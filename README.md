@@ -6,8 +6,12 @@ Repository for bioinformatic analysis of differentially expressed genes and meta
 #### Experimental design and phenotype manuscript:
 [**bioRxiv**; Gurr et al. *in review*](https://www.biorxiv.org/content/10.1101/2020.08.03.234955v1)
 
-#### Extraction protocol:
+#### RNA Extraction protocol:
 [online notebook post](https://samgurr.github.io/SamJGurr_Lab_Notebook/Updated-protocol-DNA-RNA-Extraction-of-geoduck-samples-(Zymo-kit)/)
 
-#### Raw -omic data stored here:
+#### Metabolomics extractions:
+[initial 20200911_TrialSamples](https://github.com/SamGurr/SamJGurr_Lab_Notebook/blob/master/_posts/2020-08-14-Geoduck-metabolomics-extraction.md)
+- .csv files in 'Data/Metabolomics'
+
+#### Raw -omics data stored here:
 https://osf.io/ydmt5/
