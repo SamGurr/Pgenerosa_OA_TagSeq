@@ -1,0 +1,10 @@
+Sample_num,Num_animals,Geoduck_ID,Experiment_day,Treatment_primary,Treatment_second,Metabolomics_ID
+1,1,684,11,A,A,Sample_1_1
+2,1,652,11,A,S,Sample_2_2
+3,1,621,11,A,M,Sample_3_3
+4,4,"638,624",11,A,M,Sample_4_1
+5,4,"612,632",11,E,M,Sample_5_2
+6,4,"659,666",11,E,S,Sample_6_3
+7,7,"291,300,304,316",4,E,A,Sample_7_1
+8,7,"296,312,318",4,A,A,Sample_8_2
+9,7,"190,196,200",4,A,M,Sample_9_3

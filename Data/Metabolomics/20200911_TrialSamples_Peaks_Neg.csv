@@ -1,4 +1,4 @@
-label,metaGroupId,groupId,goodPeakCount,medMz,medRt,maxQuality,note,compound,compoundId,expectedRtDiff,ppmDiff,parent,Blank1,Blank2,Blank3,1-Animal_Sample-1_1,1-Animal_Sample-2_2,1-Animal_Sample-3_3,3-Animals_Sample-4_1,3-Animals_Sample-5_2,3-Animals_Sample-6_3,7-Animals_Sample-7_1,7-Animals_Sample-8_2,7-Animals_Sample-9_3
+label,metaGroupId,groupId,goodPeakCount,medMz,medRt,maxQuality,note,compound,compoundId,expectedRtDiff,ppmDiff,parent,Blank1,Blank2,Blank3,Sample_1_1,Sample_2_2,Sample_3_3,Sample_4_1,Sample_5_2,Sample_6_3,Sample_7_1,Sample_8_2,Sample_9_3
 g,0,1,2,521.9838,14.34973,0.8253111,,GTP,GTP,-1,1925.151,521.9838,0,0,0,1737.284,0,1902.474,28903.81,12482.7,0,1922.831,1732.041,2460.989
 g,0,2,7,482.9615,13.67324,0.8501565,,UTP,UTP,-1,2080.816,482.9615,1737.822,0,1421.553,30685.12,0,8644.553,131585.1,44287.17,1621.775,10446.32,33443.59,47879.05
 g,0,3,7,423.0299,13.82554,0.840053,,Thiamine pyrophosphate,Thiamine pyrophosphate,-1,2375.413,423.0299,0,0,0,13942.27,0,5327.879,52087.79,22735.18,0,28094.95,56406.01,50347.7
