@@ -11,6 +11,7 @@ library(pasilla) # note: this was previously installed with the command `BiocMan
 library(dplyr)
 library(GenomicFeatures)
 library(pheatmap)
+library(data.table)
 
 # SET WORKING DIRECTORY AND LOAD DATA
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
@@ -99,6 +100,46 @@ colnames(cts.matrix.d21) == exp.data.d21$Sample.Name # check if TRUE, means the 
 #=====================================================================================
 #  PREP dds files for DESeq2    ~ 'Primary_Treatment' 
 #=====================================================================================
+
+#======================================================================================= #
+# ALL TIMEPOINTS and ALL TREAMENTS:
+#---- INPUT: Experiment/design matrix == 'exp.data' ...formatted to 'exp.data.ALL.TREATMENTS.mtx'
+#---- INPUT: TagSeq count matrix == 'cts.matrix'
+
+
+# format Experiment/design dataframe into matrix
+exp.data$All_Treatment <- factor(exp.data$All_Treatment) # change All_Treatment to factor
+exp.data$Time <- factor(exp.data$Time) # change Day to a factor
+exp.data.ALL.TREATMENTS <- exp.data %>% dplyr::select(c('Sample.Name', 'Time', 'All_Treatment')) # condense dataset to build target matrix
+# note: day 7 and day 14 have the same treatment -  line below substr and pastes to 'All_Treatment'
+exp.data.ALL.TREATMENTS$All_Treatment <- paste(exp.data.ALL.TREATMENTS$All_Treatment, (substr(exp.data.ALL.TREATMENTS$Time, 4,5)), sep=".d") # substr and add the day to treatment to address separately downstream DESeq2 compairons
+exp.data.ALL.TREATMENTS <- data.frame(exp.data.ALL.TREATMENTS[,-1], row.names=exp.data.ALL.TREATMENTS[,1]) # move Sample.Name column as row names  
+exp.data.ALL.TREATMENTS.mtx <- as.matrix(exp.data.ALL.TREATMENTS, row.names="Geoduck.ID") # create matrix 
+# fix(exp.data.mtx) # view data - remove # to open
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data.ALL.TREATMENTS.mtx <- exp.data.ALL.TREATMENTS.mtx[match(colnames(cts.merged),rownames(exp.data.ALL.TREATMENTS.mtx)), ]
+all(rownames(exp.data.ALL.TREATMENTS.mtx) %in% colnames(cts.matrix)) # should be TRUE
+all(rownames(exp.data.ALL.TREATMENTS.mtx) == colnames(cts.matrix)) # should be TRUE
+cts.matrix <- cts.matrix[, rownames(exp.data.ALL.TREATMENTS.mtx)]
+all(rownames(exp.data.ALL.TREATMENTS.mtx) == colnames(cts.matrix))  # should be TRUE
+
+# build dds
+dds.all.treatments <- DESeqDataSetFromMatrix(countData = cts.matrix,
+                                      colData = exp.data.ALL.TREATMENTS.mtx,
+                                      design = ~ All_Treatment) # DESeq Data Set (dds) - design as~ Primary_Treatment + Day
+dds.all.treatments # view dds
+
+# prep for DESeq2
+dds.all.treatments$All_Treatment <- relevel(dds.all.treatments$All_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
+levels(dds.all.treatments$Time) # NULL 
+levels(dds.all.treatments$All_Treatment) #  levels for condition 'Treatment': "A"   "AA"  "AAA" "AAM" "AM"  "AMA" "AMM" "AS"  "ASA" "ASM" "M"   "MA"  "MAA" "MAM" "MM"  "MMA" "MMM" "MS"  "MSA" "MSM"
+keep <- rowSums(counts(dds.all.treatments)) >= 5 # PRE-FILTERING... ommits genes where counts between ALL samples (as rows) less than 5 
+dds.all.treatments <- dds.all.treatments[keep,] # integrate this criteria in the data 
+design(dds.all.treatments) # view the design we have specified 
+ncol(dds.all.treatments) # 141 cols - Good
+colData(dds.primary)
+
+# DEG ANALYSIS READY!!
 
 #======================================================================================= #
 # ALL TIMEPOINTS and PRIMARY TREAMENT:
@@ -219,18 +260,127 @@ colData(dds.primary.d21)
 # About: Log fold change shrinkage for visualization and ranking
 # Run DESeq : Modeling counts with the specified design(dds) treatment effects 
 
+#======================================================================================= #
+# ALL TREATMENTS AND TIMEPOINTS
+
+dds.all.treatments <- DESeq(dds.all.treatments) # wait for this to complete....
+resultsNames(dds.all.treatments) # view the names of your results model 
+# Note: these are all different ways of looking at the same results... 
+res.ALL.TRMTS <- results(dds.all.treatments) # view DESeq2 result - calls the last pairwise condition 
+res.ALL.TRMTS <- results(dds.all.treatments, name="All_Treatment_MSM.d21_vs_A.d0")
+res.ALL.TRMTS.contrasts <- results(dds.all.treatments, contrast=c("All_Treatment","MSM.d21","A.d0")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
+
+res.ALL.TRMTS_Ordered <- res.ALL.TRMTS[order(res.ALL.TRMTS$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
+res.ALL.TRMTS_Ordered # ordered based on pvalue
+sum(res.ALL.TRMTS_Ordered$pvalue < 0.1, na.rm=TRUE) # 2165  DEGs between Day0 Amb and Day 21 MSM
+sum(res.ALL.TRMTS_Ordered$pvalue < 0.05, na.rm=TRUE) # 1191 DEGs between Day0 Amb and Day 21 MSM
+
+summary(res.ALL.TRMTS)
+
+# CONTROL OVER TIME PAIRWISE COMAPARISONS -------------------- #
+# OBJECTIVE: Identify the genes that D/N change over life-stage/development during the experiment 
+# these genes can be considered as continuously maintained genes
+
+# here I will call only the 6 pairwise comparisons under the control treatment through time 
+# A.d0_AA.d7, A.d0_AA.d14, A.d0_AAa.d21, AA.d7_AA.d14, AA.d7_AAA.d21, AA.d14_AAA.d21
+
+# A.d0_AA.d7 # Ambient Controls Day 0 compared to Day 7
+res.ALL.TRMTS <- results(dds.all.treatments, name="All_Treatment_AA.d7_vs_A.d0")
+res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+sum(res.A.d0_AA.d7$padj < 0.1, na.rm=TRUE) # 1 marginal DEGs
+sum(res.A.d0_AA.d7$padj < 0.05, na.rm=TRUE) # 1 significant DEGs
+res.A.d0_AA.d7.DATAFRAME <- as.data.frame(res.A.d0_AA.d7)
+res.A.d0_AA.d7.DEGS <- res.A.d0_AA.d7.DATAFRAME  %>%  # downregulated genes under moderate stress
+   dplyr::filter(padj < 0.05)
+# View(res.A.d0_AA.d7.DEGS) # 1 total DEG
+summary(res.A.d0_AA.d7)
+
+# A.d0_AA.D14 # Ambient Controls Day 0 compared to Day 14
+res.A.d0_AA.d14 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d14","A.d0"))
+sum(res.A.d0_AA.d14$padj < 0.1, na.rm=TRUE) # 6 marginal DEGs
+sum(res.A.d0_AA.d14$padj < 0.05, na.rm=TRUE) # 5 significant DEGs
+res.A.d0_AA.d14.DATAFRAME <- as.data.frame(res.A.d0_AA.d14)
+res.A.d0_AA.d14.DEGS <- res.A.d0_AA.d14.DATAFRAME  %>%  # downregulated genes under moderate stress
+  dplyr::filter(padj < 0.05)
+# View(res.A.d0_AA.d14.DEGS) # 5 total DEGs
+# one of these, PGEN_.00g045760, is Fatty acid synthase
+summary(res.A.d0_AA.d14)
+
+# # A.d0_AAa.d21 # Ambient Controls Day 0 compared to Day 21
+res.A.d0_AAA.d21 <- results(dds.all.treatments, contrast=c("All_Treatment","AAA.d21","A.d0"))
+sum(res.A.d0_AAA.d21$padj < 0.1, na.rm=TRUE) # 67 marginal DEGs
+sum(res.A.d0_AAA.d21$padj < 0.05, na.rm=TRUE) # 20 significant DEGs
+res.A.d0_AAA.d21.DATAFRAME <- as.data.frame(res.A.d0_AAA.d21)
+res.A.d0_AAA.d21.DEGS <- res.A.d0_AAA.d21.DATAFRAME  %>%  # downregulated genes under moderate stress
+  dplyr::filter(padj < 0.05)
+# View(res.A.d0_AAA.d21.DEGS) # 20 total DEGs
+summary(res.A.d0_AAA.d21)
+
+
+
+# what we find are a total of 26 significantly differentially expressed genes (p < 0.05) 
+# lets call these in a dataset for fun using the package 'data.frame'
+res.A.d0_AA.d7.NS.GENES <- res.A.d0_AA.d7.DATAFRAME %>%  dplyr::filter(padj > 0.05)
+res.A.d0_AA.d7.NS.GENES$Gene.ID <- row.names(res.A.d0_AA.d7.NS.GENES) # change row names to a column'Gene.ID'
+
+res.A.d0_AA.d14.NS.GENES <- res.A.d0_AA.d14.DATAFRAME %>%  dplyr::filter(padj > 0.05)
+res.A.d0_AA.d14.NS.GENES$Gene.ID <- row.names(res.A.d0_AA.d14.NS.GENES) # change row names to a column'Gene.ID'
+
+res.A.d0_AAA.d21.NS.GENES <- res.A.d0_AAA.d21.DATAFRAME %>%  dplyr::filter(padj > 0.05)
+res.A.d0_AAA.d21.NS.GENES$Gene.ID <- row.names(res.A.d0_AAA.d21.NS.GENES) # change row names to a column'Gene.ID'
+
+
+Amb.DEGs <- lapply(list(res.A.d0_AA.d7.NS.GENES[7], res.A.d0_AA.d14.NS.GENES[7], res.A.d0_AAA.d21.NS.GENES[7]), data.table)
+Amb.DEGs.IDs.keep <-rbindlist(lapply(Amb.DEGs, '[', j = 'Gene.ID'))[, .N, by=Gene.ID][N == 3L, 'Gene.ID']
+Amb.DEGs.keep <- Reduce(funion, Amb.DEGs)[Gene.ID %in% Amb.DEGs.IDs.keep]
+
+
+X <- as.data.frame(resultsNames(dds.all.treatments))
+X.2 <- X[c(2:13),]
+X.2 <-  as.data.frame(X.2)
+# for loop
+df_total <- data.frame()
+for (i in 1:nrow(X.2)) {
+  RSLTS <- results(dds.all.treatments, name=X.2[i,])
+  sum <- sum(RSLTS$pvalue < 0.05, na.rm=TRUE) 
+  Total.Genes <- nrow(RSLTS)
+  
+  in.loop.table <- data.frame(matrix(nrow = 1, ncol = 3))
+  colnames(in.loop.table)<-c('test', 'total.genes', 'DEGs.p0.05')
+  in.loop.table$test <- X.2[i,]
+  in.loop.table$total.genes <- Total.Genes
+  in.loop.table$DEGs.p0.05 <- sum
+  
+  df <- data.frame(in.loop.table)
+  df_total <- rbind(df_total,df)#bind to a cumulative list dataframe
+}
+df_total
+
+
+# res.AA.d7_AA.d14 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+# 
+# # AA.d7_AA.d14
+# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+# 
+# # AA.d7_AAA.d21
+# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+# 
+# # AA.d14_AAA.d21
+# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+
+
+
 
 #======================================================================================= #
-# ALL TIME POINTS
+# ALL TIME POINTS - PRIMARY TREATMENT ONLY!!!
 
 dds.primary <- DESeq(dds.primary) # wait for this to complete....
 resultsNames(dds.primary) # view the names of your results model 'Primary_Treatment_M_vs_A'
 
 # Note: these are all different ways of looking at the same results... 
-res <- results(dds.primary) # view DESeq2 results 
+res <- results(dds.primary) # view DESeq2 results - calls the last pairwise condition
 res <- results(dds.primary, name="Primary_Treatment_M_vs_A")
 res.contrasts <- results(dds.primary, contrast=c("Primary_Treatment","M","A")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
-
 
 res_Ordered <- res[order(res$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
 res_Ordered # ordered based on pvalue
@@ -250,13 +400,27 @@ res.d0 <- results(dds.primary.d0) # view DESeq2 results
 res.d0 <- results(dds.primary.d0, name="Primary_Treatment_M_vs_A")
 res.d0.contrasts <- results(dds.primary.d0, contrast=c("Primary_Treatment","M","A")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
 
-
-res.d0_Ordered <- res.d0[order(res.d0$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
+res.d0_Ordered <- res.d0[order(res.d0$pvalue),] # how to order based on p-valuel 
 res.d0_Ordered # ordered based on pvalue
 sum(res.d0_Ordered$padj < 0.1, na.rm=TRUE) # 27 marginal DEGs
 sum(res.d0_Ordered$padj < 0.05, na.rm=TRUE) # 14 significant DEGs
 
 summary(res.d0)
+
+# convert to dataframe and view the downreg and upregulated genes
+dataframe_res.d0.ordered <- as.data.frame(res.d0_Ordered)
+dataframe_res.d0.ordered$Gene.ID <- rownames(dataframe_res.d0.ordered)
+View(dataframe_res.d0.ordered)
+
+res.d0.DOWNREG <- dataframe_res.d0.ordered %>%  # downregulated genes under moderate stress
+  dplyr::filter(log2FoldChange < 0) %>% 
+  dplyr::filter(padj < 0.1)
+View(res.d0.DOWNREG) # view downreg genes
+
+res.d0.UPREG <- dataframe_res.d0.ordered %>% 
+  dplyr::filter(log2FoldChange > 0) %>%   # upregualted genes under moderate stress
+  dplyr::filter(padj < 0.1)
+View(res.d0.UPREG)  # view upreg genes
 
 #======================================================================================= #
 # DAY 21 
@@ -269,35 +433,52 @@ res.d21 <- results(dds.primary.d21) # view DESeq2 results
 res.d21 <- results(dds, name="Primary_Treatment_M_vs_A")
 res.D21.contrasts <- results(dds.primary.d21, contrast=c("Primary_Treatment","M","A")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
 
-res.d21_Ordered <- res.d21[order(res.d21$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
+res.d21_Ordered <- res.d21[order(res.d21$pvalue),] # how to order based on p-value
 res.d21_Ordered # ordered based on pvalue
 sum(res.d21_Ordered$padj < 0.1, na.rm=TRUE) # 331 marginal DEGs
 sum(res.d21_Ordered$padj < 0.05, na.rm=TRUE) # 196 significant DEGs
 
 summary(res.d21)
 
+# convert to dataframe and view the downreg and upregulated genes
+dataframe_res.d21.ordered <- as.data.frame(res.d21_Ordered)
+dataframe_res.d21.ordered$Gene.ID <- rownames(dataframe_res.d21.ordered)
+View(dataframe_res.d21.ordered)
+
+res.d21.DOWNREG <- dataframe_res.d21.ordered %>%  # downregulated genes under moderate stress
+  dplyr::filter(log2FoldChange < 0) %>% 
+  dplyr::filter(padj < 0.1)
+View(res.d21.DOWNREG) # view downreg genes
+
+res.d21.UPREG <- dataframe_res.d21.ordered %>% 
+  dplyr::filter(log2FoldChange > 0) %>%   # upregualted genes under moderate stress
+  dplyr::filter(padj < 0.1)
+View(res.d21.UPREG)  # view upreg genes
+
 #ddsMF <- dds # make a coppy of dds for multi factor designs
 
 #=====================================================================================
 # EXPLORING AND EXPORTING RESULTS
 #=====================================================================================
-summary(res.EvA)
-plotMA(res.EvA, ylim=c(-2,2))
+
+plotMA(res.d21, ylim=c(-2,2))
 
 # It is more useful visualize the MA-plot for the shrunken log2 fold changes, 
 # which remove the noise associated with log2 fold changes from low count genes 
 # without requiring arbitrary filtering thresholds.
-res.EvA_LFC <- lfcShrink(dds, coef="Treatment_E_vs_A", type="apeglm")
-summary(res.EvA_LFC)
-plotMA(res.EvA_LFC, ylim=c(-2,2))
+res.d21_LFC <- lfcShrink(dds.primary.d21, coef="Primary_Treatment_M_vs_A", type="apeglm")
+summary(res.d21_LFC)
+plotMA(res.d21_LFC, ylim=c(-2,2))
 # after calling plotMA you can use function identify to interactively detect the row number of individual genes by clicking on the plot
-idx <- identify(res.EvA_LFC$baseMean, res.EvA_LFC$log2FoldChange)
-rownames(res.EvA_LFC)[idx]
+idx <- identify(res.d21_LFC$baseMean, res.d21_LFC$log2FoldChange)
+rownames(res.d21_LFC)[idx]
 
 # plot counts
-plotCounts(dds, gene=which.min(res.EvA_LFC$padj), intgroup="Treatment") # this plots the gene which had the smallest p-value
+plotCounts(dds.primary.d21, gene=which.min(res.d21_LFC$padj), intgroup="Primary_Treatment") # this plots the gene which had the smallest p-value
+plotCounts(dds.primary.d21, gene='PGEN_.00g108770', intgroup="Primary_Treatment") # putative alternative oxidase!
+
 # sample plot in ggplot 
-d <- plotCounts(dds, gene=which.min(res.EvA_LFC$padj), intgroup="Treatment", 
+d <- plotCounts(dds, gene=which.min(res.d21_LFC$padj), intgroup="Treatment", 
                 returnData=TRUE)
 ggplot(d, aes(x=Treatment, y=count)) + 
   theme_classic() +
