@@ -50,6 +50,20 @@ Mstr.Ref <- merge(Seq.Ref, treatment_ref, by = "Geoduck_ID")
 # ALL TIMEPOINTS:
 # call all experiment design treatments as 'exp.data'
 exp.data <- Mstr.Ref[,c("Sample.Name","All_Treatment", "Primary_Treatment", "Second_Treament", "Third_Treatment", "Time")]
+
+
+# NOTE: the following datasets expore the pairwise effects through time to explore the persistant DEGs 
+# we found that primary treatment (first 110 days) affected diff expression regardless of subseq encounters
+# thus, I want to investigate these persistant DEGs in Ambient vs. Moderate through time
+# Ambient control (ambient throughout)
+exp.data.AmbControl <- exp.data %>%  dplyr::filter(All_Treatment %in% c('A', 'AA', 'AAA')) # call all controls under ambient
+exp.data.AmbControl$Treat.day <- paste(exp.data.AmbControl$All_Treatment, (substr(exp.data.AmbControl$Time, 4,5)), sep='_')
+
+# Moderate throughout 
+exp.data.Moderate <- exp.data %>%  dplyr::filter(All_Treatment %in% c('M', 'MM', 'MMM')) # call all controls under ambient
+exp.data.Moderate$Treat.day <- paste(exp.data.Moderate$All_Treatment, (substr(exp.data.Moderate$Time, 4,5)), sep='_')
+
+
 #====================================================================================================================== #
 # DAY 0 
 exp.data.d0 <- exp.data %>% dplyr::filter(Time %in% 'Day0')
@@ -97,7 +111,7 @@ write.csv(exp.data.d21, paste(path.wgcna,"d21.treatment.data.csv"))
 ncol(cts) # 282 samples (not counting gene ID column) - should be 141 samples, need to sum columns by unique ID
 cts.merged <- data.frame(cts[,-1], row.names=cts[,1]) # call new dataframe with first column now as row names, now all row values are numeric
 names(cts.merged) <- sapply(strsplit(names(cts.merged), "_"), '[', 1) # split the column names by "_" delimiter  and call the first field SG##
-cts.merged <- t(rowsum(t(cts.merged), group = colnames(cts.merged), na.rm = T)) # merge all unique columns and sum counts 
+cts.merged <- t(rowsum(t(cts.merged), group = colnames(cts.merged), na.rm = TRUE)) # merge all unique columns and sum counts 
 ncol(cts.merged) # now 141 samples
 # path for outputting all .csv filtered count files
 path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/' # run this for all count matrix outputs!!!
@@ -268,7 +282,7 @@ table(rowSums(thresh.d21)) # 3451 genes with TRUE in all 35 samples
 keep.d21 <- rowSums(thresh.d21) >= (ncol(thresh.d21)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
 summary(keep.d21) # FALSE 26622 & TRUE 8325 -- more than three quarters of the genes did not pass
 cts.matrix.d21.filtered <- cts.matrix.d21[keep.d21,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d21.filtered) # 8541 genes & 35 samples
+dim(cts.matrix.d21.filtered) # 13747 genes &  62 samples
 head(cts.matrix.d21.filtered) # FINAL DAY 21 DATASET
 # We will look at a cople samples to check our defined threshold.. 
 plot(CPM.d21[,60], cts.matrix.d21[,60], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d21)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
@@ -289,6 +303,46 @@ write.csv(day21.counts.filtered, paste(path, "day21.counts.filtered.csv"))
 #                             PREP dds files for DESeq2    
 #
 #====================================================================================================================== 
+
+
+# ========================================================== 
+# All TIMEPOINTS (test effect of time & Ambient_ALL vs. Moderate_ALL)
+#---- INPUT: Experiment/design matrix == 'exp.data.AmbControl' and 'exp.data.Moderate'
+#---- INPUT: TagSeq count matrix == 'cts.matrix.all.filtered' (3 CPM in 50% samples)
+# ========================================================== 
+
+# format Experiment/design dataframe into matrix
+exp.data.Amb_all <- exp.data.AmbControl %>% dplyr::select(c('Sample.Name', 'Treat.day', 'All_Treatment')) # coondense dataset to build target matrix
+exp.data.Amb_all$Treat.day <- factor(exp.data.Amb_all$Treat.day) # change Primary_Treatment to factor
+# exp.data.d0.PRIMARY$Time <- factor(exp.data.d0.PRIMARY$Time) # change Time to factor
+exp.data.Amb_all <- data.frame(exp.data.Amb_all[,-1], row.names=exp.data.Amb_all[,1]) # move Sample.Name column as row names  
+exp.data.Amb_all.mtx <- as.matrix(exp.data.Amb_all, row.names="Geoduck.ID") # create matrix 
+
+cts.merged.Ambient.all <- cts.matrix.all.filtered[,c(1,na.omit(match(exp.data.AmbControl$Sample.Name, colnames(cts.matrix.all.filtered))))]
+dim(cts.merged.Ambient.all) # genes 13874   number samples 23
+
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data.Amb_all.mtx <- exp.data.Amb_all.mtx[match(colnames(cts.merged.Ambient.all),rownames(exp.data.Amb_all.mtx)), ]
+all(rownames(exp.data.Amb_all.mtx) %in% colnames(cts.merged.Ambient.all)) # should be TRUE
+all(rownames(exp.data.Amb_all.mtx) == colnames(cts.merged.Ambient.all)) # should be TRUE
+all(rownames(exp.data.Amb_all.mtx) == colnames(cts.merged.Ambient.all))  # should be TRUE
+
+# build dds
+dds.Amb_all <- DESeqDataSetFromMatrix(countData = cts.merged.Ambient.all,
+                                 colData = exp.data.Amb_all.mtx,
+                                 design = ~ Treat.day) # DESeq Data Set (dds) - design as ~Primary_Treatment
+dds.Amb_all # view dds
+
+# prep for DESeq2
+dds.Amb_all$Treat.day <- relevel(dds.Amb_all$Treat.day, ref = "A_0") # specify the reference level for count analysis - A = the control treatment
+dds.Amb_all$All_Treatment <- droplevels(dds.Amb_all$All_Treatment)
+levels(dds.Amb_all$All_Treatment) # NULL
+levels(dds.Amb_all$Treat.day) #  levels for condition 'Treatment': "A_0"    "AA_14"  "AA_7"   "AAA_21"
+design(dds.Amb_all) # view the design we have specified 
+ncol(dds.Amb_all) # 23 cols - Good
+nrow(dds.Amb_all) # 13874 (cut-off of 3 CPM)
+
+# DEG ANALYSIS READY!!
 
 # ========================================================== 
 # DAY 0 
@@ -323,7 +377,7 @@ levels(dds.d0$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
 
 design(dds.d0) # view the design we have specified 
 ncol(dds.d0) # 8 cols - Good
-nrow(dds.d0) # 9091 cols (cutoff at 10 CPM) 15107 (cut-off of 3 CPM)
+nrow(dds.d0) # 9091 cols (cutoff at 10 CPM) 15036 (cut-off of 3 CPM)
 
 # DEG ANALYSIS READY!!
 
@@ -361,7 +415,35 @@ levels(dds.d7$Primary_Treatment) #  levels for condition 'Treatment':  "A" "M"
 levels(dds.d7$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
 design(dds.d7) # view the design we have specified 
 ncol(dds.d7) # 36 cols - Good
-nrow(dds.d7) # 8456 cols (10 CPM) 13670 (3 CPM)
+nrow(dds.d7) # 8456 cols (10 CPM) 13923 (3 CPM)
+
+# DEG ANALYSIS READY!!
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Interaction term '...INT': All Treatment ( AA, AM, AS, MM, MA, MS)
+# format Experiment/design dataframe into matrix
+exp.data.d7.INT <- exp.data.d7 %>% dplyr::select(c('Sample.Name', 'All_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d7.INT <- data.frame(exp.data.d7.INT[,-1], row.names=exp.data.d7.INT[,1]) # move Sample.Name column as row names  
+exp.data.d7.INT.mtx <- as.matrix(exp.data.d7.INT, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data.d7.INT.mtx <- exp.data.d7.INT.mtx[match(colnames(cts.merged.d7),rownames(exp.data.d7.INT.mtx)), ]
+all(rownames(exp.data.d7.INT.mtx) %in% colnames(cts.matrix.d7.filtered)) # should be TRUE
+all(rownames(exp.data.d7.INT.mtx) == colnames(cts.matrix.d7.filtered)) # should be TRUE
+all(rownames(exp.data.d7.INT.mtx) == colnames(cts.matrix.d7.filtered))  # should be TRUE
+# build dds
+dds.d7.INT <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
+                                      colData = exp.data.d7.INT.mtx,
+                                      design = ~ All_Treatment) # DESeq Data Set (dds) - design as ~All_Treatment
+# dds.d7 # view dds
+# prep for DESeq2
+dds.d7.INT$All_Treatment <- relevel(dds.d7.INT$All_Treatment, ref = "AA") # specify the reference level for count analysis - A = the control treatment
+dds.d7.INT$Time <- droplevels(dds.d7.INT$Time) # drop levels of time
+levels(dds.d7.INT$Time) # NULL
+levels(dds.d7.INT$All_Treatment) #  levels for condition 'Treatment': "AA" "AM" "AS" "MA" "MM" "MS"
+design(dds.d7.INT) # view the design we have specified 
+ncol(dds.d7.INT) # 36 cols - Good
+nrow(dds.d7.INT)  # 8456 (10 CPM) 13923 (3 CPM)
 
 # DEG ANALYSIS READY!!
 
@@ -375,7 +457,7 @@ exp.data.d14$Second_Treament <- factor(exp.data.d14$Second_Treament) # change Se
 exp.data.d14$Time <- factor(exp.data.d14$Time) # change Time to factor
 
 #==================== #
-# Primary*Second (ALL) Treatment
+# Primary + Second; additive effect
 # format Experiment/design dataframe into matrix
 exp.data.d14.PRIM_SEC <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Time')) # coondense dataset to build target matrix
 exp.data.d14.PRIM_SEC <- data.frame(exp.data.d14.PRIM_SEC[,-1], row.names=exp.data.d14.PRIM_SEC[,1]) # move Sample.Name column as row names  
@@ -389,7 +471,7 @@ all(rownames(exp.data.d14.PRIM_SEC.mtx) == colnames(cts.matrix.d14.filtered))  #
 dds.d14 <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
                                      colData = exp.data.d14.PRIM_SEC.mtx,
                                      design = ~ Primary_Treatment+Second_Treament) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d0 # view dds
+# dds.d14 # view dds
 # prep for DESeq2
 dds.d14$Primary_Treatment <- relevel(dds.d14$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
 dds.d14$Second_Treament <- relevel(dds.d14$Second_Treament, ref = "A") # specify the reference level for count analysis - A = the control treatment
@@ -399,7 +481,35 @@ levels(dds.d14$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
 levels(dds.d14$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
 design(dds.d14) # view the design we have specified 
 ncol(dds.d14) # 35 cols - Good
-nrow(dds.d14)  # 8541 (10 CPM) 14011 (3 CPM)
+nrow(dds.d14)  # 8541 (10 CPM) 14241 (3 CPM)
+
+# DEG ANALYSIS READY!!
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Interaction term '...INT': All Treatment ( AA, AM, AS, MM, MA, MS)
+# format Experiment/design dataframe into matrix
+exp.data.d14.INT <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'All_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d14.INT <- data.frame(exp.data.d14.INT[,-1], row.names=exp.data.d14.INT[,1]) # move Sample.Name column as row names  
+exp.data.d14.INT.mtx <- as.matrix(exp.data.d14.INT, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data.d14.INT.mtx <- exp.data.d14.INT.mtx[match(colnames(cts.merged.d14),rownames(exp.data.d14.INT.mtx)), ]
+all(rownames(exp.data.d14.INT.mtx) %in% colnames(cts.matrix.d14.filtered)) # should be TRUE
+all(rownames(exp.data.d14.INT.mtx) == colnames(cts.matrix.d14.filtered)) # should be TRUE
+all(rownames(exp.data.d14.INT.mtx) == colnames(cts.matrix.d14.filtered))  # should be TRUE
+# build dds
+dds.d14.INT <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
+                                  colData = exp.data.d14.INT.mtx,
+                                  design = ~ All_Treatment) # DESeq Data Set (dds) - design as ~All_Treatment
+# dds.d14 # view dds
+# prep for DESeq2
+dds.d14.INT$All_Treatment <- relevel(dds.d14.INT$All_Treatment, ref = "AA") # specify the reference level for count analysis - A = the control treatment
+dds.d14.INT$Time <- droplevels(dds.d14.INT$Time) # drop levels of time
+levels(dds.d14$Time) # NULL
+levels(dds.d14.INT$All_Treatment) #  levels for condition 'Treatment': "AA" "AM" "AS" "MA" "MM" "MS"
+design(dds.d14.INT) # view the design we have specified 
+ncol(dds.d14.INT) # 35 cols - Good
+nrow(dds.d14.INT)  # 8541 (10 CPM) 14241 (3 CPM)
 
 # DEG ANALYSIS READY!!
 
@@ -444,6 +554,33 @@ nrow(dds.d21) # 8325 (10 CPM) 13506 (3 CPM)
 
 # DEG ANALYSIS READY!!
 
+# ------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+# Interaction term '...INT': All Treatment ( AA, AM, AS, MM, MA, MS)
+# format Experiment/design dataframe into matrix
+exp.data.d21.INT <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'All_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d21.INT <- data.frame(exp.data.d21.INT[,-1], row.names=exp.data.d21.INT[,1]) # move Sample.Name column as row names  
+exp.data.d21.INT.mtx <- as.matrix(exp.data.d21.INT, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data.d21.INT.mtx <- exp.data.d21.INT.mtx[match(colnames(cts.merged.d21),rownames(exp.data.d21.INT.mtx)), ]
+all(rownames(exp.data.d21.INT.mtx) %in% colnames(cts.matrix.d21.filtered)) # should be TRUE
+all(rownames(exp.data.d21.INT.mtx) == colnames(cts.matrix.d21.filtered)) # should be TRUE
+all(rownames(exp.data.d21.INT.mtx) == colnames(cts.matrix.d21.filtered))  # should be TRUE
+# build dds
+dds.d21.INT <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
+                                      colData = exp.data.d21.INT.mtx,
+                                      design = ~ All_Treatment) # DESeq Data Set (dds) - design as ~All_Treatment
+# dds.d21 # view dds
+# prep for DESeq2
+dds.d21.INT$All_Treatment <- relevel(dds.d21.INT$All_Treatment, ref = "AAA") # specify the reference level for count analysis - A = the control treatment
+dds.d21.INT$Time <- droplevels(dds.d21.INT$Time) # drop levels of time
+levels(dds.d21.INT$Time) # NULL
+levels(dds.d21.INT$All_Treatment) #  levels for condition 'Treatment': "AAA" "AAM" "AMA" "AMM" "ASA" "ASM" "MAA" "MAM" "MMA" "MMM" "MSA" "MSM"
+design(dds.d21.INT) # view the design we have specified 
+ncol(dds.d21.INT) #  62 cols - Good
+nrow(dds.d21.INT)  # 13747 (3 CPM)
+
+# DEG ANALYSIS READY!!
 
 #====================================================================================================================== 
 #
@@ -484,6 +621,61 @@ nrow(dds.d21) # 8325 (10 CPM) 13506 (3 CPM)
 # false positives are rare - 5% of the time is a common rule of thumb that sample distribtions do not overlap
 # note we have ~35,000 genes so 5% is 1,750 genes! 
 # VIDEO EXPLAINING FDR https://www.youtube.com/watch?v=K8LQSvtjcEo&feature=emb_logo
+
+
+
+# ========================================================== 
+#
+# ALL TIMEPOINTS - Ambient controls    (3 CPM in 50% samples)
+# ========================================================== 
+
+nrow(dds.Amb_all) # 13874 total genes pre filtered; 
+
+#  pre-filtered in edgeR - use independentFiltering=FALSE
+dds.Amb_all <- DESeq(dds.Amb_all) # wait for this to complete....
+resultsNames(dds.Amb_all) # view the names of your results model "Treat.day_AA_14_vs_A_0"  "Treat.day_AA_7_vs_A_0"   "Treat.day_AAA_21_vs_A_0"
+
+resAmb.d0vd7 <- results(dds.Amb_all, name="Treat.day_AA_7_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd7$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd7$padj<0.05) # 0 DEGs
+
+
+resAmb.d0vd14 <- results(dds.Amb_all, name="Treat.day_AA_14_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd14$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd14$padj<0.05) # 11 DEGs
+
+
+resAmb.d0vd21 <- results(dds.Amb_all, name="Treat.day_AAA_21_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd21$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd21$padj<0.05) # 94 DEGs
+
+
+# Write results
+# path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day0/'
+# write.csv(resdata.d0.primary, paste(path_out.d0, "Day0.PrimaryTreatment_diffexpr-results.csv"))
+
+# volcano plot ------------------------------------------------------------------------------------------------------ #
+
+# png("RAnalysis/DESeq2/output/Day0/Day0.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resAmb.d0vd21,
+                lab = rownames(resAmb.d0vd21),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                title = 'Day 21 v. Day 0 (Ambient Control)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+# dev.off()
+
 
 # ========================================================== 
 #
@@ -1147,7 +1339,106 @@ dev.off()
 pcaExplorer(dds = dds.d21)
 
 
+#====================================================================================================================== 
+#
+#                                       GO ANALYSIS (with WEGO)                   
+#
+#====================================================================================================================== 
+
+# load and call desired columns of the annotation file (Uniprot IDs for each gene) - Roberts Lab (Sam White) compelted this annotation - open online on osf
+annotation.txt <- read.delim2(file="Panopea-generosa-genes-annotations.txt", header=F)
+annotation.df <- as.data.frame(annotation.txt)
+annotation.df <- annotation.df %>% dplyr::select(c('V1','V8')) # call gene name and the GO terms - (Uniprot ID 'V5')
+colnames(annotation.df)[1:2] <- c('Gene', 'GO.terms')
+annotation.df$GO.terms <- gsub(";", " ", annotation.df$GO.terms) # remove the ; delimiter and replace with nothing - already tabbed 
 
 
 
+#====================================================================================================================== 
+# Day 0 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+
+#====================================================================================================================== 
+# Day 7 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+
+resdata.d7.all.prim.M_vs_A # 94 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 14 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d7.primary<- resdata.d7.all.prim.M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d7.primary) # 94 - we have all DEGs now
+
+UPREG.d7.primary <- DEGS.d7.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d7.primary <- DEGS.d7.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d7.primary) + nrow(DWNREG.d7.primary) # should be equal to 94
+
+
+D7.UPREG_GO <- merge(UPREG.d7.primary, annotation.df, by = "Gene")
+D7.UPREG_WEGO <- D7.UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D7.UPREG_WEGO$GO.terms[is.na(D7.UPREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.UPREG_WEGO) # view the data
+
+D7.DWNREG_GO <- merge(DWNREG.d7.primary, annotation.df, by = "Gene")
+D7.DWNREG_WEGO <- D7.DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D7.DWNREG_WEGO$GO.terms[is.na(D7.DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.DWNREG_WEGO) # view the data
+
+# write to GO folder
+write.table(D7.UPREG_WEGO, file = "RAnalysis/GO/Day7_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+write.table(D7.DWNREG_WEGO, file = "RAnalysis/GO/Day7_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+
+
+
+#====================================================================================================================== 
+# Day 14  primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+
+resdata.d14.all.prim.M_vs_A # 502 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 14 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d14.primary<- resdata.d14.all.prim.M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d14.primary) # 502 - we have all DEGs now
+
+UPREG.d14.primary <- DEGS.d14.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d14.primary <- DEGS.d14.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d14.primary) + nrow(DWNREG.d14.primary) # should be equal to 502
+
+
+D14.UPREG_GO <- merge(UPREG.d14.primary, annotation.df, by = "Gene")
+D14.UPREG_WEGO <- D14.UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D14.UPREG_WEGO$GO.terms[is.na(D14.UPREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D14.UPREG_WEGO) # view the data
+
+D14.DWNREG_GO <- merge(DWNREG.d14.primary, annotation.df, by = "Gene")
+D14.DWNREG_WEGO <- D14.DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D14.DWNREG_WEGO$GO.terms[is.na(D14.DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D14.DWNREG_WEGO) # view the data
+
+# write to GO folder
+write.table(D14.UPREG_WEGO, file = "RAnalysis/GO/Day14_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+write.table(D14.DWNREG_WEGO, file = "RAnalysis/GO/Day14_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+
+
+#====================================================================================================================== 
+# Day 21 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+
+resdata.d21.All.Primary_Treatment_M_vs_A # 221 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 21 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d21.primary<- resdata.d21.All.Primary_Treatment_M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d21.primary) # 221 - we have all DEGs now
+
+UPREG.d21.primary <- DEGS.d21.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d21.primary <- DEGS.d21.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d21.primary) + nrow(DWNREG.d21.primary) # should be equal to 221
+
+
+UPREG_GO <- merge(UPREG.d21.primary, annotation.df, by = "Gene")
+UPREG_WEGO <- UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+UPREG_WEGO$GO.terms[is.na(UPREG_WEGO$GO.terms)] <- " " # make NA blank
+View(UPREG_WEGO)
+
+DWNREG_GO <- merge(DWNREG.d21.primary, annotation.df, by = "Gene")
+DWNREG_WEGO <- DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+DWNREG_WEGO$GO.terms[is.na(DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+View(DWNREG_WEGO)
+
+# write to GO folder
+write.table(UPREG_WEGO, file = "RAnalysis/GO/Day21_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE)
+write.table(DWNREG_WEGO, file = "RAnalysis/GO/Day21_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE)
 
