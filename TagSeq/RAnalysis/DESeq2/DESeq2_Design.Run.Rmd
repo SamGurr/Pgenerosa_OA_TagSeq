@@ -1,0 +1,139 @@
+---
+title: "geoduck_tagseq_analysis"
+author: "Samuel Gurr"
+date: "January 29, 2021"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Setup: 
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+```
+
+### Load libraries
+```{r load_libraries, include = TRUE}
+# load libraries - notes show the install command needed to install (pre installed)
+library(DESeq2) # note: this was previously installed with the command `BiocManager::install("DESeq2")`
+library(pasilla) # note: this was previously installed with the command `BiocManager::install("pasilla")`
+library(dplyr)
+library(GenomicFeatures)
+library(pheatmap)
+library(data.table)
+library(calibrate)
+library(gplots)
+library(RColorBrewer)
+library(affycoretools) # note: this was previously installed with the BiocManager::install("affycoretools")
+library(edgeR)
+library(data.table)
+library(EnhancedVolcano)  # note: this was previously installed with the command `BiocManager::install("EnhancedVolcano")`
+library(pcaExplorer) 
+library(vsn)
+library(tidybulk)
+
+```
+
+### Set working directory
+```{r set_wd, include = TRUE}
+
+# SET WORKING DIRECTORY AND LOAD DATA
+setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+
+```
+
+# LOAD DATA:
+
+### Gene count data - convert to matrix
+```{r count_data, include = TRUE}
+### filtered counts tables - format matrix after upload [from Count_Matrix_Stats.Filter.R] 
+all.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ all.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+all.counts_matrix <- data.frame(all.counts_matrix[,-1], row.names=all.counts_matrix[,1]) 
+d0.counts_matrix  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day0.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d0.counts_matrix <- data.frame(d0.counts_matrix[,-1], row.names=d0.counts_matrix[,1]) 
+d7.counts_matrix  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day7.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d7.counts_matrix <- data.frame(d7.counts_matrix[,-1], row.names=d7.counts_matrix[,1]) 
+d14.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day14.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d14.counts_matrix <- data.frame(d14.counts_matrix[,-1], row.names=d14.counts_matrix[,1]) 
+d21.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day21.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d21.counts_matrix <- data.frame(d21.counts_matrix[,-1], row.names=d21.counts_matrix[,1]) 
+```
+
+### Sample metadata - Experimental treatments/groups
+```{r experiment_data, include = TRUE}
+### experiment metadata [from Count_Matrix_Stats.Filter.R]  - convert characaters to factors for DESeq2
+all.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ all.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+
+d0.exp_data   <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day0.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+
+d7.exp_data   <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day7.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+
+d14.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/  day14.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+
+d21.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/  day21.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+```
+
+### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms')
+```{r load_annot_GOterms}
+Geoduck_annotation <- read.delim2(file="Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_GOterms <- as.data.frame(annotation.txt) %>% dplyr::select(c('V1','V8'))
+colnames(Geoduck_GOterms)[1:2] <- c('transcript.ID', 'GO.terms') # call gene name and the GO terms - (Uniprot ID 'V5')
+Geoduck_GOterms$GO.terms <- gsub(";", " ", annotation.df$GO.terms) # remove the ; delimiter and replace with nothing - already tabbed
+```
+
+
+# DESeq2 datasets
+
+### DEsign DESeqDatasets
+```{r import_annot}
+# ========================================================== 
+# DAY 0 FULL MODEL ==  design = ~ Primary_Treatment
+# ========================================================== 
+exp.data.d0.PRIMARY <- d0.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
+exp.data.d0.PRIMARY$Primary_Treatment <- factor(exp.data.d0.PRIMARY$Primary_Treatment) # change Primary_Treatment to factor
+exp.data.d0.PRIMARY$All_Treatment <- factor(exp.data.d0.PRIMARY$All_Treatment) # change Time to factor
+exp.data.d0.PRIMARY <- data.frame(exp.data.d0.PRIMARY[,-1], row.names=exp.data.d0.PRIMARY[,1]) # move Sample.Name column as row names  
+exp.data.d0.PRIMARY.mtx <- as.matrix(exp.data.d0.PRIMARY, row.names="Geoduck.ID") # create matrix 
+# check for 'TRUE' in each - check before proceeding  design
+exp.data.d0.PRIMARY.mtx <- exp.data.d0.PRIMARY.mtx[match(colnames(d0.counts_matrix),rownames(exp.data.d0.PRIMARY.mtx)), ]
+all(rownames(exp.data.d0.PRIMARY.mtx) %in% colnames(d0.counts_matrix)) # should be TRUE
+all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(d0.counts_matrix)) # should be TRUE
+all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(d0.counts_matrix))  # should be TRUE
+# build dds
+dds.d0 <- DESeqDataSetFromMatrix(countData = d0.counts_matrix,
+                                      colData = exp.data.d0.PRIMARY.mtx,
+                                      design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
+
+# ========================================================== 
+# DAY 7 - FULL MODEL     ==  design = ~ Primary_Treatment+Second_Treament+Primary_Treatment:Second_Treament
+#       - ADDITIVE MODEL ==  design = ~ Primary_Treatment+Second_Treament
+#       - GROUP    MODEL ==  design = ~ Primary_Treatment+Second_Treament
+# ==========================================================
+d7.exp_data <- d7.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to   build target matrix
+d7.exp_data <- data.frame(d7.exp_data[,-1], row.names=d7.exp_data[,1]) # move Sample.Name column as row names  
+d7.exp_data.mtx <- as.matrix(d7.exp_data, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+d7.exp_data.mtx <- exp.data.d7.PRIM_SEC.mtx[match(colnames(d7.counts_matrix),rownames(exp.data.d7.PRIM_SEC.mtx)), ]
+all(rownames(d7.exp_data.mtx) %in% colnames(d7.counts_matrix)) # should be TRUE
+all(rownames(d7.exp_data.mtx) == colnames(d7.counts_matrix)) # should be TRUE
+all(rownames(d7.exp_data.mtx) == colnames(d7.counts_matrix))  # should be TRUE
+# build dds
+# FULL MODEL 
+dds.d7 <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
+                                  colData = exp.data.d7.PRIM_SEC,
+                                  design = ~ Second_Treament+Primary_Treatment+Second_Treament:Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
+design(dds.d7) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
+# GROUP
+dds.d7.group <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
+                                        colData = exp.data.d7.PRIM_SEC,
+                                        design = ~ All_Treatment-1) 
+design(dds.d7.group) # ~All_Treatment 
+# MAIN EFFECT 
+dds.d7.main <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
+                                       colData = exp.data.d7.PRIM_SEC,
+                                       design = ~ Second_Treament+Primary_Treatment)
+
+
+```

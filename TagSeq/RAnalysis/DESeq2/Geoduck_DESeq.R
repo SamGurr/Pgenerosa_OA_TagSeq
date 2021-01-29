@@ -1,7 +1,7 @@
 ---
 # title: "Geoduck_TagSeq_DESeq2"
 # author: "Samuel Gurr"
-# date: "December 29, 2020"
+# date: "January 24, 2021"
 ---
   
 # LOAD PACKAGES
@@ -17,332 +17,104 @@ library(RColorBrewer)
 library(affycoretools) # note: this was previously installed with the BiocManager::install("affycoretools")
 library(edgeR)
 library(data.table)
-library(EnahncedVolcano)  # note: this was previously installed with the command `BiocManager::install("EnahncedVolcano")`
-# devtools::install_github('kevinblighe/EnhancedVolcano') # requires ggplot2 verssion 3.3.3 # install and load package "remotes " to run 'install_version("ggplot2", version = "3.3.3", repos = "http://cran.us.r-project.org")'
-
+library(EnhancedVolcano)  # note: this was previously installed with the command `BiocManager::install("EnhancedVolcano")`
+library(pcaExplorer) 
+library(vsn)
+library(tidybulk)
 
 # SET WORKING DIRECTORY AND LOAD DATA
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # LOAD DATA
-cts <- read.csv(file="HPC_Bioinf/outputs/transcript_count_matrix.csv", sep=',', header=TRUE) # read the output count matrix from prepDE.py
 
-UT_seq_map <- read.csv(file="20201020_Gurr_TagSeq_UTAustin.csv", sep=',', header=TRUE)
-smpl_ref <- read.csv(file="Sample_reference.csv", sep=',', header=TRUE)
-treatment_ref <- read.csv(file="Extraction_checklist.csv", sep=',', header=TRUE)
-
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-#                             FORMAT EXPERIMENT DESIGN DATAFRAME
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
+#====================================================================================================================== 
+#
+#                             PREP dds files for DESeq2    
+#
+#====================================================================================================================== 
 
 
-
-# MASTER REFERENCE DATA.FRAME
-# format and merge to buld master reference dataframe
-smpl_ref$Seq_Pos <- paste(smpl_ref$ï..TagSeq_Plate, smpl_ref$TagSeq_Well, sep="_")
-smpl_ref <- smpl_ref %>% select(-c("ï..TagSeq_Plate", "TagSeq_Well"))
-UT_seq_map$Seq_Pos  <- paste(UT_seq_map$ï..Plate, UT_seq_map$Well, sep="_")
-UT_seq_map <- UT_seq_map[-c(1:2)]
-Seq.Ref <- merge(smpl_ref, UT_seq_map, by = "Seq_Pos")
-Mstr.Ref <- merge(Seq.Ref, treatment_ref, by = "Geoduck_ID")
-
-#====================================================================================================================== #
-# ALL TIMEPOINTS:
-# call all experiment design treatments as 'exp.data'
-exp.data <- Mstr.Ref[,c("Sample.Name","All_Treatment", "Primary_Treatment", "Second_Treament", "Third_Treatment", "Time")]
-#====================================================================================================================== #
-# DAY 0 
-exp.data.d0 <- exp.data %>% dplyr::filter(Time %in% 'Day0')
-nrow(exp.data.d0) # 8 total samples on Day 0
-#====================================================================================================================== #
-# DAY 7 
-exp.data.d7 <- exp.data %>% dplyr::filter(Time %in% 'Day7')
-nrow(exp.data.d7) # 36 total samples on Day 0
-#====================================================================================================================== #
-# DAY 14 
-exp.data.d14 <- exp.data %>% dplyr::filter(Time %in% 'DAY14')
-nrow(exp.data.d14) # 36 total samples on Day 0
-#====================================================================================================================== #
-# DAY 21 
-exp.data.d21 <- exp.data %>% dplyr::filter(Time %in% 'DAY21')
-nrow(exp.data.d21) # 62 total sampels on day 21
-
-
-# write csv
-path.wgcna = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/WGCNA/'
-write.csv(exp.data, paste(path.wgcna,"all.treatment.data.csv"))
-write.csv(exp.data.d0, paste(path.wgcna,"d0.treatment.data.csv"))
-write.csv(exp.data.d7, paste(path.wgcna,"d7.treatment.data.csv"))
-write.csv(exp.data.d14, paste(path.wgcna,"d14.treatment.data.csv"))
-write.csv(exp.data.d21, paste(path.wgcna,"d21.treatment.data.csv"))
-
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-#                             FORMAT COUNT MATRIX 
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-
-
-
-
-
-# About: need to call the cts.matrix and call only samples that match the IDs at day 0 and 21 
-# Why? DESeq2 can only apply to factors with >=2 levels, so we cannot address 'Day' at just "Day21" for example
-# alternatively, we can call subset matrices for the timepoints of interest
-
-# NOTE: this cts matrix was NOT merged by lanes, run'rowsum' on unique delimiters to merge 'cts.merged'
-#  Format count matrix (cts has 2x columns per sample on different lanes - sum counts from unique columns + build matrix)
-ncol(cts) # 282 samples (not counting gene ID column) - should be 141 samples, need to sum columns by unique ID
-cts.merged <- data.frame(cts[,-1], row.names=cts[,1]) # call new dataframe with first column now as row names, now all row values are numeric
-names(cts.merged) <- sapply(strsplit(names(cts.merged), "_"), '[', 1) # split the column names by "_" delimiter  and call the first field SG##
-cts.merged <- t(rowsum(t(cts.merged), group = colnames(cts.merged), na.rm = T)) # merge all unique columns and sum counts 
-ncol(cts.merged)
-
-
-#====================================================================================================================== #
-# ALL TIMEPOINTS
-cts.matrix <-as.matrix(cts.merged, row.names="transcript_id") # call dataframe as matrix
-ncol(cts.matrix) # 141 samples
-nrow(cts.matrix) # 34947 total genes
-
-cts.merged.as.table <- data.frame(transcript_id = row.names(cts.merged), cts.merged) # add back the rownames 'transcript_ID'
-rownames(cts.merged.as.table) <- NULL # ommit the rownames
-ncol(cts.merged.as.table) # 142 counting the ID that we want to keep! 
-# pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
-cts.matrix.all <- cts.matrix
-colSums(cts.matrix.all) # view the colSums of our all samples  - notice the read sums are around 1 million
-CPM.all <- cpm(cts.matrix.all) # Obtain CPMs (counts oer million) using egdeR
-head(CPM.all) # Have a look at the output
-thresh.all <- CPM.all > 3 # Which values in myCPM are greater than 3?
-head(thresh.all) # This produces a logical matrix with TRUEs and FALSES
-rowSums(head(thresh.all)) # Summary of how many TRUEs there are in each row
-table(rowSums(thresh.all)) # 2618 genes with TRUE in all 141 samples 
-keep.all <- rowSums(thresh.all) >= (ncol(thresh.all)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.all) # FALSE 26598 & TRUE  8349 -- more than 2/3 of the genes did not pass
-cts.matrix.all.filtered <- cts.matrix.all[keep.all,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.all.filtered) # 8349 genes & 141 samples
-head(cts.matrix.all.filtered) # FINAL ALL DATASET
-# We will look at a cople samples to check our defined threshold.. 
-plot(CPM.all[,1], cts.matrix.all[,1], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.all)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=3) 
-abline(h=3)
-plot(CPM.all[,70], cts.matrix.all[,70], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.all)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=2.37) 
-abline(h=3)
-
-# write csv
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/'
-all.counts.filtered <- cbind(rownames(cts.matrix.all.filtered), data.frame(cts.matrix.all.filtered, row.names=NULL))
-colnames(all.counts.filtered)[1] <- "Gene.ID"
-write.csv(all.counts.filtered, paste(path,"all.counts.filtered.csv"))
-
-
-#====================================================================================================================== #
-# DAY 0 
-# About: run dyplr 'antijoin' to call cts columns that match 'Sample.Name' in the data frame 'exp.data.d0'
-cts.merged.d0 <- cts.merged.as.table[,c(1,na.omit(match(exp.data.d0$Sample.Name, colnames(cts.merged.as.table))))]
-cts.merged.d0 <- data.frame(cts.merged.d0[,-1], row.names=cts.merged.d0[,1])
-cts.matrix.d0  <-as.matrix(cts.merged.d0, row.names="transcript_id")
-ncol(cts.matrix.d0) # 8  samples from just Day 0
-nrow(cts.matrix.d0) # 34947 total genes
-colnames(cts.matrix.d0) == exp.data.d0$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
-# pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
-colSums(cts.matrix.d0) # view the colSums of our Day0 samples  - notice the read sums are around 1 million
-CPM.d0 <- cpm(cts.matrix.d0) # Obtain CPMs (counts oer million) using egdeR
-head(CPM.d0) # Have a look at the output
-thresh.d0 <- CPM.d0 > 3 # Which values in myCPM are greater than 3?
-head(thresh.d0) # This produces a logical matrix with TRUEs and FALSES
-rowSums(head(thresh.d0)) # Summary of how many TRUEs there are in each row
-table(rowSums(thresh.d0)) # 9631 genes with TRUE in all 8 samples 
-keep.d0 <- rowSums(thresh.d0) >= (ncol(thresh.d0)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d0) # FALSE 25856 & TRUE 9091 -- more than half of the genes did not pass
-cts.matrix.d0.filtered <- cts.matrix.d0[keep.d0,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d0.filtered) # 9091 genes & 8 samples
-head(cts.matrix.d0.filtered) # FINAL DAY 0 DATASET
-# We will look at a cople samples to check our defined threshold.. 
-plot(CPM.d0[,1], cts.matrix.d0[,1], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d0)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-plot(CPM.d0[,5], cts.matrix.d0[,5], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d0)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-
-# write csv
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/'
-day0.counts.filtered <- cbind(rownames(cts.matrix.d0.filtered), data.frame(cts.matrix.d0.filtered, row.names=NULL))
-colnames(day0.counts.filtered)[1] <- "Gene.ID"
-write.csv(day0.counts.filtered, paste(path,"day0.counts.filtered.csv"))
-
-#====================================================================================================================== #
-# DAY 7
-cts.merged.d7 <- cts.merged.as.table[,c(1,na.omit(match(exp.data.d7$Sample.Name, colnames(cts.merged.as.table))))]
-cts.merged.d7 <- data.frame(cts.merged.d7[,-1], row.names=cts.merged.d7[,1])
-cts.matrix.d7  <-as.matrix(cts.merged.d7, row.names="transcript_id")
-ncol(cts.matrix.d7) # 36 samples from just Day 7
-colnames(cts.matrix.d7) == exp.data.d7$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d7
-# pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
-colSums(cts.matrix.d7) # view the colSums of our Day7 samples 
-CPM.d7 <- cpm(cts.matrix.d7) # Obtain CPMs (counts oer million) using egdeR
-head(CPM.d7) # Have a look at the output
-thresh.d7 <- CPM.d7 > 3 # Which values in myCPM are greater than 3?
-head(thresh.d7) # This produces a logical matrix with TRUEs and FALSES
-rowSums(head(thresh.d7)) # Summary of how many TRUEs there are in each row
-table(rowSums(thresh.d7)) # 6718 genes with TRUE in all 36 samples 
-keep.d7 <- rowSums(thresh.d7) >= (ncol(thresh.d7)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d7) # FALSE 21024 & TRUE 13923 -- more than half of the genes did not pass
-cts.matrix.d7.filtered <- cts.matrix.d7[keep.d7,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d7.filtered) # 13923 genes & 36 samples
-head(cts.matrix.d7.filtered) # FINAL DAY 7 DATASET
-# We will look at a cople samples to check our defined threshold.. 
-plot(CPM.d7[,1], cts.matrix.d7[,1], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d7)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-plot(CPM.d7[,5], cts.matrix.d7[,5], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d7)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-
-# write csv
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/'
-day7.counts.filtered <- cbind(rownames(cts.matrix.d7.filtered), data.frame(cts.matrix.d7.filtered, row.names=NULL))
-colnames(day7.counts.filtered)[1] <- "Gene.ID"
-write.csv(day7.counts.filtered, paste(path,"day7.counts.filtered.csv"))
-
-#====================================================================================================================== #
-# DAY 14 
-cts.merged.d14 <- cts.merged.as.table[,c(1,na.omit(match(exp.data.d14$Sample.Name, colnames(cts.merged.as.table))))]
-cts.merged.d14 <- data.frame(cts.merged.d14[,-1], row.names=cts.merged.d14[,1])
-cts.matrix.d14  <-as.matrix(cts.merged.d14, row.names="transcript_id")
-ncol(cts.matrix.d14) # 35 samples from just Day 14
-colnames(cts.matrix.d14) == exp.data.d14$Sample.Name # SG92 in exp.data.d14$Sample.Name but not colnames(cts.matrix.d14)
-UT_seq_map %>% dplyr::filter(Sample.Name == "SG92") # there was no sample in SG92 for TagSeq; 35 total is correct!
-# pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
-colSums(cts.matrix.d14) # view the colSums of our Day14 samples - notice counts are near 1 million
-CPM.d14 <- cpm(cts.matrix.d14) # Obtain CPMs (counts oer million) using egdeR
-head(CPM.d14) # Have a look at the output
-thresh.d14 <- CPM.d14 > 3 # Which values in myCPM are greater than 3?
-head(thresh.d14) # This produces a logical matrix with TRUEs and FALSES
-rowSums(head(thresh.d14)) # Summary of how many TRUEs there are in each row
-table(rowSums(thresh.d14)) # 3451 genes with TRUE in all 35 samples 
-keep.d14 <- rowSums(thresh.d14) >= (ncol(thresh.d14)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d14) # FALSE 26406 & TRUE 8541 -- more than half of the genes did not pass
-cts.matrix.d14.filtered <- cts.matrix.d14[keep.d14,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d14.filtered) # 8541 genes & 35 samples
-head(cts.matrix.d14.filtered) # FINAL DAY 14 DATASET
-# We will look at a cople samples to check our defined threshold.. 
-plot(CPM.d14[,1], cts.matrix.d14[,1], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d14)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-plot(CPM.d14[,5], cts.matrix.d14[,5], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d14)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-
-# write csv
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/'
-day14.counts.filtered <- cbind(rownames(cts.matrix.d14.filtered), data.frame(cts.matrix.d14.filtered, row.names=NULL))
-colnames(day14.counts.filtered)[1] <- "Gene.ID"
-write.csv(day14.counts.filtered, paste(path,"day14.counts.filtered.csv"))
-
-#====================================================================================================================== #
-# DAY 21 
-cts.merged.d21 <- cts.merged.as.table[,c(1,na.omit(match(exp.data.d21$Sample.Name, colnames(cts.merged.as.table))))]
-cts.merged.d21 <- data.frame(cts.merged.d21[,-1], row.names=cts.merged.d21[,1])
-cts.matrix.d21  <-as.matrix(cts.merged.d21, row.names="transcript_id")
-ncol(cts.matrix.d21) # # 62 total sampels on day 21
-colnames(cts.matrix.d21) == exp.data.d21$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d21
-# pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
-colSums(cts.matrix.d21) # view the colSums of our Day21 samples - notice SOME counts are near 1 million
-CPM.d21 <- cpm(cts.matrix.d21) # Obtain CPMs (counts oer million) using egdeR
-head(CPM.d21) # Have a look at the output
-thresh.d21 <- CPM.d21 > 3 # filter CPM by threshold
-head(thresh.d21) # This produces a logical matrix with TRUEs and FALSES
-rowSums(head(thresh.d21)) # Summary of how many TRUEs there are in each row
-table(rowSums(thresh.d21)) # 3451 genes with TRUE in all 35 samples 
-keep.d21 <- rowSums(thresh.d21) >= (ncol(thresh.d21)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d21) # FALSE 26622 & TRUE 8325 -- more than three quarters of the genes did not pass
-cts.matrix.d21.filtered <- cts.matrix.d21[keep.d21,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d21.filtered) # 8541 genes & 35 samples
-head(cts.matrix.d21.filtered) # FINAL DAY 21 DATASET
-# We will look at a cople samples to check our defined threshold.. 
-plot(CPM.d21[,60], cts.matrix.d21[,60], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d21)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-plot(CPM.d21[,5], cts.matrix.d21[,5], xlab="CPM", ylab="Raw Count", ylim=c(0,50), xlim=c(0,50), main=colnames(CPM.d21)[1]) # check if our threshold of 3 CPM in 50% samples corresponds to a count of about 10-15
-abline(v=10) 
-abline(h=10)
-
-# write csv
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/'
-day21.counts.filtered <- cbind(rownames(cts.matrix.d21.filtered), data.frame(cts.matrix.d21.filtered, row.names=NULL))
-colnames(day21.counts.filtered)[1] <- "Gene.ID"
-write.csv(day21.counts.filtered, paste(path, "day21.counts.filtered.csv"))
-
-
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-#  PREP dds files for DESeq2    
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-
-
-
-
-
-#====================================================================================================================== #
-# ALL TIMEPOINTS and PRIMARY TREAMENT:
-#---- INPUT: Experiment/design matrix == 'exp.data' ...formatted to 'exp.data.PRIMARY.mtx'
-#---- INPUT: TagSeq count matrix == 'cts.matrix'
-#====================================================================================================================== #
+# ========================================================== 
+# All TIMEPOINTS (test effect of time & Ambient_ALL vs. Moderate_ALL)
+#---- INPUT: Experiment/design matrix == 'exp.data.AmbControl' and 'exp.data.Moderate'
+#---- INPUT: TagSeq count matrix == 'cts.matrix.all.filtered' (3 CPM in 50% samples)
+# ========================================================== 
 
 # format Experiment/design dataframe into matrix
-exp.data$Primary_Treatment <- factor(exp.data$Primary_Treatment) # change Primary_Treatment to factor
-exp.data$Day <- factor(exp.data$Time) # change Day to a factor
-exp.data.PRIMARY <- exp.data %>% dplyr::select(c('Sample.Name', 'Time', 'Primary_Treatment')) # coondense dataset to build target matrix
-exp.data.PRIMARY <- data.frame(exp.data.PRIMARY[,-1], row.names=exp.data.PRIMARY[,1]) # move Sample.Name column as row names  
-exp.data.PRIMARY.mtx <- as.matrix(exp.data.PRIMARY, row.names="Geoduck.ID") # create matrix 
-# fix(exp.data.mtx) # view data - remove # to open
+exp.data.Amb_all <- exp.data.AmbControl %>% dplyr::select(c('Sample.Name', 'Treat.day', 'All_Treatment')) # coondense dataset to build target matrix
+exp.data.Amb_all$Treat.day <- factor(exp.data.Amb_all$Treat.day) # change Primary_Treatment to factor
+# exp.data.d0.PRIMARY$Time <- factor(exp.data.d0.PRIMARY$Time) # change Time to factor
+exp.data.Amb_all <- data.frame(exp.data.Amb_all[,-1], row.names=exp.data.Amb_all[,1]) # move Sample.Name column as row names  
+exp.data.Amb_all.mtx <- as.matrix(exp.data.Amb_all, row.names="Geoduck.ID") # create matrix 
+
+cts.merged.Ambient.all <- cts.matrix.all.filtered[,c(1,na.omit(match(exp.data.AmbControl$Sample.Name, colnames(cts.matrix.all.filtered))))]
+dim(cts.merged.Ambient.all) # genes 13870   number samples 23
+
 # CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.PRIMARY.mtx <- exp.data.PRIMARY.mtx[match(colnames(cts.merged),rownames(exp.data.PRIMARY.mtx)), ]
-all(rownames(exp.data.PRIMARY.mtx) %in% colnames(cts.matrix)) # should be TRUE
-all(rownames(exp.data.PRIMARY.mtx) == colnames(cts.matrix)) # should be TRUE
-cts.matrix <- cts.matrix[, rownames(exp.data.PRIMARY.mtx)]
-all(rownames(exp.data.PRIMARY.mtx) == colnames(cts.matrix))  # should be TRUE
+exp.data.Amb_all.mtx <- exp.data.Amb_all.mtx[match(colnames(cts.merged.Ambient.all),rownames(exp.data.Amb_all.mtx)), ]
+all(rownames(exp.data.Amb_all.mtx) %in% colnames(cts.merged.Ambient.all)) # should be TRUE
+all(rownames(exp.data.Amb_all.mtx) == colnames(cts.merged.Ambient.all)) # should be TRUE
+all(rownames(exp.data.Amb_all.mtx) == colnames(cts.merged.Ambient.all))  # should be TRUE
 
 # build dds
-dds.primary <- DESeqDataSetFromMatrix(countData = cts.matrix,
-                                         colData = exp.data.PRIMARY.mtx,
-                                         design = ~ Primary_Treatment + Time) # DESeq Data Set (dds) - design as~ Primary_Treatment + Day
-dds.primary # view dds
+dds.Amb_all <- DESeqDataSetFromMatrix(countData = cts.merged.Ambient.all,
+                                 colData = exp.data.Amb_all.mtx,
+                                 design = ~ Treat.day) # DESeq Data Set (dds) - design as ~Primary_Treatment
+dds.Amb_all # view dds
 
 # prep for DESeq2
-dds.primary$Primary_Treatment <- relevel(dds.primary$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-levels(dds.primary$Time) # levels for condition 'Time': "Day0"  "DAY14" "DAY21" "Day7" 
-levels(dds.primary$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-keep <- rowSums(counts(dds.primary)) >= 5 # PRE-FILTERING... ommits genes where counts between ALL samples (as rows) less than 5 
-dds.primary <- dds.primary[keep,] # integrate this criteria in the data 
-design(dds.primary) # view the design we have specified 
-ncol(dds.primary) # 141 cols - Good
-colData(dds.primary)
+dds.Amb_all$Treat.day <- relevel(dds.Amb_all$Treat.day, ref = "A_0") # specify the reference level for count analysis - A = the control treatment
+dds.Amb_all$All_Treatment <- droplevels(dds.Amb_all$All_Treatment)
+levels(dds.Amb_all$All_Treatment) # NULL
+levels(dds.Amb_all$Treat.day) #  levels for condition 'Treatment': "A_0"    "AA_14"  "AA_7"   "AAA_21"
+design(dds.Amb_all) # view the design we have specified 
+ncol(dds.Amb_all) # 23 cols - Good
+nrow(dds.Amb_all) # 13870 (cut-off of 3 CPM)
 
 # DEG ANALYSIS READY!!
 
-#====================================================================================================================== #
-# DAY 0 
-#---- INPUT: Experiment/design matrix == 'exp.data.d0' ...formatted to 'exp.data.d0.PRIMARY.mtx'
-#---- INPUT: TagSeq count matrix == 'cts.matrix.d0.filtered'
-#====================================================================================================================== #
+#==================== #
+# Primary Treatment History THORUGHOUT THE ENTIRE EXPERIMENT! (what are the DEGs assocaited with the primary treatment ONLY)
+dim(cts.matrix.all.filtered) # 13870   141
+dim(exp.data) # 142   6
+exp.data$MvA_Primary_History <- substr(exp.data$All_Treatment, 1,1) # make new column for the antire Moderate and Ambient throughtou the experiment
+
+exp.data_MvA <- exp.data %>% dplyr::select(c('Sample.Name', 'MvA_Primary_History', 'Time')) # coondense dataset to build target matrix
+exp.data_MvA <- data.frame(exp.data_MvA[,-1], row.names=exp.data_MvA[,1]) # move Sample.Name column as row names  
+exp.data_MvA.mtx <- as.matrix(exp.data_MvA, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+exp.data_MvA.mtx <- exp.data_MvA.mtx[match(colnames(cts.matrix.all.filtered),rownames(exp.data_MvA.mtx)), ]
+dim(exp.data_MvA.mtx) # 141   2 - note: the line above merges based on common columns; sample S92 ommitted due to no sample in cts.matrix
+all(rownames(exp.data_MvA.mtx) %in% colnames(cts.matrix.all.filtered)) # should be TRUE
+all(rownames(exp.data_MvA.mtx) == colnames(cts.matrix.all.filtered)) # should be TRUE
+all(rownames(exp.data_MvA.mtx) == colnames(cts.matrix.all.filtered))  # should be TRUE
+# build dds
+dds.ALL_MvA <- DESeqDataSetFromMatrix(countData = cts.matrix.all.filtered,
+                                  colData = exp.data_MvA.mtx,
+                                  design = ~ MvA_Primary_History) # DESeq Data Set (dds) - design as ~Primary_Treatment
+# prep for DESeq2
+dds.ALL_MvA$MvA_Primary_History <- relevel(dds.ALL_MvA$MvA_Primary_History, ref = "A") # specify the reference level for count analysis - A = the control treatment
+dds.ALL_MvA$Time <- droplevels(dds.ALL_MvA$Time)
+levels(dds.ALL_MvA$Time) # NULL
+levels(dds.ALL_MvA$MvA_Primary_History) #  levels for condition 'Treatment': "A" "M"
+
+design(dds.ALL_MvA) # view the design we have specified 
+ncol(dds.ALL_MvA) # 141 cols - Good
+nrow(dds.ALL_MvA) #  13870 (cut-off of 3 CPM)
+
+# DEG ANALYSIS READY!!
+
+
+# ========================================================== 
+# DAY 0 FULL MODEL ==  design = ~ Primary_Treatment
+#---- INPUT: Experiment/design matrix == 'exp.data.d0' 
+#---- INPUT: TagSeq count matrix == 'cts.matrix.d0.filtered' (3 CPM in 50% samples)
+# ========================================================== 
 
 # format Experiment/design dataframe into matrix
-exp.data.d0.PRIMARY <- exp.data.d0 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d0.PRIMARY <- exp.data.d0 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
 exp.data.d0.PRIMARY$Primary_Treatment <- factor(exp.data.d0.PRIMARY$Primary_Treatment) # change Primary_Treatment to factor
-exp.data.d0.PRIMARY$Time <- factor(exp.data.d0.PRIMARY$Time) # change Time to factor
+exp.data.d0.PRIMARY$All_Treatment <- factor(exp.data.d0.PRIMARY$All_Treatment) # change Time to factor
 exp.data.d0.PRIMARY <- data.frame(exp.data.d0.PRIMARY[,-1], row.names=exp.data.d0.PRIMARY[,1]) # move Sample.Name column as row names  
 exp.data.d0.PRIMARY.mtx <- as.matrix(exp.data.d0.PRIMARY, row.names="Geoduck.ID") # create matrix 
 # fix(exp.data.mtx) # view data - remove # to open
@@ -353,108 +125,35 @@ all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(cts.matrix.d0.filtered)) # sho
 all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(cts.matrix.d0.filtered))  # should be TRUE
 
 # build dds
-dds.primary.d0 <- DESeqDataSetFromMatrix(countData = cts.matrix.d0.filtered,
+dds.d0 <- DESeqDataSetFromMatrix(countData = cts.matrix.d0.filtered,
                                       colData = exp.data.d0.PRIMARY.mtx,
                                       design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-dds.primary.d0 # view dds
+dds.d0 # view dds
 
 # prep for DESeq2
-dds.primary.d0$Primary_Treatment <- relevel(dds.primary.d0$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.primary.d0$Time <- droplevels(dds.primary.d0$Time)
-levels(dds.primary.d0$Time) # NULL
-levels(dds.primary.d0$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
+dds.d0$Primary_Treatment <- relevel(dds.d0$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
+levels(dds.d0$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
 
-design(dds.primary.d0) # view the design we have specified 
-ncol(dds.primary.d0) # 8 cols - Good
-nrow(dds.primary.d0) # 9091 cols (cutoff at 10 CPM) 15036 (cut-off of 3 CPM)
-
-
-# NO FILTER
-nrow(cts.matrix.d0) # 34947 genes
-# build dds
-dds.primary.d0.NoFilt <- DESeqDataSetFromMatrix(countData = cts.matrix.d0,
-                                         colData = exp.data.d0.PRIMARY.mtx,
-                                         design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-dds.primary.d0.NoFilt # view dds
-# prep for DESeq2
-dds.primary.d0.NoFilt$Primary_Treatment <- relevel(dds.primary.d0.NoFilt$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.primary.d0.NoFilt$Time <- droplevels(dds.primary.d0.NoFilt$Time)
-levels(dds.primary.d0.NoFilt$Time) # NULL
-levels(dds.primary.d0.NoFilt$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.primary.d0.NoFilt) # view the design we have specified 
-ncol(dds.primary.d0.NoFilt) # 8 cols - Good
-nrow(dds.primary.d0.NoFilt) # 34947 cols - Good
+design(dds.d0) # view the design we have specified 
+ncol(dds.d0) # 8 cols - Good
+nrow(dds.d0) # 15149 (cut-off of 3 CPM)
+colData(dds.d0) # view the col data
 
 # DEG ANALYSIS READY!!
 
-#====================================================================================================================== #
-# DAY 7
+# ========================================================== 
+# DAY 7 - FULL MODEL == design = ~ Primary_Treatment+Second_Treament+Primary_Treatment:Second_Treament
 #---- INPUT: Experiment/design matrix == 'exp.data.d7' 
-#---- INPUT: TagSeq count matrix == 'cts.matrix.d7.filtered'
-#====================================================================================================================== #
+#---- INPUT: TagSeq count matrix == 'cts.matrix.d7.filtered' (3 CPM in 50% samples)
+# ==========================================================
 exp.data.d7$Primary_Treatment <- factor(exp.data.d7$Primary_Treatment) # change Primary_Treatment to factor
 exp.data.d7$Second_Treament <- factor(exp.data.d7$Second_Treament) # change Second_Treament to factor
-exp.data.d7$Time <- factor(exp.data.d7$Time) # change Time to factor
-
-
-#================== #
-# Primary Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d7.PRIMARY <- exp.data.d7 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Time')) # coondense dataset to build target matrix
-exp.data.d7.PRIMARY <- data.frame(exp.data.d7.PRIMARY[,-1], row.names=exp.data.d7.PRIMARY[,1]) # move Sample.Name column as row names  
-exp.data.d7.PRIMARY.mtx <- as.matrix(exp.data.d7.PRIMARY, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d7.PRIMARY.mtx <- exp.data.d7.PRIMARY.mtx[match(colnames(cts.merged.d7),rownames(exp.data.d7.PRIMARY.mtx)), ]
-all(rownames(exp.data.d7.PRIMARY.mtx) %in% colnames(cts.matrix.d7.filtered)) # should be TRUE
-all(rownames(exp.data.d7.PRIMARY.mtx) == colnames(cts.matrix.d7.filtered)) # should be TRUE
-all(rownames(exp.data.d7.PRIMARY.mtx) == colnames(cts.matrix.d7.filtered))  # should be TRUE
-# build dds
-dds.primary.d7 <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
-                                         colData = exp.data.d7.PRIMARY.mtx,
-                                         design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d7 # view dds
-# prep for DESeq2
-dds.primary.d7$Primary_Treatment <- relevel(dds.primary.d7$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.primary.d7$Time <- droplevels(dds.primary.d7$Time) # drop levels of time
-levels(dds.primary.d7$Time) # NULL
-levels(dds.primary.d7$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.primary.d7) # view the design we have specified 
-ncol(dds.primary.d7) # 36 cols - Good
-nrow(dds.primary.d7) # 8456 cols ((10 CPM) 13923 (3 CPM)
-
-# DEG ANALYSIS READY!!
-
-#==================== #
-# Secondary Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d7.SECOND <- exp.data.d7 %>% dplyr::select(c('Sample.Name', 'Second_Treament', 'Time')) # coondense dataset to build target matrix
-exp.data.d7.SECOND <- data.frame(exp.data.d7.SECOND[,-1], row.names=exp.data.d7.SECOND[,1]) # move Sample.Name column as row names  
-exp.data.d7.SECOND.mtx <- as.matrix(exp.data.d7.SECOND, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d7.SECOND.mtx <- exp.data.d7.SECOND.mtx[match(colnames(cts.merged.d7),rownames(exp.data.d7.SECOND.mtx)), ]
-all(rownames(exp.data.d7.SECOND.mtx) %in% colnames(cts.matrix.d7.filtered)) # should be TRUE
-all(rownames(exp.data.d7.SECOND.mtx) == colnames(cts.matrix.d7.filtered)) # should be TRUE
-all(rownames(exp.data.d7.SECOND.mtx) == colnames(cts.matrix.d7.filtered))  # should be TRUE
-# build dds
-dds.second.d7 <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
-                                     colData = exp.data.d7.SECOND.mtx,
-                                     design = ~ Second_Treament) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.second.d7 # view dds
-# prep for DESeq2
-dds.second.d7$Second_Treament <- relevel(dds.second.d7$Second_Treament, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.second.d7$Time <- droplevels(dds.second.d7$Time) # drop levels of time
-levels(dds.second.d7$Time) # NULL
-levels(dds.second.d7$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
-design(dds.second.d7) # view the design we have specified 
-ncol(dds.second.d7) # 36 cols - Good
-nrow(dds.second.d7) # 8456 cols (10 CPM) 13923 (3 CPM)
-
-# DEG ANALYSIS READY!!
+exp.data.d7$All_Treatment <- factor(exp.data.d7$All_Treatment) # change Time to factor
 
 #==================== #
 # Primary*Second (ALL) Treatment
 # format Experiment/design dataframe into matrix
-exp.data.d7.PRIM_SEC <- exp.data.d7 %>% dplyr::select(c('Sample.Name', 'All_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d7.PRIM_SEC <- exp.data.d7 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to build target matrix
 exp.data.d7.PRIM_SEC <- data.frame(exp.data.d7.PRIM_SEC[,-1], row.names=exp.data.d7.PRIM_SEC[,1]) # move Sample.Name column as row names  
 exp.data.d7.PRIM_SEC.mtx <- as.matrix(exp.data.d7.PRIM_SEC, row.names="Geoduck.ID") # create matrix 
 # CKECK THE cts.matrix AND THE exp.data.mtx
@@ -463,89 +162,38 @@ all(rownames(exp.data.d7.PRIM_SEC.mtx) %in% colnames(cts.matrix.d7.filtered)) # 
 all(rownames(exp.data.d7.PRIM_SEC.mtx) == colnames(cts.matrix.d7.filtered)) # should be TRUE
 all(rownames(exp.data.d7.PRIM_SEC.mtx) == colnames(cts.matrix.d7.filtered))  # should be TRUE
 # build dds
-dds.ALL.d7 <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
-                                         colData = exp.data.d7.PRIM_SEC.mtx,
-                                         design = ~ All_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d0 # view dds
-# prep for DESeq2
-dds.ALL.d7$All_Treatment <- relevel(dds.ALL.d7$All_Treatment, ref = "AA") # specify the reference level for count analysis - A = the control treatment
-dds.ALL.d7$Time <- droplevels(dds.ALL.d7$Time) # drop levels of time
-levels(dds.ALL.d7$Time) # NULL
-levels(dds.ALL.d7$All_Treatment) #  levels for condition 'Treatment': "AA" "AM" "AS" "MA" "MM" "MS"
-design(dds.ALL.d7) # view the design we have specified 
-ncol(dds.ALL.d7) # 36 cols - Good
-nrow(dds.ALL.d7) # 8456 cols (10 CPM) 13923 (3 CPM)
+# FULL MODEL 
+dds.d7 <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
+                                  colData = exp.data.d7.PRIM_SEC,
+                                  design = ~ Second_Treament+Primary_Treatment+Second_Treament:Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
+design(dds.d7) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
+# GROUP
+dds.d7.group <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
+                                        colData = exp.data.d7.PRIM_SEC,
+                                        design = ~ All_Treatment-1) 
+design(dds.d7.group) # ~All_Treatment 
+# MAIN EFFECT 
+dds.d7.main <- DESeqDataSetFromMatrix(countData = cts.matrix.d7.filtered,
+                                       colData = exp.data.d7.PRIM_SEC,
+                                       design = ~ Second_Treament+Primary_Treatment) 
+design(dds.d7.main) # ~Second_Treament + Primary_Treatment
+
+colData(dds.d7) # view the col data
 
 # DEG ANALYSIS READY!!
 
-#====================================================================================================================== #
-# DAY 14
+# ========================================================== 
+# DAY 14 -  FULL MODEL == design = ~ Primary_Treatment+Second_Treament+Primary_Treatment:Second_Treament
 #---- INPUT: Experiment/design matrix == 'exp.data.d14' 
-#---- INPUT: TagSeq count matrix == 'cts.matrix.d14.filtered'
-#====================================================================================================================== #
-exp.data.d14$Primary_Treatment <- factor(exp.data.d14$Primary_Treatment) # change Primary_Treatment to factor
-exp.data.d14$Second_Treament <- factor(exp.data.d14$Second_Treament) # change Second_Treament to factor
-exp.data.d14$Time <- factor(exp.data.d14$Time) # change Time to factor
-
-
-#================== #
-# Primary Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d14.PRIMARY <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Time')) # coondense dataset to build target matrix
-exp.data.d14.PRIMARY <- data.frame(exp.data.d14.PRIMARY[,-1], row.names=exp.data.d14.PRIMARY[,1]) # move Sample.Name column as row names  
-exp.data.d14.PRIMARY.mtx <- as.matrix(exp.data.d14.PRIMARY, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d14.PRIMARY.mtx <- exp.data.d14.PRIMARY.mtx[match(colnames(cts.merged.d14),rownames(exp.data.d14.PRIMARY.mtx)), ]
-all(rownames(exp.data.d14.PRIMARY.mtx) %in% colnames(cts.matrix.d14.filtered)) # should be TRUE
-all(rownames(exp.data.d14.PRIMARY.mtx) == colnames(cts.matrix.d14.filtered)) # should be TRUE
-all(rownames(exp.data.d14.PRIMARY.mtx) == colnames(cts.matrix.d14.filtered))  # should be TRUE
-# build dds
-dds.primary.d14 <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
-                                         colData = exp.data.d14.PRIMARY.mtx,
-                                         design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d14 # view dds
-# prep for DESeq2
-dds.primary.d14$Primary_Treatment <- relevel(dds.primary.d14$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.primary.d14$Time <- droplevels(dds.primary.d14$Time) # drop levels of time
-levels(dds.primary.d14$Time) # NULL
-levels(dds.primary.d14$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.primary.d14) # view the design we have specified 
-ncol(dds.primary.d14) # 35 cols - Good
-nrow(dds.primary.d14) # 8541 (10 CPM) 14241 (3 CPM)
-
-# DEG ANALYSIS READY!!
+#---- INPUT: TagSeq count matrix == 'cts.matrix.d14.filtered' (3 CPM in 50% samples)
+# ========================================================== 
+exp.data.d14$Primary_Treatment <- as.factor(exp.data.d14$Primary_Treatment) # change Primary_Treatment to factor
+exp.data.d14$Second_Treament <- as.factor(exp.data.d14$Second_Treament) # change Second_Treament to factor
 
 #==================== #
-# Secondary Treatment
+# Primary + Second; additive effect
 # format Experiment/design dataframe into matrix
-exp.data.d14.SECOND <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'Second_Treament', 'Time')) # coondense dataset to build target matrix
-exp.data.d14.SECOND <- data.frame(exp.data.d14.SECOND[,-1], row.names=exp.data.d14.SECOND[,1]) # move Sample.Name column as row names  
-exp.data.d14.SECOND.mtx <- as.matrix(exp.data.d14.SECOND, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d14.SECOND.mtx <- exp.data.d14.SECOND.mtx[match(colnames(cts.merged.d14),rownames(exp.data.d14.SECOND.mtx)), ]
-all(rownames(exp.data.d14.SECOND.mtx) %in% colnames(cts.matrix.d14.filtered)) # should be TRUE
-all(rownames(exp.data.d14.SECOND.mtx) == colnames(cts.matrix.d14.filtered)) # should be TRUE
-all(rownames(exp.data.d14.SECOND.mtx) == colnames(cts.matrix.d14.filtered))  # should be TRUE
-# build dds
-dds.second.d14 <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
-                                        colData = exp.data.d14.SECOND.mtx,
-                                        design = ~ Second_Treament) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.second.d14 # view dds
-# prep for DESeq2
-dds.second.d14$Second_Treament <- relevel(dds.second.d14$Second_Treament, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.second.d14$Time <- droplevels(dds.second.d14$Time) # drop levels of time
-levels(dds.second.d14$Time) # NULL
-levels(dds.second.d14$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
-design(dds.second.d14) # view the design we have specified 
-ncol(dds.second.d14) # 35 cols - Good
-nrow(dds.second.d14)  # 8541 (10 CPM) 14241 (3 CPM)
-
-# DEG ANALYSIS READY!!
-
-#==================== #
-# Primary*Second (ALL) Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d14.PRIM_SEC <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'All_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d14.PRIM_SEC <- exp.data.d14 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to build target matrix
 exp.data.d14.PRIM_SEC <- data.frame(exp.data.d14.PRIM_SEC[,-1], row.names=exp.data.d14.PRIM_SEC[,1]) # move Sample.Name column as row names  
 exp.data.d14.PRIM_SEC.mtx <- as.matrix(exp.data.d14.PRIM_SEC, row.names="Geoduck.ID") # create matrix 
 # CKECK THE cts.matrix AND THE exp.data.mtx
@@ -554,118 +202,39 @@ all(rownames(exp.data.d14.PRIM_SEC.mtx) %in% colnames(cts.matrix.d14.filtered)) 
 all(rownames(exp.data.d14.PRIM_SEC.mtx) == colnames(cts.matrix.d14.filtered)) # should be TRUE
 all(rownames(exp.data.d14.PRIM_SEC.mtx) == colnames(cts.matrix.d14.filtered))  # should be TRUE
 # build dds
-dds.ALL.d14 <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
+# FULL MODEL 
+dds.d14 <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
                                      colData = exp.data.d14.PRIM_SEC.mtx,
-                                     design = ~ All_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d0 # view dds
-# prep for DESeq2
-dds.ALL.d14$All_Treatment <- relevel(dds.ALL.d14$All_Treatment, ref = "AA") # specify the reference level for count analysis - A = the control treatment
-dds.ALL.d14$Time <- droplevels(dds.ALL.d14$Time) # drop levels of time
-levels(dds.ALL.d14$Time) # NULL
-levels(dds.ALL.d14$All_Treatment) #  levels for condition 'Treatment': "AA" "AM" "AS" "MA" "MM" "MS"
-design(dds.ALL.d14) # view the design we have specified 
-ncol(dds.ALL.d14) # 35 cols - Good
-nrow(dds.ALL.d14)  # 8541 (10 CPM) 14241 (3 CPM)
+                                     design = ~ Second_Treament+Primary_Treatment+Second_Treament:Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
+design(dds.d14) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
+# GROUP
+dds.d14.group <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
+                                        colData = exp.data.d14.PRIM_SEC.mtx,
+                                        design = ~ All_Treatment-1) 
+design(dds.d14.group) # ~All_Treatment 
+# MAIN EFFECT 
+dds.d14.main <- DESeqDataSetFromMatrix(countData = cts.matrix.d14.filtered,
+                                       colData = exp.data.d14.PRIM_SEC.mtx,
+                                       design = ~ Second_Treament+Primary_Treatment) 
+design(dds.d14.main) # ~Second_Treament + Primary_Treatment
+
 
 # DEG ANALYSIS READY!!
 
-#====================================================================================================================== #
-# DAY 21 
-#---- INPUT: Experiment/design matrix == 'exp.data.d21' ...formatted to 'exp.data.d21.PRIMARY.mtx'
-#---- INPUT: TagSeq count matrix == 'cts.matrix.d21.filtered'
-#====================================================================================================================== #
+# ========================================================== 
+# DAY 21 -  FULL MODEL == design = ~Primary_Treatment+Second_Treament+Third_Treatment+Primary_Treatment:Second_Treament+Primary_Treatment:Third_Treatment+Second_Treament:Third_Treatment
+#---- INPUT: Experiment/design matrix == 'exp.data.d21'
+#---- INPUT: TagSeq count matrix == 'cts.matrix.d21.filtered' (3 CPM in 50% samples)
+# ========================================================== 
 exp.data.d21$Primary_Treatment <- factor(exp.data.d21$Primary_Treatment) # change Primary_Treatment to factor
 exp.data.d21$Second_Treament <- factor(exp.data.d21$Second_Treament) # change Second_Treament to factor
 exp.data.d21$Third_Treatment <- factor(exp.data.d21$Third_Treatment) # change Third_Treatment to factor
 exp.data.d21$All_Treatment <- factor(exp.data.d21$All_Treatment) # change All_Treatment to factor
-exp.data.d21$Time <- factor(exp.data.d21$Time) # change Time to factor
-
-
-#================== #
-# Primary Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d21.PRIMARY <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Time')) # coondense dataset to build target matrix
-exp.data.d21.PRIMARY <- data.frame(exp.data.d21.PRIMARY[,-1], row.names=exp.data.d21.PRIMARY[,1]) # move Sample.Name column as row names  
-exp.data.d21.PRIMARY.mtx <- as.matrix(exp.data.d21.PRIMARY, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d21.PRIMARY.mtx <- exp.data.d21.PRIMARY.mtx[match(colnames(cts.merged.d21),rownames(exp.data.d21.PRIMARY.mtx)), ]
-all(rownames(exp.data.d21.PRIMARY.mtx) %in% colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.PRIMARY.mtx) == colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.PRIMARY.mtx) == colnames(cts.matrix.d21.filtered))  # should be TRUE
-# build dds
-dds.primary.d21 <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
-                                          colData = exp.data.d21.PRIMARY.mtx,
-                                          design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.primary.d21 # view dds
-# prep for DESeq2
-dds.primary.d21$Primary_Treatment <- relevel(dds.primary.d21$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.primary.d21$Time <- droplevels(dds.primary.d21$Time) # drop levels of time
-levels(dds.primary.d21$Time) # NULL
-levels(dds.primary.d21$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.primary.d21) # view the design we have specified 
-ncol(dds.primary.d21) # 62 cols - Good
-nrow(dds.primary.d21) # 8325 (10 CPM) 13747 (3 CPM)
-
-# DEG ANALYSIS READY!!
 
 #==================== #
-# Secondary Treatment
+# Primary + Second +Third (and all interactions) 
 # format Experiment/design dataframe into matrix
-exp.data.d21.SECOND <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'Second_Treament', 'Time')) # coondense dataset to build target matrix
-exp.data.d21.SECOND <- data.frame(exp.data.d21.SECOND[,-1], row.names=exp.data.d21.SECOND[,1]) # move Sample.Name column as row names  
-exp.data.d21.SECOND.mtx <- as.matrix(exp.data.d21.SECOND, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d21.SECOND.mtx <- exp.data.d21.SECOND.mtx[match(colnames(cts.merged.d21),rownames(exp.data.d21.SECOND.mtx)), ]
-all(rownames(exp.data.d21.SECOND.mtx) %in% colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.SECOND.mtx) == colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.SECOND.mtx) == colnames(cts.matrix.d21.filtered))  # should be TRUE
-# build dds
-dds.second.d21 <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
-                                         colData = exp.data.d21.SECOND.mtx,
-                                         design = ~ Second_Treament) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.second.d21 # view dds
-# prep for DESeq2
-dds.second.d21$Second_Treament <- relevel(dds.second.d21$Second_Treament, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.second.d21$Time <- droplevels(dds.second.d21$Time) # drop levels of time
-levels(dds.second.d21$Time) # NULL
-levels(dds.second.d21$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
-design(dds.second.d21) # view the design we have specified 
-ncol(dds.second.d21) # 62 cols - Good
-nrow(dds.second.d21) # 8325 (10 CPM) 13747 (3 CPM)
-
-# DEG ANALYSIS READY!!
-
-#==================== #
-# Third (ALL) Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d21.THIRD <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'Third_Treatment', 'Time')) # coondense dataset to build target matrix
-exp.data.d21.THIRD <- data.frame(exp.data.d21.THIRD[,-1], row.names=exp.data.d21.THIRD[,1]) # move Sample.Name column as row names  
-exp.data.d21.THIRD.mtx <- as.matrix(exp.data.d21.THIRD, row.names="Geoduck.ID") # create matrix 
-# CKECK THE cts.matrix AND THE exp.data.mtx
-exp.data.d21.THIRD.mtx <- exp.data.d21.THIRD.mtx[match(colnames(cts.merged.d21),rownames(exp.data.d21.THIRD.mtx)), ]
-all(rownames(exp.data.d21.THIRD.mtx) %in% colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.THIRD.mtx) == colnames(cts.matrix.d21.filtered)) # should be TRUE
-all(rownames(exp.data.d21.THIRD.mtx) == colnames(cts.matrix.d21.filtered))  # should be TRUE
-# build dds
-dds.third.d21 <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
-                                      colData = exp.data.d21.THIRD.mtx,
-                                      design = ~ Third_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.third.d21 # view dds
-# prep for DESeq2
-dds.third.d21$Third_Treatment <- relevel(dds.third.d21$Third_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.third.d21$Time <- droplevels(dds.ALL.d21$Time) # drop levels of time
-levels(dds.third.d21$Time) # NULL
-levels(dds.third.d21$Third_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.third.d21) # view the design we have specified 
-ncol(dds.third.d21) #  62 cols - Good
-nrow(dds.third.d21) # 8325 (10 CPM) 13747 (3 CPM)
-
-# DEG ANALYSIS READY!!
-
-#==================== #
-# Primary + Second +Third (ALL) Treatment
-# format Experiment/design dataframe into matrix
-exp.data.d21.PRIM_SEC_THIRD <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment','Second_Treament', 'Third_Treatment', 'Time')) # coondense dataset to build target matrix
+exp.data.d21.PRIM_SEC_THIRD <- exp.data.d21 %>% dplyr::select(c('Sample.Name', 'Primary_Treatment','Second_Treament', 'Third_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
 exp.data.d21.PRIM_SEC_THIRD <- data.frame(exp.data.d21.PRIM_SEC_THIRD[,-1], row.names=exp.data.d21.PRIM_SEC_THIRD[,1]) # move Sample.Name column as row names  
 exp.data.d21.PRIM_SEC_THIRD.mtx <- as.matrix(exp.data.d21.PRIM_SEC_THIRD, row.names="Geoduck.ID") # create matrix 
 # CKECK THE cts.matrix AND THE exp.data.mtx
@@ -674,54 +243,58 @@ all(rownames(exp.data.d21.PRIM_SEC_THIRD.mtx) %in% colnames(cts.matrix.d21.filte
 all(rownames(exp.data.d21.PRIM_SEC_THIRD.mtx) == colnames(cts.matrix.d21.filtered)) # should be TRUE
 all(rownames(exp.data.d21.PRIM_SEC_THIRD.mtx) == colnames(cts.matrix.d21.filtered))  # should be TRUE
 # build dds
-dds.ALL.d21 <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
-                                      colData = exp.data.d21.PRIM_SEC_THIRD.mtx,
-                                      design = ~ Primary_Treatment+Second_Treament+Third_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-# dds.ALL.d21 # view dds
-# prep for DESeq2
-dds.ALL.d21$Primary_Treatment <- relevel(dds.ALL.d21$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
-dds.ALL.d21$Second_Treament <- relevel(dds.ALL.d21$Second_Treament, ref = "A") 
-dds.ALL.d21$Third_Treatment <- relevel(dds.ALL.d21$Third_Treatment, ref = "A") 
+# full model
+dds.d21 <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
+                                        colData = exp.data.d21.PRIM_SEC_THIRD.mtx,
+                                        design = ~ Primary_Treatment+
+                                        Second_Treament+
+                                        Third_Treatment+
+                                        Primary_Treatment:Second_Treament+
+                                        Primary_Treatment:Third_Treatment+
+                                        Second_Treament:Third_Treatment) 
+# GROUP
+dds.d21.group <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
+                                        colData = exp.data.d21.PRIM_SEC_THIRD.mtx,
+                                        design = ~ All_Treatment-1) 
+# MAIN EFFECT 
+dds.d21.main <- DESeqDataSetFromMatrix(countData = cts.matrix.d21.filtered,
+                                       colData = exp.data.d21.PRIM_SEC_THIRD.mtx,
+                                       design = ~ Third_Treatment+Second_Treament+Primary_Treatment) 
 
-dds.ALL.d21$Time <- droplevels(dds.ALL.d21$Time) # drop levels of time
-levels(dds.ALL.d21$Time) # NULL
-levels(dds.ALL.d21$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
-design(dds.ALL.d21) # view the design we have specified 
-ncol(dds.ALL.d21) #  62 cols - Good
-nrow(dds.ALL.d21) # 8325 (10 CPM) 13747 (3 CPM)
+
+
+# prep for DESeq2
+# dds.d21$Primary_Treatment <- relevel(dds.d21$Primary_Treatment, ref = "A") # specify the reference level for count analysis - A = the control treatment
+# dds.d21$Second_Treament <- relevel(dds.d21$Second_Treament, ref = "A") 
+# dds.d21$Third_Treatment <- relevel(dds.d21$Third_Treatment, ref = "A") 
+# levels(dds.d21$Primary_Treatment) #  levels for condition 'Treatment': "A" "M"
+# levels(dds.d21$Second_Treament) #  levels for condition 'Treatment': "A" "M" "S"
+# levels(dds.d21$Third_Treatment) #  levels for condition 'Treatment': "A" "M"
+# design(dds.d21) # view the design we have specified 
+# ncol(dds.d21) #  62 cols - Good
+# nrow(dds.d21) #13743 (3 CPM)
 
 # DEG ANALYSIS READY!!
 
-
-
-
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-# Differential expression analysis
-#====================================================================================================================== #
-#====================================================================================================================== #
-#====================================================================================================================== #
-
-# dds.primary.d0 (not filtered by edgeR = dds.primary.d0.NoFilt)
+#====================================================================================================================== 
 #
+#                          Differential expression analysis (DESeq2)
+#
+#====================================================================================================================== 
+
+# ================== #
+# About and notes...
+# ==================
+# dds.d0 (not filtered by edgeR = dds.primary.d0.NoFilt)
+#
+# dds.d7
 # 
-# dds.primary.d7
-# dds.second.d7
-# dds.ALL.d7
+# dds.d14
 # 
-# dds.primary.d14
-# dds.second.d14
-# dds.ALL.d14
-# 
-# dds.primary.d21
-# dds.second.d21
-# dds.third.d21
-# dds.ALL.d21
+# dds.d21
 
 # About: Log fold change shrinkage for visualization and ranking
 # Run DESeq : Modeling counts with the specified design(dds) treatment effects 
-
 
 # Note about NA values! =============================================== #
 # p-values are set to NA by DESeq2 for the following reasions (review URL: https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pvaluesNA)
@@ -743,1092 +316,1444 @@ nrow(dds.ALL.d21) # 8325 (10 CPM) 13747 (3 CPM)
 # note we have ~35,000 genes so 5% is 1,750 genes! 
 # VIDEO EXPLAINING FDR https://www.youtube.com/watch?v=K8LQSvtjcEo&feature=emb_logo
 
-#======================================================================================= #
-# DAY 0, pre filtered for 10 CPM
-#======================================================================================= #
-nrow(dds.primary.d0) # 9091 total genes pre filtered; FDR cutoff of 0.1 = 909 false positives; 0.05 = 450 flase positives
+
+
+# ==========================================================
+#
+# ALL TIMEPOINTS - Ambient controls    (3 CPM in 50% samples)
+# ========================================================== 
+
+# PRIMARY MODERATE VERSUS AMBEINT HISTORY UNDER THE ENTIRE EXPERIMENT  ========================================================== #
+dds.ALL_MvA
+#  pre-filtered in edgeR - use independentFiltering=FALSE
+dds.ALL_MvA <- DESeq(dds.ALL_MvA) # wait for this to complete....
+resultsNames(dds.ALL_MvA) # view the names of your results model "MvA_Primary_History_M_vs_A"
+# count  DEGs with pdj threshold < 0.05 and LFC >1 (up) and < -1 (down)
+res.ALL.MvA <- results(dds.ALL_MvA, name="MvA_Primary_History_M_vs_A", alpha = 0.05)
+hist(res.ALL.MvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(res.ALL.MvA)*0.05),col="red") # add line at expected 5% false positive
+table(res.ALL.MvA$padj<0.05) # 971 DEGs total with padj value < 0.05
+res.ALL.MvA <- res.ALL.MvA[order(res.ALL.MvA$padj), ] # Order by adjusted p-value
+sum((res.ALL.MvA$log2FoldChange[1:971] >= 1) == TRUE) # 57 DEGs upregulated  (LFC >= 1)
+( sum((res.ALL.MvA$log2FoldChange[1:971] >= 1) == TRUE) / (table(res.ALL.MvA$padj<0.05))[2] ) * 100 # 5.870237 % DEGs upregulated (N = 971)
+sum((res.ALL.MvA$log2FoldChange[1:971] <= -1) == TRUE) # 255 DEGs downregulated  (LFC <= -1)
+( sum((res.ALL.MvA$log2FoldChange[1:971] <= -1) == TRUE) / (table(res.ALL.MvA$padj<0.05))[2] ) * 100 # 26.26159 % DEGs downregulated (N = 971)
+# create a dataframe of results 
+resdata.ALL.MvA <- merge(as.data.frame(res.ALL.MvA), as.data.frame(counts(dds.ALL_MvA, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.ALL.MvA)[1] <- "Gene"
+# Write results
+path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/'
+write.csv(resdata.ALL.MvA, paste(path_out.d0, "ALL_Mod_vs_Amb_diffexpr-results.csv"))
+# volcano plot ------------------------------------------------------------------------------------------------------ #
+png("RAnalysis/DESeq2/output/ALL_ModvsAmb.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(res.ALL.MvA,
+                lab = rownames(res.ALL.MvA),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                title = 'Moderate versus Ambient Treatment (Primary)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1.0,
+                pCutoff = 0.3,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+# Plot dispersions ------------------------------------------------------------------------------------------------------ #
+png("RAnalysis/DESeq2/output/ALL_ModvsAmb.dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.ALL_MvA, main="All MvA dispersions")
+dev.off()
+# Heat maps and Principal components analysis ------------------------------------------------------------------------------------------ #
+# significantly upregulated genes - padj < 0.05; LFC > 2
+res.ALL.MvA_UPREG <- res.ALL.MvA[c(1:971),] 
+upreg.T_F <- res.ALL.MvA_UPREG$log2FoldChange >= 1 # we would like to keep genes that have at least 50% TRUES in each row of thresh
+res.ALL.MvA_UPREG <- res.ALL.MvA_UPREG[upreg.T_F,]  # call onl upreg genes
+dds_UPREG <- dds.ALL_MvA[(rownames(res.ALL.MvA_UPREG))] # call only res.ALL.MvA_UPREG rows (12) 
+dim(dds_UPREG) # 57 141 - 57 pass this criteria
+rlog.dds_UPREG<- rlogTransformation(dds_UPREG) # Conmplete rlog transformation ....takes a bit of time
+sampleDist.rlog.dds_UPREG <- dist(t(assay(rlog.dds_UPREG))) # next assay [access dds data matrix] and t() [transpose rows and columns] in dist() [calculate the Euclidean Distance]
+sampleDistMatrix.rlog.dds_UPREG <- as.matrix(sampleDist.rlog.dds_UPREG) # convert to a data matrix for heatmap 
+rownames(sampleDistMatrix.rlog.dds_UPREG) <- dds_UPREG$MvA_Primary_History # assign the rownames as the conditions of your samples
+pheatmap(sampleDistMatrix.rlog.dds_UPREG, 
+         clustering_distance_rows = sampleDist.rlog.dds_UPREG, 
+         clustering_distance_cols = sampleDist.rlog.dds_UPREG, 
+         col = colors) # create the heatmap 
+plotPCA(rlog.dds_UPREG,intgroup="MvA_Primary_History")  # use the DESeq2 call plotPCA() and call the rlog_dds for PCA plotting - Q: difference between replicates or condition explains the most variance in this dataset?
+
+
+# significantly downregulated genes - padj < 0.05; LFC < 2
+res.ALL.MvA_DWNREG <- res.ALL.MvA[c(1:971),] 
+dwnreg.T_F <- res.ALL.MvA_DWNREG$log2FoldChange <= -1 # we would like to keep genes that have at least 50% TRUES in each row of thresh
+res.ALL.MvA_DWNREG <- res.ALL.MvA_DWNREG[dwnreg.T_F,] # call only downreg genes
+dds_DWNREG <- dds.ALL_MvA[(rownames(res.ALL.MvA_DWNREG))] # call only res.ALL.MvA_UPREG rows (12) 
+dim(dds_DWNREG) # 255 141 - 255 pass this criteria
+rlog.dds_DWNREG<- rlogTransformation(dds_DWNREG) # Conmplete rlog transformation  ....takes a bit of time
+sampleDist.rlog.dds_DWNREG <- dist(t(assay(rlog.dds_DWNREG))) # next assay [access dds data matrix] and t() [transpose rows and columns] in dist() [calculate the Euclidean Distance]
+sampleDistMatrix.rlog.dds_DWNREG <- as.matrix(sampleDist.rlog.dds_DWNREG) # convert to a data matrix for heatmap 
+rownames(sampleDistMatrix.rlog.dds_DWNREG) <- dds_DWNREG$MvA_Primary_History # assign the rownames as the conditions of your samples
+pheatmap(sampleDistMatrix.rlog.dds_DWNREG, 
+         clustering_distance_rows = sampleDist.rlog.dds_DWNREG, 
+         clustering_distance_cols = sampleDist.rlog.dds_DWNREG, 
+         col = colors) # create the heatmap 
+plotPCA(rlog.dds_DWNREG,intgroup="MvA_Primary_History")  # use the DESeq2 call plotPCA() and call the rlog_dds for PCA plotting - Q: difference between replicates or condition explains the most variance in this dataset?
+
+
+
+
+
+# AMBIENT RHOGUHTOU ONLY - LOOK FOR TIME-DEPENDENT DEGs UNDER AMBIENT TREATMENT ====================================== #
+nrow(dds.Amb_all) # 13874 total genes pre filtered; 
 
 #  pre-filtered in edgeR - use independentFiltering=FALSE
-dds.primary.d0 <- DESeq(dds.primary.d0) # wait for this to complete....
-resultsNames(dds.primary.d0) # view the names of your results model 'Primary_Treatment_M_vs_A'
-resd0.primary <- results(dds.primary.d0, alpha = 0.5) # already filtered in edgeR; FDR of 0.05 (~ 450 in 9091 genes)
+dds.Amb_all <- DESeq(dds.Amb_all) # wait for this to complete....
+resultsNames(dds.Amb_all) # view the names of your results model "Treat.day_AA_14_vs_A_0"  "Treat.day_AA_7_vs_A_0"   "Treat.day_AAA_21_vs_A_0"
+
+resAmb.d0vd7 <- results(dds.Amb_all, name="Treat.day_AA_7_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd7$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd7$padj<0.05) # 0 DEGs
+
+
+resAmb.d0vd14 <- results(dds.Amb_all, name="Treat.day_AA_14_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd14$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd14$padj<0.05) # 11 DEGs
+
+
+resAmb.d0vd21 <- results(dds.Amb_all, name="Treat.day_AAA_21_vs_A_0", alpha = 0.05)
+hist(resAmb.d0vd21$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
+abline(h=(nrow(dds.Amb_all)*0.05),col="red") # add line at expected 5% false positive
+table(resAmb.d0vd21$padj<0.05) # 90 DEGs
+
+
+# Write results
+# path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day0/'
+# write.csv(resdata.d0.primary, paste(path_out.d0, "Day0.PrimaryTreatment_diffexpr-results.csv"))
+
+# volcano plot ------------------------------------------------------------------------------------------------------ #
+
+# png("RAnalysis/DESeq2/output/Day0/Day0.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resAmb.d0vd21,
+                lab = rownames(resAmb.d0vd21),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day 21 v. Day 0 (Ambient Control)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pCutoff = 0.3,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+# dev.off()
+
+
+# ==========================================================
+#
+# DAY 0    (3 CPM in 50% samples)
+# ========================================================== 
+nrow(dds.d0) # 15036 total genes pre filtered
+dim(dds.d0) # 15149     8
+design(dds.d0) # FULL MODEL ==- ~Primary_Treatment
+
+# RUN DESEQ2 model
+dds.d0 <- DESeq(dds.d0) # wait for this to complete....
+resultsNames(dds.d0) # view the names of your results model 'Primary_Treatment_M_vs_A'
+colData(dds.d0)
+
+# Primary_Treatment_M_vs_A
+resd0.primary <- results(dds.d0, alpha = 0.5) # already filtered in edgeR; FDR of 0.05 (~ 651.8 in 15.036 genes)
 hist(resd0.primary$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d0)*0.05),col="red") # add line at expected 5% false positive
-table(resd0.primary$padj<0.05) # 14 DEGs; 9058 FALSE
+abline(h=(nrow(dds.d0)*0.05),col="red") # add line at expected 5% false positive
+table(resd0.primary$padj<0.05) #  11  DEGs
 resd0.primary <- resd0.primary[order(resd0.primary$padj), ] ## Order by adjusted p-value
-resdata.d0.primary  <- merge(as.data.frame(resd0.primary), as.data.frame(counts(dds.primary.d0, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+
+# count and % upregulated and downregulated DEGs (first 13 rows of ordered table are the DEGs)
+sum((resd0.primary$log2FoldChange[1:11] >= 1) == TRUE) # 3 DEGs upregulated  (LFC >= 1)
+( sum((resd0.primary$log2FoldChange[1:11] >= 1) == TRUE) / (table(resd0.primary$padj<0.05))[2] ) * 100 # 27.27273 % DEGs upregulated (N = 971)
+sum((resd0.primary$log2FoldChange[1:11] <= -1) == TRUE) # 8 DEGs downregulated  (LFC <= -1)
+( sum((resd0.primary$log2FoldChange[1:11] <= -1) == TRUE) / (table(resd0.primary$padj<0.05))[2] ) * 100 # 72.72727 % DEGs downregulated (N = 971)
+
+# as.data.frame for the ordered results
+resdata.d0.primary  <- merge(as.data.frame(resd0.primary), as.data.frame(counts(dds.d0, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d0.primary)[1] <- "Gene"
 head(resdata.d0.primary)
 
-## Write results
+# Write results
 path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day0/'
 write.csv(resdata.d0.primary, paste(path_out.d0, "Day0.PrimaryTreatment_diffexpr-results.csv"))
-## Examine plot of p-values
+
+# volcano plot 
+pCutoff_d0 <- max(resd0.primary$padj[1:11])
+png("RAnalysis/DESeq2/output/Day0/Day0.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd0.primary,
+                lab = rownames(resd0.primary),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day 0: Primary Treatment (M v A)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = pCutoff_d0+0.001,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+# Plot dispersions 
+png("RAnalysis/DESeq2/output/Day0/Day0.dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.d0, main="Day 0 dispersions")
+dev.off()
+
+# Data transformations for heatmap and PCA visuals ======================================================================================= #
+# rlog - regularized log transformation of origin count data to log2 scale - fit for each sample and dist. of coefficients in the data
+rlog.d0<- rlogTransformation(dds.d0) # rlog transform (regularized log)
+
+png("RAnalysis/DESeq2/output/Day0/Day0.rlog_histogram.png", 1000, 1000, pointsize=20)# diagnostics of transformation # Histogram and sd plot
+hist(assay(rlog.d0)) # view histogram 
+dev.off()
+png("RAnalysis/DESeq2/output/Day0/Day0.rlog_mean_sd.png", 1000, 1000, pointsize=20)
+meanSdPlot(assay(rlog.d0)) # shows the sd y axis (sq root of varaince in all samples) - flat curve may seem like a goals, BUT may be unreasonable in cases with MANY true DEGs from experimental conditions
+dev.off()
+
+# PCA plot rlog ------------------------ #
+library("ggplot2")
+pcaData_d0 <- plotPCA(rlog.d0, intgroup = "Primary_Treatment", returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d0, "percentVar"))
+png("RAnalysis/DESeq2/output/Day0/Day0.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d0, aes(x = PC1, y = PC2, color = Primary_Treatment, label=name)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=5) +
+  geom_point(size =6) +
+  theme_classic() +
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day0 (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
+dev.off()
+# Plot heat map rlog------------------------ #
+save_pheatmap <- function(x, filename, width=1000, height=960) { # template for saving pheatmap outputs
+  stopifnot(!missing(x))
+  stopifnot(!missing(filename))
+  png(filename,width = width, height=height)
+  grid::grid.newpage()
+  grid::grid.draw(x$gtable)
+  dev.off()
+}
+select <- order(rowMeans(counts(dds.d0,normalized=TRUE)), decreasing=TRUE)[1:25] # normalize the counts per row and call the first 25 most expressed genes
+df <- as.data.frame(colData(dds.d0)[c("Primary_Treatment")])
+annotation_colors = list(Treatment = c(A="Blue", M="Orange"))
+d0.rlog.heatmap<- pheatmap(assay(rlog.d0)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+         cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+         main = "Day0.rlog_heatmap")
+save_pheatmap(d0.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day0/Day0.rlog_heatmap.png")
+
+# ========================================================== 
+#
+# DAY 7    (3 CPM in 50% samples)
+# ========================================================== 
+# view the design for each of the d7 dds 
+design(dds.d7) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
+design(dds.d7.group) # ~All_Treatment  (group)
+design(dds.d7.main) # ~Second_Treament + Primary_Treatment
+
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d7 <- DESeq(dds.d7) #  full model                                   wait for this to complete....
+dds.d7.group <- DESeq(dds.d7.group) # group model                       wait for this to complete....
+dds.d7.main <- DESeq(dds.d7.main) # main effect model                   wait for this to complete....
+
+# model matrix 
+# View(model.matrix(~ Second_Treament + Primary_Treatment+Second_Treament*Primary_Treatment, colData(dds.d7)))
+# View(model.matrix(~ All_Treatment, colData(dds.d7.group)))
+# View(model.matrix(~ Second_Treament + Primary_Treatment, colData(dds.d7.main)))
+
+# ~ FULL MODEL EFFECTS  ======================================================================================================================== #
+resultsNames(dds.d7) # view the names of your results model 
+dds.d7$Primary_Treatment # ambient is the reference 
+dds.d7$Second_Treament # ambient is the reference 
+
+# Q: What is the main effect (Primary treatment) during SECONDARY response to AMBINET? (MA vs AA)
+resd7._MAvAA <- results(dds.d7, contrast=c("Primary_Treatment", "M", "A"), alpha = 0.05)
+table(resd7._MAvAA$padj<0.05) # 2 DEGs
+
+# Q: What is the main effect (Primary treatment) during SECONDARY response to MODERATE? (MM vs AM)
+# This is, by definition, the main effect (Primary treatment) plus the interaction term 
+# (the extra condition effect in secondary treatment  'Severe' compared to Secondary Treatment 'Ambient').
+resd7._MMvAM <- results(dds.d7, list(c("Primary_Treatment_M_vs_A","Second_TreamentM.Primary_TreatmentM")))
+table(resd7._MMvAM$padj<0.05) # 4  DEGs
+
+# Q: What is the main effect (Primary treatment) during SECONDARY response to SEVERE? (MS vs AS)
+# This is, by definition, the main effect (Primary treatment) plus the interaction term 
+# (the extra condition effect in secondary treatment  'Severe' compared to Secondary Treatment 'Ambient').
+resd7._MSvAS <- results(dds.d7, list(c("Primary_Treatment_M_vs_A","Second_TreamentS.Primary_TreatmentM")))
+table(resd7._MSvAS$padj<0.05) # 1  DEGs
+
+#Effect of Severe vs. Moderate for the Primary Ambient individuals (AM v AS)
+resd7._AMvAS <- results(dds.d7, contrast= c(0,-1,1,0,0,0))
+table(resd7._AMvAS$padj<0.05) # 0 DEGs
+
+# Interaction term for the main  effect (Primary Treatment) in Secondary Moderate versus Ambient
+resd7._MMvAM_MAvAA<- results(dds.d7, name="Second_TreamentM.Primary_TreatmentM", alpha = 0.05) # (MMvAM × MAvAA)
+table(resd7._MMvAM_MAvAA$padj<0.05) # 0 DEGs
+
+# Interaction term for the main  effect (Primary Treatment) in Secondary SEVERE versus Ambient
+resd7._MSvAS_MAvAA<- results(dds.d7, name="Second_TreamentS.Primary_TreatmentM", alpha = 0.05) # (MSvAS × MAvAA)
+table(resd7._MSvAS_MAvAA$padj<0.05) # 0 DEGs
+
+# Interaction term for the main  effect (Primary Treatment) in Secondary SEVERE  versus MODERATE
+resd7._MSvAS_MMvAM= results(dds.d7, contrast=list("Second_TreamentS.Primary_TreatmentM", "Second_TreamentM.Primary_TreatmentM"), alpha = 0.05) # (MSvAS × MMvAM)
+table(resd7._MSvAS_MMvAM$padj<0.05) # 0 DEGs
+
+
+# ~ Main EFFECTS  ======================================================================================================================== #
+resultsNames(dds.d7.main) # view the names of your results model 
+
+# Main effect of Primary treatment (WITHOUT ref level in other factor - no interaction term in this model!!!)
+resd7._P.MvA<- results(dds.d7.main, name="Primary_Treatment_M_vs_A", alpha = 0.05) 
+table(resd7._P.MvA$padj<0.05) # 99 DEGs
+resd7._P.MvA <- resd7._P.MvA[order(resd7._P.MvA$padj), ] ## Order by adjusted p-value
+sum((resd7._P.MvA$log2FoldChange[1:99] >= 1) == TRUE) # 32 DEGs upregulated  (LFC >= 1)
+( sum((resd7._P.MvA$log2FoldChange[1:99] >= 1) == TRUE) / (table(resd7._P.MvA$padj<0.05))[2] ) * 100 # 32.32323 % DEGs upregulated (N = 971)
+sum((resd7._P.MvA$log2FoldChange[1:99] <= -1) == TRUE) # 44 DEGs downregulated  (LFC <= -1)
+( sum((resd7._P.MvA$log2FoldChange[1:99] <= -1) == TRUE) / (table(resd7._P.MvA$padj<0.05))[2] ) * 100 # 44.44444 % DEGs downregulated (N = 971)
+
+# What is the difference between secondary treatment 'moderate' WITHOUT considering the primary treament history?
+resd7._S.MvA<- results(dds.d7.main, name="Second_Treament_M_vs_A", alpha = 0.05)
+table(resd7._S.MvA$padj<0.05) # 118 DEGs
+resd7._S.MvA <- resd7._S.MvA[order(resd7._S.MvA$padj), ] ## Order by adjusted p-value
+sum((resd7._S.MvA$log2FoldChange[1:118] >= 1) == TRUE) # 91 DEGs upregulated  (LFC >= 1)
+( sum((resd7._S.MvA$log2FoldChange[1:118] >= 1) == TRUE) / (table(resd7._S.MvA$padj<0.05))[2] ) * 100 # 77.11864 % DEGs upregulated (N = 971)
+sum((resd7._S.MvA$log2FoldChange[1:118] <= -1) == TRUE) #  6 DEGs downregulated  (LFC <= -1)
+( sum((resd7._S.MvA$log2FoldChange[1:118] <= -1) == TRUE) / (table(resd7._S.MvA$padj<0.05))[2] ) * 100 # 5.084746 % DEGs downregulated (N = 971)
+
+# What is the difference between secondary treatment 'severe' WITHOUT considering the primary treament history?
+resd7._S.SvA<- results(dds.d7.main, name="Second_Treament_S_vs_A", alpha = 0.05)
+table(resd7._S.SvA$padj<0.05) # 1 DEGs
+resd7._S.SvA <- resd7._S.SvA[order(resd7._S.SvA$padj), ] ## Order by adjusted p-value
+sum((resd7._S.SvA$log2FoldChange[1] >= 1) == TRUE) # 1 DEGs upregulated  (LFC >= 1)
+sum((resd7._S.SvA$log2FoldChange[1] <= -1) == TRUE) #  0 DEGs downregulated  (LFC <= -1)
+
+
+# ~ Group - MAIN EFFECTS(ACCOUNTING FOR SECONDARY-TREATMENT SPECIFIC EFFECTS) ============================================================================================ #
+resultsNames(dds.d7.group) # view the names of your results model 
+
+# ALL primary history regarless of subsequent exposure (Ambient versus Moderate)
+res.d7_P.MvA_group <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentAM", "All_TreatmentAS"),c("All_TreatmentMA", "All_TreatmentMM", "All_TreatmentMS")),  alpha= 0.05)
+table(res.d7_P.MvA_group$padj<0.05) # 111 DEGs
+res.d7_P.MvA_group <- res.d7_P.MvA_group[order(res.d7_P.MvA_group$padj), ] ## Order by adjusted p-value
+sum((res.d7_P.MvA_group$log2FoldChange[1:111] >= 1) == TRUE) # 66 DEGs upregulated  (LFC >= 1)
+( sum((res.d7_P.MvA_group$log2FoldChange[1:111] >= 1) == TRUE) / (table(res.d7_P.MvA_group$padj<0.05))[2] ) * 100 # 59.45946 % DEGs upregulated (N = 971)
+sum((res.d7_P.MvA_group$log2FoldChange[1:111] <= -1) == TRUE) #  44 DEGs downregulated  (LFC <= -1)
+( sum((res.d7_P.MvA_group$log2FoldChange[1:111] <= -1) == TRUE) / (table(res.d7_P.MvA_group$padj<0.05))[2] ) * 100 # 39.63964 % DEGs downregulated (N = 971)
+
+# CONSTANT exposure to SAME treatment
+resd7._AAvMM_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 7 more days)
+table(resd7._AAvMM_group$padj<0.05) # 28 DEGs
+# SECOND exposure by PRIMARY treatment
+resd7._AAvMA_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05) # Second Ambient
+table(resd7._AAvMA_group$padj<0.05) # 2 DEGs
+resd7._AMvMM_group <- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMM")),  alpha= 0.05) # Second Moderate
+table(resd7._AMvMM_group$padj<0.05) # 3 DEGs
+resd7._ASvMS_group <- results(dds.d7.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMS")),  alpha= 0.05) # Second Severe
+table(resd7._ASvMS_group$padj<0.05) # 0 DEGs
+# AMBIENT history and subseqent treatment 
+resd7._AAvAM_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAM")),  alpha= 0.05) # Amb - response to Moderate
+table(resd7._AAvAM_group$padj<0.05) # 1 DEGs
+resd7._AAvAS_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to Severe
+table(resd7._AAvAS_group$padj<0.05) # 6 DEGs
+resd7._AMvAS_group <- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to moderate versus Severe
+table(resd7._AMvAS_group$padj<0.05) # 0 DEGs
+# MODERATE history and subseqent treatment 
+resd7._MMvMA_group <- results(dds.d7.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMA")),  alpha= 0.05) # Mod - response to Ambient
+table(resd7._MMvMA_group$padj<0.05) # 35 DEGs
+resd7._MMvMS_group <- results(dds.d7.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMS")),  alpha= 0.05) # Mod - response to Severe
+table(resd7._MMvMS_group$padj<0.05) # 0 DEGs
+resd7._MAvMS_group <- results(dds.d7.group, contrast = list(("All_TreatmentMA"),("All_TreatmentMS")),  alpha= 0.05) # Amb - response to ambient versus Severe
+table(resd7._MAvMS_group$padj<0.05) # 0 DEGs
+# OTHER pairwise interactions
+#AA
+resd7._AAvMM_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 7 more days)
+table(resd7._AAvMM_group$padj<0.05) # 28 DEGs
+resd7._AAvMA_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd7._AAvMA_group$padj<0.05) # 2 DEGs
+resd7._AAvMS_group <- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd7._AAvMS_group$padj<0.05) # 8 DEGs
+#AM
+resd7._AMvMA_group <- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd7._AMvMA_group$padj<0.05) # 187 DEGs
+resd7._AMvMS_group <- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd7._AMvMS_group$padj<0.05) # 51 DEGs
+#AS
+resd7._ASvMA_group <- results(dds.d7.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd7._ASvMA_group$padj<0.05) # 22 DEGs
+resd7._ASvMM_group <- results(dds.d7.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMM")),  alpha= 0.05)
+table(resd7._ASvMM_group$padj<0.05) # 25 DEGs
+# Second treatment effects (regarless of prior history)
+#A v M
+resd7._S.AvM_group <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAM", "All_TreatmentMM")),  alpha= 0.05)
+table(resd7._S.AvM_group$padj<0.05) # 114 DEGs
+resd7._S.AvM_group <- resd7._S.AvM_group[order(resd7._S.AvM_group$padj), ] ## Order by adjusted p-value
+sum((resd7._S.AvM_group$log2FoldChange[1:114] >= 1) == TRUE) # 8 DEGs upregulated  (LFC >= 1)
+( sum((resd7._S.AvM_group$log2FoldChange[1:114] >= 1) == TRUE) / (table(resd7._S.AvM_group$padj<0.05))[2] ) * 100 # 7.017544 % DEGs upregulated (N = 971)
+sum((resd7._S.AvM_group$log2FoldChange[1:114] <= -1) == TRUE) #  104 DEGs downregulated  (LFC <= -1)
+( sum((resd7._S.AvM_group$log2FoldChange[1:114] <= -1) == TRUE) / (table(resd7._S.AvM_group$padj<0.05))[2] ) * 100 # 91.22807 % DEGs downregulated (N = 971)
+
+# A v S
+resd7._S.AvS_group <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd7._S.AvS_group$padj<0.05) # 1 DEGs
+resd7._S.AvS_group <- resd7._S.AvS_group[order(resd7._S.AvS_group$padj), ] ## Order by adjusted p-value
+sum((resd7._S.AvS_group$log2FoldChange[1] >= 1) == TRUE) # 0
+sum((resd7._S.AvS_group$log2FoldChange[1] <= -1) == TRUE) # 1
+
+#M v S
+resd7._S.MvS_group <- results(dds.d7.group, contrast = list(c("All_TreatmentAM", "All_TreatmentMM"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd7._S.MvS_group$padj<0.05) # 13 DEGs
+resd7._S.MvS_group <- resd7._S.MvS_group[order(resd7._S.MvS_group$padj), ] ## Order by adjusted p-value
+sum((resd7._S.AvM_group$log2FoldChange[1:13] >= 1) == TRUE) # 8 DEGs upregulated  (LFC >= 1)
+( sum((resd7._S.AvM_group$log2FoldChange[1:13] >= 1) == TRUE) / (table(resd7._S.MvS_group$padj<0.05))[2] ) * 100 # 7.017544 % DEGs upregulated (N = 971)
+sum((resd7._S.AvM_group$log2FoldChange[1:13] <= -1) == TRUE) #  104 DEGs downregulated  (LFC <= -1)
+( sum((resd7._S.AvM_group$log2FoldChange[1:13] <= -1) == TRUE) / (table(resd7._S.MvS_group$padj<0.05))[2] ) * 100 # 91.22807 % DEGs downregulated (N = 971)
+
+
+
+
+## Write results
+# path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day7/'
+# write.csv(resdata.d7.all.prim.M_vs_A, paste(path_out.d7, "Day7.PrimaryTreament_diffexpr-results.csv"))
+# write.csv(resdata.d7.second_M_vs_A, paste(path_out.d7, "Day7.SecondTreament_MvsA_diffexpr-results.csv"))
+# write.csv(resdata.d7.all.second_S_vs_A, paste(path_out.d7, "Day7.SecondTreament_SvsA_diffexpr-results.csv"))
+
+
+# volcano plot ------------------------------------------------------------------------------------------------------ #
+# Effect of primary treatment 'res.d7_P.MvA_group' - 111 DEGs
+png("RAnalysis/DESeq2/output/Day7/Day7.Primary_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(res.d7_P.MvA_group,
+                lab = rownames(res.d7_P.MvA_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day7 Primary treatment (M v A)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+# Effect of second treatment M v. A 'resd7._S.AvM_group' - 114 DEGs
+png("RAnalysis/DESeq2/output/Day7/Day7.SecondAvM_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd7._S.AvM_group,
+                lab = rownames(resd7._S.AvM_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day7 Second treatment (A v M)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+# Effect of second treatment S v. A 'resd7._S.AvS_group' - 1 DEG
+png("RAnalysis/DESeq2/output/Day7/Day7.SecondAvS_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd7._S.AvS_group,
+                lab = rownames(resd7._S.AvS_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day7 Second treatment (A v S)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1.0,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+# Effect of second treatment M v. S 'resd7._S.MvS_group' - 1 DEG
+png("RAnalysis/DESeq2/output/Day7/Day7.SecondMvs_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd7._S.MvS_group,
+                lab = rownames(resd7._S.MvS_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day7 Second treatment (M v S)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1.0,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+# Effect of second treatment S v. A 'resd7.all.second_S_vs_A' - 1 DEG
+png("RAnalysis/DESeq2/output/Day7/Day7.AMvMA_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd7._AMvMA_group,
+                lab = rownames(resd7._AMvMA_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day 7 Prim.Second (AM v MA)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
+
+
 # Plot dispersions ------------------------------------------------------------------------------------------------------ #
-png("Day0.PrimaryTreatment-dispersions.png", 1000, 1000, pointsize=20)
-plotDispEsts(dds.primary.d0, main="Dispersion plot_M_vs._A_Day0")
+
+png("RAnalysis/DESeq2/output/Day7/Day7-dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.d7, main="Day 7 data dispersions")
 dev.off()
-# Regularized log transformation for clustering/heatmaps, etc
-rld.d0.primary <- rlogTransformation(dds.primary.d0) # rlog transform (regularized log)
-head(assay(rld.d0.primary)) # view first few rows
-hist(assay(rld.d0.primary)) # view histogram 
-# Colors for plots below; Use RColorBrewer, better and assign mycols variable
-mycols <- brewer.pal(8, "Dark2")[1:length(unique(rld.d0.primary$Primary_Treatment))]
-# Sample distance heatmap
-sampleDists <- as.matrix(dist(t(assay(rld.d0.primary))))
-png(filename= "RAnalysis/DESeq2/output/Day0/Day0.PrimaryTreatment-heatmap-samples.png", w=1000, h=1000, pointsize=20)
-heatmap.2(as.matrix(sampleDists), key=F, trace="none",
-          col=colorpanel(100, "black", "white"),
-          ColSideColors=mycols[rld.d0.primary$Primary_Treatment], RowSideColors=mycols[rld.d0.primary$Primary_Treatment],
-          margin=c(10, 10), main="Sample Distance Matrix")
+
+# Heat maps and Principal components analysis ------   Primary_Treatment_M_vs_A ----------------------------------------- #
+# significantly upregulated genes - padj < 0.05; LFC > 2
+res7.MvA_UPREG <- res.d7_P.MvA_group[c(1:111),] 
+d7.upreg.T_F <- res7.MvA_UPREG$log2FoldChange >= 1 # we would like to keep genes that have at least 50% TRUES in each row of thresh
+res7.MvA_UPREG <- res7.MvA_UPREG[d7.upreg.T_F,]  # call onl upreg genes
+dds.d7_UPREG <- dds.d7[(rownames(res7.MvA_UPREG))] # call only res.ALL.MvA_UPREG rows (12) 
+dim(dds.d7_UPREG) # 66 36 - 66 pass this criteria as upregulated
+rlog.dds.d7_UPREG<- rlogTransformation(dds.d7_UPREG) # Conmplete rlog transformation ....takes a bit of time
+sampleDist.rlog.dds.d7_UPREG <- dist(t(assay(rlog.dds.d7_UPREG))) # next assay [access dds data matrix] and t() [transpose rows and columns] in dist() [calculate the Euclidean Distance]
+sampleDistMatrix.rlog.dds.d7_UPREG <- as.matrix(sampleDist.rlog.dds.d7_UPREG) # convert to a data matrix for heatmap 
+rownames(sampleDistMatrix.rlog.dds.d7_UPREG) <- dds.d7_UPREG$Primary_Treatment # assign the rownames as the conditions of your samples
+pheatmap(sampleDistMatrix.rlog.dds.d7_UPREG, 
+         clustering_distance_rows = sampleDist.rlog.dds.d7_UPREG, 
+         clustering_distance_cols = sampleDist.rlog.dds.d7_UPREG) # create the heatmap 
+plotPCA(rlog.dds.d7_UPREG,intgroup="Primary_Treatment") # use the DESeq2 call plotPCA() and call the rlog_dds for PCA plotting - Q: difference between replicates or condition explains the most variance in this dataset?
+
+
+select <- order(rowMeans(counts(dds.d7_UPREG,normalized=TRUE)), decreasing=TRUE)[1:25] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d7_UPREG)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d7.UPREG.rlog.heatmap<- pheatmap(assay(rlog.dds.d7_UPREG)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                           cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                           main = "Day7.UPREG.rlog_heatmap")
+save_pheatmap(d7.UPREG.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day7/Day7.PrimaryMvA_Upregulated_rlog_heatmap.png")
+
+
+# significantly downregulated genes - padj < 0.05; LFC < 2
+res7.MvA_DWNREG <- res.d7_P.MvA_group[c(1:111),] 
+d7.dwnreg.T_F <- res7.MvA_DWNREG$log2FoldChange <= -1 # we would like to keep genes that have at least 50% TRUES in each row of thresh
+res7.MvA_DWNREG <- res7.MvA_DWNREG[d7.dwnreg.T_F,] # call only downreg genes
+dds.d7_DWNREG <- dds.d7[(rownames(res7.MvA_DWNREG))] # call only res.ALL.MvA_UPREG rows (12) 
+dim(dds.d7_DWNREG) # 41 36 - 41 pass this criteria
+rlog.dds.d7_DWNREG<- rlogTransformation(dds.d7_DWNREG) # Conmplete rlog transformation  ....takes a bit of time
+sampleDist.rlog.dds_DWNREG <- dist(t(assay(rlog.dds.d7_DWNREG))) # next assay [access dds data matrix] and t() [transpose rows and columns] in dist() [calculate the Euclidean Distance]
+sampleDistMatrix.rlog.dds.d7_DWNREG <- as.matrix(sampleDist.rlog.dds_DWNREG) # convert to a data matrix for heatmap 
+rownames(sampleDistMatrix.rlog.dds.d7_DWNREG) <- rlog.dds.d7_DWNREG$Primary_Treatment # assign the rownames as the conditions of your samples
+pheatmap(sampleDistMatrix.rlog.dds.d7_DWNREG, 
+         clustering_distance_rows = sampleDist.rlog.dds_DWNREG, 
+         clustering_distance_cols = sampleDist.rlog.dds_DWNREG) # create the heatmap 
+plotPCA(rlog.dds.d7_DWNREG,intgroup="Primary_Treatment")  # use the DESeq2 call plotPCA() and call the rlog_dds for PCA plotting - Q: difference between replicates or condition explains the most variance in this dataset?
+
+
+select <- order(rowMeans(counts(dds.d7_DWNREG,normalized=TRUE)), decreasing=TRUE)[1:25] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d7_DWNREG)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d7.DOWNREG.rlog.heatmap<- pheatmap(assay(rlog.dds.d7_DWNREG)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                                 cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                                 main = "Day7.DOWNREG.rlog_heatmap")
+save_pheatmap(d7.DOWNREG.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day7/Day7.PrimaryMvA_downregulated_rlog_heatmap.png")
+
+
+# ======================================== 
+# Data transformations for heatmap and PCA visuals 
+# ============================================================= 
+rlog.d7<- rlogTransformation(dds.d7) #  full model                       wait for this to complete.... 
+
+png("RAnalysis/DESeq2/output/Day7/Day7.rlog_histogram.png", 1000, 1000, pointsize=20)# diagnostics of transformation # Histogram and sd plot
+hist(assay(rlog.d7)) # view histogram 
 dev.off()
-# Principal components analysis ------------------------------------------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-DESeq2::plotPCA(rld.d0.primary, intgroup="Primary_Treatment")
-rld_pca.do.primary <- function (rld.d0.primary, intgroup = "Primary_Treatment", ntop = 500, colors=NULL, legendpos="bottomleft", main="PCA Biplot", textcx=1, ...) {
-  require(genefilter)
-  require(calibrate)
-  require(RColorBrewer)
-  rv = rowVars(assay(rld.d0.primary))
-  select = order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
-  pca = prcomp(t(assay(rld.d0.primary)[select, ]))
-  fac = factor(apply(as.data.frame(colData(rld.d0.primary)[, intgroup, drop = FALSE]), 1, paste, collapse = " : "))
-  if (is.null(colors)) {
-    if (nlevels(fac) >= 3) {
-      colors = brewer.pal(nlevels(fac), "Paired")
-    }   else {
-      colors = c("black", "red")
-    }
-  }
-  pc1var <- round(summary(pca)$importance[2,1]*100, digits=1)
-  pc2var <- round(summary(pca)$importance[2,2]*100, digits=1)
-  pc1lab <- paste0("PC1 (",as.character(pc1var),"%)")
-  pc2lab <- paste0("PC1 (",as.character(pc2var),"%)")
-  plot(PC2~PC1, data=as.data.frame(pca$x), bg=colors[fac], pch=21, xlab=pc1lab, ylab=pc2lab, main=main, ...)
-  with(as.data.frame(pca$x), textxy(PC1, PC2, labs=rownames(as.data.frame(pca$x)), cex=textcx))
-  legend(legendpos, legend=levels(fac), col=colors, pch=20)
-}
-png("Day0.Primary.qc-pca.png", 1000, 1000, pointsize=20)
-rld_pca.do.primary(rld.d0.primary, colors=mycols, intgroup="Primary_Treatment", xlim=c(-75, 35))
+png("RAnalysis/DESeq2/output/Day7/Day7.rlog_mean_sd.png", 1000, 1000, pointsize=20)
+meanSdPlot(assay(rlog.d7)) # shows the sd y axis (sq root of varaince in all samples) - flat curve may seem like a goals, BUT may be unreasonable in cases with MANY true DEGs from experimental conditions
 dev.off()
-## MA plot ------------------------------------------------------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-## DESeq2::plotMA(dds, ylim=c(-1,1), cex=1)
-# DO.primary_maplot <- function (resd0.primary, thresh=0.05, labelsig=TRUE, textcx=1, ...) {
-#   with(res, plot(baseMean, log2FoldChange, pch=20, cex=.5, log="x", ...))
-#   with(subset(resd0.primary, padj<thresh), points(baseMean, log2FoldChange, col="red", pch=20, cex=1.5))
-#   if (labelsig) {
-#     require(calibrate)
-#     with(subset(resd0.primary, padj<thresh), textxy(baseMean, log2FoldChange, labs=Gene, cex=textcx, col=2))
-#   }
-# }
-# png("Day0_primary_diffexpr-maplot.png", 1500, 1000, pointsize=20)
-# maplot(resdata.d0.primary)
-# dev.off()
-## Volcano plot with "significant" genes labeled ---------------------------------------------------------------- #
-volcanoplot <- function (resd0.primary, lfcthresh=2, sigthresh=0.05, main="Volcano Plot", legendpos="bottomright", labelsig=TRUE, textcx=1, ...) {
-  with(resd0.primary, plot(log2FoldChange, -log10(pvalue), pch=20, main=main, ...))
-  with(subset(resd0.primary, padj<sigthresh ), points(log2FoldChange, -log10(pvalue), pch=20, col="red", ...))
-  with(subset(resd0.primary, abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="orange", ...))
-  with(subset(resd0.primary, padj<sigthresh & abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="green", ...))
-  if (labelsig) {
-    require(calibrate)
-    with(subset(resd0.primary, padj<sigthresh & abs(log2FoldChange)>lfcthresh), textxy(log2FoldChange, -log10(pvalue), labs=Gene, cex=textcx, ...))
-  }
-  legend(legendpos, xjust=1, yjust=1, legend=c(paste("FDR<",sigthresh,sep=""), paste("|LogFC|>",lfcthresh,sep=""), "both"), pch=20, col=c("red","orange","green"))
-}
-png("Day0.PrimaryTreatment_diffexpr-volcanoplot.png", 1200, 1000, pointsize=20)
-volcanoplot(resdata.d0.primary, lfcthresh=1, sigthresh=0.05, textcx=.5, xlim=c(-4, 4))
+
+# PCA plot rlog ------------------------ #
+pcaData_d7 <- plotPCA(rlog.d7, intgroup = c( "Primary_Treatment", "Second_Treament"), returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d7, "percentVar"))
+png("RAnalysis/DESeq2/output/Day7/Day7.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d7, aes(x = PC1, y = PC2, color = Primary_Treatment, shape = Second_Treament)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=3) +
+  geom_point(size =6) +
+  theme_classic() +
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day7 (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
 dev.off()
-# convert to dataframe and view the downreg and upregulated genes
-dataframe_res.d0.ordered <- as.data.frame(res.d0_Ordered)
-dataframe_res.d0.ordered$Gene.ID <- rownames(dataframe_res.d0.ordered)
-View(dataframe_res.d0.ordered)
 
-res.d0.DOWNREG <- dataframe_res.d0.ordered %>%  # downregulated genes under moderate stress
-  dplyr::filter(log2FoldChange < 0) %>% 
-  dplyr::filter(padj < 0.1)
-View(res.d0.DOWNREG) # view downreg genes
+# Plot heat map rlog------------------------ #
+select <- order(rowMeans(counts(dds.d7,normalized=TRUE)), decreasing=TRUE)[1:20] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d7)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d7.rlog.heatmap<- pheatmap(assay(rlog.d7)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                           cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                           main = "Day7.rlog_heatmap")
+save_pheatmap(d7.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day7/Day7.rlog_heatmap.png")
 
-res.d0.UPREG <- dataframe_res.d0.ordered %>% 
-  dplyr::filter(log2FoldChange > 0) %>%   # upregualted genes under moderate stress
-  dplyr::filter(padj < 0.1)
-View(res.d0.UPREG)  # view upreg genes
+# ========================================================== 
+#
+# DAY 14   (3 CPM in 50% samples)
+# ========================================================== 
 
+# view the design for each of the d7 dds 
+design(dds.d14) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
+design(dds.d14.group) # ~All_Treatment - 1 (group)
+design(dds.d14.main) # ~Second_Treament + Primary_Treatment
 
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d14 <- DESeq(dds.d14) #  full model                                   wait for this to complete....
+dds.d14.group <- DESeq(dds.d14.group) # group model                       wait for this to complete....
+dds.d14.main <- DESeq(dds.d14.main) # main effect model                   wait for this to complete....
 
+# Q: What is the main effect (Primary treatment) during SECONDARY response to AMBINET? (MA vs AA)
+resd14._MAvAA <- results(dds.d14, contrast=c("Primary_Treatment", "M", "A"), alpha = 0.05)
+table(resd14._MAvAA$padj<0.05) # 4 DEGs
 
+# Q: What is the main effect (Primary treatment) during SECONDARY response to MODERATE? (MM vs AM)
+# This is, by definition, the main effect (Primary treatment) plus the interaction term 
+# (the extra condition effect in secondary treatment  'Severe' compared to Secondary Treatment 'Ambient').
+resd14._MMvAM <- results(dds.d14, list(c("Primary_Treatment_M_vs_A","Second_TreamentM.Primary_TreatmentM")))
+table(resd14._MMvAM$padj<0.05) # 7  DEGs
 
-#======================================================================================= #
-# DAY 7, pre filtered for 10 CPM in 50% samples
-#======================================================================================= #
-# dds.primary.d7
-# dds.second.d7
-# dds.ALL.d7
+# Q: What is the main effect (Primary treatment) during SECONDARY response to SEVERE? (MS vs AS)
+# This is, by definition, the main effect (Primary treatment) plus the interaction term 
+# (the extra condition effect in secondary treatment  'Severe' compared to Secondary Treatment 'Ambient').
+resd14._MSvAS <- results(dds.d14, list(c("Primary_Treatment_M_vs_A","Second_TreamentS.Primary_TreatmentM")))
+table(resd14._MSvAS$padj<0.05) # 2  DEGs
 
-# Primary treatment ==================================================================================================== #
-nrow(dds.primary.d7) # 8456 total genes pre filtered; FDR cutoff of 0.1 = 845.6 false positives; 0.05 = 422.8 flase positives
+#Effect of Severe vs. Moderate for the Primary Ambient individuals (AM v AS)
+resd14._AMvAS <- results(dds.d14, contrast= c(0,-1,1,0,0,0))
+table(resd14._AMvAS$padj<0.05) # 0 DEGs
 
-dds.primary.d7 <- DESeq(dds.primary.d7) # wait for this to complete....
-resultsNames(dds.primary.d7) # view the names of your results model 'Primary_Treatment_M_vs_A'
-resd7.primary <- results(dds.primary.d7, alpha = 0.05) # Get differential expression results
-hist(resd7.primary$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.primary$padj<0.05) # 49 DEGs, 8407 FALSE
-table(resd7.primary$pvalue<0.05) # 1005 DEGs, 7451 FALSE
-resd7.primary <- resd7.primary[order(resd7.primary$padj), ] ## Order by adjusted p-value
-resdata.d7.primary  <- merge(as.data.frame(resd7.primary), as.data.frame(counts(dds.primary.d7, normalized=TRUE)), by="row.names", sort=FALSE)## Merge with normalized count data
-names(resdata.d7.primary)[1] <- "Gene"
-head(resdata.d7.primary)
-## Write results
-path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day7/'
-write.csv(resdata.d7.primary, paste(path_out.d7, "Day7.PrimaryTreatment_diffexpr-results.csv"))
+# Interaction term for the main  effect (Primary Treatment) in Secondary Moderate versus Ambient
+resd14._MMvAM_MAvAA<- results(dds.d14, name="Second_TreamentM.Primary_TreatmentM", alpha = 0.05) # (MMvAM × MAvAA)
+table(resd14._MMvAM_MAvAA$padj<0.05) # 0 DEGs
 
+# Interaction term for the main  effect (Primary Treatment) in Secondary SEVERE versus Ambient
+resd14._MSvAS_MAvAA<- results(dds.d14, name="Second_TreamentS.Primary_TreatmentM", alpha = 0.05) # (MSvAS × MAvAA)
+table(resd14._MSvAS_MAvAA$padj<0.05) # 0 DEGs
 
-
-# Second treatment ==================================================================================================== #
-nrow(dds.second.d7) # 8456 total genes pre filtered; FDR cutoff of 0.1 = 845.6 false positives; 0.05 = 422.8 flase positives
-
-dds.second.d7 <- DESeq(dds.second.d7) # wait for this to complete....
-resultsNames(dds.second.d7) # view the names of your results model 'second_Treatment_M_vs_A'
-
-resd7.second.MvA <- results(dds.second.d7, name="Second_Treament_M_vs_A", alpha = 0.05) # Get differential expression results
-hist(resd7.second.MvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.second.MvA$padj<0.05) # 30 DEGs
-table(resd7.second.MvA$pvalue<0.05) # 759 DEGs -  obs. of histogram
-resd7.second.MvA <- resd7.second.MvA[order(resd7.second.MvA$padj), ] ## Order by adjusted p-value
-resdata.d7.second.MvA<- merge(as.data.frame(resd7.second.MvA), as.data.frame(counts(dds.second.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.second.MvA)[1] <- "Gene" # assign col 1
+# Interaction term for the main  effect (Primary Treatment) in Secondary SEVERE  versus MODERATE
+resd14._MSvAS_MMvAM= results(dds.d14, contrast=list("Second_TreamentS.Primary_TreatmentM", "Second_TreamentM.Primary_TreatmentM"), alpha = 0.05) # (MSvAS × MMvAM)
+table(resd14._MSvAS_MMvAM$padj<0.05) # 0 DEGs
 
 
-resd7.second.SvA <- results(dds.second.d7, name="Second_Treament_S_vs_A", alpha = 0.05) # Get differential expression results
-hist(resd7.second.SvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(resd7.second.SvA)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.second.SvA$padj<0.05) # 2 DEGs
-resd7.second.SvA <- resd7.second.SvA[order(resd7.second.SvA$padj), ] ## Order by adjusted p-value
-resdata.d7.second.SvA  <- merge(as.data.frame(resd7.second.SvA), as.data.frame(counts(dds.second.d7, normalized=TRUE)), by="row.names", sort=FALSE)
-names(resdata.d7.second.SvA)[1] <- "Gene" # assign col 1
+# ~ Main EFFECTS  ======================================================================================================================== #
+resultsNames(dds.d14.main) # view the names of your results model 
 
-## Write results
-path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day7/'
-write.csv(resdata.d7.second.MvA, paste(path_out.d7, "Day7.secondTreatment_MvA_diffexpr-results.csv"))
-write.csv(resdata.d7.second.SvA, paste(path_out.d7, "Day7.secondTreatment_SvA_diffexpr-results.csv"))
+# Main effect of Primary treatment (WITHOUT ref level in other factor - no interaction term in this model!!!)
+resd14._P.MvA<- results(dds.d14.main, name="Primary_Treatment_M_vs_A", alpha = 0.05) 
+table(resd14._P.MvA$padj<0.05) # 510 DEGs
+resd14._P.MvA <- resd14._P.MvA[order(resd14._P.MvA$padj), ] ## Order by adjusted p-value
+sum((resd14._P.MvA$log2FoldChange[1:510] >= 1) == TRUE) # 70 DEGs upregulated  (LFC >= 1)
+( sum((resd14._P.MvA$log2FoldChange[1:510] >= 1) == TRUE) / (table(resd14._P.MvA$padj<0.05))[2] ) * 100 # 13.72549 % DEGs upregulated (N = 9141)
+sum((resd14._P.MvA$log2FoldChange[1:510] <= -1) == TRUE) # 335 DEGs downregulated  (LFC <= -1)
+( sum((resd14._P.MvA$log2FoldChange[1:510] <= -1) == TRUE) / (table(resd14._P.MvA$padj<0.05))[2] ) * 100 # 65.68627 % DEGs downregulated (N = 9141)
 
+# What is the difference between secondary treatment 'moderate' WITHOUT considering the primary treament history?
+resd14._S.MvA<- results(dds.d14.main, name="Second_Treament_M_vs_A", alpha = 0.05)
+table(resd14._S.MvA$padj<0.05) # 0 DEGs
 
+# What is the difference between secondary treatment 'severe' WITHOUT considering the primary treament history?
+resd14._S.SvA<- results(dds.d14.main, name="Second_Treament_S_vs_A", alpha = 0.05)
+table(resd14._S.SvA$padj<0.05) # 0 DEGs
 
-# All treatment ==================================================================================================== #
-nrow(dds.second.d7) # 8456 total genes pre filtered; FDR cutoff of 0.1 = 845.6 false positives; 0.05 = 422.8 flase positives
+# ~ Group - MAIN EFFECTS(ACCOUNTING FOR SECONDARY-TREATMENT SPECIFIC EFFECTS) ============================================================================================ #
+resultsNames(dds.d14.group) # view the names of your results model 
 
-dds.ALL.d7 <- DESeq(dds.ALL.d7) # wait for this to complete....
-resultsNames(dds.ALL.d7) # view the names of your results model 
-# Get differential expression results
-resd7.all.AM_vs_AA<- results(dds.ALL.d7, name="All_Treatment_AM_vs_AA", alpha = 0.05)
-hist(resd7.all.AM_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.all.AM_vs_AA$padj<0.05) # 0 DEGs
-resd7.all.AM_vs_AA <- resd7.all.AM_vs_AA[order(resd7.all.AS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d7.all.AM_vs_AA  <- merge(as.data.frame(resd7.all.AM_vs_AA), as.data.frame(counts(dds.ALL.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.all.AM_vs_AA)[1] <- "Gene" # assign col 1
+# ALL primary history regarless of subsequent exposure (Ambient versus Moderate)
+res.d14_P.MvA_group <- results(dds.d14.group, contrast = list(c("All_TreatmentMA", "All_TreatmentMM", "All_TreatmentMS"),c("All_TreatmentAA", "All_TreatmentAM", "All_TreatmentAS")),  alpha= 0.05)
+table(res.d14_P.MvA_group$padj<0.05) # 511 DEGs
+res.d14_P.MvA_group <- res.d14_P.MvA_group[order(res.d14_P.MvA_group$padj), ] ## Order by adjusted p-value
+sum((res.d14_P.MvA_group$log2FoldChange[1:511] >= 1) == TRUE) # 111 DEGs upregulated  (LFC >= 1)
+( sum((res.d14_P.MvA_group$log2FoldChange[1:511] >= 1) == TRUE) / (table(res.d14_P.MvA_group$padj<0.05))[2] ) * 100 # 21.72211 % DEGs upregulated (N = 9141)
+sum((res.d14_P.MvA_group$log2FoldChange[1:511] <= -1) == TRUE) #  396 DEGs downregulated  (LFC <= -1)
+( sum((res.d14_P.MvA_group$log2FoldChange[1:511] <= -1) == TRUE) / (table(res.d14_P.MvA_group$padj<0.05))[2] ) * 100 # 77.49511 % DEGs downregulated (N = 9141)
 
-resd7.all.AS_vs_AA<- results(dds.ALL.d7, name="All_Treatment_AS_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd7.all.AS_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.all.AS_vs_AA$padj<0.05) # 7  DEGs
-resd7.all.AS_vs_AA <- resd7.all.AS_vs_AA[order(resd7.all.AS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d7.all.AS_vs_AA  <- merge(as.data.frame(resd7.all.AS_vs_AA), as.data.frame(counts(dds.ALL.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.all.AS_vs_AA)[1] <- "Gene" # assign col 1
+# CONSTANT exposure to SAME treatment
+resd14._AAvMM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 14 more days)
+table(resd14._AAvMM_group$padj<0.05) # 11 DEGs
+# SECOND exposure by PRIMARY treatment
+resd14._AAvMA_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05) # Second Ambient
+table(resd14._AAvMA_group$padj<0.05) # 4 DEGs
+resd14._AMvMM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMM")),  alpha= 0.05) # Second Moderate
+table(resd14._AMvMM_group$padj<0.05) # 12 DEGs
+resd14._ASvMS_group <- results(dds.d14.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMS")),  alpha= 0.05) # Second Severe
+table(resd14._ASvMS_group$padj<0.05) # 2 DEGs
+# AMBIENT history and subseqent treatment 
+resd14._AAvAM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAM")),  alpha= 0.05) # Amb - response to Moderate
+table(resd14._AAvAM_group$padj<0.05) # 0 DEGs
+resd14._AAvAS_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to Severe
+table(resd14._AAvAS_group$padj<0.05) # 0 DEGs
+resd14._AMvAS_group <- results(dds.d14.group, contrast = list(("All_TreatmentAM"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to moderate versus Severe
+table(resd14._AMvAS_group$padj<0.05) # 0 DEGs
+# MODERATE history and subseqent treatment 
+resd14._MMvMA_group <- results(dds.d14.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMA")),  alpha= 0.05) # Mod - response to Ambient
+table(resd14._MMvMA_group$padj<0.05) # 0 DEGs
+resd14._MMvMS_group <- results(dds.d14.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMS")),  alpha= 0.05) # Mod - response to Severe
+table(resd14._MMvMS_group$padj<0.05) # 0 DEGs
+resd14._MAvMS_group <- results(dds.d14.group, contrast = list(("All_TreatmentMA"),("All_TreatmentMS")),  alpha= 0.05) # Amb - response to ambient versus Severe
+table(resd14._MAvMS_group$padj<0.05) # 0 DEGs
+# OTHER pairwise interactions
+#AA
+resd14._AAvMM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 14 more days)
+table(resd14._AAvMM_group$padj<0.05) # 11 DEGs
+resd14._AAvMA_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd14._AAvMA_group$padj<0.05) # 2 DEGs
+resd14._AAvMS_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd14._AAvMS_group$padj<0.05) # 39 DEGs
+#AM
+resd14._AMvMA_group <- results(dds.d14.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd14._AMvMA_group$padj<0.05) # 16 DEGs
+resd14._AMvMS_group <- results(dds.d14.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd14._AMvMS_group$padj<0.05) # 0 DEGs
+#AS
+resd14._ASvMA_group <- results(dds.d14.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd14._ASvMA_group$padj<0.05) # 11 DEGs
+resd14._ASvMM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMM")),  alpha= 0.05)
+table(resd14._ASvMM_group$padj<0.05) # 1 DEGs
+# Second treatment effects (regarless of prior history)
+#A v M
+resd14._S.AvM_group <- results(dds.d14.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAM", "All_TreatmentMM")),  alpha= 0.05)
+table(resd14._S.AvM_group$padj<0.05) # 0 DEGs
 
-resd7.all.MA_vs_AA<- results(dds.ALL.d7, name="All_Treatment_MA_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd7.all.MA_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.all.MA_vs_AA$padj<0.05) # 7 DEGs
-resd7.all.MA_vs_AA <- resd7.all.MA_vs_AA[order(resd7.all.MA_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d7.all.MA_vs_AA   <- merge(as.data.frame(resd7.all.MA_vs_AA), as.data.frame(counts(dds.ALL.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.all.MA_vs_AA)[1] <- "Gene" # assign col 1
+# A v S
+resd14._S.AvS_group <- results(dds.d14.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd14._S.AvS_group$padj<0.05) # 0  DEGs
 
-resd7.all.MM_vs_AA<- results(dds.ALL.d7, name="All_Treatment_MM_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd7.all.MM_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.all.MM_vs_AA$padj<0.05) # 20 DEGs
-resd7.all.MM_vs_AA <- resd7.all.MM_vs_AA[order(resd7.all.MM_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d7.all.MM_vs_AA  <- merge(as.data.frame(resd7.all.MM_vs_AA), as.data.frame(counts(dds.ALL.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.all.MM_vs_AA)[1] <- "Gene" # assign col 1
-
-resd7.all.MS_vs_AA<- results(dds.ALL.d7, name="All_Treatment_MS_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd7.all.MS_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d7)*0.05),col="red") # add line at expected 5% false positive
-table(resd7.all.MS_vs_AA$padj<0.05) # 6 DEGs
-resd7.all.MS_vs_AA <- resd7.all.MS_vs_AA[order(resd7.all.MS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d7.all.MS_vs_AA  <- merge(as.data.frame(resd7.all.MS_vs_AA), as.data.frame(counts(dds.ALL.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d7.all.MS_vs_AA)[1] <- "Gene" # assign col 1
-
-## Write results
-path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day7/'
-write.csv(resdata.d7.all.AM_vs_AA, paste(path_out.d7, "Day7.AllTreatment_AMvsAA_diffexpr-results.csv"))
-write.csv(resdata.d7.all.AS_vs_AA, paste(path_out.d7, "Day7.AllTreatment_ASvsAA_diffexpr-results.csv"))
-write.csv(resdata.d7.all.MA_vs_AA, paste(path_out.d7, "Day7.AllTreatment_MAvsAA_diffexpr-results.csv"))
-write.csv(resdata.d7.all.MM_vs_AA, paste(path_out.d7, "Day7.AllTreatment_MMvsAA_diffexpr-results.csv"))
-write.csv(resdata.d7.all.MS_vs_AA, paste(path_out.d7, "Day7.AllTreatment_MSvsAA_diffexpr-results.csv"))
-
-
-
-#======================================================================================= #
-# DAY 14;  pre filtered for 10 CPM in 50% samples
-#======================================================================================= #
-path_out.d14 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day14/'
-
-# Primary treatment ==================================================================================================== #
-nrow(dds.primary.d14) # 8541 total genes pre filtered
-
-dds.primary.d14 <- DESeq(dds.primary.d14) # wait for this to complete....
-resultsNames(dds.primary.d14) # view the names of your results model 'Primary_Treatment_M_vs_A'
-resd14.primary <- results(dds.primary.d14, alpha = 0.05) # Get differential expression results
-hist(resd14.primary$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.primary$padj<0.05) # 466 DEGs, 7743 FALSE
-table(resd14.primary$pvalue<0.05) # 1302 DEGs, 7239 FALSE
-resd14.primary <- resd14.primary[order(resd14.primary$padj), ] ## Order by adjusted p-value
-resdata.d14.primary  <- merge(as.data.frame(resd14.primary), as.data.frame(counts(dds.primary.d14, normalized=TRUE)), by="row.names", sort=FALSE)## Merge with normalized count data
-names(resdata.d14.primary)[1] <- "Gene"
-head(resdata.d14.primary)
-## Write results
-write.csv(resdata.d14.primary, paste(path_out.d14, "Day14.PrimaryTreatment_diffexpr-results.csv"))
+#M v S
+resd14._S.MvS_group <- results(dds.d14.group, contrast = list(c("All_TreatmentAM", "All_TreatmentMM"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd14._S.MvS_group$padj<0.05) # 0 DEGs
 
 
 
-# Second treatment ==================================================================================================== #
-nrow(dds.second.d14) # 8541 total genes pre filtered
-
-dds.second.d14 <- DESeq(dds.second.d14) # wait for this to complete....
-resultsNames(dds.second.d14) # view the names of your results model 'second_Treatment_M_vs_A'
-
-resd14.second.MvA <- results(dds.second.d14, name="Second_Treament_M_vs_A", alpha = 0.05) # Get differential expression results
-hist(resd14.second.MvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.second.MvA$padj<0.05) # 0 DEGs
-table(resd14.second.MvA$pvalue<0.05) # 252 DEGs -  obs. of histogram
-resd14.second.MvA <- resd14.second.MvA[order(resd14.second.MvA$padj), ] ## Order by adjusted p-value
-resdata.d14.second.MvA<- merge(as.data.frame(resd14.second.MvA), as.data.frame(counts(dds.second.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.second.MvA)[1] <- "Gene" # assign col 1
-
-
-resd14.second.SvA <- results(dds.second.d14, name="Second_Treament_S_vs_A", alpha = 0.05) # Get differential expression results
-hist(resd14.second.SvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(resd14.second.SvA)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.second.SvA$padj<0.05) # 3 DEGs
-resd14.second.SvA <- resd14.second.SvA[order(resd14.second.SvA$padj), ] ## Order by adjusted p-value
-resdata.d14.second.SvA  <- merge(as.data.frame(resd14.second.SvA), as.data.frame(counts(dds.second.d14, normalized=TRUE)), by="row.names", sort=FALSE)
-names(resdata.d14.second.SvA)[1] <- "Gene" # assign col 1
-
-## Write results
-write.csv(resdata.d14.second.MvA, paste(path_out.d14, "Day14.secondTreatment_MvA_diffexpr-results.csv"))
-write.csv(resdata.d14.second.SvA, paste(path_out.d14, "Day14.secondTreatment_SvA_diffexpr-results.csv"))
+# Write results
+# path_out.d14 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day14/'
+# write.csv(resdata.d14.all.prim.M_vs_A, paste(path_out.d14, "Day14.PrimaryTreament_diffexpr-results.csv"))
+# write.csv(resdata.d14.second_M_vs_A, paste(path_out.d14, "Day14.SecondTreament_MvsA_diffexpr-results.csv"))
+# write.csv(resdata.d14.all.second_S_vs_A, paste(path_out.d14, "Day14.SecondTreament_SvsA_diffexpr-results.csv"))
 
 
 
-# All treatment ==================================================================================================== #
-nrow(dds.second.d14) # 8456 total genes pre filtered; FDR cutoff of 0.1 = 845.6 false positives; 0.05 = 422.8 flase positives
+# volcano plot ------------------------------------------------------------------------------------------------------ #
+# Effect of primary treatment 'res.d14_P.MvA_group' - 111 DEGs
+png("RAnalysis/DESeq2/output/Day14/Day14.Primary_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(res.d14_P.MvA_group,
+                lab = rownames(res.d14_P.MvA_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day14 Primary treatment (M v A)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.145)
+dev.off()
 
-dds.ALL.d14 <- DESeq(dds.ALL.d14) # wait for this to complete....
-resultsNames(dds.ALL.d14) # view the names of your results model 
-# Get differential expression results
-resd14.all.AM_vs_AA<- results(dds.ALL.d14, name="All_Treatment_AM_vs_AA", alpha = 0.05)
-hist(resd14.all.AM_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.0
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.all.AM_vs_AA$padj<0.05) # 1 DEGs
-resd14.all.AM_vs_AA <- resd14.all.AM_vs_AA[order(resd14.all.AS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d14.all.AM_vs_AA  <- merge(as.data.frame(resd14.all.AM_vs_AA), as.data.frame(counts(dds.ALL.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.all.AM_vs_AA)[1] <- "Gene" # assign col 1
+# Effect of second treatment M v. A 'resd14._S.AvM_group' - 114 DEGs
+png("RAnalysis/DESeq2/output/Day14/Day14.SecondAvM_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd14._S.AvM_group,
+                lab = rownames(resd14._S.AvM_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day14 Second treatment (A v M)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.145)
+dev.off()
 
-resd14.all.AS_vs_AA<- results(dds.ALL.d14, name="All_Treatment_AS_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd14.all.AS_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.all.AS_vs_AA$padj<0.05) # 1  DEGs
-resd14.all.AS_vs_AA <- resd14.all.AS_vs_AA[order(resd14.all.AS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d14.all.AS_vs_AA  <- merge(as.data.frame(resd14.all.AS_vs_AA), as.data.frame(counts(dds.ALL.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.all.AS_vs_AA)[1] <- "Gene" # assign col 1
+# Effect of second treatment S v. A 'resd14._S.AvS_group' - 1 DEG
+png("RAnalysis/DESeq2/output/Day14/Day14.SecondAvS_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd14._S.AvS_group,
+                lab = rownames(resd14._S.AvS_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day14 Second treatment (A v S)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1.0,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.145)
+dev.off()
 
-resd14.all.MA_vs_AA<- results(dds.ALL.d14, name="All_Treatment_MA_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd14.all.MA_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.all.MA_vs_AA$padj<0.05) # 5 DEGs
-resd14.all.MA_vs_AA <- resd14.all.MA_vs_AA[order(resd14.all.MA_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d14.all.MA_vs_AA   <- merge(as.data.frame(resd14.all.MA_vs_AA), as.data.frame(counts(dds.ALL.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.all.MA_vs_AA)[1] <- "Gene" # assign col 1
+# Effect of second treatment M v. S 'resd14._S.MvS_group' - 1 DEG
+png("RAnalysis/DESeq2/output/Day14/Day14.SecondMvs_VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd14._S.MvS_group,
+                lab = rownames(resd14._S.MvS_group),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Day14 Second treatment (M v S)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1.0,
+                pCutoff = 0.05,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.145)
+dev.off()
 
-resd14.all.MM_vs_AA<- results(dds.ALL.d14, name="All_Treatment_MM_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd14.all.MM_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.all.MM_vs_AA$padj<0.05) # 12 DEGs
-resd14.all.MM_vs_AA <- resd14.all.MM_vs_AA[order(resd14.all.MM_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d14.all.MM_vs_AA  <- merge(as.data.frame(resd14.all.MM_vs_AA), as.data.frame(counts(dds.ALL.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.all.MM_vs_AA)[1] <- "Gene" # assign col 1
+# =========================================
+# Data transformations for heatmap and PCA visuals 
+# ============================================================= 
+rlog.d14<- rlogTransformation(dds.d14) #  full model                       wait for this to complete.... 
 
-resd14.all.MS_vs_AA<- results(dds.ALL.d14, name="All_Treatment_MS_vs_AA", alpha = 0.05) # FDR 5% 
-hist(resd14.all.MS_vs_AA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.primary.d14)*0.05),col="red") # add line at expected 5% false positive
-table(resd14.all.MS_vs_AA$padj<0.05) # 44 DEGs
-resd14.all.MS_vs_AA <- resd14.all.MS_vs_AA[order(resd14.all.MS_vs_AA$padj), ] ## Order by adjusted p-value
-resdata.d14.all.MS_vs_AA  <- merge(as.data.frame(resd14.all.MS_vs_AA), as.data.frame(counts(dds.ALL.d14, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d14.all.MS_vs_AA)[1] <- "Gene" # assign col 1
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_histogram.png", 1000, 1000, pointsize=20)# diagnostics of transformation # Histogram and sd plot
+hist(assay(rlog.d14)) # view histogram 
+dev.off()
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_mean_sd.png", 1000, 1000, pointsize=20)
+meanSdPlot(assay(rlog.d14)) # shows the sd y axis (sq root of varaince in all samples) - flat curve may seem like a goals, BUT may be unreasonable in cases with MANY true DEGs from experimental conditions
+dev.off()
 
-## Write results
-write.csv(resdata.d14.all.AM_vs_AA, paste(path_out.d14, "Day14.AllTreatment_AMvsAA_diffexpr-results.csv"))
-write.csv(resdata.d14.all.AS_vs_AA, paste(path_out.d14, "Day14.AllTreatment_ASvsAA_diffexpr-results.csv"))
-write.csv(resdata.d14.all.MA_vs_AA, paste(path_out.d14, "Day14.AllTreatment_MAvsAA_diffexpr-results.csv"))
-write.csv(resdata.d14.all.MM_vs_AA, paste(path_out.d14, "Day14.AllTreatment_MMvsAA_diffexpr-results.csv"))
-write.csv(resdata.d14.all.MS_vs_AA, paste(path_out.d14, "Day14.AllTreatment_MSvsAA_diffexpr-results.csv"))
+# PCA plot rlog ------------------------ #
+pcaData_d14 <- plotPCA(rlog.d14, intgroup = c( "Primary_Treatment", "Second_Treament"), returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d14, "percentVar"))
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d14, aes(x = PC1, y = PC2, color = Primary_Treatment, shape = Second_Treament)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=3) +
+  geom_point(size =6) +
+  theme_classic() +
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day14 (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
+dev.off()
+
+# Plot heat map rlog------------------------ #
+select <- order(rowMeans(counts(dds.d14,normalized=TRUE)), decreasing=TRUE)[1:20] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d14)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d14.rlog.heatmap<- pheatmap(assay(rlog.d14)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                           cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                           main = "Day7.rlog_heatmap")
+save_pheatmap(d14.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day14/Day14.rlog_heatmap.png")
 
 
+# Plot dispersions ------------------------------------------------------------------------------------------------------ #
+png("RAnalysis/DESeq2/output/Day14/Day14-dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.d14, main="Day 14 data dispersions")
+dev.off()
 
+# Heat maps and Principal components analysis ============================================================================= #
 
-#======================================================================================= #
-# DAY 21                               
-#======================================================================================= #
-# dds.primary.d21
-# dds.second.d21
-# dds.third.d21
-# dds.ALL.d21
+#  Primary_Treatment_M_vs_A 
 
+# ALL 511 DEGS
+res14.MvA <- res.d14_P.MvA_group[c(1:511),] # 511 total DEGs - lets call this dataset for a PCA and heat map 
+res14.MvA # view the last pdj - should be < 0.05 
+dds.d14.MvA<- dds.d14[(rownames(res14.MvA_UPREG))]
+rlog.dds.d14.MvA<- rlogTransformation(dds.d14.MvA) # rlog transformation 
+# PCA plot rlog 
+pcaData_d14 <- plotPCA(rlog.dds.d14.MvA, intgroup = c( "Primary_Treatment", "Second_Treament"), returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d14, "percentVar"))
+png("RAnalysis/DESeq2/output/Day14/Day14.DEGs.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d14, aes(x = PC1, y = PC2, color = Primary_Treatment, shape = Second_Treament)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=3) +
+  geom_point(size =6) +
+  theme_classic() +
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day14 DEGs only (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
+dev.off()
+# Plot heat map rlog
+select <- order(rowMeans(counts(dds.d14.MvA,normalized=TRUE)), decreasing=TRUE)[1:25] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d14.MvA)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d14_DEGs.rlog.heatmap<- pheatmap(assay(rlog.dds.d14.MvA)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                           cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                           main = "Day14.DEGsrlog_heatmap")
+save_pheatmap(d14_DEGs.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day14/Day14.DEGsrlog_heatmap.png")
+
+# ========================================================== 
+#
+# DAY 21   (3 CPM in 50% samples)                          
+# ========================================================== 
 path_out.d21 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/Day21/'
 
-# Primary treatment ==================================================================================================== #
+# view the design for each of the d7 dds 
+design(dds.d21) # ~Primary_Treatment + Second_Treament + Third_Treatment + Primary_Treatment:Second_Treament + Primary_Treatment:Third_Treatment + Second_Treament:Third_Treatment
+design(dds.d21.group) # ~All_Treatment -1  (group)
+design(dds.d21.main) # ~Third_Treatment + Second_Treament + Primary_Treatment
 
-nrow(dds.primary.d21) # 8325 total genes pre filtered
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d21 <- DESeq(dds.d21) #  full model                                   wait for this to complete....
+dds.d21.group <- DESeq(dds.d21.group) # group model                       wait for this to complete....
+dds.d21.main <- DESeq(dds.d21.main) # main effect model                   wait for this to complete....
 
-dds.primary.d21 <- DESeq(dds.primary.d21) # wait for this to complete....
-resultsNames(dds.primary.d21) # view the names of your results model 'Primary_Treatment_M_vs_A'
+# ~ FULL MODEL EFFECTS  ======================================================================================================================== #
+resultsNames(dds.d21) # view the names of your results model 
 
-resd21.primary <- results(dds.primary.d21, alpha = 0.05) # FDR 5%  # Get differential expression results
-hist(resd21.primary$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(resd21.primary)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.primary$padj<0.05) # 148 DEGs
-resd21.primary <- resd21.primary[order(resd21.primary$padj), ] ## Order by adjusted p-value
-resdata.d21.primary  <- merge(as.data.frame(resd21.primary), as.data.frame(counts(dds.primary.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.primary)[1] <- "Gene"  # assign col 1
-head(resdata.d21.primary)
-## Write results
-write.csv(resdata.d21.primary, paste(path_out.d21, "Day21.PrimaryTreatment_diffexpr-results.csv"))
+resd21._full_1<- results(dds.d21, name="Primary_Treatment_M_vs_A", alpha = 0.05)
+table(resd21._full_1$padj<0.05) # 99 DEGs
 
-# Second treatment ==================================================================================================== #
+resd21._full_2<- results(dds.d21, name="Second_Treament_M_vs_A", alpha = 0.05)
+table(resd21._full_2$padj<0.05) # 0 DEGs
 
-dds.second.d21 <- DESeq(dds.second.d21) # wait for this to complete....
-resultsNames(dds.second.d21) # view the names of your results model 
-# Get differential expression results
-resd21.second.MvA<- results(dds.second.d21, name="Second_Treament_M_vs_A", alpha = 0.05) # FDR 5% 
-hist(resd21.second.MvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.second.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.second.MvA$padj<0.05) # 2 DEGs
-resd21.second.MvA <- resd14.all.MM_vs_AA[order(resd21.second.MvA$padj), ] ## Order by adjusted p-value
-resdata.d21.second.MvA  <- merge(as.data.frame(resd21.second.MvA), as.data.frame(counts(dds.second.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.second.MvA)[1] <- "Gene" # assign col 1
+resd21._full_3<- results(dds.d21, name="Second_Treament_S_vs_A", alpha = 0.05)
+table(resd21._full_3$padj<0.05) # 0 DEGs
 
-resd21.second.SvA<- results(dds.second.d21, name="Second_Treament_S_vs_A", alpha = 0.05) # FDR 5% 
-hist(resd21.second.SvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.second.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.second.SvA$padj<0.05) # 0 DEGs
-resd21.second.SvA <- resd21.second.SvA[order(resd21.second.SvA$padj), ] ## Order by adjusted p-value
-resdata.d21.second.SvA  <- merge(as.data.frame(resd21.second.SvA), as.data.frame(counts(dds.second.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.second.SvA)[1] <- "Gene" # assign col 1
+resd21._full_4<- results(dds.d21, name="Third_Treatment_M_vs_A", alpha = 0.05)
+table(resd21._full_4$padj<0.05) #  0 DEGs
 
-## Write results
-write.csv(resdata.d21.second.MvA, paste(path_out.d21, "Day21.secondTreatment_MvA_diffexpr-results.csv"))
-write.csv(resdata.d21.second.SvA, paste(path_out.d21, "Day21.secondTreatment_SvA_diffexpr-results.csv"))
+resd21._full_5<- results(dds.d21, name="Primary_TreatmentM.Second_TreamentM", alpha = 0.05)
+table(resd21._full_5$padj<0.05) # 89 DEGs
 
-# Third treatment ==================================================================================================== #
 
-dds.third.d21 <- DESeq(dds.third.d21) # wait for this to complete....
-resultsNames(dds.third.d21) # view the names of your results model 
-# Get differential expression results
-resd21.third.MvA <- results(dds.third.d21, name="Third_Treatment_M_vs_A", alpha = 0.05) # FDR 5% 
-hist(resd21.third.MvA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.third.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.third.MvA$padj<0.05) # 0 DEGs
-resd21.third.MvA <- resd21.third.MvA[order(resd21.third.MvA$padj), ] ## Order by adjusted p-value
-resdata.d21.third.MvA <- merge(as.data.frame(resd21.third.MvA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.third.MvA)[1] <- "Gene" # assign col 1
-## Write results
-write.csv(resdata.d21.third.MvA, paste(path_out.d21, "Day21.thirdTreatment_MvA_diffexpr-results.csv"))
 
-# All treatment (Prim + Second + Third; ref level "A") =============================================================== #
 
-dds.All.d21 <- DESeq(dds.ALL.d21) # wait for this to complete....
-resultsNames(dds.All.d21) # view the names of your results model 
-
 
-resd21.All.Primary_Treatment_M_vs_A <- results(dds.All.d21, name="Primary_Treatment_M_vs_A", alpha = 0.05) # FDR 5% 
-hist(resd21.All.Primary_Treatment_M_vs_A$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.Primary_Treatment_M_vs_A$padj<0.05) # 221 DEGs
-resd21.All.Primary_Treatment_M_vs_A <- resd21.All.Primary_Treatment_M_vs_A[order(resd21.All.Primary_Treatment_M_vs_A$padj), ] ## Order by adjusted p-value
-resdata.d21.All.Primary_Treatment_M_vs_A  <- merge(as.data.frame(resd21.All.Primary_Treatment_M_vs_A), as.data.frame(counts(dds.All.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.Primary_Treatment_M_vs_A)[1] <- "Gene" # assign col 1
-View(resdata.d21.All.Primary_Treatment_M_vs_A)
-
-
+resd21._full_6<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Primary_TreatmentM.Second_TreamentS")))
+table(resd21._full_6$padj<0.05) # 9 DEGs
 
+resd21._full_7<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Primary_TreatmentM.Third_TreatmentM")))
+table(resd21._full_7$padj<0.05) # 10 DEGs
 
+resd21._full_8<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Second_TreamentM.Third_TreatmentM")))
+table(resd21._full_8$padj<0.05) # 34 DEGs
 
-
-
-
-
-
-
-
-# Get differential expression results  [ previous results for the ALL_Treatment as three characteris (AAA vs AMA, AAA vs MSM...etc...) ]
-
-resd21.All.AAM_vs_AAA <- results(dds.All.d21, name="All_Treatment_AAM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.AAM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.AAM_vs_AAA$padj<0.05) # 1 DEGs
-resd21.All.AAM_vs_AAA <- resd21.All.AAM_vs_AAA[order(resd21.All.AAM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.AAM_vs_AAA  <- merge(as.data.frame(resd21.All.AAM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.AAM_vs_AAA)[1] <- "Gene" # assign col 1
-
-
-resd21.All.AMA_vs_AAA <- results(dds.All.d21, name="All_Treatment_AMA_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.AMA_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.AMA_vs_AAA$padj<0.05) # 1 DEGs
-resd21.All.AMA_vs_AAA <- resd21.All.AMA_vs_AAA[order(resd21.All.AMA_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.AMA_vs_AAA  <- merge(as.data.frame(resd21.All.AMA_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.AMA_vs_AAA)[1] <- "Gene" # assign col 1
+resd21._full_9<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Second_TreamentS.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 178 DEGs
 
 
-resd21.All.AMM_vs_AAA <- results(dds.All.d21, name="All_Treatment_AMM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.AMM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.AMM_vs_AAA$padj<0.05) # 1 DEGs
-table(resd21.All.AMM_vs_AAA$pvalue<0.05) # 790 DEGs
-resd21.All.AMM_vs_AAA <- resd21.All.AMM_vs_AAA[order(resd21.All.AMM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.AMM_vs_AAA  <- merge(as.data.frame(resd21.All.AMM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.AMM_vs_AAA)[1] <- "Gene" # assign col 1
 
 
-resd21.All.ASA_vs_AAA <- results(dds.All.d21, name="All_Treatment_ASA_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.ASA_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.ASA_vs_AAA$padj<0.05) # 2 DEGs
-table(resd21.All.ASA_vs_AAA$pvalue<0.05) # 523 DEGs
-resd21.All.ASA_vs_AAA <- resd21.All.ASA_vs_AAA[order(resd21.All.ASA_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.ASA_vs_AAA  <- merge(as.data.frame(resd21.All.ASA_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.ASA_vs_AAA)[1] <- "Gene" # assign col 1
+resd21._full_9<- results(dds.d21, list(c("Second_Treament_M_vs_A","Primary_TreatmentM.Second_TreamentS")))
+table(resd21._full_9$padj<0.05) # 12 DEGs
 
+resd21._full_9<- results(dds.d21, list(c("Second_Treament_M_vs_A","Primary_TreatmentM.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 0 DEGs
 
-resd21.All.ASM_vs_AAA <- results(dds.All.d21, name="All_Treatment_ASM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.ASM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.ASM_vs_AAA$padj<0.05) # 3 DEGs
-table(resd21.All.ASM_vs_AAA$pvalue<0.05) # 718 DEGs
-resd21.All.ASM_vs_AAA <- resd21.All.ASM_vs_AAA[order(resd21.All.ASM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.ASM_vs_AAA  <- merge(as.data.frame(resd21.All.ASM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.ASM_vs_AAA)[1] <- "Gene" # assign col 1
+resd21._full_9<- results(dds.d21, list(c("Second_Treament_M_vs_A","Second_TreamentM.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 15 DEGs
 
+resd21._full_9<- results(dds.d21, list(c("Second_Treament_M_vs_A","Second_TreamentS.Third_TreatmentM"))) 
+table(resd21._full_9$padj<0.05) # 182 DEGs
 
-resd21.All.MAA_vs_AAA <- results(dds.All.d21, name="All_Treatment_MAA_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MAA_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MAA_vs_AAA$padj<0.05) # 67 DEGs
-table(resd21.All.MAA_vs_AAA$pvalue<0.05) # 1083 DEGs
-resd21.All.MAA_vs_AAA <- resd21.All.MAA_vs_AAA[order(resd21.All.MAA_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MAA_vs_AAA  <- merge(as.data.frame(resd21.All.MAA_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MAA_vs_AAA)[1] <- "Gene" # assign col 1
 
 
-resd21.All.MAM_vs_AAA <- results(dds.All.d21, name="All_Treatment_MAM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MAM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MAM_vs_AAA$padj<0.05) # 19 DEGs
-table(resd21.All.MAM_vs_AAA$pvalue<0.05) # 561 DEGs
-resd21.All.MAM_vs_AAA <- resd21.All.MAM_vs_AAA[order(resd21.All.MAM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MAM_vs_AAA  <- merge(as.data.frame(resd21.All.MAM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MAM_vs_AAA)[1] <- "Gene" # assign col 1
+resd21._full_9<- results(dds.d21, list(c("Third_Treatment_M_vs_A","Primary_TreatmentM.Second_TreamentS")))
+table(resd21._full_9$padj<0.05) # 57 DEGs
 
+resd21._full_9<- results(dds.d21, list(c("Third_Treatment_M_vs_A","Primary_TreatmentM.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 2 DEGs
 
-resd21.All.MMA_vs_AAA <- results(dds.All.d21, name="All_Treatment_MMA_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MMA_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MMA_vs_AAA$padj<0.05) # 1 DEGs
-table(resd21.All.MMA_vs_AAA$pvalue<0.05) # 469 DEGs
-resd21.All.MMA_vs_AAA <- resd21.All.MMA_vs_AAA[order(resd21.All.MMA_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MMA_vs_AAA  <- merge(as.data.frame(resd21.All.MMA_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MMA_vs_AAA)[1] <- "Gene" # assign col 1
-
-
-resd21.All.MMM_vs_AAA <- results(dds.All.d21, name="All_Treatment_MMM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MMM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MMM_vs_AAA$padj<0.05) # 1 DEGs
-table(resd21.All.MMM_vs_AAA$pvalue<0.05) # 422 DEGs
-resd21.All.MMM_vs_AAA <- resd21.All.MMM_vs_AAA[order(resd21.All.MMM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MMM_vs_AAA  <- merge(as.data.frame(resd21.All.MMM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MMM_vs_AAA)[1] <- "Gene" # assign col 1
-
-
-resd21.All.MSA_vs_AAA <- results(dds.All.d21, name="All_Treatment_MSA_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MSA_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MSA_vs_AAA$padj<0.05) # 3 DEGs
-table(resd21.All.MSA_vs_AAA$pvalue<0.05) # 379 DEGs
-resd21.All.MSA_vs_AAA <- resd21.All.MSA_vs_AAA[order(resd21.All.MSA_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MSA_vs_AAA  <- merge(as.data.frame(resd21.All.MSA_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MSA_vs_AAA)[1] <- "Gene" # assign col 1
-
-
-resd21.All.MSM_vs_AAA <- results(dds.All.d21, name="All_Treatment_MSM_vs_AAA", alpha = 0.05) # FDR 5% 
-hist(resd21.All.MSM_vs_AAA$pvalue, breaks=20, col="grey") # view histogram,  about 425 genes are likely false positives, alpha = 0.05 FDR is good!
-abline(h=(nrow(dds.ALL.d21)*0.05),col="red") # add line at expected 5% false positive
-table(resd21.All.MSM_vs_AAA$padj<0.05) # 3 DEGs
-table(resd21.All.MSM_vs_AAA$pvalue<0.05) # 633 DEGs
-resd21.All.MSM_vs_AAA <- resd21.All.MSM_vs_AAA[order(resd21.All.MSM_vs_AAA$padj), ] ## Order by adjusted p-value
-resdata.d21.All.MSM_vs_AAA  <- merge(as.data.frame(resd21.All.MSM_vs_AAA), as.data.frame(counts(dds.third.d21, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
-names(resdata.d21.All.MSM_vs_AAA)[1] <- "Gene" # assign col 1
-
-## Write results
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Plot dispersions -------------------------------------------------------------------- #
-png("Day21.AllTreatment-dispersions.png", 1000, 1000, pointsize=20)
-plotDispEsts(dds.All.d21, main="Day21.AllTreatment_Dispersion plot")
-dev.off()
-
-# Regularized log transformation for clustering/heatmaps, etc ------------------------- #
-rld.d21.All<- rlogTransformation(dds.All.d21) # rlog transform (regularized log)
-head(assay(rld.d21.All)) # view first few rows
-hist(assay(rld.d21.All)) # view histogram 
-
-# Colors for plots below; Use RColorBrewer, better and assign mycols variable --------- #
-mycols <- brewer.pal(8, "Dark2")[1:length(unique(rld.d21.All$All_Treatment))]
-
-# Sample distance heatmap ------------------------------------------------------------- #
-sampleDists <- as.matrix(dist(t(assay(rld.d21.All))))
-png("Day21.AllTreatment-heatmap-samples.png", w=1000, h=1000, pointsize=20)
-heatmap.2(as.matrix(sampleDists), key=F, trace="none",
-          col=colorpanel(100, "black", "white"),
-          ColSideColors=mycols[rld.d21.All$All_Treatment], RowSideColors=mycols[rld.d21.All$All_Treatment],
-          margin=c(10, 10), main="Sample Distance Matrix")
-dev.off()
-
-# Principal components analysis ------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-png("Day21.AllTreatment.qc-pca_2.png", 1000, 1000, pointsize=20)
-DESeq2::plotPCA(rld.d21.All, intgroup="All_Treatment")
-dev.off()
-
-rld_pca.d21.primary <- function (rld.d21.primary, intgroup = "condition", ntop = 500, colors=NULL, legendpos="bottomleft", main="PCA Biplot", textcx=1, ...) {
-  require(genefilter)
-  require(calibrate)
-  require(RColorBrewer)
-  rv = rowVars(assay(rld.d21.primary))
-  select = order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
-  pca = prcomp(t(assay(rld.d21.primary)[select, ]))
-  fac = factor(apply(as.data.frame(colData(rld.d21.primary)[, intgroup, drop = FALSE]), 1, paste, collapse = " : "))
-  if (is.null(colors)) {
-    if (nlevels(fac) >= 3) {
-      colors = brewer.pal(nlevels(fac), "Paired")
-    }   else {
-      colors = c("black", "red")
-    }
-  }
-  pc1var <- round(summary(pca)$importance[2,1]*100, digits=1)
-  pc2var <- round(summary(pca)$importance[2,2]*100, digits=1)
-  pc1lab <- paste0("PC1 (",as.character(pc1var),"%)")
-  pc2lab <- paste0("PC1 (",as.character(pc2var),"%)")
-  plot(PC2~PC1, data=as.data.frame(pca$x), bg=colors[fac], pch=21, xlab=pc1lab, ylab=pc2lab, main=main, ...)
-  with(as.data.frame(pca$x), textxy(PC1, PC2, labs=rownames(as.data.frame(pca$x)), cex=textcx))
-  legend(legendpos, legend=levels(fac), col=colors, pch=20)
-  #     rldyplot(PC2 ~ PC1, groups = fac, data = as.data.frame(pca$rld),
-  #            pch = 16, cerld = 2, aspect = "iso", col = colours, main = draw.key(key = list(rect = list(col = colours),
-  #                                                                                         terldt = list(levels(fac)), rep = FALSE)))
+resd21._full_9<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Second_TreamentM.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 34 DEGs
+
+resd21._full_9<- results(dds.d21, list(c("Primary_Treatment_M_vs_A","Second_TreamentS.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 178 DEGs
+
+
+
+
+resd21._full_9<- results(dds.d21, list(c("Third_Treatment_M_vs_A","Second_TreamentS.Third_TreatmentM")))
+table(resd21._full_9$padj<0.05) # 0 DEGs
+
+
+
+
+# ~ Main EFFECTS  ======================================================================================================================== #
+resultsNames(dds.d21.main) # view the names of your results model 
+
+resd21._main_1<- results(dds.d21.main, name="Primary_Treatment_M_vs_A", alpha = 0.05)
+table(resd21._main_1$padj<0.05) # 224 DEGs
+
+resd21._main_2<- results(dds.d21.main, name="Second_Treament_M_vs_A", alpha = 0.05)
+table(resd21._main_2$padj<0.05) # 3 DEGs
+
+resd21._main_3<- results(dds.d21.main, name="Second_Treament_S_vs_A", alpha = 0.05)
+table(resd21._main_3$padj<0.05) # 0 DEGs
+
+resd21._main_4<- results(dds.d21.main, name="Third_Treatment_M_vs_A", alpha = 0.05)
+table(resd21._main_4$padj<0.05) # 0 DEGs
+
+
+
+# ~ Group - MAIN EFFECTS(ACCOUNTING FOR SECONDARY-TREATMENT SPECIFIC EFFECTS) ============================================================================================ #
+resultsNames(dds.d21.group) # view the names of your results model 
+
+# group model: dds.d21.group - ACCOUNTS FOR SECOND TREATMENT-SPECIFIC EFFECTS
+res.d21_Prim_MvA_group <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAAM", "All_TreatmentAMA", "All_TreatmentAMM", "All_TreatmentASA","All_TreatmentASM"), 
+                                                                 c("All_TreatmentMAA", "All_TreatmentMAM", "All_TreatmentMMA", "All_TreatmentMMM", "All_TreatmentMSA", "All_TreatmentMSM")),  alpha= 0.05)
+table(res.d21_Prim_MvA_group$padj<0.05) # 233 DEGs
+
+# CONSTANT exposure to SAME treatment
+d21.GROUP.DEGs_table = data.frame() # start a data frame
+df_d21_group<- data.frame(resultsNames(dds.d21.group))
+unique.vars <- df_d21_group[1,]
+for(i in 1:nrow(df_d21_group)) {
+  
+      var <- df_d21_group[i,]
+      T_F <- (df_d21_group[,1]!=c(unique.vars,var))
+      df_d21_group_2 <- data.frame(df_d21_group[T_F,])
+
+      for(j in 1:nrow(df_d21_group_2)) {
+          
+          var2 <- df_d21_group_2[j,]
+          res <- results(dds.d21.group, contrast = list((var),(var2)),  alpha= 0.05) 
+          res.table<-as.data.frame(table(res$padj<0.05))
+          DEGs_total <- res.table[2,2]
+          DEGs_total[is.na(DEGs_total)] <- 0
+          DEGs.table <- data.frame(matrix(nrow = 1, ncol = 7)) # create a new data table
+          colnames(DEGs.table)<-c('Var1', 'Var2', 'DEGs', 'num.upreg', 'num.downreg', 'perc.upreg','perc.downreg') 
+          res.order <- res[order(res$padj), ] ## Order by adjusted p-value
+          DEGs.table$num.upreg <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
+          DEGs.table$perc.upreg <- (sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) / (table(res.order$padj<0.05))[2] ) * 100 
+          DEGs.table$num.downreg <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          DEGs.table$perc.downreg <- (sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) / (table(res.order$padj<0.05))[2] ) * 100 
+          DEGs.table$Var1 <- var # fill date
+          DEGs.table$Var2 <- var2 # fill run number 
+          DEGs.table$DEGs <- DEGs_total # fill with the chosen alpha value (assigned at start of script)
+          df.group <- data.frame(DEGs.table) # name dataframe for this single row
+          d21.GROUP.DEGs_table <- rbind(d21.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
+          print(d21.GROUP.DEGs_table) # show loop progress in the console
+          unique.vars <- unique(d21.GROUP.DEGs_table$Var1)
+      } 
 }
-png("Day21.Primary.qc-pca.png", 1000, 1000, pointsize=20)
-rld_pca.d21.primary(rld.d21.primary, colors=mycols, intgroup="Primary_Treatment", xlim=c(-100, 50))
-dev.off()
-
-## Volcano plot with "significant" genes labeled --------------------------------- #
-volcanoplot <- function (res.d21, lfcthresh=2, sigthresh=0.05, main="Volcano Plot", legendpos="bottomright", labelsig=TRUE, textcx=1, ...) {
-  with(res.d21, plot(log2FoldChange, -log10(pvalue), pch=20, main=main, ...))
-  with(subset(res.d21, padj<sigthresh ), points(log2FoldChange, -log10(pvalue), pch=20, col="red", ...))
-  with(subset(res.d21, abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="orange", ...))
-  with(subset(res.d21, padj<sigthresh & abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="green", ...))
-  if (labelsig) {
-    require(calibrate)
-    with(subset(res.d21, padj<sigthresh & abs(log2FoldChange)>lfcthresh), textxy(log2FoldChange, -log10(pvalue), labs=Gene, cex=textcx, ...))
-  }
-  legend(legendpos, xjust=1, yjust=1, legend=c(paste("FDR<",sigthresh,sep=""), paste("|LogFC|>",lfcthresh,sep=""), "both"), pch=20, col=c("red","orange","green"))
-}
-png("Day21.PrimaryTreatment_diffexpr-volcanoplot.png", 1200, 1000, pointsize=20)
-volcanoplot(resdata.d21.primary, lfcthresh=1, sigthresh=0.05, textcx=.5, xlim=c(-4, 4))
-dev.off()
-
-
-# convert to dataframe and view the downreg and upregulated genes
-dataframe_res.d21.ordered <- as.data.frame(res.d21_Ordered)
-dataframe_res.d21.ordered$Gene.ID <- rownames(dataframe_res.d21.ordered)
-View(dataframe_res.d21.ordered)
-
-res.d21.DOWNREG <- dataframe_res.d21.ordered %>%  # downregulated genes under moderate stress
-  dplyr::filter(log2FoldChange < 0) %>% 
-  dplyr::filter(padj < 0.1)
-View(res.d21.DOWNREG) # view downreg genes
-
-res.d21.UPREG <- dataframe_res.d21.ordered %>% 
-  dplyr::filter(log2FoldChange > 0) %>%   # upregualted genes under moderate stress
-  dplyr::filter(padj < 0.1)
-View(res.d21.UPREG)  # view upreg genes
-
-#ddsMF <- dds # make a coppy of dds for multi factor designs
+View(d21.GROUP.DEGs_table)
 
 
 
-#======================================================================================= #
-#======================================================================================= #
-#======================================================================================= #
-# DAY 21   - Primary Treatment only ==================================================== #
-#======================================================================================= #
-#======================================================================================= #
-#======================================================================================= #
+resd21._AAAvMMM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentMMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 21 more days)
+res.table<-as.data.frame(table(resd21._AAAvMMM_group$padj<0.05)) # 0 DEGs
+
+# THIRD exposure by PRIMARY treatment
+resd21._AAAvMAA_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentMAA")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvMAA_group$padj<0.05) # 76 DEGs
+
+resd21._AAAvASM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentASM")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvASM_group$padj<0.05) # 0 DEGs
+
+resd21._AAAvMAM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentMAM")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvMAM_group$padj<0.05) # 22 DEGs
+
+resd21._ASMvMSM_group <- results(dds.d21.group, contrast = list(("All_TreatmentASM"),("All_TreatmentMSM")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvMSA_group$padj<0.05) # 0 DEGs
+
+resd21._AAAvMSA_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentMSA")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvMSA_group$padj<0.05) # 2 DEGs
+
+resd21._AAAvMSM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAAA"),("All_TreatmentMSM")),  alpha= 0.05) # Second Ambient
+table(resd21._AAAvMSM_group$padj<0.05) # 1 DEGs
 
 
-dds.ALL.d21 <- DESeq(dds.All.d21) # wait for this to complete....
-resultsNames(dds.All.d21) # view the names of your results models
+resd21._AMMvMMM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAMM"),("All_TreatmentMMM")),  alpha= 0.05) # Second Ambient
+table(resd21._AMMvMMM_group$padj<0.05) # 38 DEGs
 
-# Results ------------------------------------------------------------------------------ #
-res.d21.All <- results(dds.All.d21) # view DESeq2 results 
-table(res.d21.All$padj<0.05) 
-res.d21.All <- results(dds.All.d21, name="Primary_Treatment_M_vs_A")
-table(res.d21.All$padj<0.05) # should be the same as 'res.d21'
-res.D21.contrasts <- results(dds.primary.d21, contrast=c("Primary_Treatment","M","A")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
-table(res.D21.contrasts$padj<0.05) # should be the same as 'res.d21'
-res.d21_Ordered <- res.d21[order(res.d21$pvalue),] # how to order based on p-value
-res.d21_Ordered # ordered based on pvalue
-sum(res.d21_Ordered$padj < 0.05, na.rm=TRUE) # 196 significant DEGs
-summary(res.d21) # shows pval <0.1 by default 
-## Merge with normalized count data 
-resdata.d21.primary  <- merge(as.data.frame(res.d21), as.data.frame(counts(dds.primary.d21, normalized=TRUE)), by="row.names", sort=FALSE)
-names(resdata.d21.primary)[1] <- "Gene"
-head(resdata.d21.primary)
+
+
+resd21._AMvMM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMM")),  alpha= 0.05) # Second Moderate
+table(resd21._AMvMM_group$padj<0.05) # 12 DEGs
+resd21._ASvMS_group <- results(dds.d21.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMS")),  alpha= 0.05) # Second Severe
+table(resd21._ASvMS_group$padj<0.05) # 2 DEGs
+# AMBIENT history and subseqent treatment 
+resd21._AAvAM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAM")),  alpha= 0.05) # Amb - response to Moderate
+table(resd21._AAvAM_group$padj<0.05) # 0 DEGs
+resd21._AAvAS_group <- results(dds.d21.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to Severe
+table(resd21._AAvAS_group$padj<0.05) # 0 DEGs
+resd21._AMvAS_group <- results(dds.d21.group, contrast = list(("All_TreatmentAM"),("All_TreatmentAS")),  alpha= 0.05) # Amb - response to moderate versus Severe
+table(resd21._AMvAS_group$padj<0.05) # 0 DEGs
+# MODERATE history and subseqent treatment 
+resd21._MMvMA_group <- results(dds.d21.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMA")),  alpha= 0.05) # Mod - response to Ambient
+table(resd21._MMvMA_group$padj<0.05) # 0 DEGs
+resd21._MMvMS_group <- results(dds.d21.group, contrast = list(("All_TreatmentMM"),("All_TreatmentMS")),  alpha= 0.05) # Mod - response to Severe
+table(resd21._MMvMS_group$padj<0.05) # 0 DEGs
+resd21._MAvMS_group <- results(dds.d21.group, contrast = list(("All_TreatmentMA"),("All_TreatmentMS")),  alpha= 0.05) # Amb - response to ambient versus Severe
+table(resd21._MAvMS_group$padj<0.05) # 0 DEGs
+# OTHER pairwise interactions
+#AA
+resd21._AAvMM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 21 more days)
+table(resd21._AAvMM_group$padj<0.05) # 11 DEGs
+resd21._AAvMA_group <- results(dds.d21.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd21._AAvMA_group$padj<0.05) # 2 DEGs
+resd21._AAvMS_group <- results(dds.d21.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd21._AAvMS_group$padj<0.05) # 39 DEGs
+#AM
+resd21._AMvMA_group <- results(dds.d21.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd21._AMvMA_group$padj<0.05) # 16 DEGs
+resd21._AMvMS_group <- results(dds.d21.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMS")),  alpha= 0.05)
+table(resd21._AMvMS_group$padj<0.05) # 0 DEGs
+#AS
+resd21._ASvMA_group <- results(dds.d21.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMA")),  alpha= 0.05)
+table(resd21._ASvMA_group$padj<0.05) # 11 DEGs
+resd21._ASvMM_group <- results(dds.d21.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMM")),  alpha= 0.05)
+table(resd21._ASvMM_group$padj<0.05) # 1 DEGs
+# Second treatment effects (regarless of prior history)
+#A v M
+resd21._S.AvM_group <- results(dds.d21.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAM", "All_TreatmentMM")),  alpha= 0.05)
+table(resd21._S.AvM_group$padj<0.05) # 0 DEGs
+
+# A v S
+resd21._S.AvS_group <- results(dds.d21.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd21._S.AvS_group$padj<0.05) # 0  DEGs
+
+#M v S
+resd21._S.MvS_group <- results(dds.d21.group, contrast = list(c("All_TreatmentAM", "All_TreatmentMM"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
+table(resd14._S.MvS_group$padj<0.05) # 0 DEGs
+
+
+
+
+
+
+
+
+
+
 ## Write results
-write.csv(resdata.d21.primary, file="D21.PrimaryTreatment_diffexpr-results.csv")
+# write.csv(resdata.d21.All.Primary_Treatment_M_vs_A, paste(path_out.d21, "Day21.PrimaryTreament_diffexpr-results.csv"))
+# write.csv(resdata.d21.All.Second_Treatment_M_vs_A, paste(path_out.d21, "Day21.SecondTreament_MvsA_diffexpr-results.csv"))
+# write.csv(resdata.d21.All.Second_Treatment_S_vs_A, paste(path_out.d21, "Day21.SecondTreament_SvsA_diffexpr-results.csv"))
+# write.csv(resdata.d21.All.Third_Treatment_M_vs_A, paste(path_out.d21, "Day21.ThirdTreament_diffexpr-results.csv"))
 
-# Plot dispersions -------------------------------------------------------------------- #
-png("Day21.PrimaryTreatment-dispersions.png", 1000, 1000, pointsize=20)
-plotDispEsts(dds.primary.d21, main="Day21.PrimaryTreatment_Dispersion plot")
-dev.off()
+# volcano plot ------------------------------------------------------------------------------------------------------ #
 
-# Regularized log transformation for clustering/heatmaps, etc ------------------------- #
-rld.d21.primary <- rlogTransformation(dds.primary.d21) # rlog transform (regularized log)
-head(assay(rld.d21.primary)) # view first few rows
-hist(assay(rld.d21.primary)) # view histogram 
-
-# Colors for plots below; Use RColorBrewer, better and assign mycols variable --------- #
-mycols <- brewer.pal(8, "Dark2")[1:length(unique(rld.d21.primary$Primary_Treatment))]
-
-# Sample distance heatmap ------------------------------------------------------------- #
-sampleDists <- as.matrix(dist(t(assay(rld.d21.primary))))
-png("Day21.PrimaryTreatment-heatmap-samples.png", w=1000, h=1000, pointsize=20)
-heatmap.2(as.matrix(sampleDists), key=F, trace="none",
-          col=colorpanel(100, "black", "white"),
-          ColSideColors=mycols[rld.d21.primary$Primary_Treatment], RowSideColors=mycols[rld.d21.primary$Primary_Treatment],
-          margin=c(10, 10), main="Sample Distance Matrix")
-dev.off()
-
-# Principal components analysis ------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-png("Day21.Primary.qc-pca_2.png", 1000, 1000, pointsize=20)
-DESeq2::plotPCA(rld.d21.primary, intgroup="Primary_Treatment")
-dev.off()
-
-rld_pca.d21.primary <- function (rld.d21.primary, intgroup = "condition", ntop = 500, colors=NULL, legendpos="bottomleft", main="PCA Biplot", textcx=1, ...) {
-  require(genefilter)
-  require(calibrate)
-  require(RColorBrewer)
-  rv = rowVars(assay(rld.d21.primary))
-  select = order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
-  pca = prcomp(t(assay(rld.d21.primary)[select, ]))
-  fac = factor(apply(as.data.frame(colData(rld.d21.primary)[, intgroup, drop = FALSE]), 1, paste, collapse = " : "))
-  if (is.null(colors)) {
-    if (nlevels(fac) >= 3) {
-      colors = brewer.pal(nlevels(fac), "Paired")
-    }   else {
-      colors = c("black", "red")
-    }
-  }
-  pc1var <- round(summary(pca)$importance[2,1]*100, digits=1)
-  pc2var <- round(summary(pca)$importance[2,2]*100, digits=1)
-  pc1lab <- paste0("PC1 (",as.character(pc1var),"%)")
-  pc2lab <- paste0("PC1 (",as.character(pc2var),"%)")
-  plot(PC2~PC1, data=as.data.frame(pca$x), bg=colors[fac], pch=21, xlab=pc1lab, ylab=pc2lab, main=main, ...)
-  with(as.data.frame(pca$x), textxy(PC1, PC2, labs=rownames(as.data.frame(pca$x)), cex=textcx))
-  legend(legendpos, legend=levels(fac), col=colors, pch=20)
-  #     rldyplot(PC2 ~ PC1, groups = fac, data = as.data.frame(pca$rld),
-  #            pch = 16, cerld = 2, aspect = "iso", col = colours, main = draw.key(key = list(rect = list(col = colours),
-  #                                                                                         terldt = list(levels(fac)), rep = FALSE)))
-}
-png("Day21.Primary.qc-pca.png", 1000, 1000, pointsize=20)
-rld_pca.d21.primary(rld.d21.primary, colors=mycols, intgroup="Primary_Treatment", xlim=c(-100, 50))
-dev.off()
-
-## Volcano plot with "significant" genes labeled --------------------------------- #
-volcanoplot <- function (res.d21, lfcthresh=2, sigthresh=0.05, main="Volcano Plot", legendpos="bottomright", labelsig=TRUE, textcx=1, ...) {
-  with(res.d21, plot(log2FoldChange, -log10(pvalue), pch=20, main=main, ...))
-  with(subset(res.d21, padj<sigthresh ), points(log2FoldChange, -log10(pvalue), pch=20, col="red", ...))
-  with(subset(res.d21, abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="orange", ...))
-  with(subset(res.d21, padj<sigthresh & abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="green", ...))
-  if (labelsig) {
-    require(calibrate)
-    with(subset(res.d21, padj<sigthresh & abs(log2FoldChange)>lfcthresh), textxy(log2FoldChange, -log10(pvalue), labs=Gene, cex=textcx, ...))
-  }
-  legend(legendpos, xjust=1, yjust=1, legend=c(paste("FDR<",sigthresh,sep=""), paste("|LogFC|>",lfcthresh,sep=""), "both"), pch=20, col=c("red","orange","green"))
-}
-png("Day21.PrimaryTreatment_diffexpr-volcanoplot.png", 1200, 1000, pointsize=20)
-volcanoplot(resdata.d21.primary, lfcthresh=1, sigthresh=0.05, textcx=.5, xlim=c(-4, 4))
+# Effect of primary treatment 'resd14.all.primary_M_vs_A' - 221 DEGs
+png("RAnalysis/DESeq2/output/Day21/Day21.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd21.All.Primary_Treatment_M_vs_A,
+                lab = rownames(resd21.All.Primary_Treatment_M_vs_A),
+                x = 'log2FoldChange',
+                y = 'padj',
+                title = 'Moderate versus Ambient Treatment (Primary)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 1,
+                pCutoff = 0.3,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
 dev.off()
 
 
+# Effect of second treatment M v. A 'resdata.d14.second_M_vs_A' - 0 DEGs
+png("RAnalysis/DESeq2/output/Day21/Day21.SecondTreatment_MvA-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd21.All.Second_Treatment_M_vs_A,
+                lab = rownames(resd21.All.Second_Treatment_M_vs_A),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                title = 'Moderate versus Ambient Treatment (Second)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
 
-#=====================================================================================
-# EXPLORING AND EXPORTING RESULTS
-#=====================================================================================
+# Effect of second treatment S v. A 'resd14.all.second_S_vs_A' - 1 DEG
+png("RAnalysis/DESeq2/output/Day21/Day21.SecondTreatment_SvA-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd21.All.Second_Treatment_S_vs_A,
+                lab = rownames(resd21.All.Second_Treatment_S_vs_A),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                title = 'Severe versus Ambient Treatment (Second)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
 
-plotMA(res.d21, ylim=c(-2,2))
+# Effect of second treatment S v. A 'resd14.all.second_S_vs_A' - 1 DEG
+png("RAnalysis/DESeq2/output/Day21/Day21.ThirdTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
+EnhancedVolcano(resd21.All.Third_Treatment_M_vs_A,
+                lab = rownames(resd21.All.Third_Treatment_M_vs_A),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                title = 'Moderate versus Ambient Treatment (Third)',
+                subtitle = "DESeq2 - Differential expression",
+                FCcutoff = 2.0,
+                pointSize = 4.0,
+                labSize = 6.0,
+                colAlpha = 1,
+                legendPosition = 'right',
+                legendLabSize = 12,
+                legendIconSize = 4.0,
+                widthConnectors = 0.75)
+dev.off()
 
-# It is more useful visualize the MA-plot for the shrunken log2 fold changes, 
-# which remove the noise associated with log2 fold changes from low count genes 
-# without requiring arbitrary filtering thresholds.
-res.d21_LFC <- lfcShrink(dds.primary.d21, coef="Primary_Treatment_M_vs_A", type="apeglm")
-summary(res.d21_LFC)
-plotMA(res.d21_LFC, ylim=c(-2,2))
-# after calling plotMA you can use function identify to interactively detect the row number of individual genes by clicking on the plot
-idx <- identify(res.d21_LFC$baseMean, res.d21_LFC$log2FoldChange)
-rownames(res.d21_LFC)[idx]
+# Plot dispersions ------------------------------------------------------------------------------------------------------ #
 
-# plot counts
-plotCounts(dds.primary.d21, gene=which.min(res.d21_LFC$padj), intgroup="Primary_Treatment") # this plots the gene which had the smallest p-value
-plotCounts(dds.primary.d21, gene='PGEN_.00g108770', intgroup="Primary_Treatment") # putative alternative oxidase!
+png("RAnalysis/DESeq2/output/Day21/Day21-dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.d21, main="Day 21 data dispersions")
+dev.off()
 
-# sample plot in ggplot 
-d <- plotCounts(dds, gene=which.min(res.d21_LFC$padj), intgroup="Treatment", 
-                returnData=TRUE)
-ggplot(d, aes(x=Treatment, y=count)) + 
+
+# =========================================
+# Data transformations for heatmap and PCA visuals 
+# ============================================================= 
+rlog.d14<- rlogTransformation(dds.d14) #  full model                       wait for this to complete.... 
+
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_histogram.png", 1000, 1000, pointsize=20)# diagnostics of transformation # Histogram and sd plot
+hist(assay(rlog.d14)) # view histogram 
+dev.off()
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_mean_sd.png", 1000, 1000, pointsize=20)
+meanSdPlot(assay(rlog.d14)) # shows the sd y axis (sq root of varaince in all samples) - flat curve may seem like a goals, BUT may be unreasonable in cases with MANY true DEGs from experimental conditions
+dev.off()
+
+# PCA plot rlog ------------------------ #
+pcaData_d14 <- plotPCA(rlog.d14, intgroup = c( "Primary_Treatment", "Second_Treament"), returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d14, "percentVar"))
+png("RAnalysis/DESeq2/output/Day14/Day14.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d14, aes(x = PC1, y = PC2, color = Primary_Treatment, shape = Second_Treament)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=3) +
+  geom_point(size =6) +
   theme_classic() +
-  geom_point(position=position_jitter(w=0.1,h=0)) + 
-  scale_y_log10(breaks=c(0, 25,100,400,2000))
-# heatmap of count matrix
-ntd <- normTransform(dds)
-select <- order(rowMeans(counts(dds,normalized=TRUE)),
-                decreasing=TRUE)[1:20]
-df <- as.data.frame(colData(dds)[,c("Treatment","Day")])
-pheatmap(assay(ntd)[select,], cluster_rows=T, show_rownames=T,
-         cluster_cols=F, annotation_col=df)
-
-
-
-#======================================================================================= #
-# ALL TREATMENTS AND TIMEPOINTS
-
-dds.all.treatments <- DESeq(dds.all.treatments) # wait for this to complete....
-resultsNames(dds.all.treatments) # view the names of your results model 
-
-# Get differential expression results
-res.ALL <- results(dds.all.treatments)
-table(res.ALL$padj<0.05)
-## Order by adjusted p-value
-res.ALL <- res.ALL[order(res.ALL$padj), ]
-## Merge with normalized count data
-resdata.ALL <- merge(as.data.frame(res.ALL), as.data.frame(counts(dds.all.treatments, normalized=TRUE)), by="row.names", sort=FALSE)
-names(resdata.ALL)[1] <- "Gene"
-head(resdata.ALL)
-## Write results
-write.csv(resdata.d0.primary, file="D0.PrimaryTreatment_diffexpr-results.csv")
-## Examine plot of p-values
-hist(resd0.primary$pvalue, breaks=50, col="grey") # view histogram
-
-
-res.test <- results(dds.all.treatments, name="All_Treatment_M.d0_vs_A.d0")
-table(res.test.contrasts$padj<0.05)
-res.test.contrasts <- results(dds.all.treatments, contrast=c("All_Treatment","M.d0","A.d0")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
-res.d0_Ordered <- res.d0[order(res.d0$pvalue),] # how to order based on p-valuel 
-res.d0_Ordered # ordered based on pvalue
-sum(res.d0_Ordered$padj < 0.1, na.rm=TRUE) # 27 marginal DEGs
-sum(res.d0_Ordered$padj < 0.05, na.rm=TRUE) # 14 significant DEGs
-summary(res.d0)
-# Plot dispersions
-png("Day0.PrimaryTreatment-dispersions.png", 1000, 1000, pointsize=20)
-plotDispEsts(dds.primary.d0, main="Dispersion plot_M_vs._A_Day0")
-dev.off()
-# Regularized log transformation for clustering/heatmaps, etc
-rld.d0.primary <- rlogTransformation(dds.primary.d0) # rlog transform (regularized log)
-head(assay(rld.d0.primary)) # view first few rows
-hist(assay(rld.d0.primary)) # view histogram 
-# Colors for plots below; Use RColorBrewer, better and assign mycols variable
-mycols <- brewer.pal(8, "Dark2")[1:length(unique(rld.d0.primary$Primary_Treatment))]
-# Sample distance heatmap
-sampleDists <- as.matrix(dist(t(assay(rld.d0.primary))))
-png("Day0.PrimaryTreatment-heatmap-samples.png", w=1000, h=1000, pointsize=20)
-heatmap.2(as.matrix(sampleDists), key=F, trace="none",
-          col=colorpanel(100, "black", "white"),
-          ColSideColors=mycols[rld.d0.primary$Primary_Treatment], RowSideColors=mycols[rld.d0.primary$Primary_Treatment],
-          margin=c(10, 10), main="Sample Distance Matrix")
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day14 (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
 dev.off()
 
-# ## Examine independent filtering
-# attr(resd0.primary, "filterThreshold")
-# plot(attr(resd0.primary,"filterNumRej"), type="b", xlab="quantiles of baseMean", ylab="number of rejections")
+# Plot heat map rlog------------------------ #
+select <- order(rowMeans(counts(dds.d14,normalized=TRUE)), decreasing=TRUE)[1:20] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d14)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d14.rlog.heatmap<- pheatmap(assay(rlog.d14)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                            cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                            main = "Day7.rlog_heatmap")
+save_pheatmap(d14.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day14/Day14.rlog_heatmap.png")
 
-# Principal components analysis ------------------------------------------------------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-## DESeq2::plotPCA(rld, intgroup="condition")
-rld_pca.do.primary <- function (rld.d0.primary, intgroup = "condition", ntop = 500, colors=NULL, legendpos="bottomleft", main="PCA Biplot", textcx=1, ...) {
-  require(genefilter)
-  require(calibrate)
-  require(RColorBrewer)
-  rv = rowVars(assay(rld.d0.primary))
-  select = order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
-  pca = prcomp(t(assay(rld.d0.primary)[select, ]))
-  fac = factor(apply(as.data.frame(colData(rld.d0.primary)[, intgroup, drop = FALSE]), 1, paste, collapse = " : "))
-  if (is.null(colors)) {
-    if (nlevels(fac) >= 3) {
-      colors = brewer.pal(nlevels(fac), "Paired")
-    }   else {
-      colors = c("black", "red")
-    }
-  }
-  pc1var <- round(summary(pca)$importance[2,1]*100, digits=1)
-  pc2var <- round(summary(pca)$importance[2,2]*100, digits=1)
-  pc1lab <- paste0("PC1 (",as.character(pc1var),"%)")
-  pc2lab <- paste0("PC1 (",as.character(pc2var),"%)")
-  plot(PC2~PC1, data=as.data.frame(pca$x), bg=colors[fac], pch=21, xlab=pc1lab, ylab=pc2lab, main=main, ...)
-  with(as.data.frame(pca$x), textxy(PC1, PC2, labs=rownames(as.data.frame(pca$x)), cex=textcx))
-  legend(legendpos, legend=levels(fac), col=colors, pch=20)
-  #     rldyplot(PC2 ~ PC1, groups = fac, data = as.data.frame(pca$rld),
-  #            pch = 16, cerld = 2, aspect = "iso", col = colours, main = draw.key(key = list(rect = list(col = colours),
-  #                                                                                         terldt = list(levels(fac)), rep = FALSE)))
-}
-png("Day0.Primary.qc-pca.png", 1000, 1000, pointsize=20)
-rld_pca.do.primary(rld.d0.primary, colors=mycols, intgroup="Primary_Treatment", xlim=c(-75, 35))
+
+# Plot dispersions ------------------------------------------------------------------------------------------------------ #
+png("RAnalysis/DESeq2/output/Day14/Day14-dispersions.png", 1000, 1000, pointsize=20)
+plotDispEsts(dds.d14, main="Day 14 data dispersions")
 dev.off()
 
-## MA plot ------------------------------------------------------------------------------------------------------ #
-## Could do with built-in DESeq2 function:
-## DESeq2::plotMA(dds, ylim=c(-1,1), cex=1)
-# DO.primary_maplot <- function (resd0.primary, thresh=0.05, labelsig=TRUE, textcx=1, ...) {
-#   with(res, plot(baseMean, log2FoldChange, pch=20, cex=.5, log="x", ...))
-#   with(subset(resd0.primary, padj<thresh), points(baseMean, log2FoldChange, col="red", pch=20, cex=1.5))
-#   if (labelsig) {
-#     require(calibrate)
-#     with(subset(resd0.primary, padj<thresh), textxy(baseMean, log2FoldChange, labs=Gene, cex=textcx, col=2))
-#   }
-# }
-# png("Day0_primary_diffexpr-maplot.png", 1500, 1000, pointsize=20)
-# maplot(resdata.d0.primary)
-# dev.off()
+# Heat maps and Principal components analysis ============================================================================= #
 
+#  Primary_Treatment_M_vs_A 
 
-## Volcano plot with "significant" genes labeled ------------------------------------------------------------------------------------------------------ #
-volcanoplot <- function (resd0.primary, lfcthresh=2, sigthresh=0.05, main="Volcano Plot", legendpos="bottomright", labelsig=TRUE, textcx=1, ...) {
-  with(resd0.primary, plot(log2FoldChange, -log10(pvalue), pch=20, main=main, ...))
-  with(subset(resd0.primary, padj<sigthresh ), points(log2FoldChange, -log10(pvalue), pch=20, col="red", ...))
-  with(subset(resd0.primary, abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="orange", ...))
-  with(subset(resd0.primary, padj<sigthresh & abs(log2FoldChange)>lfcthresh), points(log2FoldChange, -log10(pvalue), pch=20, col="green", ...))
-  if (labelsig) {
-    require(calibrate)
-    with(subset(resd0.primary, padj<sigthresh & abs(log2FoldChange)>lfcthresh), textxy(log2FoldChange, -log10(pvalue), labs=Gene, cex=textcx, ...))
-  }
-  legend(legendpos, xjust=1, yjust=1, legend=c(paste("FDR<",sigthresh,sep=""), paste("|LogFC|>",lfcthresh,sep=""), "both"), pch=20, col=c("red","orange","green"))
-}
-png("D0.PrimaryTreatment_diffexpr-volcanoplot.png", 1200, 1000, pointsize=20)
-volcanoplot(resdata.d0.primary, lfcthresh=1, sigthresh=0.05, textcx=.5, xlim=c(-4, 4))
+# ALL 511 DEGS
+res14.MvA <- res.d14_P.MvA_group[c(1:511),] # 511 total DEGs - lets call this dataset for a PCA and heat map 
+res14.MvA # view the last pdj - should be < 0.05 
+dds.d14.MvA<- dds.d14[(rownames(res14.MvA_UPREG))]
+rlog.dds.d14.MvA<- rlogTransformation(dds.d14.MvA) # rlog transformation 
+# PCA plot rlog 
+pcaData_d14 <- plotPCA(rlog.dds.d14.MvA, intgroup = c( "Primary_Treatment", "Second_Treament"), returnData = TRUE)
+percentVar <- round(100 * attr(pcaData_d14, "percentVar"))
+png("RAnalysis/DESeq2/output/Day14/Day14.DEGs.rlog_PCA.png", 1000, 1000, pointsize=20)
+ggplot(pcaData_d14, aes(x = PC1, y = PC2, color = Primary_Treatment, shape = Second_Treament)) +
+  scale_shape_manual(values = c(4, 19, 17)) +
+  geom_text(aes(label=name),hjust=0.2, vjust=1.4, size=3) +
+  geom_point(size =6) +
+  theme_classic() +
+  theme(text = element_text(size=15)) +
+  ggtitle("PCA: Day14 DEGs only (rlog)") +
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
 dev.off()
+# Plot heat map rlog
+select <- order(rowMeans(counts(dds.d14.MvA,normalized=TRUE)), decreasing=TRUE)[1:25] # normalize the counts per row and call the first 20 most expressed genes
+df <- as.data.frame(colData(dds.d14.MvA)[c("Primary_Treatment", "Second_Treament")])
+annotation_colors = list((Primary_Treatment = c(A="Blue", M="Orange")), Second_Treament = c(A="White", M="Grey", S="Black"))
+d14_DEGs.rlog.heatmap<- pheatmap(assay(rlog.dds.d14.MvA)[select,], cluster_rows=TRUE, show_rownames=TRUE, # rlog heatmap
+                                 cluster_cols=TRUE, annotation_col=df, annotation_colors = annotation_colors,
+                                 main = "Day14.DEGsrlog_heatmap")
+save_pheatmap(d14_DEGs.rlog.heatmap, filename = "RAnalysis/DESeq2/output/Day14/Day14.DEGsrlog_heatmap.png")
+
+
+#====================================================================================================================== 
+#
+#                                       GO ANALYSIS (with WEGO)                   
+#
+#====================================================================================================================== 
+
+# load and call desired columns of the annotation file (Uniprot IDs for each gene) - Roberts Lab (Sam White) compelted this annotation - open online on osf
+annotation.txt <- read.delim2(file="Panopea-generosa-genes-annotations.txt", header=F)
+annotation.df <- as.data.frame(annotation.txt)
+annotation.df <- annotation.df %>% dplyr::select(c('V1','V8')) # call gene name and the GO terms - (Uniprot ID 'V5')
+colnames(annotation.df)[1:2] <- c('Gene', 'GO.terms')
+annotation.df$GO.terms <- gsub(";", " ", annotation.df$GO.terms) # remove the ; delimiter and replace with nothing - already tabbed 
 
 
 
-# convert to dataframe and view the downreg and upregulated genes
-dataframe_res.d0.ordered <- as.data.frame(res.d0_Ordered)
-dataframe_res.d0.ordered$Gene.ID <- rownames(dataframe_res.d0.ordered)
-View(dataframe_res.d0.ordered)
+#====================================================================================================================== 
+# Day ALL Moderate vs. Ambient  ====================================================================================== #
+#====================================================================================================================== 
 
-res.d0.DOWNREG <- dataframe_res.d0.ordered %>%  # downregulated genes under moderate stress
-  dplyr::filter(log2FoldChange < 0) %>% 
-  dplyr::filter(padj < 0.1)
-View(res.d0.DOWNREG) # view downreg genes
+resdata.ALL.MvA
 
-res.d0.UPREG <- dataframe_res.d0.ordered %>% 
-  dplyr::filter(log2FoldChange > 0) %>%   # upregualted genes under moderate stress
-  dplyr::filter(padj < 0.1)
-View(res.d0.UPREG)  # view upreg genes
+resdata.ALL.MvA # 971 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 14 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.ALL.MvA<- resdata.ALL.MvA %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.ALL.MvA) # 971 - we have all DEGs now
 
+UPREG.ALL.MvA<- DEGS.ALL.MvA %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.ALL.MvA <- DEGS.ALL.MvA %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.ALL.MvA) + nrow(DWNREG.ALL.MvA) # should be equal to 971
 
 
+ALL.MvA.UPREG_GO <- merge(UPREG.ALL.MvA, annotation.df, by = "Gene")
+ALL.MvA.UPREG_WEGO <- ALL.MvA.UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+ALL.MvA.UPREG_WEGO$GO.terms[is.na(ALL.MvA.UPREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.UPREG_WEGO) # view the data
+
+ALL.MvA.DWNREG_GO <- merge(DWNREG.ALL.MvA, annotation.df, by = "Gene")
+ALL.MvA.DWNREG_WEGO <- ALL.MvA.DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+ALL.MvA.DWNREG_WEGO$GO.terms[is.na(ALL.MvA.DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.DWNREG_WEGO) # view the data
+
+# write to GO folder
+write.table(ALL.MvA.UPREG_WEGO, file = "RAnalysis/GO/ALL_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+write.table(ALL.MvA.DWNREG_WEGO, file = "RAnalysis/GO/ALL_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
 
 
-# Extracting transformed values 
-# vst and rlot provide'blind' argument meaning that the transofmrations can proceed with the 
-# sample information WITHOUT having the re-estimate the dispersions 
-# with blin d== TRUE this will reestimate the dispersions using only an intercepts - this should 
-# be used in order to compare samples in a manner wholly unbiases by the infromation about experimental groups
-# HOWEVER the blind dispersion estimation (without sample information) is not appropriate if you expect that many or the majority
-# of genes (rows) willhave large differernces in counts explainable by the experimental design and one wishes to transform 
-# the data for downstream analysis 
-# overall, using blind = False is NOT using the information about which samples were in which experimental group 
-# in applying the transformation (an unbiased method) 
-vsd <- vst(dds.all.treatments, blind=FALSE) #  transformation functions return an object of class DESeqTransform 
-rld <- rlog(dds.all.treatments, blind=FALSE) #  rlog = regularized log - transformed the origin count data to the log2 scale by fitting
-# a model with a term for each sample and a prior distrubtion on the coefficients which is esimated from the data 
-# captures high dispersions for low counts and therefore these genes exhibit higher shrinkage from the rlog
-head(assay(rld), 3) # view the heade of the data
-# View the effects of transformations on the variance 
-# plots the SD of the transformed data, scross scamples, against the mean, using the log transformation, regualrized log, and 
-# the variacle stabalizing transforamtion
-# this gives log2(n + 1)
-ntd <- normTransform(vsd) # normTransform(object, f = log2, pc = 1) normTransform F = function to apply, pc = a pseudocount 
-# without specifying the default if 
-library("vsn")
-meanSdPlot(assay(ntd)) # log transformation 
-meanSdPlot(assay(vsd)) # variance stabalizing transforamtion
-meanSdPlot(assay(rld)) # regularized log 
-# this gives log2(n + 1)
-ntd <- normTransform(dds)
-library("vsn")
-meanSdPlot(assay(ntd))
+#====================================================================================================================== 
+# Day 0 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+#====================================================================================================================== 
+# Day 7 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
 
-plotPCA(vsd, intgroup=c("condition", "type"))
+resdata.d7.all.prim.M_vs_A # 94 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 14 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d7.primary<- resdata.d7.all.prim.M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d7.primary) # 94 - we have all DEGs now
 
-# Note: these are all different ways of looking at the same results... 
-res.ALL.TRMTS <- results(dds.all.treatments, name="All_Treatment_MSM.d21_vs_A.d0")
-res.ALL.TRMTS.contrasts <- results(dds.all.treatments, contrast=c("All_Treatment","MSM.d21","A.d0")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
+UPREG.d7.primary <- DEGS.d7.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d7.primary <- DEGS.d7.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d7.primary) + nrow(DWNREG.d7.primary) # should be equal to 94
 
-res.ALL.TRMTS_Ordered <- res.ALL.TRMTS[order(res.ALL.TRMTS$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
-res.ALL.TRMTS_Ordered # ordered based on pvalue
-sum(res.ALL.TRMTS_Ordered$pvalue < 0.1, na.rm=TRUE) # 2165  DEGs between Day0 Amb and Day 21 MSM
-sum(res.ALL.TRMTS_Ordered$pvalue < 0.05, na.rm=TRUE) # 1191 DEGs between Day0 Amb and Day 21 MSM
 
-summary(res.ALL.TRMTS)
+D7.UPREG_GO <- merge(UPREG.d7.primary, annotation.df, by = "Gene")
+D7.UPREG_WEGO <- D7.UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D7.UPREG_WEGO$GO.terms[is.na(D7.UPREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.UPREG_WEGO) # view the data
 
-# CONTROL OVER TIME PAIRWISE COMAPARISONS -------------------- #
-# OBJECTIVE: Identify the genes that D/N change over life-stage/development during the experiment 
-# these genes can be considered as continuously maintained genes
+D7.DWNREG_GO <- merge(DWNREG.d7.primary, annotation.df, by = "Gene")
+D7.DWNREG_WEGO <- D7.DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D7.DWNREG_WEGO$GO.terms[is.na(D7.DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D7.DWNREG_WEGO) # view the data
 
-# here I will call only the 6 pairwise comparisons under the control treatment through time 
-# A.d0_AA.d7, A.d0_AA.d14, A.d0_AAa.d21, AA.d7_AA.d14, AA.d7_AAA.d21, AA.d14_AAA.d21
-
-# A.d0_AA.d7 # Ambient Controls Day 0 compared to Day 7
-res.ALL.TRMTS <- results(dds.all.treatments, name="All_Treatment_AA.d7_vs_A.d0")
-res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
-sum(res.A.d0_AA.d7$padj < 0.1, na.rm=TRUE) # 1 marginal DEGs
-sum(res.A.d0_AA.d7$padj < 0.05, na.rm=TRUE) # 1 significant DEGs
-res.A.d0_AA.d7.DATAFRAME <- as.data.frame(res.A.d0_AA.d7)
-res.A.d0_AA.d7.DEGS <- res.A.d0_AA.d7.DATAFRAME  %>%  # downregulated genes under moderate stress
-  dplyr::filter(padj < 0.05)
-# View(res.A.d0_AA.d7.DEGS) # 1 total DEG
-summary(res.A.d0_AA.d7)
-
-# A.d0_AA.D14 # Ambient Controls Day 0 compared to Day 14
-res.A.d0_AA.d14 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d14","A.d0"))
-sum(res.A.d0_AA.d14$padj < 0.1, na.rm=TRUE) # 6 marginal DEGs
-sum(res.A.d0_AA.d14$padj < 0.05, na.rm=TRUE) # 5 significant DEGs
-res.A.d0_AA.d14.DATAFRAME <- as.data.frame(res.A.d0_AA.d14)
-res.A.d0_AA.d14.DEGS <- res.A.d0_AA.d14.DATAFRAME  %>%  # downregulated genes under moderate stress
-  dplyr::filter(padj < 0.05)
-# View(res.A.d0_AA.d14.DEGS) # 5 total DEGs
-# one of these, PGEN_.00g045760, is Fatty acid synthase
-summary(res.A.d0_AA.d14)
-
-# # A.d0_AAa.d21 # Ambient Controls Day 0 compared to Day 21
-res.A.d0_AAA.d21 <- results(dds.all.treatments, contrast=c("All_Treatment","AAA.d21","A.d0"))
-sum(res.A.d0_AAA.d21$padj < 0.1, na.rm=TRUE) # 67 marginal DEGs
-sum(res.A.d0_AAA.d21$padj < 0.05, na.rm=TRUE) # 20 significant DEGs
-res.A.d0_AAA.d21.DATAFRAME <- as.data.frame(res.A.d0_AAA.d21)
-res.A.d0_AAA.d21.DEGS <- res.A.d0_AAA.d21.DATAFRAME  %>%  # downregulated genes under moderate stress
-  dplyr::filter(padj < 0.05)
-# View(res.A.d0_AAA.d21.DEGS) # 20 total DEGs
-summary(res.A.d0_AAA.d21)
+# write to GO folder
+write.table(D7.UPREG_WEGO, file = "RAnalysis/GO/Day7_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+write.table(D7.DWNREG_WEGO, file = "RAnalysis/GO/Day7_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
 
 
 
-# what we find are a total of 26 significantly differentially expressed genes (p < 0.05) 
-# lets call these in a dataset for fun using the package 'data.frame'
-res.A.d0_AA.d7.NS.GENES <- res.A.d0_AA.d7.DATAFRAME %>%  dplyr::filter(padj > 0.05)
-res.A.d0_AA.d7.NS.GENES$Gene.ID <- row.names(res.A.d0_AA.d7.NS.GENES) # change row names to a column'Gene.ID'
+#====================================================================================================================== 
+# Day 14  primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
 
-res.A.d0_AA.d14.NS.GENES <- res.A.d0_AA.d14.DATAFRAME %>%  dplyr::filter(padj > 0.05)
-res.A.d0_AA.d14.NS.GENES$Gene.ID <- row.names(res.A.d0_AA.d14.NS.GENES) # change row names to a column'Gene.ID'
+resdata.d14.all.prim.M_vs_A # 502 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 14 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d14.primary<- resdata.d14.all.prim.M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d14.primary) # 502 - we have all DEGs now
 
-res.A.d0_AAA.d21.NS.GENES <- res.A.d0_AAA.d21.DATAFRAME %>%  dplyr::filter(pvalue > 0.05)
-res.A.d0_AAA.d21.NS.GENES$Gene.ID <- row.names(res.A.d0_AAA.d21.NS.GENES) # change row names to a column'Gene.ID'
-
-
-Amb.DEGs <- lapply(list(res.A.d0_AA.d7.NS.GENES[7], res.A.d0_AA.d14.NS.GENES[7], res.A.d0_AAA.d21.NS.GENES[7]), data.table)
-Amb.DEGs.IDs.keep <-rbindlist(lapply(Amb.DEGs, '[', j = 'Gene.ID'))[, .N, by=Gene.ID][N == 3L, 'Gene.ID']
-Amb.DEGs.keep <- Reduce(funion, Amb.DEGs)[Gene.ID %in% Amb.DEGs.IDs.keep]
+UPREG.d14.primary <- DEGS.d14.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d14.primary <- DEGS.d14.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d14.primary) + nrow(DWNREG.d14.primary) # should be equal to 502
 
 
-X <- as.data.frame(resultsNames(dds.all.treatments))
-X.2 <- X[c(2:13),]
-X.2 <-  as.data.frame(X.2)
-# for loop
-df_total <- data.frame()
-for (i in 1:nrow(X.2)) {
-  RSLTS <- results(dds.all.treatments, name=X.2[i,])
-  sum <- sum(RSLTS$pvalue < 0.05, na.rm=TRUE) 
-  Total.Genes <- nrow(RSLTS)
-  
-  in.loop.table <- data.frame(matrix(nrow = 1, ncol = 3))
-  colnames(in.loop.table)<-c('test', 'total.genes', 'DEGs.p0.05')
-  in.loop.table$test <- X.2[i,]
-  in.loop.table$total.genes <- Total.Genes
-  in.loop.table$DEGs.p0.05 <- sum
-  
-  df <- data.frame(in.loop.table)
-  df_total <- rbind(df_total,df)#bind to a cumulative list dataframe
-}
-df_total
+D14.UPREG_GO <- merge(UPREG.d14.primary, annotation.df, by = "Gene")
+D14.UPREG_WEGO <- D14.UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D14.UPREG_WEGO$GO.terms[is.na(D14.UPREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D14.UPREG_WEGO) # view the data
+
+D14.DWNREG_GO <- merge(DWNREG.d14.primary, annotation.df, by = "Gene")
+D14.DWNREG_WEGO <- D14.DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+D14.DWNREG_WEGO$GO.terms[is.na(D14.DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+# View(D14.DWNREG_WEGO) # view the data
+
+# write to GO folder
+write.table(D14.UPREG_WEGO, file = "RAnalysis/GO/Day14_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
+write.table(D14.DWNREG_WEGO, file = "RAnalysis/GO/Day14_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE) # call at 'Native Format' on  https://wego.genomics.cn/ 
 
 
-# res.AA.d7_AA.d14 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
-# 
-# # AA.d7_AA.d14
-# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
-# 
-# # AA.d7_AAA.d21
-# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
-# 
-# # AA.d14_AAA.d21
-# res.A.d0_AA.d7 <- results(dds.all.treatments, contrast=c("All_Treatment","AA.d7","A.d0"))
+#====================================================================================================================== 
+# Day 21 primary treatment data  ====================================================================================== #
+#====================================================================================================================== 
+
+resdata.d21.All.Primary_Treatment_M_vs_A # 221 DEGS (log2FoldChange > 1; < -1 & padj < 0.05) on day 21 in response to Primary treatment (initial Mdoerate vs. Ambient conditioning)
+DEGS.d21.primary<- resdata.d21.All.Primary_Treatment_M_vs_A %>%  dplyr::filter(padj<0.05)
+nrow(DEGS.d21.primary) # 221 - we have all DEGs now
+
+UPREG.d21.primary <- DEGS.d21.primary %>%  dplyr::filter(log2FoldChange > 1) # call upregulated genes
+DWNREG.d21.primary <- DEGS.d21.primary %>%  dplyr::filter(log2FoldChange < 1) # call downregulated genes 
+nrow(UPREG.d21.primary) + nrow(DWNREG.d21.primary) # should be equal to 221
 
 
+UPREG_GO <- merge(UPREG.d21.primary, annotation.df, by = "Gene")
+UPREG_WEGO <- UPREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+UPREG_WEGO$GO.terms[is.na(UPREG_WEGO$GO.terms)] <- " " # make NA blank
+View(UPREG_WEGO)
 
+DWNREG_GO <- merge(DWNREG.d21.primary, annotation.df, by = "Gene")
+DWNREG_WEGO <- DWNREG_GO %>% dplyr::select(c('Gene', 'GO.terms'))
+DWNREG_WEGO$GO.terms[is.na(DWNREG_WEGO$GO.terms)] <- " " # make NA blank
+View(DWNREG_WEGO)
 
-#======================================================================================= #
-# ALL TIME POINTS - PRIMARY TREATMENT ONLY!!!
+# write to GO folder
+write.table(UPREG_WEGO, file = "RAnalysis/GO/Day21_Upreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE)
+write.table(DWNREG_WEGO, file = "RAnalysis/GO/Day21_Downreg_Primary_WEGO", quote=FALSE, row.names = FALSE, col.names = FALSE)
 
-dds.primary <- DESeq(dds.primary) # wait for this to complete....
-resultsNames(dds.primary) # view the names of your results model 'Primary_Treatment_M_vs_A'
-
-# Note: these are all different ways of looking at the same results... 
-res <- results(dds.primary) # view DESeq2 results - calls the last pairwise condition
-res <- results(dds.primary, name="Primary_Treatment_M_vs_A")
-res.contrasts <- results(dds.primary, contrast=c("Primary_Treatment","M","A")) # alternative way of calling the results (i.e. Day_DAY21_vs_Day0)
-
-res_Ordered <- res[order(res$pvalue),] # how to order based on p-value; chosses EHSM vs A - the last pairwise call 
-res_Ordered # ordered based on pvalue
-sum(res_Ordered$padj < 0.1, na.rm=TRUE) # 1417 marginal DEGs
-sum(res_Ordered$padj < 0.05, na.rm=TRUE) # 1071 significant DEGs
-
-summary(res)
