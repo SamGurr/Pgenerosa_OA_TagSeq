@@ -945,6 +945,105 @@ sum((res.d14_P.MvA_group$log2FoldChange[1:511] >= 1) == TRUE) # 111 DEGs upregul
 sum((res.d14_P.MvA_group$log2FoldChange[1:511] <= -1) == TRUE) #  396 DEGs downregulated  (LFC <= -1)
 ( sum((res.d14_P.MvA_group$log2FoldChange[1:511] <= -1) == TRUE) / (table(res.d14_P.MvA_group$padj<0.05))[2] ) * 100 # 77.49511 % DEGs downregulated (N = 9141)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+row.names(res.d14_P.MvA_group)
+d14_P.MvA_DEGs <- data.frame(row.names(res.d14_P.MvA_group)[1:511])
+d14_p.MvA_boolean <- row.names(d14.counts_matrix) %in% d21_P.MvA_DEGs[,1] # boolean expression (T v F) for common calls to subset
+summary(d14_p.MvA_boolean) # should be 511 TRUE
+d14_P.MvA_DEGs.matrix <- d14.counts_matrix[d14_p.MvA_boolean,] # integrate the boolean expression to the larger dataset to localize the DEGs for pheatmap
+
+
+## Get some nicer colours
+mypalette <- brewer.pal(11,"RdYlBu")
+morecols <- colorRampPalette(mypalette)
+# Set up colour vector for celltype variable
+col.cell <- c("blue","orange")[dds.d14$Primary_Treatment]
+# Plot the heatmap
+heatmap.2(as.matrix(d14_P.MvA_DEGs.matrix),col=rev(morecols(50)),trace="none", 
+          main="Day0 Primary Amb v Moderate DEGs",ColSideColors=col.cell, scale="row")
+
+
+d21_P.MvA_pHMod.boolean <- colnames(d21_P.MvA_DEGs.matrix) %in% colnames(dds.d14)[dds.d14$Primary_Treatment == "M"]
+d21_P.MvA_pHMod <- d21_P.MvA_DEGs.matrix[,d21_P.MvA_pHMod.boolean]
+
+d21_P.MvA_pHAmb.boolean <- colnames(d21_P.MvA_DEGs.matrix) %in% colnames(dds.d14)[dds.d14$Primary_Treatment == "A"]
+d21_P.MvA_pHAmb <- d21_P.MvA_DEGs.matrix[,d21_P.MvA_pHAmb.boolean]
+
+###Visualize group means
+#calculate group means
+Mean_d21_P.MvA_pHAmb <- rowMeans(d21_P.MvA_pHAmb, na.rm = TRUE)
+Mean_d21_P.MvA_pHMod <- rowMeans(d21_P.MvA_pHMod, na.rm = TRUE)
+#bind all group means together
+d21_P.MvA_heatmapMEANS <- as.matrix(data.frame(cbind(Mean_d21_P.MvA_pHAmb,Mean_d21_P.MvA_pHMod)))
+#plot for day10 group mean comparison
+colnames(d21_P.MvA_heatmapMEANS) <- c("Ambient", "Moderate")
+jpeg("RAnalysis/DESeq2/output/Day14/D14_P.MvA_heatmap.2.jpg", width = 600, height = 1000)
+heatmap.2(d21_P.MvA_heatmapMEANS,margins = c(10,20), cexCol = 2, distfun = function(x) as.dist(1 - cor(t(x), use = "pa")), 
+          hclustfun = function(x) hclust(x,method = 'average'), key.xtickfun = function() {
+  breaks = pretty(parent.frame()$breaks)
+  #breaks = breaks[c(1,length(breaks))]
+  list(at = parent.frame()$scale01(breaks),labels = breaks)},Colv=NA, col= rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)), 
+  density.info = "none", trace = "none", scale = "row", labRow = FALSE,sepwidth=c(0.01,0.01),sepcolor="white",
+  colsep=1:ncol(d21_P.MvA_heatmapMEANS),rowsep=1:nrow(d21_P.MvA_heatmapMEANS),lmat = rbind(c(0,3),c(2,1),c(4,0)),keysize=0.5, 
+  key.par = list(cex=1),lhei=c(1.5,4,1), lwid = c(1.5,4))
+dev.off()
+
+heatmap.2(d21_P.MvA_heatmapMEANS, reorderfun=function(d, w) reorder(d, w, agglo.FUN = mean) )
+
+heatmap.2(d21_P.MvA_heatmapMEANS,
+          cellnote = d21_P.MvA_heatmapMEANS,  # same data set for cell labels
+          main = "Correlation", # heat map title
+          notecol="black",      # change font color of cell labels to black
+          density.info="none",  # turns off density plot inside color legend
+          trace="none",         # turns off trace lines inside the heat map
+          margins =c(12,9),     # widens margins around plot
+          #col=my_palette,       # use on color palette defined earlier
+          #breaks=col_breaks,    # enable color transition at specified limits
+          dendrogram="row",     # only draw a row dendrogram
+          Colv="NA")            # turn off column clustering
+library(gplots)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # CONSTANT exposure to SAME treatment
 resd14._AAvMM_group <- results(dds.d14.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMM")),  alpha= 0.05) # Constant expore (basically M v A Primaru + 14 more days)
 table(resd14._AAvMM_group$padj<0.05) # 11 DEGs

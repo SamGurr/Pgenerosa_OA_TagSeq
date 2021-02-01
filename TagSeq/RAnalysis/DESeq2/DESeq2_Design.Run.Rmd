@@ -18,7 +18,6 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRU
 ```{r load_libraries, include = TRUE}
 # load libraries - notes show the install command needed to install (pre installed)
 library(DESeq2) # note: this was previously installed with the command `BiocManager::install("DESeq2")`
-library(pasilla) # note: this was previously installed with the command `BiocManager::install("pasilla")`
 library(dplyr)
 library(GenomicFeatures)
 library(pheatmap)
@@ -33,15 +32,18 @@ library(EnhancedVolcano)  # note: this was previously installed with the command
 library(pcaExplorer) 
 library(vsn)
 library(tidybulk)
-
+# Plotting
+library(ggplot2)
+library(cowplot)
 ```
 
 ### Set working directory
 ```{r set_wd, include = TRUE}
 
 # SET WORKING DIRECTORY AND LOAD DATA
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2")
 
+path_out = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/output/'
 ```
 
 # LOAD DATA:
@@ -49,30 +51,30 @@ setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq
 ### Gene count data - convert to matrix
 ```{r count_data, include = TRUE}
 ### filtered counts tables - format matrix after upload [from Count_Matrix_Stats.Filter.R] 
-all.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ all.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+all.counts_matrix <- read.csv(file="counts_filtered/ all.counts.filtered_matrix.csv", sep=',', header=TRUE) 
 all.counts_matrix <- data.frame(all.counts_matrix[,-1], row.names=all.counts_matrix[,1]) 
-d0.counts_matrix  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day0.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d0.counts_matrix  <- read.csv(file="counts_filtered/ day0.counts.filtered_matrix.csv", sep=',', header=TRUE) 
 d0.counts_matrix <- data.frame(d0.counts_matrix[,-1], row.names=d0.counts_matrix[,1]) 
-d7.counts_matrix  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day7.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d7.counts_matrix  <- read.csv(file="counts_filtered/ day7.counts.filtered_matrix.csv", sep=',', header=TRUE) 
 d7.counts_matrix <- data.frame(d7.counts_matrix[,-1], row.names=d7.counts_matrix[,1]) 
-d14.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day14.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d14.counts_matrix <- read.csv(file="counts_filtered/ day14.counts.filtered_matrix.csv", sep=',', header=TRUE) 
 d14.counts_matrix <- data.frame(d14.counts_matrix[,-1], row.names=d14.counts_matrix[,1]) 
-d21.counts_matrix <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day21.counts.filtered_matrix.csv", sep=',', header=TRUE) 
+d21.counts_matrix <- read.csv(file="counts_filtered/ day21.counts.filtered_matrix.csv", sep=',', header=TRUE) 
 d21.counts_matrix <- data.frame(d21.counts_matrix[,-1], row.names=d21.counts_matrix[,1]) 
 ```
 
 ### Sample metadata - Experimental treatments/groups
 ```{r experiment_data, include = TRUE}
 ### experiment metadata [from Count_Matrix_Stats.Filter.R]  - convert characaters to factors for DESeq2
-all.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ all.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+all.exp_data  <- read.csv(file="counts_filtered/ all.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
-d0.exp_data   <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day0.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+d0.exp_data   <- read.csv(file="counts_filtered/ day0.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
-d7.exp_data   <- read.csv(file="RAnalysis/DESeq2/counts_filtered/ day7.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+d7.exp_data   <- read.csv(file="counts_filtered/ day7.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
-d14.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/  day14.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+d14.exp_data  <- read.csv(file="counts_filtered/  day14.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
-d21.exp_data  <- read.csv(file="RAnalysis/DESeq2/counts_filtered/  day21.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
+d21.exp_data  <- read.csv(file="counts_filtered/  day21.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 ```
 
 ### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms')
@@ -81,59 +83,524 @@ Geoduck_annotation <- read.delim2(file="Panopea-generosa-genes-annotations.txt",
 Geoduck_GOterms <- as.data.frame(annotation.txt) %>% dplyr::select(c('V1','V8'))
 colnames(Geoduck_GOterms)[1:2] <- c('transcript.ID', 'GO.terms') # call gene name and the GO terms - (Uniprot ID 'V5')
 Geoduck_GOterms$GO.terms <- gsub(";", " ", annotation.df$GO.terms) # remove the ; delimiter and replace with nothing - already tabbed
-```
 
+```
 
 # DESeq2 datasets
 
 ### DEsign DESeqDatasets
-```{r import_annot}
+```{r build_dds_datasets}
 # ========================================================== 
 # DAY 0 FULL MODEL ==  design = ~ Primary_Treatment
-# ========================================================== 
-exp.data.d0.PRIMARY <- d0.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
-exp.data.d0.PRIMARY$Primary_Treatment <- factor(exp.data.d0.PRIMARY$Primary_Treatment) # change Primary_Treatment to factor
-exp.data.d0.PRIMARY$All_Treatment <- factor(exp.data.d0.PRIMARY$All_Treatment) # change Time to factor
-exp.data.d0.PRIMARY <- data.frame(exp.data.d0.PRIMARY[,-1], row.names=exp.data.d0.PRIMARY[,1]) # move Sample.Name column as row names  
-exp.data.d0.PRIMARY.mtx <- as.matrix(exp.data.d0.PRIMARY, row.names="Geoduck.ID") # create matrix 
+# ========================================================== #
+#####
+d0.metadata <- d0.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
+d0.metadata <- data.frame(d0.metadata[,-1], row.names=d0.metadata[,1]) # move Sample.Name column as row names  
+d0.metadata.mtx <- as.matrix(d0.metadata, row.names="Geoduck.ID") # create matrix 
 # check for 'TRUE' in each - check before proceeding  design
-exp.data.d0.PRIMARY.mtx <- exp.data.d0.PRIMARY.mtx[match(colnames(d0.counts_matrix),rownames(exp.data.d0.PRIMARY.mtx)), ]
-all(rownames(exp.data.d0.PRIMARY.mtx) %in% colnames(d0.counts_matrix)) # should be TRUE
-all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(d0.counts_matrix)) # should be TRUE
-all(rownames(exp.data.d0.PRIMARY.mtx) == colnames(d0.counts_matrix))  # should be TRUE
+d0.metadata.mtx <- d0.metadata.mtx[match(colnames(d0.counts_matrix),rownames(d0.metadata.mtx)), ]
+# all(rownames(d0.metadata.mtx) %in% colnames(d0.counts_matrix)) # should be TRUE
+# all(rownames(d0.metadata.mtx) == colnames(d0.counts_matrix)) # should be TRUE
+# all(rownames(d0.metadata.mtx) == colnames(d0.counts_matrix))  # should be TRUE
 # build dds
 dds.d0 <- DESeqDataSetFromMatrix(countData = d0.counts_matrix,
-                                      colData = exp.data.d0.PRIMARY.mtx,
+                                      colData = d0.metadata.mtx,
                                       design = ~ Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-
+ 
 # ========================================================== 
 # DAY 7 - FULL MODEL     ==  design = ~ Primary_Treatment+Second_Treament+Primary_Treatment:Second_Treament
 #       - ADDITIVE MODEL ==  design = ~ Primary_Treatment+Second_Treament
 #       - GROUP    MODEL ==  design = ~ Primary_Treatment+Second_Treament
-# ==========================================================
-d7.exp_data <- d7.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to   build target matrix
-d7.exp_data <- data.frame(d7.exp_data[,-1], row.names=d7.exp_data[,1]) # move Sample.Name column as row names  
-d7.exp_data.mtx <- as.matrix(d7.exp_data, row.names="Geoduck.ID") # create matrix 
+# ========================================================== #
+#####
+d7.metadata <- d7.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to   build target matrix
+d7.metadata <- data.frame(d7.metadata[,-1], row.names=d7.metadata[,1]) # move Sample.Name column as row names  
+d7.metadata.mtx <- as.matrix(d7.metadata, row.names="Geoduck.ID") # create matrix 
 # CKECK THE cts.matrix AND THE exp.data.mtx
-d7.exp_data.mtx <- exp.data.d7.PRIM_SEC.mtx[match(colnames(d7.counts_matrix),rownames(exp.data.d7.PRIM_SEC.mtx)), ]
-all(rownames(d7.exp_data.mtx) %in% colnames(d7.counts_matrix)) # should be TRUE
-all(rownames(d7.exp_data.mtx) == colnames(d7.counts_matrix)) # should be TRUE
-all(rownames(d7.exp_data.mtx) == colnames(d7.counts_matrix))  # should be TRUE
+d7.metadata.mtx <- d7.metadata.mtx[match(colnames(d7.counts_matrix),rownames(d7.metadata.mtx)), ]
+# all(rownames(d7.metadata.mtx) %in% colnames(d7.counts_matrix)) # should be TRUE
+# all(rownames(d7.metadata.mtx) == colnames(d7.counts_matrix)) # should be TRUE
+# all(rownames(d7.metadata.mtx) == colnames(d7.counts_matrix))  # should be TRUE
 # build dds
 # FULL MODEL 
 dds.d7 <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
-                                  colData = exp.data.d7.PRIM_SEC,
+                                  colData = d7.metadata.mtx,
                                   design = ~ Second_Treament+Primary_Treatment+Second_Treament:Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
-design(dds.d7) # ~Second_Treament + Primary_Treatment + Second_Treament:Primary_Treatment
-# GROUP
-dds.d7.group <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
-                                        colData = exp.data.d7.PRIM_SEC,
-                                        design = ~ All_Treatment-1) 
-design(dds.d7.group) # ~All_Treatment 
-# MAIN EFFECT 
+# ADDITIVE MODEL  
 dds.d7.main <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
-                                       colData = exp.data.d7.PRIM_SEC,
+                                       colData = d7.metadata.mtx,
                                        design = ~ Second_Treament+Primary_Treatment)
-
+# GROUP MODEL- note! ~group -1` removed the intercept to call each pariwise interaction
+dds.d7.group <- DESeqDataSetFromMatrix(countData = d7.counts_matrix,
+                                        colData = d7.metadata.mtx,
+                                        design = ~ All_Treatment-1) 
+# ========================================================== 
+# DAY 14  - FULL MODEL     ==  design = ~ Primary_Treatment+Second_Treament+Primary_Treatment:Second_Treament
+#       - ADDITIVE MODEL ==  design = ~ Primary_Treatment+Second_Treament
+#       - GROUP    MODEL ==  design = ~ Primary_Treatment+Second_Treament
+# ========================================================== #
+#####
+d14.metadata <- d14.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'All_Treatment')) # coondense dataset to build target matrix
+d14.metadata <- data.frame(d14.metadata[,-1], row.names=d14.metadata[,1]) # move Sample.Name column as row names  
+d14.metadata.mtx <- as.matrix(d14.metadata, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+d14.metadata.mtx <- d14.metadata.mtx[match(colnames(d14.counts_matrix),rownames(d14.metadata.mtx)), ]
+# all(rownames(d14.metadata.mtx) %in% colnames(d14.counts_matrix)) # should be TRUE
+# all(rownames(d14.metadata.mtx) == colnames(d14.counts_matrix)) # should be TRUE
+# all(rownames(d14.metadata.mtx) == colnames(d14.counts_matrix))  # should be TRUE
+# build dds
+# FULL MODEL 
+dds.d14 <- DESeqDataSetFromMatrix(countData = d14.counts_matrix,
+                                     colData = d14.metadata.mtx,
+                                     design = ~ Second_Treament+Primary_Treatment+Second_Treament:Primary_Treatment) # DESeq Data Set (dds) - design as ~Primary_Treatment
+# GROUP MDOEL
+dds.d14.group <- DESeqDataSetFromMatrix(countData = d14.counts_matrix,
+                                        colData = d14.metadata.mtx,
+                                        design = ~ All_Treatment-1) 
+# ADDITIVE MODEL 
+dds.d14.main <- DESeqDataSetFromMatrix(countData = d14.counts_matrix,
+                                       colData = d14.metadata.mtx,
+                                       design = ~ Second_Treament+Primary_Treatment) 
+# ========================================================== 
+# DAY 21 -  FULL MODEL == design = ~Primary_Treatment+Second_Treament+Third_Treatment+Primary_Treatment:Second_Treament+Primary_Treatment:Third_Treatment+Second_Treament:Third_Treatment
+#---- INPUT: Experiment/design matrix == 'exp.data.d21'
+#---- INPUT: TagSeq count matrix == 'cts.matrix.d21.filtered' (3 CPM in 50% samples)
+# ========================================================== 
+#####
+d21.metadata <- d21.exp_data %>% dplyr::select(c('Sample.Name', 'Primary_Treatment','Second_Treament', 'Third_Treatment', 'All_Treatment')) # coondense dataset to build target matrix
+d21.metadata <- data.frame(d21.metadata[,-1], row.names=d21.metadata[,1]) # move Sample.Name column as row names  
+d21.metadata.mtx <- as.matrix(d21.metadata, row.names="Geoduck.ID") # create matrix 
+# CKECK THE cts.matrix AND THE exp.data.mtx
+d21.metadata.mtx <- d21.metadata.mtx[match(colnames(d21.counts_matrix),rownames(d21.metadata.mtx)), ]
+# all(rownames(d21.metadata.mtx) %in% colnames(d21.counts_matrix)) # should be TRUE
+# all(rownames(d21.metadata.mtx) == colnames(d21.counts_matrix)) # should be TRUE
+# all(rownames(d21.metadata.mtx) == colnames(d21.counts_matrix))  # should be TRUE
+# build dds
+# FULL MODEL
+dds.d21 <- DESeqDataSetFromMatrix(countData = d21.counts_matrix,
+                                        colData = d21.metadata.mtx,
+                                        design = ~ Primary_Treatment+
+                                        Second_Treament+
+                                        Third_Treatment+
+                                        Primary_Treatment:Second_Treament+
+                                        Primary_Treatment:Third_Treatment+
+                                        Second_Treament:Third_Treatment) 
+# GROUP MDOEL
+dds.d21.group <- DESeqDataSetFromMatrix(countData = d21.counts_matrix,
+                                        colData = d21.metadata.mtx,
+                                        design = ~ All_Treatment-1) 
+# ADDITIVE MODEL 
+dds.d21.main <- DESeqDataSetFromMatrix(countData = d21.counts_matrix,
+                                       colData = d21.metadata.mtx,
+                                       design = ~ Third_Treatment+Second_Treament+Primary_Treatment) 
 
 ```
+
+### Plot reads per gene and reads per sample in each dds
+```{r ddsPlots_read.gene_reads.sample}
+# DAY 0 PLOT THE (1) READS PER SAMPLE (2) READS PER GENE - FOR EACH DDS
+d0.nsamples <- ncol(counts(dds.d0)) # Number of samples - for the plot label
+d0.rps <- qplot(colSums(counts(dds.d0))) +# reads of reads per sample 
+  labs(x = "Mapped reads per sample", y = "Number of samples",
+       title = "Day 0: Mapped reads per sample") +
+  geom_label(aes(x = 8e5, y = 1, label = paste(d0.nsamples, "samples")))
+d0.ngenes <- nrow(counts(dds.d0)) # Number of genes
+d0.ngenes_min <-min(rowSums(counts(dds.d0))) #  minimum reads
+d0.ngenes_less.ten <- length( which( (rowSums(counts(dds.d0))) < 10) )
+d0.ngenes_less.fifteen <- length( which( (rowSums(counts(dds.d0))) < 15) )
+d0.ngenes_max <-max(rowSums(counts(dds.d0))) #  maximum reads
+d0.rpg <- qplot(log10(rowSums(counts(dds.d0))), bins = 16) + # number of reads per gene
+  labs(x = "log10(Mapped reads per gene)", y = "Number of genes",
+       title = "Day 0: Mapped reads per gene") +
+  geom_label(aes(x = 4, y = 3000, label = paste(d0.ngenes, "total genes"))) +
+  geom_label(aes(x = 4, y = 2700, label = paste("max count =", d0.ngenes_max))) +
+  geom_label(aes(x = 4, y = 2400, label = paste("min count =", d0.ngenes_min))) +
+  geom_label(aes(x = 4, y = 2100, label = paste("<10 =", d0.ngenes_less.ten))) +
+  geom_label(aes(x = 4, y = 1900, label = paste("<15 =", d0.ngenes_less.fifteen)))
+d0.countfig <- plot_grid(d0.rps, d0.rpg)
+
+# DAY 7 PLOT THE (1) READS PER SAMPLE (2) READS PER GENE - FOR EACH DDS
+d7.nsamples <- ncol(counts(dds.d7)) # Number of samples - for the plot label
+d7.rps <- qplot(colSums(counts(dds.d7))) +# reads of reads per sample 
+  labs(x = "Mapped reads per sample", y = "Number of samples",
+       title = "Day 7: Mapped reads per sample") +
+  geom_label(aes(x = 6e5, y = 4, label = paste(d7.nsamples, "samples")))
+d7.ngenes <- nrow(counts(dds.d7)) # Number of genes
+d7.ngenes_min <-min(rowSums(counts(dds.d7))) #  minimum reads
+d7.ngenes_max <-max(rowSums(counts(dds.d7))) #  maximum reads
+d7.rpg <- qplot(log10(rowSums(counts(dds.d7))), bins = 16) + # number of reads per gene
+  labs(x = "log10(Mapped reads per gene)", y = "Number of genes",
+       title = "Day 7: Mapped reads per gene") +
+  geom_label(aes(x = 4, y = 3000, label = paste(d7.ngenes, "total genes"))) +
+  geom_label(aes(x = 4, y = 2700, label = paste("max count =", d7.ngenes_max))) +
+  geom_label(aes(x = 4, y = 2400, label = paste("min count =", d7.ngenes_min))) 
+d7.countfig <- plot_grid(d7.rps, d7.rpg)
+
+# DAY 14 PLOT THE (1) READS PER SAMPLE (2) READS PER GENE - FOR EACH DDS
+d14.nsamples <- ncol(counts(dds.d14)) # Number of samples - for the plot label
+d14.rps <- qplot(colSums(counts(dds.d14))) +# reads of reads per sample 
+  labs(x = "Mapped reads per sample", y = "Number of samples",
+       title = "Day 14: Mapped reads per sample") +
+  geom_label(aes(x = 6e5, y = 4, label = paste(d14.nsamples, "samples")))
+d14.ngenes <- nrow(counts(dds.d14)) # Number of genes
+d14.ngenes_min <-min(rowSums(counts(dds.d14))) #  minimum reads
+d14.ngenes_max <-max(rowSums(counts(dds.d14))) #  maximum reads
+d14.rpg <- qplot(log10(rowSums(counts(dds.d14))), bins = 16) + # number of reads per gene
+  labs(x = "log10(Mapped reads per gene)", y = "Number of genes",
+       title = "Day 14: Mapped reads per gene") +
+  geom_label(aes(x = 4, y = 3000, label = paste(d14.ngenes, "total genes"))) +
+  geom_label(aes(x = 4, y = 2700, label = paste("max count =", d14.ngenes_max))) +
+  geom_label(aes(x = 4, y = 2400, label = paste("min count =", d14.ngenes_min)))
+d14.countfig <- plot_grid(d14.rps, d14.rpg)
+
+# DAY 21 PLOT THE (1) READS PER SAMPLE (2) READS PER GENE - FOR EACH DDS
+d21.nsamples <- ncol(counts(dds.d21)) # Number of samples - for the plot label
+d21.rps <- qplot(colSums(counts(dds.d21))) +# reads of reads per sample 
+  labs(x = "Mapped reads per sample", y = "Number of samples",
+       title = "Day 21: Mapped reads per sample") +
+  geom_label(aes(x = 6e5, y = 11, label = paste(d21.nsamples, "samples")))
+d21.ngenes <- nrow(counts(dds.d21)) # Number of genes
+d21.ngenes_min <-min(rowSums(counts(dds.d21))) #  minimum reads
+d21.ngenes_max <-max(rowSums(counts(dds.d21))) #  maximum reads
+d21.countfig <- qplot(log10(rowSums(counts(dds.d21))), bins = 16) + # number of reads per gene
+  labs(x = "log10(Mapped reads per gene)", y = "Number of genes",
+       title = "Day 21: Mapped reads per gene") +
+  geom_label(aes(x = 4, y = 3000, label = paste(d21.ngenes, "total genes"))) +
+  geom_label(aes(x = 4, y = 2700, label = paste("max count =", d21.ngenes_max))) +
+  geom_label(aes(x = 4, y = 2400, label = paste("min count =", d21.ngenes_min))) 
+
+plot_grid(d0.countfig, d7.countfig, d14.countfig, d21.countfig)
+
+```
+
+### RUN DESEQ2 model - wait for this to complete...
+```{r run_dds}
+dds.d0 <- DESeq(dds.d0) # wait for this to complete....
+
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d7 <- DESeq(dds.d7) #  full model                 wait for this to complete....
+dds.d7.group <- DESeq(dds.d7.group) # group model     wait for this to complete....
+dds.d7.main <- DESeq(dds.d7.main) # main effect model    
+
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d14 <- DESeq(dds.d14) #  full model               wait for this to complete....
+dds.d14.group <- DESeq(dds.d14.group) # group model   wait for this to complete....
+dds.d14.main <- DESeq(dds.d14.main) # main effect model    
+
+# RUN DESEQ2 model - view all the pariwise comparisons
+dds.d21 <- DESeq(dds.d21) #  full model                  wait for this to complete....
+dds.d21.group <- DESeq(dds.d21.group) # group model      wait for this to complete....
+dds.d21.main <- DESeq(dds.d21.main) # main effect model    
+
+```
+
+# Analysis (DEG tables)
+
+### Primary treatment: padj < 0.05; FDR 5%; LFC >1 (<-1)
+```{r P.MvA}
+# prep a table for knitr
+DEGs.table <- data.frame(matrix(nrow = 4, ncol = 6)) # create a new data table
+colnames(DEGs.table)<-c('Day', 'Treatment','Pairwise.compare', 'DEGs_total', 'DEGs_UP', 'DEGs_DOWN') 
+    
+      
+# DAY 0 - main model
+resd0.primary <- results(dds.d0, name="Primary_Treatment_M_vs_A", alpha = 0.05)
+d0.numDEGs_padj <-data.frame(table(resd0.primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
+resd0.primary.ordered <- resd0.primary[order(resd0.primary$padj), ] # Order by adjusted p-value
+d0.num.DownReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
+d0.num.UpReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d0.total <- sum(d0.num.DownReg,d0.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+
+# DAY 7 - group model 
+res.d7_P.AvM_group <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentAM", "All_TreatmentAS"),c("All_TreatmentMA", "All_TreatmentMM", "All_TreatmentMS")),  alpha= 0.05)
+# table(res.d7_P.MvA_group$padj<0.05) # 111 DEGs
+d7.numDEGs_padj <-data.frame(table(res.d7_P.AvM_group$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
+res.d7_Prim_AvM_group.ordered <- res.d7_P.AvM_group[order(res.d7_P.AvM_group$padj), ] # Order by adjusted p-value
+d7.num.UpReg <- sum((res.d7_Prim_AvM_group.ordered$log2FoldChange[1:d7.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
+d7.num.DownReg <- sum((res.d7_Prim_AvM_group.ordered$log2FoldChange[1:d7.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d7.total <- sum(d7.num.DownReg,d7.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+
+# DAY 14 - group model 
+res.d14_P.AvM_group <- results(dds.d14.group, contrast = list(c("All_TreatmentAA", "All_TreatmentAM", "All_TreatmentAS"),  c("All_TreatmentMA", "All_TreatmentMM", "All_TreatmentMS")),  alpha= 0.05)
+# table(res.d14_P.AvM_group$padj<0.05) 
+d14.numDEGs_padj <-data.frame(table(res.d14_P.AvM_group$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
+res.d14_Prim_AvM_group.ordered <- res.d14_P.AvM_group[order(res.d14_P.AvM_group$padj), ] # Order by adjusted p-value
+d14.num.UpReg <- sum((res.d14_Prim_AvM_group.ordered$log2FoldChange[1:d14.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
+d14.num.DownReg <- sum((res.d14_Prim_AvM_group.ordered$log2FoldChange[1:d14.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d14.total <- sum(d14.num.DownReg,d14.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+
+# DAY 21 - group model 
+res.d21_Prim_AvM_group <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAAM", "All_TreatmentAMA", "All_TreatmentAMM", "All_TreatmentASA","All_TreatmentASM"), c("All_TreatmentMAA", "All_TreatmentMAM", "All_TreatmentMMA", "All_TreatmentMMM", "All_TreatmentMSA", "All_TreatmentMSM")),  alpha= 0.05)
+d21.numDEGs_padj <-data.frame(table(res.d21_Prim_AvM_group$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
+res.d21_Prim_AvM_group.ordered <- res.d21_Prim_AvM_group[order(res.d21_Prim_AvM_group$padj), ] # Order by adjusted p-value
+d21.num.UpReg <- sum((res.d21_Prim_AvM_group.ordered$log2FoldChange[1:d21.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
+d21.num.DownReg <- sum((res.d21_Prim_AvM_group.ordered$log2FoldChange[1:d21.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d21.total <- sum(d21.num.DownReg,d21.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+
+# write to table
+DEGs.table$Day <- c("0", "7", "14", "21")
+DEGs.table$Treatment <- "Primary"
+DEGs.table$Pairwise.compare <- "A_v_M"
+DEGs.table$DEGs_total <- c(d0.total, d7.total, d14.total, d21.total)
+DEGs.table$DEGs_UP <- c(d0.num.UpReg, d7.num.UpReg, d14.num.UpReg, d21.num.UpReg)
+DEGs.table$DEGs_DOWN <- c(d0.num.DownReg, d7.num.DownReg, d14.num.DownReg, d21.num.DownReg)
+
+knitr::kable(DEGs.table, caption = "Primary Treatment Effects [3 cpm in 50%; FDR 0.05; padj <0.05; LFC >1]")
+
+# FDR histograms - red line shows the false discovery rate of 0.05 called in each model as "alpha = 0.05"
+# peaks at pdj < 0.05 above this line are considering true in the models
+# hist(resd0.primary$pvalue, breaks=20, col="grey")          + abline(h=(nrow(resd0.primary)*0.05),col="red")
+# hist(res.d7_P.AvM_group$pvalue, breaks=20, col="grey")     + abline(h=(nrow(res.d7_P.AvM_group)*0.05),col="red")
+# hist(res.d14_P.AvM_group$pvalue, breaks=20, col="grey")    + abline(h=(nrow(res.d14_P.AvM_group)*0.05),col="red")
+# hist(res.d21_Prim_AvM_group$pvalue, breaks=20, col="grey") + abline(h=(nrow(res.d21_Prim_AvM_group)*0.05),col="red")
+
+# output tables for DEGs 
+# Day 0 
+DE_d0.primary <- merge(as.data.frame(resd0.primary), as.data.frame(counts(dds.d0, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange <= 1) %>% mutate(down = log2FoldChange >= -1) # remember! this model is M vA whereas the rest ate A v M
+write.csv(DE_d0.primary, paste(path_out,"DE_Day0_Primary.Ambient_vs_Moderate.csv"))
+
+# Day 7 
+DE_d7.primary <- merge(as.data.frame(res.d7_P.AvM_group), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+write.csv(DE_d7.primary, paste(path_out,"DE_Day7_Primary.Ambient_vs_Moderate.csv"))
+
+# Day 14 
+DE_d14.primary <- merge(as.data.frame(res.d14_P.AvM_group), as.data.frame(counts(dds.d14, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+write.csv(DE_d14.primary, paste(path_out,"DE_Day14_Primary.Ambient_vs_Moderate.csv"))
+
+# Day 21
+DE_d21.primary <- merge(as.data.frame(res.d21_Prim_AvM_group), as.data.frame(counts(dds.d21, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+write.csv(DE_d21.primary, paste(path_out,"DE_Day21_Primary.Ambient_vs_Moderate.csv"))
+
+
+d0_P.DEGs_boolean <- DE_d0.primary %>% dplyr::select(c("Row.names"
+,"log2FoldChange","padj","up","down")) %>% dplyr::mutate(Day_Trmt = "Day0_Primary_AvM")
+
+d7_P.DEGs_boolean <- DE_d7.primary %>% dplyr::select(c("Row.names"
+,"log2FoldChange","padj","up","down")) %>% dplyr::mutate(Day_Trmt = "Day7_Primary_AvM")
+
+d14_P.DEGs_boolean <- DE_d14.primary %>% dplyr::select(c("Row.names"
+,"log2FoldChange","padj","up","down")) %>% dplyr::mutate(Day_Trmt = "Day14_Primary_AvM")
+
+d21_P.DEGs_boolean <- DE_d21.primary %>% dplyr::select(c("Row.names"
+,"log2FoldChange","padj","up","down")) %>% dplyr::mutate(Day_Trmt = "Day21_Primary_AvM")
+
+All_DEGs_Primary.Ambieant_v_Moderate <- rbind(d0_P.DEGs_boolean,d7_P.DEGs_boolean, d14_P.DEGs_boolean,d21_P.DEGs_boolean)
+
+# Summary table for the frequency that DEGs occured 
+DE_freq.upreg <-All_DEGs_Primary.Ambieant_v_Moderate %>%
+            filter(up == TRUE) %>% 
+            group_by(Row.names, up) %>%
+            summarise(Freq = n()) %>% 
+            arrange(desc(Freq))
+DE_freq.upreg <- DE_freq.upreg %>% group_by(Freq) %>% summarise(num.transcripts = n(),Direction = "upregulated")
+
+DE_freq.downreg <-All_DEGs_Primary.Ambieant_v_Moderate %>%
+            filter(down == TRUE) %>% 
+            group_by(Row.names, down) %>%
+            summarise(Freq = n()) %>%
+            arrange(desc(Freq))
+DE_freq.downreg <- DE_freq.downreg %>% group_by(Freq) %>% summarise(num.transcripts = n(),Direction = "downregulated")
+knitr::kable(rbind(DE_freq.downreg, DE_freq.upreg),caption = "DEGs Summary: Primary Amb_v_Mod (1 = unique; >1 = multiple Days)")
+
+```
+
+
+
+```{r }
+# Day 7: ALL PAIRWISE COMPARISONS
+d7.GROUP.DEGs_table = data.frame() # start a data frame
+df_d7_group<- data.frame(resultsNames(dds.d7.group))
+unique.vars <- df_d7_group[1,]
+for(i in 1:nrow(df_d7_group)) {
+  
+      var <- df_d7_group[i,]
+      T_F <- (df_d7_group[,1]!=c(unique.vars,var))
+      df_d7_group_2 <- data.frame(df_d7_group[T_F,])
+
+      for(j in 1:nrow(df_d7_group_2)) {
+          
+          var2 <- df_d7_group_2[j,]
+          res <- results(dds.d7.group, contrast = list((var),(var2)),  alpha= 0.05) 
+          res.table<-as.data.frame(table(res$padj<0.05))
+          DEGs_total <- res.table[2,2]
+          DEGs_total[is.na(DEGs_total)] <- 0
+          DEGs.table <- data.frame(matrix(nrow = 1, ncol = 6)) # create a new data table
+          colnames(DEGs.table)<-c('Day', 'Treatment', 'Pairwise.compare', 'DEGs_total', 'DEGs_UP', 'DEGs_DOWN') 
+          res.order <- res[order(res$padj), ] ## Order by adjusted p-value
+          DEGs.table$Day <- "7"
+          DEGs.table$Treatment <- "full_interaction"
+          DEGs.table$Pairwise.compare <- paste((substr(var, 14,15)), (substr(var2, 14,15)), sep = "_")
+          DEGs.table$DEGs_total <- DEGs_total
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          df.group <- data.frame(DEGs.table) # name dataframe for this single row
+          d7.GROUP.DEGs_table <- rbind(d7.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
+          unique.vars <- unique((substr(d7.GROUP.DEGs_table$Pairwise.compare,1,2)))
+      } 
+}
+d7.full.interaction.DEGs <- d7.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA", d7.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+
+# Day 14: ALL PAIRWISE COMPARISONS
+d14.GROUP.DEGs_table = data.frame() # start a data frame
+df_d14_group<- data.frame(resultsNames(dds.d14.group))
+unique.vars <- df_d14_group[1,]
+for(i in 1:nrow(df_d14_group)) {
+  
+      var <- df_d14_group[i,]
+      T_F <- (df_d14_group[,1]!=c(unique.vars,var))
+      df_d14_group_2 <- data.frame(df_d14_group[T_F,])
+
+      for(j in 1:nrow(df_d14_group_2)) {
+          
+          var2 <- df_d14_group_2[j,]
+          res <- results(dds.d14.group, contrast = list((var),(var2)),  alpha= 0.05) 
+          res.table<-as.data.frame(table(res$padj<0.05))
+          DEGs_total <- res.table[2,2]
+          DEGs_total[is.na(DEGs_total)] <- 0
+          DEGs.table <- data.frame(matrix(nrow = 1, ncol = 6)) # create a new data table
+          colnames(DEGs.table)<-c('Day', 'Treatment', 'Pairwise.compare', 'DEGs_total', 'DEGs_UP', 'DEGs_DOWN') 
+          res.order <- res[order(res$padj), ] ## Order by adjusted p-value
+          DEGs.table$Day <- "14"
+          DEGs.table$Treatment <- "full_interaction"
+          DEGs.table$Pairwise.compare <- paste((substr(var, 14,15)), (substr(var2, 14,15)), sep = "_")
+          DEGs.table$DEGs_total <- DEGs_total
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          df.group <- data.frame(DEGs.table) # name dataframe for this single row
+          d14.GROUP.DEGs_table <- rbind(d14.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
+          unique.vars <- unique((substr(d14.GROUP.DEGs_table$Pairwise.compare,1,2)))
+      } 
+}
+d14.full.interaction.DEGs <- d14.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA", d14.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+
+
+# Day 21: ALL PAIRWISE COMPARISONS
+d21.GROUP.DEGs_table = data.frame() # start a data frame
+df_d21_group<- data.frame(resultsNames(dds.d21.group))
+unique.vars <- df_d21_group[1,]
+for(i in 1:nrow(df_d21_group)) {
+  
+      var <- df_d21_group[i,]
+      T_F <- (df_d21_group[,1]!=c(unique.vars,var))
+      df_d21_group_2 <- data.frame(df_d21_group[T_F,])
+
+      for(j in 1:nrow(df_d21_group_2)) {
+          
+          var2 <- df_d21_group_2[j,]
+          res <- results(dds.d21.group, contrast = list((var),(var2)),  alpha= 0.05) 
+          res.table<-as.data.frame(table(res$padj<0.05))
+          DEGs_total <- res.table[2,2]
+          DEGs_total[is.na(DEGs_total)] <- 0
+          DEGs.table <- data.frame(matrix(nrow = 1, ncol = 6)) # create a new data table
+          colnames(DEGs.table)<-c('Day', 'Treatment', 'Pairwise.compare', 'DEGs_total', 'DEGs_UP', 'DEGs_DOWN') 
+          res.order <- res[order(res$padj), ] ## Order by adjusted p-value
+          DEGs.table$Day <- "21"
+          DEGs.table$Treatment <- "full_interaction"
+          DEGs.table$Pairwise.compare <- paste((substr(var, 14,16)), (substr(var2, 14,16)), sep = "_")
+          DEGs.table$DEGs_total <- DEGs_total
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          df.group <- data.frame(DEGs.table) # name dataframe for this single row
+          d21.GROUP.DEGs_table <- rbind(d21.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
+          unique.vars <- unique((substr(d21.GROUP.DEGs_table$Pairwise.compare,1,3)))
+      } 
+}
+
+d21.full.interaction.DEGs <- d21.GROUP.DEGs_table[-grep("MAA_A|MAM_A|MMA_A|MMM_A|MSA_A|MSM_A|MMA_M|MMM_M|MSA_M", d21.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+
+# knitr table
+knitr::kable(rbind(d7.full.interaction.DEGs, d14.full.interaction.DEGs, d21.full.interaction.DEGs), caption = "All pairwise DEGs in 'group' DESeq2 model")
+```
+# Plotting
+
+### rlog transform dds data... this takes a bit!
+```{r tranformations}
+colData(dds.d0) <- droplevels(colData(dds.d0))
+# Day 0 
+rlog.d0 <- rlogTransformation(dds.d0)
+vsd.d0 <- vst(dds.d0, blind = TRUE)
+
+# Day 7 
+rlog.d7 <- rlogTransformation(dds.d7)
+vsd.d7 <- vst(dds.d7, blind = TRUE)
+
+# Day 14 
+rlog.d14 <- rlogTransformation(dds.d14)
+vsd.d14 <- vst(dds.d14, blind = TRUE)
+
+# Day 21 
+rlog.d21 <- rlogTransformation(dds.d21)
+vsd.d21 <- vst(dds.d21, blind = TRUE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dds.d7
+vsd <- vst(dds.d21, blind = TRUE)
+sampleDists <- dist(t(assay(dds.d21)), method = "manhattan")
+sampleDistMatrix <- as.matrix(sampleDists)
+## Calculate MDS
+mds <- as.data.frame(colData(vsd)) %>% 
+  cbind(cmdscale(sampleDistMatrix))
+# Calculate group centroids for plotting
+mds <- mds %>%
+  group_by(Primary_Treatment) %>%
+  dplyr::summarise(c1 = mean(`1`), c2 = mean(`2`)) %>%    
+  full_join(mds)
+# Calculate variance explained by each PC
+MDS <- cmdscale(sampleDistMatrix, eig = TRUE)
+vexpl <- round(MDS$eig*100/sum(MDS$eig),1)[1:2]
+## ggplot theme
+theme_custom <- function() {
+ # theme_classic(base_size = 10) %+replace%    #, base_family = "Arial"
+  theme_bw(base_size = 10) %+replace%    #, base_family = "Arial"
+    theme(
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      panel.background = element_blank(),
+      panel.border = element_rect(color = "black", fill = NA),
+      legend.background = element_rect(fill = NA, colour = NA),
+      axis.text.x = element_text(angle=45, hjust=1, vjust = 1)#,
+    )
+}
+# Plot with spiders
+pcoa <- ggplot(mds, aes(color = Primary_Treatment, shape = Second_Treament)) +
+  geom_segment(mapping = aes(x = `1`, y = `2`, xend = c1, yend = c2),
+               lwd = 0.25, col = "grey") +
+  geom_point(size = 2, aes(x = c1, y = c2, fill = Primary_Treatment)) +
+  geom_point(size = 2, aes(x = c1, y = c2)) +
+  geom_point(size = 0.7, aes(x = `1`, y = `2`, fill = Primary_Treatment, show.legend = F)) +
+  geom_point(size = 0.7, aes(x = `1`, y = `2`), show.legend = F) +
+  scale_shape_manual(values = c(21, 24, 19)) +
+  #scale_alpha_manual(values = c(1, 0), name = "temp", labels = c("control", "heated")) +
+  guides(shape = guide_legend(order = 2, override.aes = list(fill = "black"))) +
+  #guides(alpha = guide_legend(override.aes = list(shape = 21, alpha = 1, fill = c("black", "white")))) +
+  labs(x = paste0("PC1 [", vexpl[1],"%]"), y = paste0("PC2 [", vexpl[2],"%]")) +
+  theme_custom() +
+  theme(legend.spacing.y = unit(0, "cm"))
+pcoa

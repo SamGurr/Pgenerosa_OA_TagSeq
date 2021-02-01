@@ -1,0 +1,115 @@
+---
+title: "Count_Matrix_Stats.Filter"
+author: "Samuel Gurr"
+date: "February 1, 2021"
+output: html_document
+---
+
+# Setup: 
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+```
+
+### Load libraries
+```{r  }
+library(dplyr)
+```
+
+### Set working directory
+```{r  }
+setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+# path for outputting all .csv filtered count files
+path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/RAnalysis/DESeq2/counts_filtered/' # run this for all count matrix outputs!!!
+```
+
+# LOAD DATA:
+
+```{r  }
+raw_counts <- read.csv(file="HPC_Bioinf/outputs/transcript_count_matrix_trimpolyx_10.csv", sep=',', header=TRUE) # read the output count matrix - NOTE: TRIMMED at 30 phred threshold!
+UT_seq_map <- read.csv(file="20201020_Gurr_TagSeq_UTAustin.csv", sep=',', header=TRUE)
+smpl_ref <- read.csv(file="Sample_reference.csv", sep=',', header=TRUE)
+treatment_ref <- read.csv(file="Extraction_checklist.csv", sep=',', header=TRUE)
+```
+
+
+```{r  }
+# MASTER REFERENCE DATA.FRAME
+# format and merge to buld master reference dataframe
+smpl_ref$Seq_Pos <- paste(smpl_ref$ï..TagSeq_Plate, smpl_ref$TagSeq_Well, sep="_")
+smpl_ref <- smpl_ref[,-c(1:2)]
+UT_seq_map$Seq_Pos  <- paste(UT_seq_map$ï..Plate, UT_seq_map$Well, sep="_")
+UT_seq_map <- UT_seq_map[-c(1:2)]
+Seq.Ref <- merge(smpl_ref, UT_seq_map, by = "Seq_Pos")
+Mstr.Ref <- merge(Seq.Ref, treatment_ref, by = "Geoduck_ID")
+```
+
+
+```{r  }
+#================= #
+# ALL TIMEPOINTS:
+# call all experiment design treatments as 'exp.data'
+exp.data <- Mstr.Ref[,c("Sample.Name","All_Treatment", "Primary_Treatment", "Second_Treament", "Third_Treatment", "Time")]
+write.csv(exp.data,paste(path,"all.exp.data.csv"))
+#================= #
+# DAY 0 
+exp.data.d0 <- exp.data %>% dplyr::filter(Time %in% 'Day0') # all data on day 0
+nrow(exp.data.d0) # 8 total samples on Day 0
+write.csv(exp.data.d0,paste(path,"day0.exp.data.csv"))
+#================= #
+# DAY 7 
+exp.data.d7 <- exp.data %>% dplyr::filter(Time %in% 'Day7') # all data on day 7
+nrow(exp.data.d7) # 36 total samples on Day 7
+write.csv(exp.data.d7,paste(path,"day7.exp.data.csv"))
+#================= #
+# DAY 14 
+UT_seq_map %>% dplyr::filter(Sample.Name == "SG92") # there was no sample in SG92 for TagSeq; 35 total is correct!
+
+exp.data.d14 <- exp.data %>% dplyr::filter(Time %in% 'DAY14') # all data on day 14
+exp.data.d14 <- exp.data.d14 %>% dplyr::filter(!(Sample.Name %in% 'SG92')) # RUN THIS! now 35 rows (samples) ommmits SG92 (NOT sent to for TagSeq!)
+nrow(exp.data.d14) #  35 total samples on Day 14
+write.csv(exp.data.d14,paste(path," day14.exp.data.csv"))
+#================= #
+# DAY 21 
+exp.data.d21 <- exp.data %>% dplyr::filter(Time %in% 'DAY21') # all data on day 21
+nrow(exp.data.d21) # 62 total sampels on day 21
+write.csv(exp.data.d21,paste(path," day21.exp.data.csv"))
+
+```
+
+
+```{r  }
+ncol(raw_counts) # 282 samples (not counting gene ID column) - should be 141 samples, need to sum columns by unique ID
+raw_counts.merged <- data.frame(raw_counts[,-1], row.names=raw_counts[,1]) # call new dataframe with first column now as row names, now all row values are numeric
+names(raw_counts.merged) <- sapply(strsplit(names(raw_counts.merged), "_"), '[', 1) # split the column names by "_" delimiter  and call the first field SG##
+raw_counts.merged <- t(rowsum(t(raw_counts.merged), group = colnames(raw_counts.merged), na.rm = TRUE)) # merge all unique columns and sum counts 
+ncol(raw_counts.merged) # now 141 samples
+
+raw_counts.matrix <-as.matrix(raw_counts.merged, row.names="transcript_id") # call dataframe as matrix
+ncol(raw_counts.matrix) # 141 samples
+nrow(raw_counts.matrix) # 34947 total genes
+
+raw_counts.merged.as.table <- data.frame(transcript_id = row.names(raw_counts.merged), raw_counts.merged) # add back the rownames 'transcript_ID'
+rownames(raw_counts.merged.as.table) <- NULL # ommit the rownames
+ncol(raw_counts.merged.as.table) # 142 counting the transcript.ID that we want to keep! 
+
+
+# READ COUNTS 
+dim(raw_counts.matrix) # 34947 total genes 141 samples
+sum(transcript_sums) # 114250931 total read counts 
+
+gene_sums <- data.frame(rowSums(raw_counts.matrix))  # all gene.IDs and the sum of unique reads
+
+transcript_sums <- colSums(raw_counts.matrix) # sum of reads for each sample
+mean(transcript_sums) # 810290.3 == average raw read counts for each sample
+
+gene_sums_gtr0 <- rowSums(raw_counts.matrix) > 0 # all gene.IDs with at least one unique read
+sum(gene_sums_gtr0 == TRUE) # 29335 total genes with unique transcript reads 
+( sum(gene_sums_gtr0 == TRUE) / (dim(raw_counts.matrix)[1]) ) *100 # 83.9414 % of genes have a unique mapped read
+```
+
+```{r  }
+```
+
+```{r  }
+```
