@@ -1,0 +1,705 @@
+hgnc_symbol,hgnc_id,go_name,go_id,go_domain,ncon_gene,ncon_go,global_padj,gene_padj,pval,sim,sem_sim,cilow_global_padj,ciupp_global_padj,cilow_gene_padj,ciupp_gene_padj,cilow_pval,ciupp_pval
+C1QL4,31416,protein binding,GO:0005515,molecular function,1,161,2.276e-01,1.565e-01,1.565e-01,5.152e-01,1.323e-02,2.096e-01,2.471e-01,1.309e-01,1.871e-01,1.309e-01,1.871e-01
+RGN,9989,calcium ion binding,GO:0005509,molecular function,4,5,1.588e-01,3.782e-02,1.984e-02,8.322e-01,3.140e-02,1.483e-01,1.701e-01,2.225e-02,6.428e-02,1.126e-02,3.496e-02
+RGN,9989,L-ascorbic acid biosynthetic process,GO:0019853,biological process,4,7,1.588e-01,3.782e-02,2.076e-02,8.293e-01,3.492e-02,1.483e-01,1.701e-01,2.225e-02,6.428e-02,1.170e-02,3.684e-02
+RGN,9989,gluconolactonase activity,GO:0004341,molecular function,4,2,1.588e-01,3.839e-02,2.879e-02,7.819e-01,3.473e-02,1.483e-01,1.701e-01,2.238e-02,6.585e-02,1.679e-02,4.939e-02
+RGN,9989,zinc ion binding,GO:0008270,molecular function,4,5,1.683e-01,5.115e-02,5.115e-02,6.957e-01,4.002e-02,1.538e-01,1.842e-01,2.699e-02,9.697e-02,2.699e-02,9.697e-02
+HELZ2,30021,cytoplasm,GO:0005737,cellular component,9,20,1.641e-01,1.521e-01,3.979e-02,7.333e-01,2.491e-02,1.542e-01,1.746e-01,1.058e-01,2.188e-01,2.654e-02,5.966e-02
+HELZ2,30021,"nuclear-transcribed mRNA catabolic process, nonsense-mediated decay",GO:0000184,biological process,9,4,1.654e-01,1.521e-01,4.311e-02,7.220e-01,3.883e-02,1.578e-01,1.733e-01,1.058e-01,2.188e-01,2.310e-02,8.045e-02
+HELZ2,30021,membrane,GO:0016020,cellular component,9,33,1.729e-01,1.583e-01,7.244e-02,6.432e-01,1.745e-02,1.558e-01,1.920e-01,1.187e-01,2.112e-01,5.542e-02,9.469e-02
+HELZ2,30021,RNA helicase activity,GO:0003724,molecular function,9,5,1.931e-01,1.521e-01,8.297e-02,6.172e-01,5.566e-02,1.526e-01,2.444e-01,1.058e-01,2.188e-01,3.589e-02,1.918e-01
+HELZ2,30021,positive regulation of transcription by RNA polymerase II,GO:0045944,biological process,9,37,1.972e-01,1.583e-01,1.115e-01,5.732e-01,2.200e-02,1.736e-01,2.241e-01,1.187e-01,2.112e-01,8.121e-02,1.530e-01
+HELZ2,30021,RNA binding,GO:0003723,molecular function,9,39,2.058e-01,1.707e-01,1.261e-01,5.528e-01,1.631e-02,1.891e-01,2.239e-01,1.428e-01,2.040e-01,1.003e-01,1.584e-01
+HELZ2,30021,protein binding,GO:0005515,molecular function,9,161,2.197e-01,1.749e-01,1.455e-01,5.283e-01,1.009e-02,2.037e-01,2.370e-01,1.559e-01,1.963e-01,1.267e-01,1.670e-01
+HELZ2,30021,nuclear receptor coactivator activity,GO:0030374,molecular function,9,2,2.604e-01,2.031e-01,1.846e-01,4.785e-01,5.425e-02,1.779e-01,3.812e-01,1.198e-01,3.443e-01,9.039e-02,3.768e-01
+NPC2,14537,cholesterol transport,GO:0030301,biological process,15,8,1.588e-01,3.071e-02,4.498e-03,9.428e-01,9.136e-03,1.483e-01,1.701e-01,2.006e-02,4.702e-02,2.085e-03,9.704e-03
+NPC2,14537,intracellular sterol transport,GO:0032366,biological process,15,4,1.588e-01,3.071e-02,5.816e-03,9.314e-01,1.448e-02,1.483e-01,1.701e-01,2.006e-02,4.702e-02,2.527e-03,1.339e-02
+NPC2,14537,intracellular cholesterol transport,GO:0032367,biological process,15,4,1.588e-01,3.071e-02,7.799e-03,9.238e-01,7.149e-03,1.483e-01,1.701e-01,2.006e-02,4.702e-02,5.323e-03,1.143e-02
+NPC2,14537,cholesterol efflux,GO:0033344,biological process,15,2,1.588e-01,3.071e-02,8.006e-03,9.212e-01,9.630e-03,1.483e-01,1.701e-01,2.006e-02,4.702e-02,4.855e-03,1.320e-02
+NPC2,14537,enzyme binding,GO:0019899,molecular function,15,31,1.588e-01,3.479e-02,1.230e-02,8.942e-01,1.172e-02,1.483e-01,1.701e-01,2.765e-02,4.378e-02,9.055e-03,1.671e-02
+NPC2,14537,sterol binding,GO:0032934,molecular function,15,7,1.588e-01,3.698e-02,1.557e-02,8.700e-01,1.761e-02,1.483e-01,1.701e-01,2.749e-02,4.973e-02,1.129e-02,2.148e-02
+NPC2,14537,sterol transport,GO:0015918,biological process,15,8,1.588e-01,3.751e-02,1.858e-02,8.488e-01,1.333e-02,1.483e-01,1.701e-01,2.769e-02,5.080e-02,1.475e-02,2.339e-02
+NPC2,14537,response to virus,GO:0009615,biological process,15,6,1.588e-01,4.252e-02,2.352e-02,8.104e-01,2.974e-02,1.483e-01,1.701e-01,2.797e-02,6.466e-02,1.450e-02,3.816e-02
+NPC2,14537,cholesterol binding,GO:0015485,molecular function,15,5,1.588e-01,4.382e-02,2.591e-02,7.981e-01,1.907e-02,1.483e-01,1.701e-01,3.555e-02,5.400e-02,1.930e-02,3.478e-02
+NPC2,14537,lysosome,GO:0005764,cellular component,15,12,1.588e-01,4.931e-02,3.287e-02,7.608e-01,8.681e-03,1.483e-01,1.701e-01,4.293e-02,5.664e-02,2.862e-02,3.776e-02
+NPC2,14537,cholesterol homeostasis,GO:0042632,biological process,15,2,1.695e-01,7.109e-02,5.674e-02,6.801e-01,2.154e-02,1.567e-01,1.833e-01,5.065e-02,9.976e-02,4.002e-02,8.043e-02
+NPC2,14537,extracellular exosome,GO:0070062,cellular component,15,26,1.699e-01,7.589e-02,6.595e-02,6.581e-01,1.278e-02,1.681e-01,1.716e-01,6.248e-02,9.219e-02,5.419e-02,8.025e-02
+NPC2,14537,protein binding,GO:0005515,molecular function,15,161,1.709e-01,6.847e-02,5.635e-02,6.808e-01,3.250e-02,1.697e-01,1.722e-01,4.657e-02,1.007e-01,3.342e-02,9.502e-02
+NPC2,14537,cholesterol transfer activity,GO:0120020,molecular function,15,2,1.756e-01,7.619e-02,6.744e-02,6.534e-01,2.366e-02,1.639e-01,1.881e-01,5.376e-02,1.080e-01,4.629e-02,9.825e-02
+NPC2,14537,extracellular space,GO:0005615,cellular component,15,21,1.791e-01,8.076e-02,8.076e-02,6.262e-01,1.537e-02,1.690e-01,1.897e-01,6.386e-02,1.021e-01,6.386e-02,1.021e-01
+BPNT1,1096,"3'(2'),5'-bisphosphate nucleotidase activity",GO:0008441,molecular function,2,2,6.151e-01,6.016e-01,6.016e-01,1.946e-01,3.633e-02,4.826e-01,7.840e-01,4.637e-01,7.806e-01,4.637e-01,7.806e-01
+EPDR1,17572,identical protein binding,GO:0042802,molecular function,7,11,1.588e-01,8.864e-02,2.634e-02,7.961e-01,1.917e-02,1.483e-01,1.701e-01,6.775e-02,1.160e-01,1.976e-02,3.512e-02
+EPDR1,17572,phospholipid binding,GO:0005543,molecular function,7,11,1.588e-01,8.864e-02,3.367e-02,7.572e-01,1.415e-02,1.483e-01,1.701e-01,6.775e-02,1.160e-01,2.676e-02,4.236e-02
+EPDR1,17572,myofibroblast contraction,GO:1990764,biological process,7,2,1.672e-01,9.786e-02,6.140e-02,6.668e-01,3.398e-02,1.488e-01,1.878e-01,6.165e-02,1.553e-01,3.619e-02,1.042e-01
+EPDR1,17572,ganglioside GM1 binding,GO:1905573,molecular function,7,3,1.694e-01,9.547e-02,5.674e-02,6.797e-01,2.161e-02,1.539e-01,1.865e-01,7.637e-02,1.194e-01,4.020e-02,8.007e-02
+EPDR1,17572,lysosome,GO:0005764,cellular component,7,12,1.719e-01,1.032e-01,6.886e-02,6.479e-01,4.777e-02,1.437e-01,2.057e-01,6.744e-02,1.580e-01,3.298e-02,1.438e-01
+EPDR1,17572,protein binding,GO:0005515,molecular function,7,161,1.866e-01,1.197e-01,9.096e-02,6.056e-01,3.403e-02,1.676e-01,2.076e-01,7.604e-02,1.886e-01,5.431e-02,1.523e-01
+EPDR1,17572,extracellular region,GO:0005576,cellular component,7,11,2.464e-01,1.793e-01,1.793e-01,4.894e-01,2.290e-02,2.076e-01,2.925e-01,1.343e-01,2.392e-01,1.343e-01,2.392e-01
+FOLR1,3791,methotrexate binding,GO:0051870,molecular function,16,7,1.652e-01,2.979e-01,5.649e-02,6.820e-01,3.145e-03,1.571e-01,1.737e-01,2.271e-01,3.908e-01,5.361e-02,5.953e-02
+FOLR1,3791,folic acid binding,GO:0005542,molecular function,16,8,1.653e-01,2.979e-01,5.712e-02,6.804e-01,1.616e-03,1.573e-01,1.736e-01,2.271e-01,3.908e-01,5.567e-02,5.860e-02
+FOLR1,3791,folic acid receptor activity,GO:0061714,molecular function,16,2,1.891e-01,2.979e-01,9.907e-02,5.931e-01,1.507e-02,1.831e-01,1.952e-01,2.271e-01,3.908e-01,7.926e-02,1.238e-01
+FOLR1,3791,sperm-egg recognition,GO:0035036,biological process,16,4,1.932e-01,2.979e-01,1.102e-01,5.758e-01,4.321e-03,1.857e-01,2.009e-01,2.271e-01,3.908e-01,1.036e-01,1.173e-01
+FOLR1,3791,cell adhesion,GO:0007155,biological process,16,12,2.022e-01,3.019e-01,1.199e-01,5.609e-01,2.185e-02,1.756e-01,2.328e-01,2.261e-01,4.031e-01,8.797e-02,1.635e-01
+FOLR1,3791,fusion of sperm to egg plasma membrane involved in single fertilization,GO:0007342,biological process,16,3,2.048e-01,2.979e-01,1.253e-01,5.540e-01,1.597e-02,1.840e-01,2.279e-01,2.271e-01,3.908e-01,1.000e-01,1.570e-01
+FOLR1,3791,folic acid transport,GO:0015884,biological process,16,8,2.181e-01,3.019e-01,1.368e-01,5.380e-01,2.514e-02,1.906e-01,2.496e-01,2.261e-01,4.031e-01,9.625e-02,1.945e-01
+FOLR1,3791,protein binding,GO:0005515,molecular function,16,161,2.347e-01,3.019e-01,1.634e-01,5.062e-01,2.690e-02,1.986e-01,2.775e-01,2.261e-01,4.031e-01,1.136e-01,2.349e-01
+FOLR1,3791,extracellular exosome,GO:0070062,cellular component,16,26,2.450e-01,3.019e-01,1.746e-01,4.927e-01,3.529e-02,1.930e-01,3.111e-01,2.261e-01,4.031e-01,1.103e-01,2.762e-01
+FOLR1,3791,cellular response to folic acid,GO:0071231,biological process,16,6,2.637e-01,3.019e-01,1.993e-01,4.691e-01,2.657e-02,2.183e-01,3.187e-01,2.261e-01,4.031e-01,1.421e-01,2.795e-01
+FOLR1,3791,anchored component of external side of plasma membrane,GO:0031362,cellular component,16,3,2.722e-01,3.178e-01,2.112e-01,4.589e-01,1.571e-02,2.439e-01,3.038e-01,2.618e-01,3.857e-01,1.747e-01,2.553e-01
+FOLR1,3791,cell surface,GO:0009986,cellular component,16,6,3.131e-01,3.323e-01,2.595e-01,4.158e-01,2.489e-02,2.591e-01,3.783e-01,2.566e-01,4.303e-01,1.954e-01,3.445e-01
+FOLR1,3791,signaling receptor activity,GO:0038023,molecular function,16,27,3.991e-01,3.944e-01,3.618e-01,3.395e-01,3.224e-02,3.115e-01,5.112e-01,3.117e-01,4.990e-01,2.623e-01,4.989e-01
+FOLR1,3791,nucleus,GO:0005634,cellular component,16,26,4.124e-01,4.251e-01,3.751e-01,3.317e-01,2.522e-02,3.361e-01,5.062e-01,3.609e-01,5.007e-01,2.952e-01,4.766e-01
+FOLR1,3791,apical plasma membrane,GO:0016324,cellular component,16,3,4.125e-01,4.317e-01,3.718e-01,3.327e-01,3.230e-02,3.214e-01,5.294e-01,3.298e-01,5.652e-01,2.682e-01,5.155e-01
+FOLR1,3791,basolateral plasma membrane,GO:0016323,cellular component,16,2,4.696e-01,4.501e-01,4.405e-01,2.905e-01,2.477e-02,3.896e-01,5.660e-01,3.732e-01,5.430e-01,3.501e-01,5.543e-01
+KLKB1,6371,extracellular exosome,GO:0070062,cellular component,5,26,3.954e-01,7.255e-01,3.562e-01,3.425e-01,3.549e-02,3.001e-01,5.208e-01,5.425e-01,9.703e-01,2.527e-01,5.021e-01
+KLKB1,6371,protein binding,GO:0005515,molecular function,5,161,4.327e-01,7.255e-01,3.956e-01,3.154e-01,4.057e-02,3.129e-01,5.982e-01,5.425e-01,9.703e-01,2.654e-01,5.898e-01
+KLKB1,6371,extracellular space,GO:0005615,cellular component,5,21,4.688e-01,7.255e-01,4.358e-01,2.899e-01,4.137e-02,3.465e-01,6.342e-01,5.425e-01,9.703e-01,3.042e-01,6.242e-01
+KLKB1,6371,plasminogen activation,GO:0031639,biological process,5,3,6.925e-01,7.603e-01,6.863e-01,1.478e-01,3.250e-02,5.717e-01,8.388e-01,5.907e-01,9.784e-01,5.621e-01,8.379e-01
+KLKB1,6371,positive regulation of fibrinolysis,GO:0051919,biological process,5,4,7.639e-01,7.603e-01,7.603e-01,9.684e-02,4.679e-02,5.983e-01,9.753e-01,5.907e-01,9.784e-01,5.907e-01,9.784e-01
+FAT4,23109,extracellular exosome,GO:0070062,cellular component,3,26,1.727e-01,1.041e-01,7.284e-02,6.424e-01,7.071e-03,1.684e-01,1.771e-01,8.459e-02,1.281e-01,6.530e-02,8.126e-02
+FAT4,23109,protein binding,GO:0005515,molecular function,3,161,1.826e-01,1.041e-01,8.475e-02,6.185e-01,1.257e-02,1.736e-01,1.921e-01,8.459e-02,1.281e-01,7.002e-02,1.026e-01
+FAT4,23109,cell-cell adhesion,GO:0098609,biological process,3,22,1.869e-01,1.129e-01,8.422e-02,6.156e-01,5.094e-02,1.464e-01,2.386e-01,7.870e-02,1.618e-01,3.905e-02,1.816e-01
+DCXR,18985,identical protein binding,GO:0042802,molecular function,11,11,1.588e-01,1.017e-01,2.351e-02,8.128e-01,1.768e-02,1.483e-01,1.701e-01,7.610e-02,1.358e-01,1.801e-02,3.070e-02
+DCXR,18985,L-xylulose reductase (NADP+) activity,GO:0050038,molecular function,11,2,1.596e-01,1.017e-01,3.906e-02,7.356e-01,2.140e-02,1.495e-01,1.703e-01,7.610e-02,1.358e-01,2.759e-02,5.529e-02
+DCXR,18985,carbonyl reductase (NADPH) activity,GO:0004090,molecular function,11,2,1.598e-01,1.017e-01,3.964e-02,7.334e-01,2.184e-02,1.498e-01,1.704e-01,7.610e-02,1.358e-01,2.770e-02,5.671e-02
+DCXR,18985,glucose metabolic process,GO:0006006,biological process,11,8,1.618e-01,1.017e-01,4.981e-02,6.997e-01,5.251e-03,1.533e-01,1.707e-01,7.610e-02,1.358e-01,4.559e-02,5.441e-02
+DCXR,18985,xylulose metabolic process,GO:0005997,biological process,11,4,1.736e-01,1.098e-01,7.472e-02,6.364e-01,3.637e-02,1.517e-01,1.986e-01,7.069e-02,1.706e-01,4.235e-02,1.318e-01
+DCXR,18985,extracellular exosome,GO:0070062,cellular component,11,26,1.749e-01,1.080e-01,7.863e-02,6.305e-01,7.497e-03,1.697e-01,1.802e-01,7.180e-02,1.626e-01,7.008e-02,8.821e-02
+DCXR,18985,"oxidoreductase activity, acting on NAD(P)H, quinone or similar compound as acceptor",GO:0016655,molecular function,11,9,1.879e-01,1.098e-01,9.155e-02,6.050e-01,2.982e-02,1.652e-01,2.137e-01,7.069e-02,1.706e-01,5.913e-02,1.418e-01
+DCXR,18985,protein binding,GO:0005515,molecular function,11,161,1.883e-01,1.137e-01,9.720e-02,5.963e-01,1.473e-02,1.762e-01,2.012e-01,7.544e-02,1.714e-01,7.842e-02,1.205e-01
+DCXR,18985,cytoplasmic microtubule,GO:0005881,cellular component,11,5,1.890e-01,1.098e-01,9.125e-02,6.047e-01,3.620e-02,1.598e-01,2.236e-01,7.069e-02,1.706e-01,5.390e-02,1.545e-01
+DCXR,18985,nucleus,GO:0005634,cellular component,11,26,2.052e-01,1.265e-01,1.156e-01,5.655e-01,3.885e-02,1.706e-01,2.468e-01,8.510e-02,1.881e-01,6.602e-02,2.026e-01
+MZB1,30125,endoplasmic reticulum chaperone complex,GO:0034663,cellular component,4,2,4.651e-01,6.100e-01,4.364e-01,2.940e-01,1.792e-02,4.097e-01,5.280e-01,5.392e-01,6.901e-01,3.714e-01,5.127e-01
+MZB1,30125,protein binding,GO:0005515,molecular function,4,161,4.856e-01,6.100e-01,4.596e-01,2.809e-01,6.078e-03,4.612e-01,5.114e-01,5.392e-01,6.901e-01,4.355e-01,4.851e-01
+MZB1,30125,regulation of B cell proliferation,GO:0030888,biological process,4,5,5.669e-01,6.100e-01,5.468e-01,2.249e-01,3.982e-02,4.255e-01,7.552e-01,5.392e-01,6.901e-01,3.972e-01,7.528e-01
+MZB1,30125,extracellular region,GO:0005576,cellular component,4,11,5.783e-01,6.100e-01,5.600e-01,2.201e-01,2.921e-02,4.796e-01,6.973e-01,5.392e-01,6.901e-01,4.498e-01,6.972e-01
+GPX3,4555,glutathione peroxidase activity,GO:0004602,molecular function,9,2,1.588e-01,2.943e-02,4.635e-03,9.428e-01,8.838e-03,1.483e-01,1.701e-01,2.518e-02,3.440e-02,2.559e-03,8.394e-03
+GPX3,4555,identical protein binding,GO:0042802,molecular function,9,11,1.588e-01,3.663e-02,9.492e-03,9.086e-01,1.565e-02,1.483e-01,1.701e-01,3.339e-02,4.017e-02,5.221e-03,1.726e-02
+GPX3,4555,hydrogen peroxide catabolic process,GO:0042744,biological process,9,4,1.588e-01,4.566e-02,2.199e-02,8.238e-01,9.977e-03,1.483e-01,1.701e-01,3.658e-02,5.698e-02,1.902e-02,2.541e-02
+GPX3,4555,peroxidase activity,GO:0004601,molecular function,9,19,1.588e-01,4.566e-02,2.243e-02,8.204e-01,1.790e-02,1.483e-01,1.701e-01,3.658e-02,5.698e-02,1.705e-02,2.950e-02
+GPX3,4555,extracellular exosome,GO:0070062,cellular component,9,26,1.588e-01,4.861e-02,3.612e-02,7.467e-01,1.768e-02,1.483e-01,1.701e-01,3.987e-02,5.927e-02,2.711e-02,4.812e-02
+GPX3,4555,extracellular space,GO:0005615,cellular component,9,21,1.592e-01,5.049e-02,4.128e-02,7.271e-01,9.278e-03,1.489e-01,1.702e-01,4.071e-02,6.262e-02,3.550e-02,4.799e-02
+GPX3,4555,selenium binding,GO:0008430,molecular function,9,2,1.599e-01,4.942e-02,3.649e-02,7.467e-01,3.355e-02,1.499e-01,1.705e-01,3.656e-02,6.681e-02,2.136e-02,6.235e-02
+GPX3,4555,protein binding,GO:0005515,molecular function,9,161,1.612e-01,5.462e-02,5.462e-02,6.866e-01,1.293e-02,1.516e-01,1.715e-01,4.404e-02,6.774e-02,4.404e-02,6.774e-02
+LRP3,6695,negative regulation of gene expression,GO:0010629,biological process,4,18,2.978e-01,3.863e-01,2.438e-01,4.290e-01,2.477e-02,2.444e-01,3.629e-01,2.544e-01,5.866e-01,1.843e-01,3.226e-01
+LRP3,6695,negative regulation of fat cell differentiation,GO:0045599,biological process,4,4,3.519e-01,3.994e-01,2.923e-01,3.732e-01,8.346e-02,1.881e-01,6.584e-01,2.465e-01,6.471e-01,1.298e-01,6.581e-01
+LRP3,6695,positive regulation of gene expression,GO:0010628,biological process,4,15,3.585e-01,4.287e-01,3.107e-01,3.758e-01,2.908e-02,2.836e-01,4.532e-01,3.033e-01,6.058e-01,2.296e-01,4.203e-01
+LRP3,6695,positive regulation of osteoblast differentiation,GO:0045669,biological process,4,3,3.592e-01,3.994e-01,3.087e-01,3.707e-01,5.756e-02,2.322e-01,5.558e-01,2.465e-01,6.471e-01,1.758e-01,5.423e-01
+CHIT1,1936,endochitinase activity,GO:0008843,molecular function,6,2,1.588e-01,9.534e-02,1.991e-02,8.397e-01,9.866e-03,1.483e-01,1.701e-01,7.374e-02,1.233e-01,1.705e-02,2.324e-02
+CHIT1,1936,chitinase activity,GO:0004568,molecular function,6,5,1.592e-01,9.534e-02,4.313e-02,7.209e-01,1.985e-02,1.479e-01,1.713e-01,7.374e-02,1.233e-01,3.102e-02,5.997e-02
+CHIT1,1936,chitin binding,GO:0008061,molecular function,6,3,1.592e-01,9.534e-02,4.067e-02,7.300e-01,2.509e-02,1.489e-01,1.703e-01,7.374e-02,1.233e-01,2.720e-02,6.082e-02
+CHIT1,1936,extracellular space,GO:0005615,cellular component,6,21,2.413e-01,2.047e-01,1.651e-01,5.015e-01,4.316e-02,1.787e-01,3.257e-01,1.487e-01,2.818e-01,9.549e-02,2.856e-01
+CHIT1,1936,chitin catabolic process,GO:0006032,biological process,6,7,2.478e-01,2.110e-01,1.843e-01,4.857e-01,2.692e-03,2.419e-01,2.538e-01,1.673e-01,2.660e-01,1.780e-01,1.908e-01
+CHIT1,1936,extracellular region,GO:0005576,cellular component,6,11,2.585e-01,2.076e-01,1.942e-01,4.733e-01,3.060e-02,2.062e-01,3.241e-01,1.535e-01,2.806e-01,1.331e-01,2.832e-01
+CHIA,17432,kinase binding,GO:0019900,molecular function,9,4,1.703e-01,2.961e-01,5.711e-02,6.772e-01,4.041e-02,1.504e-01,1.928e-01,1.638e-01,5.355e-01,3.038e-02,1.074e-01
+CHIA,17432,chitin binding,GO:0008061,molecular function,9,3,1.744e-01,2.961e-01,6.576e-02,6.552e-01,4.961e-02,1.496e-01,2.035e-01,1.638e-01,5.355e-01,3.028e-02,1.428e-01
+CHIA,17432,chitinase activity,GO:0004568,molecular function,9,5,2.038e-01,3.153e-01,1.107e-01,5.720e-01,4.557e-02,1.690e-01,2.458e-01,1.687e-01,5.891e-01,5.669e-02,2.162e-01
+CHIA,17432,protein binding,GO:0005515,molecular function,9,161,2.534e-01,3.254e-01,1.683e-01,4.957e-01,5.546e-02,1.807e-01,3.552e-01,1.851e-01,5.721e-01,8.060e-02,3.513e-01
+CHIA,17432,extracellular space,GO:0005615,cellular component,9,21,3.127e-01,3.509e-01,2.472e-01,4.195e-01,5.572e-02,2.088e-01,4.684e-01,2.307e-01,5.337e-01,1.276e-01,4.788e-01
+CHIA,17432,extracellular region,GO:0005576,cellular component,9,11,3.172e-01,3.632e-01,2.589e-01,4.145e-01,3.463e-02,2.468e-01,4.077e-01,2.549e-01,5.175e-01,1.725e-01,3.886e-01
+CHIA,17432,chitin catabolic process,GO:0006032,biological process,9,7,3.626e-01,3.886e-01,3.124e-01,3.690e-01,5.432e-02,2.376e-01,5.534e-01,2.684e-01,5.628e-01,1.825e-01,5.347e-01
+CHIA,17432,production of molecular mediator involved in inflammatory response,GO:0002532,biological process,9,10,4.035e-01,3.962e-01,3.616e-01,3.386e-01,3.701e-02,3.035e-01,5.364e-01,2.829e-01,5.550e-01,2.513e-01,5.204e-01
+CHIA,17432,positive regulation of chemokine production,GO:0032722,biological process,9,16,4.699e-01,4.873e-01,4.380e-01,2.883e-01,4.269e-02,3.375e-01,6.544e-01,3.976e-01,5.974e-01,2.932e-01,6.542e-01
+DDX18,2741,"maturation of LSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)",GO:0000463,biological process,7,2,1.641e-01,1.837e-01,4.568e-02,7.125e-01,1.681e-02,1.542e-01,1.746e-01,1.215e-01,2.778e-01,3.454e-02,6.040e-02
+DDX18,2741,nucleolus,GO:0005730,cellular component,7,5,1.843e-01,1.938e-01,8.065e-02,6.211e-01,5.942e-02,1.353e-01,2.510e-01,1.168e-01,3.214e-01,3.351e-02,1.941e-01
+DDX18,2741,chromosome,GO:0005694,cellular component,7,8,2.182e-01,2.029e-01,1.294e-01,5.449e-01,4.868e-02,1.711e-01,2.783e-01,1.224e-01,3.365e-01,6.437e-02,2.600e-01
+DDX18,2741,membrane,GO:0016020,cellular component,7,33,2.483e-01,2.402e-01,1.853e-01,4.844e-01,9.783e-03,2.276e-01,2.708e-01,1.872e-01,3.082e-01,1.636e-01,2.100e-01
+DDX18,2741,protein binding,GO:0005515,molecular function,7,161,2.506e-01,2.425e-01,1.682e-01,4.922e-01,6.738e-02,1.530e-01,4.103e-01,1.564e-01,3.761e-01,7.378e-02,3.833e-01
+DDX18,2741,RNA binding,GO:0003723,molecular function,7,39,3.187e-01,2.822e-01,2.656e-01,4.109e-01,2.509e-02,2.613e-01,3.888e-01,2.109e-01,3.777e-01,2.011e-01,3.506e-01
+TBX15,11594,"DNA-binding transcription factor activity, RNA polymerase II-specific",GO:0000981,molecular function,6,7,1.588e-01,4.657e-02,1.775e-02,8.559e-01,1.120e-02,1.483e-01,1.701e-01,3.680e-02,5.894e-02,1.445e-02,2.180e-02
+TBX15,11594,sequence-specific double-stranded DNA binding,GO:1990837,molecular function,6,14,1.588e-01,4.657e-02,2.141e-02,8.279e-01,2.036e-02,1.483e-01,1.701e-01,3.680e-02,5.894e-02,1.572e-02,2.917e-02
+TBX15,11594,regulation of transcription by RNA polymerase II,GO:0006357,biological process,6,30,1.588e-01,4.657e-02,2.303e-02,8.174e-01,2.222e-02,1.483e-01,1.701e-01,3.680e-02,5.894e-02,1.649e-02,3.216e-02
+TBX15,11594,RNA polymerase II cis-regulatory region sequence-specific DNA binding,GO:0000978,molecular function,6,17,1.696e-01,6.896e-02,4.597e-02,7.104e-01,3.645e-02,1.526e-01,1.885e-01,3.843e-02,1.237e-01,2.562e-02,8.249e-02
+TBX15,11594,protein binding,GO:0005515,molecular function,6,161,2.003e-01,1.440e-01,1.200e-01,5.615e-01,6.743e-03,1.911e-01,2.099e-01,1.308e-01,1.586e-01,1.090e-01,1.321e-01
+TBX15,11594,cell fate specification,GO:0001708,biological process,6,24,3.459e-01,3.003e-01,3.003e-01,3.845e-01,1.971e-02,2.952e-01,4.054e-01,2.434e-01,3.707e-01,2.434e-01,3.707e-01
+MYO6,7605,endocytic vesicle,GO:0030139,cellular component,30,6,1.588e-01,1.962e-01,1.945e-02,8.429e-01,1.052e-02,1.483e-01,1.701e-01,1.517e-01,2.537e-01,1.660e-02,2.278e-02
+MYO6,7605,microvillus,GO:0005902,cellular component,30,5,1.588e-01,1.962e-01,3.372e-02,7.576e-01,2.308e-02,1.483e-01,1.701e-01,1.517e-01,2.537e-01,2.341e-02,4.856e-02
+MYO6,7605,Golgi apparatus,GO:0005794,cellular component,30,5,1.588e-01,1.962e-01,3.472e-02,7.525e-01,4.918e-03,1.483e-01,1.701e-01,1.517e-01,2.537e-01,3.211e-02,3.755e-02
+MYO6,7605,clathrin-coated endocytic vesicle,GO:0045334,cellular component,30,4,1.588e-01,1.962e-01,3.804e-02,7.390e-01,5.598e-03,1.483e-01,1.701e-01,1.517e-01,2.537e-01,3.473e-02,4.166e-02
+MYO6,7605,actin-dependent ATPase activity,GO:0030898,molecular function,30,2,1.624e-01,1.964e-01,4.557e-02,7.122e-01,2.915e-02,1.524e-01,1.732e-01,1.520e-01,2.538e-01,2.847e-02,7.294e-02
+MYO6,7605,microfilament motor activity,GO:0000146,molecular function,30,4,1.646e-01,1.962e-01,5.299e-02,6.910e-01,1.476e-02,1.543e-01,1.755e-01,1.517e-01,2.537e-01,4.139e-02,6.783e-02
+MYO6,7605,cytoplasmic vesicle,GO:0031410,cellular component,30,30,1.655e-01,1.964e-01,5.803e-02,6.778e-01,4.648e-03,1.578e-01,1.736e-01,1.520e-01,2.538e-01,5.393e-02,6.244e-02
+MYO6,7605,"DNA damage response, signal transduction by p53 class mediator",GO:0030330,biological process,30,5,1.686e-01,1.964e-01,6.790e-02,6.534e-01,5.032e-03,1.579e-01,1.800e-01,1.520e-01,2.538e-01,6.291e-02,7.328e-02
+MYO6,7605,actin cytoskeleton,GO:0015629,cellular component,30,4,1.694e-01,1.997e-01,5.489e-02,6.848e-01,3.223e-02,1.532e-01,1.874e-01,1.491e-01,2.674e-01,3.268e-02,9.219e-02
+MYO6,7605,endocytosis,GO:0006897,biological process,30,10,1.710e-01,2.004e-01,6.225e-02,6.659e-01,2.375e-02,1.530e-01,1.912e-01,1.491e-01,2.694e-01,4.289e-02,9.035e-02
+MYO6,7605,cytoplasm,GO:0005737,cellular component,30,20,1.810e-01,2.059e-01,8.706e-02,6.137e-01,2.002e-02,1.628e-01,2.014e-01,1.454e-01,2.915e-01,6.473e-02,1.171e-01
+MYO6,7605,inner ear morphogenesis,GO:0042472,biological process,30,3,1.900e-01,2.091e-01,9.883e-02,5.931e-01,2.512e-02,1.687e-01,2.141e-01,1.460e-01,2.996e-01,6.820e-02,1.432e-01
+MYO6,7605,inner ear auditory receptor cell differentiation,GO:0042491,biological process,30,3,1.947e-01,2.143e-01,1.128e-01,5.716e-01,1.819e-02,1.718e-01,2.207e-01,1.535e-01,2.992e-01,8.683e-02,1.466e-01
+MYO6,7605,vesicle transport along actin filament,GO:0030050,biological process,30,5,1.955e-01,2.210e-01,9.243e-02,5.987e-01,6.178e-02,1.468e-01,2.603e-01,1.485e-01,3.290e-01,3.659e-02,2.335e-01
+MYO6,7605,nuclear membrane,GO:0031965,cellular component,30,6,2.016e-01,2.208e-01,1.200e-01,5.602e-01,2.872e-02,1.644e-01,2.474e-01,1.492e-01,3.269e-01,8.014e-02,1.797e-01
+MYO6,7605,ruffle,GO:0001726,cellular component,30,2,2.021e-01,2.224e-01,1.192e-01,5.615e-01,2.761e-02,1.661e-01,2.457e-01,1.513e-01,3.268e-01,8.117e-02,1.751e-01
+MYO6,7605,vesicle,GO:0031982,cellular component,30,5,2.136e-01,2.222e-01,1.260e-01,5.502e-01,4.228e-02,1.660e-01,2.751e-01,1.486e-01,3.322e-01,6.954e-02,2.282e-01
+MYO6,7605,filamentous actin,GO:0031941,cellular component,30,2,2.166e-01,2.313e-01,1.398e-01,5.351e-01,1.467e-02,1.987e-01,2.361e-01,1.824e-01,2.932e-01,1.141e-01,1.713e-01
+MYO6,7605,nucleoplasm,GO:0005654,cellular component,30,10,2.205e-01,2.264e-01,1.437e-01,5.280e-01,3.592e-02,1.680e-01,2.895e-01,1.488e-01,3.445e-01,8.937e-02,2.310e-01
+MYO6,7605,membrane,GO:0016020,cellular component,30,33,2.408e-01,2.398e-01,1.608e-01,5.032e-01,5.810e-02,1.581e-01,3.666e-01,1.574e-01,3.655e-01,7.563e-02,3.419e-01
+MYO6,7605,regulation of secretion,GO:0051046,biological process,30,16,2.490e-01,2.456e-01,1.817e-01,4.850e-01,3.634e-02,1.875e-01,3.305e-01,1.650e-01,3.654e-01,1.149e-01,2.874e-01
+MYO6,7605,positive regulation of transcription by RNA polymerase II,GO:0045944,biological process,30,37,2.616e-01,2.613e-01,1.982e-01,4.699e-01,2.821e-02,2.091e-01,3.272e-01,1.890e-01,3.614e-01,1.380e-01,2.846e-01
+MYO6,7605,plasma membrane,GO:0005886,cellular component,30,16,2.692e-01,2.565e-01,2.032e-01,4.631e-01,3.927e-02,1.988e-01,3.645e-01,1.796e-01,3.663e-01,1.262e-01,3.272e-01
+MYO6,7605,perinuclear region of cytoplasm,GO:0048471,cellular component,30,5,2.747e-01,2.636e-01,2.142e-01,4.539e-01,3.247e-02,2.115e-01,3.568e-01,1.923e-01,3.613e-01,1.465e-01,3.132e-01
+MYO6,7605,extracellular exosome,GO:0070062,cellular component,30,26,2.794e-01,2.632e-01,2.158e-01,4.511e-01,4.068e-02,2.047e-01,3.814e-01,1.847e-01,3.751e-01,1.323e-01,3.519e-01
+MYO6,7605,actin filament binding,GO:0051015,molecular function,30,5,2.862e-01,2.871e-01,2.299e-01,4.425e-01,7.729e-03,2.724e-01,3.008e-01,2.491e-01,3.310e-01,2.098e-01,2.519e-01
+MYO6,7605,nucleus,GO:0005634,cellular component,30,26,2.870e-01,2.773e-01,2.110e-01,4.483e-01,6.746e-02,1.763e-01,4.671e-01,1.786e-01,4.306e-01,9.020e-02,4.937e-01
+MYO6,7605,actin filament organization,GO:0007015,biological process,30,16,3.276e-01,3.050e-01,2.773e-01,3.996e-01,3.803e-02,2.419e-01,4.437e-01,2.186e-01,4.253e-01,1.842e-01,4.174e-01
+MYO6,7605,"RNA polymerase II, holoenzyme",GO:0016591,cellular component,30,2,3.333e-01,3.105e-01,2.865e-01,3.954e-01,1.363e-02,2.981e-01,3.726e-01,2.587e-01,3.725e-01,2.465e-01,3.331e-01
+MYO6,7605,protein binding,GO:0005515,molecular function,30,161,3.801e-01,3.432e-01,3.393e-01,3.558e-01,2.534e-02,3.114e-01,4.639e-01,2.704e-01,4.356e-01,2.639e-01,4.364e-01
+TAF13,11546,transcription factor TFIID complex,GO:0005669,cellular component,8,4,1.588e-01,1.093e-02,2.049e-03,9.627e-01,5.785e-03,1.483e-01,1.701e-01,6.809e-03,1.753e-02,9.282e-04,4.522e-03
+TAF13,11546,protein C-terminus binding,GO:0008022,molecular function,8,3,1.588e-01,1.600e-02,5.989e-03,9.358e-01,5.198e-03,1.483e-01,1.701e-01,1.463e-02,1.749e-02,4.249e-03,8.443e-03
+TAF13,11546,transcription by RNA polymerase II,GO:0006366,biological process,8,9,1.588e-01,1.620e-02,6.071e-03,9.283e-01,1.421e-02,1.483e-01,1.701e-01,1.348e-02,1.947e-02,2.215e-03,1.664e-02
+TAF13,11546,TBP-class protein binding,GO:0017025,molecular function,8,2,1.588e-01,1.637e-02,7.132e-03,9.266e-01,9.380e-03,1.483e-01,1.701e-01,1.438e-02,1.864e-02,4.121e-03,1.234e-02
+TAF13,11546,nucleoplasm,GO:0005654,cellular component,8,10,1.588e-01,3.346e-02,2.390e-02,8.107e-01,1.726e-02,1.483e-01,1.701e-01,2.584e-02,4.332e-02,1.846e-02,3.094e-02
+TAF13,11546,nucleolus,GO:0005730,cellular component,8,5,1.612e-01,6.446e-02,5.817e-02,6.763e-01,2.087e-02,1.492e-01,1.742e-01,4.632e-02,8.972e-02,4.159e-02,8.136e-02
+TAF13,11546,protein binding,GO:0005515,molecular function,8,161,1.711e-01,7.235e-02,6.873e-02,6.504e-01,2.290e-02,1.554e-01,1.884e-01,5.538e-02,9.451e-02,4.780e-02,9.881e-02
+FCN2,3624,proteoglycan binding,GO:0043394,molecular function,16,6,1.588e-01,1.684e-02,1.470e-03,9.584e-01,1.649e-02,1.483e-01,1.701e-01,4.538e-03,6.252e-02,2.202e-04,9.810e-03
+FCN2,3624,calcium-dependent protein binding,GO:0048306,molecular function,16,3,1.588e-01,2.706e-02,3.451e-03,9.477e-01,1.095e-02,1.483e-01,1.701e-01,8.479e-03,8.638e-02,1.057e-03,1.126e-02
+FCN2,3624,signaling receptor binding,GO:0005102,molecular function,16,58,1.588e-01,5.893e-02,1.648e-02,8.638e-01,1.611e-02,1.483e-01,1.701e-01,5.042e-02,6.889e-02,1.245e-02,2.183e-02
+FCN2,3624,opsonization,GO:0008228,biological process,16,2,1.588e-01,5.893e-02,1.976e-02,8.410e-01,7.959e-03,1.483e-01,1.701e-01,5.042e-02,6.889e-02,1.740e-02,2.243e-02
+FCN2,3624,"complement activation, lectin pathway",GO:0001867,biological process,16,3,1.588e-01,5.893e-02,2.810e-02,7.851e-01,1.630e-02,1.483e-01,1.701e-01,5.042e-02,6.889e-02,2.178e-02,3.627e-02
+FCN2,3624,carbohydrate derivative binding,GO:0097367,molecular function,16,30,1.588e-01,5.893e-02,3.004e-02,7.746e-01,8.407e-03,1.483e-01,1.701e-01,5.042e-02,6.889e-02,2.634e-02,3.425e-02
+FCN2,3624,defense response to Gram-negative bacterium,GO:0050829,biological process,16,2,1.588e-01,5.893e-02,3.260e-02,7.620e-01,8.209e-03,1.483e-01,1.701e-01,5.042e-02,6.889e-02,2.859e-02,3.717e-02
+FCN2,3624,defense response to Gram-positive bacterium,GO:0050830,biological process,16,2,1.588e-01,5.893e-02,3.387e-02,7.563e-01,4.620e-03,1.483e-01,1.701e-01,5.042e-02,6.889e-02,3.146e-02,3.645e-02
+FCN2,3624,collagen-containing extracellular matrix,GO:0062023,cellular component,16,16,1.588e-01,6.020e-02,3.679e-02,7.446e-01,1.802e-02,1.483e-01,1.701e-01,4.947e-02,7.326e-02,2.762e-02,4.899e-02
+FCN2,3624,mannan binding,GO:2001065,molecular function,16,2,1.588e-01,6.020e-02,4.032e-02,7.304e-01,8.362e-03,1.483e-01,1.701e-01,4.947e-02,7.326e-02,3.517e-02,4.623e-02
+FCN2,3624,recognition of apoptotic cell,GO:0043654,biological process,16,2,1.592e-01,6.053e-02,4.529e-02,7.138e-01,1.795e-02,1.479e-01,1.713e-01,4.923e-02,7.444e-02,3.361e-02,6.103e-02
+FCN2,3624,antigen binding,GO:0003823,molecular function,16,5,1.596e-01,6.411e-02,4.439e-02,7.169e-01,2.267e-02,1.486e-01,1.714e-01,5.497e-02,7.477e-02,3.062e-02,6.436e-02
+FCN2,3624,extracellular exosome,GO:0070062,cellular component,16,26,1.665e-01,7.019e-02,6.112e-02,6.691e-01,1.787e-02,1.547e-01,1.793e-01,6.042e-02,8.156e-02,4.617e-02,8.092e-02
+FCN2,3624,protein binding,GO:0005515,molecular function,16,161,1.676e-01,7.061e-02,6.089e-02,6.706e-01,6.963e-03,1.576e-01,1.781e-01,6.588e-02,7.568e-02,5.469e-02,6.781e-02
+FCN2,3624,extracellular space,GO:0005615,cellular component,16,21,1.689e-01,7.263e-02,6.892e-02,6.512e-01,1.021e-02,1.578e-01,1.808e-01,6.467e-02,8.158e-02,5.894e-02,8.058e-02
+FCN2,3624,blood microparticle,GO:0072562,cellular component,16,4,1.748e-01,7.730e-02,7.394e-02,6.401e-01,4.302e-03,1.661e-01,1.840e-01,7.487e-02,7.981e-02,6.927e-02,7.892e-02
+PTPRG,9671,identical protein binding,GO:0042802,molecular function,6,11,1.588e-01,9.433e-02,2.606e-02,7.975e-01,2.595e-02,1.483e-01,1.701e-01,7.230e-02,1.231e-01,1.751e-02,3.876e-02
+PTPRG,9671,negative regulation of epithelial cell migration,GO:0010633,biological process,6,7,1.588e-01,9.433e-02,2.599e-02,7.948e-01,3.784e-02,1.483e-01,1.701e-01,7.230e-02,1.231e-01,1.394e-02,4.844e-02
+PTPRG,9671,protein dephosphorylation,GO:0006470,biological process,6,12,1.662e-01,9.839e-02,6.034e-02,6.710e-01,1.550e-02,1.553e-01,1.778e-01,7.967e-02,1.215e-01,4.703e-02,7.741e-02
+PTPRG,9671,protein tyrosine phosphatase activity,GO:0004725,molecular function,6,9,1.704e-01,9.839e-02,6.629e-02,6.567e-01,1.469e-02,1.554e-01,1.869e-01,7.967e-02,1.215e-01,5.260e-02,8.355e-02
+PTPRG,9671,extracellular exosome,GO:0070062,cellular component,6,26,1.898e-01,1.118e-01,1.052e-01,5.835e-01,7.849e-03,1.801e-01,2.001e-01,1.081e-01,1.157e-01,9.391e-02,1.179e-01
+PTPRG,9671,protein binding,GO:0005515,molecular function,6,161,1.917e-01,1.168e-01,1.051e-01,5.836e-01,1.536e-02,1.762e-01,2.085e-01,1.037e-01,1.316e-01,8.424e-02,1.311e-01
+CD109,21685,plasma membrane,GO:0005886,cellular component,6,16,4.492e-01,7.124e-01,4.165e-01,3.054e-01,2.399e-02,3.716e-01,5.430e-01,5.979e-01,8.487e-01,3.321e-01,5.223e-01
+CD109,21685,cell surface,GO:0009986,cellular component,6,6,5.042e-01,7.124e-01,4.801e-01,2.667e-01,2.582e-02,4.139e-01,6.144e-01,5.979e-01,8.487e-01,3.828e-01,6.022e-01
+CD109,21685,cytosol,GO:0005829,cellular component,6,11,5.361e-01,7.230e-01,5.158e-01,2.418e-01,4.261e-02,3.990e-01,7.204e-01,5.967e-01,8.760e-01,3.717e-01,7.157e-01
+CD109,21685,negative regulation of wound healing,GO:0061045,biological process,6,9,5.523e-01,7.124e-01,5.352e-01,2.366e-01,1.417e-02,4.997e-01,6.103e-01,5.979e-01,8.487e-01,4.793e-01,5.977e-01
+CD109,21685,negative regulation of transforming growth factor beta receptor signaling pathway,GO:0030512,biological process,6,5,5.538e-01,7.124e-01,5.332e-01,2.300e-01,4.726e-02,4.039e-01,7.593e-01,5.979e-01,8.487e-01,3.758e-01,7.565e-01
+CD109,21685,transforming growth factor beta binding,GO:0050431,molecular function,6,3,7.657e-01,7.635e-01,7.635e-01,1.068e-01,1.658e-02,7.013e-01,8.361e-01,6.993e-01,8.337e-01,6.993e-01,8.337e-01
+POSTN,16953,cell adhesion molecule binding,GO:0050839,molecular function,10,5,1.588e-01,2.682e-02,3.012e-03,9.433e-01,2.137e-02,1.483e-01,1.701e-01,7.033e-03,1.023e-01,6.399e-04,1.418e-02
+POSTN,16953,metal ion binding,GO:0046872,molecular function,10,8,1.588e-01,7.749e-02,2.059e-02,8.339e-01,2.020e-02,1.483e-01,1.701e-01,5.813e-02,1.033e-01,1.514e-02,2.799e-02
+POSTN,16953,collagen-containing extracellular matrix,GO:0062023,cellular component,10,16,1.594e-01,8.355e-02,3.105e-02,7.714e-01,4.926e-02,1.478e-01,1.719e-01,5.613e-02,1.244e-01,1.421e-02,6.784e-02
+POSTN,16953,cell adhesion,GO:0007155,biological process,10,12,1.606e-01,9.357e-02,3.766e-02,7.405e-01,1.344e-02,1.513e-01,1.704e-01,7.593e-02,1.153e-01,3.024e-02,4.691e-02
+POSTN,16953,extracellular space,GO:0005615,cellular component,10,21,1.651e-01,1.063e-01,5.808e-02,6.769e-01,1.306e-02,1.552e-01,1.756e-01,9.130e-02,1.238e-01,4.705e-02,7.170e-02
+POSTN,16953,protein binding,GO:0005515,molecular function,10,161,1.736e-01,1.072e-01,7.824e-02,6.311e-01,1.487e-02,1.579e-01,1.909e-01,9.108e-02,1.263e-01,6.239e-02,9.812e-02
+POSTN,16953,extracellular matrix,GO:0031012,cellular component,10,14,1.787e-01,1.081e-01,6.108e-02,6.660e-01,5.384e-02,1.493e-01,2.139e-01,7.915e-02,1.478e-01,2.655e-02,1.405e-01
+POSTN,16953,trans-Golgi network,GO:0005802,cellular component,10,3,1.804e-01,1.104e-01,8.694e-02,6.143e-01,1.436e-02,1.694e-01,1.920e-01,9.891e-02,1.231e-01,7.016e-02,1.077e-01
+POSTN,16953,extracellular matrix organization,GO:0030198,biological process,10,12,1.870e-01,1.183e-01,1.002e-01,5.917e-01,4.493e-03,1.775e-01,1.971e-01,1.036e-01,1.350e-01,9.379e-02,1.070e-01
+POSTN,16953,cellular response to vitamin K,GO:0071307,biological process,10,3,2.482e-01,1.804e-01,1.804e-01,4.883e-01,2.224e-02,2.104e-01,2.928e-01,1.363e-01,2.387e-01,1.363e-01,2.387e-01
+A2ML1,23336,peptidase inhibitor activity,GO:0030414,molecular function,6,5,1.588e-01,8.388e-02,2.618e-02,7.964e-01,1.996e-02,1.483e-01,1.701e-01,6.569e-02,1.071e-01,1.923e-02,3.566e-02
+A2ML1,23336,endopeptidase inhibitor activity,GO:0004866,molecular function,6,7,1.588e-01,8.388e-02,2.741e-02,7.888e-01,1.317e-02,1.483e-01,1.701e-01,6.569e-02,1.071e-01,2.232e-02,3.366e-02
+A2ML1,23336,extracellular exosome,GO:0070062,cellular component,6,26,1.898e-01,1.610e-01,9.977e-02,5.917e-01,2.020e-02,1.734e-01,2.079e-01,1.281e-01,2.023e-01,7.440e-02,1.338e-01
+A2ML1,23336,extracellular space,GO:0005615,cellular component,6,21,2.102e-01,1.652e-01,1.352e-01,5.411e-01,1.185e-02,1.959e-01,2.256e-01,1.353e-01,2.017e-01,1.150e-01,1.589e-01
+A2ML1,23336,regulation of endopeptidase activity,GO:0052548,biological process,6,9,2.399e-01,1.969e-01,1.668e-01,5.009e-01,3.678e-02,1.873e-01,3.072e-01,1.455e-01,2.665e-01,1.032e-01,2.695e-01
+A2ML1,23336,protease binding,GO:0002020,molecular function,6,4,2.438e-01,1.806e-01,1.434e-01,5.203e-01,7.383e-02,1.553e-01,3.826e-01,9.766e-02,3.340e-01,5.394e-02,3.810e-01
+GRHPR,4570,glyoxylate reductase (NADP+) activity,GO:0030267,molecular function,14,2,1.588e-01,6.714e-02,1.475e-02,8.684e-01,2.332e-02,1.483e-01,1.701e-01,4.734e-02,9.522e-02,8.321e-03,2.617e-02
+GRHPR,4570,excretion,GO:0007588,biological process,14,8,1.588e-01,6.714e-02,2.892e-02,7.826e-01,4.054e-02,1.482e-01,1.702e-01,4.734e-02,9.522e-02,1.521e-02,5.497e-02
+GRHPR,4570,hydroxypyruvate reductase activity,GO:0016618,molecular function,14,2,1.592e-01,6.714e-02,3.303e-02,7.620e-01,3.651e-02,1.489e-01,1.702e-01,4.734e-02,9.522e-02,1.874e-02,5.820e-02
+GRHPR,4570,glycerate dehydrogenase activity,GO:0008465,molecular function,14,2,1.592e-01,6.714e-02,3.312e-02,7.617e-01,3.567e-02,1.489e-01,1.702e-01,4.734e-02,9.522e-02,1.905e-02,5.758e-02
+GRHPR,4570,NADPH binding,GO:0070402,molecular function,14,3,1.592e-01,6.714e-02,3.388e-02,7.580e-01,3.251e-02,1.489e-01,1.702e-01,4.734e-02,9.522e-02,2.048e-02,5.607e-02
+GRHPR,4570,protein homodimerization activity,GO:0042803,molecular function,14,5,1.592e-01,6.714e-02,3.938e-02,7.341e-01,1.639e-02,1.489e-01,1.702e-01,4.734e-02,9.522e-02,3.019e-02,5.136e-02
+GRHPR,4570,glyoxylate metabolic process,GO:0046487,biological process,14,5,1.594e-01,6.827e-02,4.038e-02,7.308e-01,3.173e-02,1.478e-01,1.719e-01,4.704e-02,9.907e-02,2.426e-02,6.722e-02
+GRHPR,4570,cytosol,GO:0005829,cellular component,14,11,1.967e-01,1.346e-01,1.061e-01,5.807e-01,3.146e-02,1.691e-01,2.289e-01,7.962e-02,2.274e-01,6.787e-02,1.658e-01
+GRHPR,4570,cytoplasm,GO:0005737,cellular component,14,20,2.014e-01,1.289e-01,8.922e-02,6.043e-01,6.084e-02,1.509e-01,2.687e-01,6.472e-02,2.565e-01,3.715e-02,2.143e-01
+GRHPR,4570,extracellular exosome,GO:0070062,cellular component,14,26,2.270e-01,1.525e-01,1.431e-01,5.259e-01,5.059e-02,1.604e-01,3.214e-01,8.451e-02,2.753e-01,7.453e-02,2.749e-01
+GRHPR,4570,catalytic complex,GO:1902494,cellular component,14,63,3.196e-01,2.749e-01,2.663e-01,4.087e-01,3.628e-02,2.424e-01,4.215e-01,1.871e-01,4.038e-01,1.794e-01,3.952e-01
+ACE,2707,endosome,GO:0005768,cellular component,25,10,1.588e-01,1.661e-01,1.740e-02,8.594e-01,9.888e-03,1.483e-01,1.701e-01,1.419e-01,1.946e-01,1.473e-02,2.054e-02
+ACE,2707,peptidyl-dipeptidase activity,GO:0008241,molecular function,25,2,1.588e-01,1.661e-01,1.838e-02,8.503e-01,1.620e-02,1.483e-01,1.701e-01,1.419e-01,1.946e-01,1.429e-02,2.364e-02
+ACE,2707,lysosome,GO:0005764,cellular component,25,12,1.592e-01,1.661e-01,3.397e-02,7.564e-01,1.535e-02,1.489e-01,1.702e-01,1.419e-01,1.946e-01,2.662e-02,4.333e-02
+ACE,2707,mitogen-activated protein kinase kinase binding,GO:0031434,molecular function,25,2,1.660e-01,1.661e-01,6.219e-02,6.671e-01,4.384e-03,1.577e-01,1.747e-01,1.419e-01,1.946e-01,5.818e-02,6.648e-02
+ACE,2707,chloride ion binding,GO:0031404,molecular function,25,2,1.663e-01,1.661e-01,6.132e-02,6.671e-01,4.025e-02,1.523e-01,1.816e-01,1.419e-01,1.946e-01,3.220e-02,1.168e-01
+ACE,2707,exopeptidase activity,GO:0008238,molecular function,25,12,1.671e-01,1.661e-01,6.372e-02,6.628e-01,1.950e-02,1.547e-01,1.805e-01,1.419e-01,1.946e-01,4.689e-02,8.659e-02
+ACE,2707,zinc ion binding,GO:0008270,molecular function,25,5,1.697e-01,1.661e-01,6.329e-02,6.646e-01,9.833e-03,1.565e-01,1.841e-01,1.419e-01,1.946e-01,5.444e-02,7.357e-02
+ACE,2707,endopeptidase activity,GO:0004175,molecular function,25,9,1.702e-01,1.661e-01,6.731e-02,6.536e-01,2.913e-02,1.524e-01,1.900e-01,1.419e-01,1.946e-01,4.303e-02,1.053e-01
+ACE,2707,regulation of systemic arterial blood pressure by renin-angiotensin,GO:0003081,biological process,25,6,1.738e-01,1.661e-01,7.914e-02,6.293e-01,1.335e-02,1.685e-01,1.791e-01,1.419e-01,1.946e-01,6.452e-02,9.707e-02
+ACE,2707,arachidonic acid secretion,GO:0050482,biological process,25,3,1.748e-01,1.661e-01,6.641e-02,6.547e-01,4.295e-02,1.544e-01,1.979e-01,1.419e-01,1.946e-01,3.358e-02,1.314e-01
+ACE,2707,metallopeptidase activity,GO:0008237,molecular function,25,4,1.784e-01,1.709e-01,8.261e-02,6.214e-01,3.244e-02,1.545e-01,2.058e-01,1.385e-01,2.109e-01,5.115e-02,1.334e-01
+ACE,2707,mitogen-activated protein kinase binding,GO:0051019,molecular function,25,5,1.852e-01,1.679e-01,9.583e-02,5.989e-01,6.487e-03,1.749e-01,1.961e-01,1.456e-01,1.936e-01,8.706e-02,1.055e-01
+ACE,2707,extracellular exosome,GO:0070062,cellular component,25,26,1.882e-01,1.700e-01,9.657e-02,5.965e-01,2.904e-02,1.697e-01,2.087e-01,1.499e-01,1.928e-01,6.261e-02,1.489e-01
+ACE,2707,tripeptidyl-peptidase activity,GO:0008240,molecular function,25,2,1.901e-01,1.766e-01,1.000e-01,5.901e-01,3.496e-02,1.546e-01,2.337e-01,1.345e-01,2.317e-01,6.013e-02,1.664e-01
+ACE,2707,positive regulation of systemic arterial blood pressure,GO:0003084,biological process,25,9,1.912e-01,1.735e-01,1.067e-01,5.811e-01,1.330e-02,1.732e-01,2.111e-01,1.506e-01,1.998e-01,8.807e-02,1.294e-01
+ACE,2707,plasma membrane,GO:0005886,cellular component,25,16,1.937e-01,1.700e-01,1.080e-01,5.790e-01,1.264e-02,1.875e-01,2.000e-01,1.499e-01,1.928e-01,8.992e-02,1.298e-01
+ACE,2707,extracellular space,GO:0005615,cellular component,25,21,1.964e-01,1.700e-01,1.111e-01,5.744e-01,1.482e-02,1.860e-01,2.074e-01,1.499e-01,1.928e-01,8.966e-02,1.376e-01
+ACE,2707,metallodipeptidase activity,GO:0070573,molecular function,25,3,2.052e-01,1.814e-01,1.189e-01,5.608e-01,3.686e-02,1.627e-01,2.589e-01,1.374e-01,2.396e-01,7.065e-02,2.000e-01
+ACE,2707,hormone catabolic process,GO:0042447,biological process,25,16,2.111e-01,1.898e-01,1.248e-01,5.515e-01,4.466e-02,1.600e-01,2.787e-01,1.442e-01,2.498e-01,6.566e-02,2.374e-01
+ACE,2707,peptide catabolic process,GO:0043171,biological process,25,17,2.260e-01,1.969e-01,1.501e-01,5.218e-01,2.457e-02,1.891e-01,2.701e-01,1.549e-01,2.502e-01,1.071e-01,2.104e-01
+ACE,2707,amyloid-beta metabolic process,GO:0050435,biological process,25,3,2.432e-01,2.073e-01,1.706e-01,4.974e-01,3.284e-02,1.920e-01,3.080e-01,1.516e-01,2.836e-01,1.106e-01,2.632e-01
+ACE,2707,external side of plasma membrane,GO:0009897,cellular component,25,4,2.577e-01,2.329e-01,1.934e-01,4.758e-01,1.818e-02,2.272e-01,2.922e-01,1.957e-01,2.770e-01,1.530e-01,2.446e-01
+ACE,2707,bradykinin receptor binding,GO:0031711,molecular function,25,4,3.182e-01,2.917e-01,2.684e-01,4.099e-01,1.005e-02,2.957e-01,3.425e-01,2.612e-01,3.259e-01,2.403e-01,2.998e-01
+ACE,2707,kidney development,GO:0001822,biological process,25,5,3.764e-01,3.464e-01,3.371e-01,3.587e-01,1.369e-02,3.392e-01,4.177e-01,2.976e-01,4.032e-01,2.934e-01,3.873e-01
+ACE,2707,regulation of angiotensin metabolic process,GO:0060177,biological process,25,2,5.121e-01,4.862e-01,4.825e-01,2.597e-01,4.829e-02,3.581e-01,7.322e-01,3.204e-01,7.377e-01,3.132e-01,7.431e-01
+MLP,7142,cytoplasm,GO:0005737,cellular component,7,20,2.070e-01,3.881e-01,1.282e-01,5.500e-01,1.764e-02,1.815e-01,2.362e-01,3.053e-01,4.934e-01,1.001e-01,1.641e-01
+MLP,7142,actin filament binding,GO:0051015,molecular function,7,5,2.613e-01,3.881e-01,1.966e-01,4.719e-01,2.438e-02,2.197e-01,3.107e-01,3.053e-01,4.934e-01,1.446e-01,2.673e-01
+MLP,7142,plasma membrane,GO:0005886,cellular component,7,16,2.712e-01,3.881e-01,2.057e-01,4.610e-01,3.778e-02,2.034e-01,3.615e-01,3.053e-01,4.934e-01,1.272e-01,3.326e-01
+MLP,7142,extracellular exosome,GO:0070062,cellular component,7,26,2.755e-01,3.881e-01,2.117e-01,4.558e-01,3.483e-02,2.111e-01,3.596e-01,3.053e-01,4.934e-01,1.367e-01,3.278e-01
+MLP,7142,protein binding,GO:0005515,molecular function,7,161,3.494e-01,3.919e-01,3.055e-01,3.812e-01,1.414e-02,3.114e-01,3.921e-01,3.039e-01,5.054e-01,2.625e-01,3.555e-01
+MLP,7142,actin filament organization,GO:0007015,biological process,7,16,3.699e-01,3.965e-01,3.273e-01,3.633e-01,3.250e-02,2.845e-01,4.808e-01,3.020e-01,5.205e-01,2.327e-01,4.604e-01
+MLP,7142,central nervous system development,GO:0007417,biological process,7,3,5.395e-01,5.177e-01,5.177e-01,2.430e-01,3.481e-02,4.231e-01,6.881e-01,3.856e-01,6.952e-01,3.856e-01,6.952e-01
+COCA1,7325,dinucleotide insertion or deletion binding,GO:0032139,molecular function,41,3,1.588e-01,7.131e-02,1.474e-02,8.784e-01,1.014e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.183e-02,1.837e-02
+COCA1,7325,single-stranded DNA binding,GO:0003697,molecular function,41,5,1.588e-01,7.131e-02,1.506e-02,8.761e-01,1.098e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.210e-02,1.874e-02
+COCA1,7325,dinucleotide repeat insertion binding,GO:0032181,molecular function,41,2,1.588e-01,7.131e-02,1.525e-02,8.749e-01,1.074e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.234e-02,1.885e-02
+COCA1,7325,guanine/thymine mispair binding,GO:0032137,molecular function,41,2,1.588e-01,7.131e-02,1.731e-02,8.582e-01,1.536e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.344e-02,2.230e-02
+COCA1,7325,double-stranded DNA binding,GO:0003690,molecular function,41,11,1.588e-01,7.131e-02,1.991e-02,8.398e-01,7.450e-03,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.770e-02,2.240e-02
+COCA1,7325,protein C-terminus binding,GO:0008022,molecular function,41,3,1.588e-01,7.131e-02,2.096e-02,8.311e-01,1.281e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.722e-02,2.550e-02
+COCA1,7325,postreplication repair,GO:0006301,biological process,41,4,1.588e-01,7.131e-02,2.334e-02,8.147e-01,1.194e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.956e-02,2.786e-02
+COCA1,7325,DNA repair,GO:0006281,biological process,41,19,1.588e-01,7.131e-02,2.332e-02,8.144e-01,5.939e-03,1.483e-01,1.701e-01,6.169e-02,8.244e-02,2.142e-02,2.538e-02
+COCA1,7325,mismatched DNA binding,GO:0030983,molecular function,41,11,1.588e-01,7.131e-02,2.346e-02,8.135e-01,1.484e-02,1.483e-01,1.701e-01,6.169e-02,8.244e-02,1.882e-02,2.925e-02
+COCA1,7325,DNA-dependent ATPase activity,GO:0008094,molecular function,41,7,1.588e-01,7.131e-02,2.439e-02,8.075e-01,9.062e-03,1.483e-01,1.701e-01,6.169e-02,8.244e-02,2.133e-02,2.788e-02
+COCA1,7325,mismatch repair complex,GO:0032300,cellular component,41,9,1.588e-01,7.131e-02,2.784e-02,7.864e-01,8.509e-03,1.483e-01,1.701e-01,6.169e-02,8.244e-02,2.442e-02,3.174e-02
+COCA1,7325,mismatch repair,GO:0006298,biological process,41,4,1.588e-01,7.326e-02,2.752e-02,7.893e-01,2.667e-02,1.483e-01,1.701e-01,6.156e-02,8.719e-02,1.814e-02,4.176e-02
+COCA1,7325,single thymine insertion binding,GO:0032143,molecular function,41,2,1.588e-01,7.448e-02,3.115e-02,7.706e-01,2.985e-02,1.483e-01,1.701e-01,6.178e-02,8.980e-02,1.972e-02,4.922e-02
+COCA1,7325,single guanine insertion binding,GO:0032142,molecular function,41,2,1.588e-01,7.448e-02,3.171e-02,7.677e-01,2.730e-02,1.483e-01,1.701e-01,6.178e-02,8.980e-02,2.086e-02,4.821e-02
+COCA1,7325,MutSbeta complex,GO:0032302,cellular component,41,3,1.588e-01,7.480e-02,3.396e-02,7.564e-01,2.126e-02,1.483e-01,1.701e-01,6.172e-02,9.067e-02,2.420e-02,4.766e-02
+COCA1,7325,MutSalpha complex,GO:0032301,cellular component,41,3,1.588e-01,7.480e-02,3.399e-02,7.563e-01,2.173e-02,1.483e-01,1.701e-01,6.172e-02,9.067e-02,2.401e-02,4.811e-02
+COCA1,7325,enzyme binding,GO:0019899,molecular function,41,31,1.592e-01,7.703e-02,3.661e-02,7.448e-01,1.611e-02,1.489e-01,1.702e-01,5.924e-02,1.002e-01,2.819e-02,4.756e-02
+COCA1,7325,DNA recombination,GO:0006310,biological process,41,13,1.598e-01,7.864e-02,3.319e-02,7.609e-01,3.212e-02,1.498e-01,1.704e-01,5.830e-02,1.061e-01,1.973e-02,5.581e-02
+COCA1,7325,magnesium ion binding,GO:0000287,molecular function,41,3,1.617e-01,8.270e-02,3.954e-02,7.356e-01,3.944e-02,1.521e-01,1.720e-01,7.363e-02,9.288e-02,2.119e-02,7.375e-02
+COCA1,7325,"chromosome, telomeric region",GO:0000781,cellular component,41,4,1.621e-01,7.880e-02,3.220e-02,7.642e-01,5.466e-02,1.522e-01,1.727e-01,5.821e-02,1.067e-01,1.336e-02,7.758e-02
+COCA1,7325,maintenance of DNA repeat elements,GO:0043570,biological process,41,6,1.621e-01,7.880e-02,3.972e-02,7.331e-01,3.613e-02,1.522e-01,1.727e-01,5.821e-02,1.067e-01,2.225e-02,7.090e-02
+COCA1,7325,oxidized purine DNA binding,GO:0032357,molecular function,41,3,1.640e-01,8.537e-02,4.537e-02,7.134e-01,3.292e-02,1.577e-01,1.707e-01,6.984e-02,1.044e-01,2.677e-02,7.691e-02
+COCA1,7325,protein localization to chromatin,GO:0071168,biological process,41,7,1.658e-01,8.268e-02,4.318e-02,7.200e-01,4.449e-02,1.526e-01,1.800e-01,5.590e-02,1.223e-01,2.126e-02,8.769e-02
+COCA1,7325,protein homodimerization activity,GO:0042803,molecular function,41,5,1.699e-01,9.285e-02,4.083e-02,7.298e-01,5.915e-02,1.523e-01,1.896e-01,7.088e-02,1.216e-01,1.604e-02,1.039e-01
+COCA1,7325,MutLalpha complex binding,GO:0032405,molecular function,41,2,1.723e-01,9.895e-02,6.560e-02,6.566e-01,3.786e-02,1.494e-01,1.987e-01,7.101e-02,1.379e-01,3.663e-02,1.175e-01
+COCA1,7325,ATPase activity,GO:0016887,molecular function,41,20,1.787e-01,1.228e-01,8.712e-02,6.140e-01,1.583e-02,1.606e-01,1.988e-01,1.037e-01,1.454e-01,6.867e-02,1.105e-01
+COCA1,7325,double-strand/single-strand DNA junction binding,GO:0000406,molecular function,41,3,1.838e-01,1.262e-01,9.027e-02,6.083e-01,1.252e-02,1.770e-01,1.910e-01,1.177e-01,1.353e-01,7.498e-02,1.087e-01
+COCA1,7325,positive regulation of helicase activity,GO:0051096,biological process,41,4,1.858e-01,1.048e-01,6.459e-02,6.539e-01,7.087e-02,1.397e-01,2.471e-01,5.615e-02,1.955e-01,2.241e-02,1.861e-01
+COCA1,7325,DNA binding,GO:0003677,molecular function,41,20,1.877e-01,1.301e-01,9.671e-02,5.971e-01,1.337e-02,1.767e-01,1.993e-01,1.218e-01,1.390e-01,7.941e-02,1.178e-01
+COCA1,7325,ADP binding,GO:0043531,molecular function,41,3,1.880e-01,1.392e-01,9.958e-02,5.912e-01,3.205e-02,1.573e-01,2.246e-01,1.015e-01,1.909e-01,6.203e-02,1.599e-01
+COCA1,7325,ATP binding,GO:0005524,molecular function,41,4,1.935e-01,1.422e-01,9.942e-02,5.896e-01,4.462e-02,1.557e-01,2.404e-01,9.774e-02,2.068e-01,5.075e-02,1.948e-01
+COCA1,7325,four-way junction DNA binding,GO:0000400,molecular function,41,4,2.039e-01,1.568e-01,1.267e-01,5.523e-01,5.356e-03,1.998e-01,2.081e-01,1.389e-01,1.769e-01,1.174e-01,1.369e-01
+COCA1,7325,protein kinase binding,GO:0019901,molecular function,41,16,2.096e-01,1.641e-01,1.302e-01,5.469e-01,2.291e-02,1.785e-01,2.461e-01,1.258e-01,2.140e-01,9.430e-02,1.798e-01
+COCA1,7325,intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator,GO:0042771,biological process,41,3,2.142e-01,1.569e-01,1.266e-01,5.495e-01,4.151e-02,1.655e-01,2.773e-01,1.056e-01,2.330e-01,7.204e-02,2.223e-01
+COCA1,7325,somatic recombination of immunoglobulin genes involved in immune response,GO:0002204,biological process,41,4,2.164e-01,1.495e-01,1.208e-01,5.540e-01,6.093e-02,1.599e-01,2.930e-01,7.922e-02,2.821e-01,4.940e-02,2.952e-01
+COCA1,7325,nucleoplasm,GO:0005654,cellular component,41,10,2.207e-01,1.592e-01,1.108e-01,5.650e-01,7.893e-02,1.546e-01,3.150e-01,8.187e-02,3.096e-01,3.427e-02,3.584e-01
+COCA1,7325,chromatin binding,GO:0003682,molecular function,41,6,2.385e-01,1.880e-01,1.696e-01,5.004e-01,1.716e-02,2.094e-01,2.717e-01,1.496e-01,2.363e-01,1.350e-01,2.132e-01
+COCA1,7325,negative regulation of DNA recombination,GO:0045910,biological process,41,13,2.595e-01,2.093e-01,1.954e-01,4.745e-01,1.013e-02,2.450e-01,2.749e-01,1.960e-01,2.234e-01,1.716e-01,2.224e-01
+COCA1,7325,nucleus,GO:0005634,cellular component,41,26,2.645e-01,2.200e-01,1.987e-01,4.685e-01,3.335e-02,2.035e-01,3.437e-01,1.514e-01,3.196e-01,1.328e-01,2.971e-01
+COCA1,7325,membrane,GO:0016020,cellular component,41,33,2.755e-01,2.201e-01,1.929e-01,4.648e-01,7.151e-02,1.692e-01,4.486e-01,1.062e-01,4.561e-01,7.545e-02,4.931e-01
+COCA1,7325,protein binding,GO:0005515,molecular function,41,161,3.234e-01,2.650e-01,2.360e-01,4.159e-01,9.163e-02,1.697e-01,6.163e-01,1.065e-01,6.591e-01,7.563e-02,7.365e-01
+MATN1,6907,collagen-containing extracellular matrix,GO:0062023,cellular component,2,16,1.592e-01,8.139e-02,4.070e-02,7.295e-01,2.417e-02,1.479e-01,1.713e-01,5.472e-02,1.211e-01,2.736e-02,6.053e-02
+MATN1,6907,protein binding,GO:0005515,molecular function,2,161,2.117e-01,1.385e-01,1.385e-01,5.367e-01,1.400e-02,1.933e-01,2.319e-01,1.142e-01,1.679e-01,1.142e-01,1.679e-01
+PCBP3,8651,mRNA binding,GO:0003729,molecular function,8,11,1.588e-01,1.795e-01,2.913e-02,7.795e-01,1.616e-02,1.483e-01,1.701e-01,9.864e-02,3.267e-01,2.271e-02,3.737e-02
+PCBP3,8651,regulation of RNA metabolic process,GO:0051252,biological process,8,19,1.850e-01,1.795e-01,8.869e-02,6.109e-01,2.020e-02,1.713e-01,1.997e-01,9.864e-02,3.267e-01,6.529e-02,1.205e-01
+PCBP3,8651,regulation of gene expression,GO:0010468,biological process,8,23,1.860e-01,1.795e-01,6.678e-02,6.515e-01,5.964e-02,1.548e-01,2.237e-01,9.864e-02,3.267e-01,2.696e-02,1.654e-01
+PCBP3,8651,RNA binding,GO:0003723,molecular function,8,39,1.953e-01,1.795e-01,8.641e-02,6.112e-01,5.243e-02,1.635e-01,2.332e-01,9.864e-02,3.267e-01,3.937e-02,1.897e-01
+PCBP3,8651,cytoplasm,GO:0005737,cellular component,8,20,2.087e-01,2.000e-01,1.222e-01,5.562e-01,3.772e-02,1.679e-01,2.595e-01,1.001e-01,3.995e-01,7.151e-02,2.087e-01
+PCBP3,8651,extracellular exosome,GO:0070062,cellular component,8,26,2.845e-01,2.601e-01,2.252e-01,4.447e-01,2.616e-02,2.324e-01,3.483e-01,1.885e-01,3.590e-01,1.639e-01,3.094e-01
+PCBP3,8651,nucleus,GO:0005634,cellular component,8,26,2.926e-01,2.233e-01,2.027e-01,4.530e-01,7.758e-02,1.735e-01,4.937e-01,9.939e-02,5.019e-01,7.471e-02,5.498e-01
+PCBP3,8651,cytosol,GO:0005829,cellular component,8,11,3.047e-01,2.624e-01,2.505e-01,4.235e-01,2.234e-02,2.559e-01,3.628e-01,1.934e-01,3.560e-01,1.930e-01,3.251e-01
+FYCO1,14673,Golgi apparatus,GO:0005794,cellular component,9,5,1.588e-01,1.223e-01,2.880e-02,7.821e-01,2.233e-02,1.483e-01,1.701e-01,9.697e-02,1.543e-01,2.035e-02,4.075e-02
+FYCO1,14673,lysosome,GO:0005764,cellular component,9,12,1.667e-01,1.223e-01,5.274e-02,6.908e-01,4.426e-02,1.533e-01,1.814e-01,9.697e-02,1.543e-01,2.611e-02,1.065e-01
+FYCO1,14673,plus-end-directed vesicle transport along microtubule,GO:0072383,biological process,9,4,1.714e-01,1.223e-01,6.653e-02,6.558e-01,2.105e-02,1.536e-01,1.913e-01,9.697e-02,1.543e-01,4.775e-02,9.270e-02
+FYCO1,14673,late endosome,GO:0005770,cellular component,9,3,1.721e-01,1.223e-01,7.383e-02,6.404e-01,1.612e-02,1.668e-01,1.776e-01,9.697e-02,1.543e-01,5.763e-02,9.458e-02
+FYCO1,14673,autophagosome,GO:0005776,cellular component,9,4,1.725e-01,1.223e-01,7.510e-02,6.371e-01,2.158e-02,1.651e-01,1.803e-01,9.697e-02,1.543e-01,5.380e-02,1.048e-01
+FYCO1,14673,intracellular membrane-bounded organelle,GO:0043231,cellular component,9,34,1.763e-01,1.223e-01,7.575e-02,6.363e-01,1.307e-02,1.652e-01,1.881e-01,9.697e-02,1.543e-01,6.206e-02,9.247e-02
+FYCO1,14673,membrane,GO:0016020,cellular component,9,33,1.839e-01,1.282e-01,9.126e-02,6.051e-01,3.435e-02,1.575e-01,2.148e-01,9.585e-02,1.714e-01,5.423e-02,1.536e-01
+FYCO1,14673,protein binding,GO:0005515,molecular function,9,161,2.217e-01,1.570e-01,1.396e-01,5.309e-01,4.900e-02,1.576e-01,3.118e-01,8.223e-02,2.998e-01,7.309e-02,2.665e-01
+FYCO1,14673,positive regulation of autophagosome maturation,GO:1901098,biological process,9,5,3.915e-01,3.513e-01,3.513e-01,3.449e-01,4.111e-02,2.836e-01,5.404e-01,2.310e-01,5.344e-01,2.310e-01,5.344e-01
+FABP1,3555,negative regulation of cysteine-type endopeptidase activity involved in apoptotic process,GO:0043154,biological process,10,7,1.588e-01,1.065e-01,1.233e-02,8.879e-01,1.876e-02,1.483e-01,1.701e-01,6.162e-02,1.839e-01,6.940e-03,2.190e-02
+FABP1,3555,antioxidant activity,GO:0016209,molecular function,10,10,1.724e-01,1.147e-01,5.732e-02,6.777e-01,3.828e-02,1.539e-01,1.931e-01,7.350e-02,1.791e-01,3.128e-02,1.050e-01
+FABP1,3555,negative regulation of apoptotic process,GO:0043066,biological process,10,21,1.729e-01,1.135e-01,5.355e-02,6.868e-01,4.266e-02,1.504e-01,1.988e-01,7.395e-02,1.743e-01,2.739e-02,1.047e-01
+FABP1,3555,nucleoplasm,GO:0005654,cellular component,10,10,1.848e-01,1.339e-01,6.408e-02,6.586e-01,5.828e-02,1.599e-01,2.135e-01,6.548e-02,2.737e-01,2.601e-02,1.578e-01
+FABP1,3555,cellular response to hypoxia,GO:0071456,biological process,10,4,1.907e-01,1.339e-01,8.699e-02,6.108e-01,4.984e-02,1.521e-01,2.390e-01,6.548e-02,2.737e-01,4.222e-02,1.792e-01
+FABP1,3555,extracellular exosome,GO:0070062,cellular component,10,26,1.946e-01,1.339e-01,8.719e-02,6.100e-01,5.012e-02,1.591e-01,2.380e-01,6.548e-02,2.737e-01,4.179e-02,1.819e-01
+FABP1,3555,cytosol,GO:0005829,cellular component,10,11,2.133e-01,1.367e-01,1.076e-01,5.731e-01,6.266e-02,1.511e-01,3.010e-01,6.433e-02,2.905e-01,4.536e-02,2.553e-01
+FABP1,3555,cellular response to hydrogen peroxide,GO:0070301,biological process,10,3,2.140e-01,1.438e-01,1.323e-01,5.429e-01,3.422e-02,1.706e-01,2.684e-01,7.715e-02,2.682e-01,8.289e-02,2.111e-01
+FABP1,3555,protein binding,GO:0005515,molecular function,10,161,2.296e-01,1.433e-01,1.268e-01,5.420e-01,7.307e-02,1.439e-01,3.664e-01,6.178e-02,3.323e-01,4.871e-02,3.299e-01
+AGRIN,329,basement membrane,GO:0005604,cellular component,8,2,1.588e-01,9.751e-02,1.368e-02,8.861e-01,1.035e-02,1.483e-01,1.701e-01,7.647e-02,1.243e-01,1.084e-02,1.726e-02
+AGRIN,329,collagen-containing extracellular matrix,GO:0062023,cellular component,8,16,1.588e-01,9.941e-02,3.257e-02,7.628e-01,1.939e-02,1.483e-01,1.701e-01,7.735e-02,1.278e-01,2.389e-02,4.439e-02
+AGRIN,329,receptor clustering,GO:0043113,biological process,8,8,1.618e-01,1.100e-01,3.568e-02,7.505e-01,4.478e-02,1.520e-01,1.723e-01,7.668e-02,1.579e-01,1.762e-02,7.228e-02
+AGRIN,329,extracellular exosome,GO:0070062,cellular component,8,26,1.799e-01,1.413e-01,8.385e-02,6.202e-01,1.423e-02,1.689e-01,1.917e-01,1.353e-01,1.477e-01,6.761e-02,1.040e-01
+AGRIN,329,tissue development,GO:0009888,biological process,8,30,2.031e-01,1.592e-01,1.191e-01,5.619e-01,2.533e-02,1.728e-01,2.387e-01,1.318e-01,1.922e-01,8.360e-02,1.696e-01
+AGRIN,329,neuromuscular junction development,GO:0007528,biological process,8,4,2.107e-01,1.629e-01,1.354e-01,5.411e-01,4.653e-03,2.014e-01,2.205e-01,1.537e-01,1.727e-01,1.270e-01,1.443e-01
+AGRIN,329,animal organ morphogenesis,GO:0009887,biological process,8,30,2.122e-01,1.611e-01,1.298e-01,5.466e-01,3.134e-02,1.735e-01,2.594e-01,1.303e-01,1.993e-01,8.473e-02,1.988e-01
+AGRIN,329,protein binding,GO:0005515,molecular function,8,161,2.147e-01,1.570e-01,1.342e-01,5.408e-01,3.160e-02,1.781e-01,2.587e-01,1.348e-01,1.829e-01,8.605e-02,2.094e-01
+GCH1,4193,protein homodimerization activity,GO:0042803,molecular function,25,5,1.588e-01,2.620e-01,3.193e-02,7.649e-01,7.649e-03,1.483e-01,1.701e-01,2.287e-01,3.001e-01,2.820e-02,3.614e-02
+GCH1,4193,pteridine-containing compound biosynthetic process,GO:0042559,biological process,25,13,1.594e-01,2.629e-01,4.299e-02,7.211e-01,2.700e-02,1.478e-01,1.719e-01,2.303e-01,3.001e-01,2.775e-02,6.660e-02
+GCH1,4193,identical protein binding,GO:0042802,molecular function,25,11,1.601e-01,2.739e-01,3.851e-02,7.380e-01,3.093e-02,1.502e-01,1.706e-01,2.192e-01,3.422e-01,2.334e-02,6.353e-02
+GCH1,4193,cytoplasmic vesicle,GO:0031410,cellular component,25,30,1.618e-01,2.739e-01,4.489e-02,7.155e-01,3.752e-02,1.519e-01,1.722e-01,2.192e-01,3.422e-01,2.460e-02,8.195e-02
+GCH1,4193,tetrahydrobiopterin biosynthetic process,GO:0006729,biological process,25,4,1.644e-01,2.629e-01,3.817e-02,7.391e-01,2.709e-02,1.543e-01,1.751e-01,2.303e-01,3.001e-01,2.440e-02,5.970e-02
+GCH1,4193,cytoplasm,GO:0005737,cellular component,25,20,2.030e-01,2.764e-01,1.025e-01,5.840e-01,4.860e-02,1.563e-01,2.636e-01,2.195e-01,3.480e-01,5.172e-02,2.030e-01
+GCH1,4193,neuromuscular process controlling posture,GO:0050884,biological process,25,2,2.037e-01,2.948e-01,1.053e-01,5.790e-01,5.346e-02,1.542e-01,2.690e-01,2.419e-01,3.592e-01,4.907e-02,2.258e-01
+GCH1,4193,nucleoplasm,GO:0005654,cellular component,25,10,2.094e-01,2.866e-01,1.138e-01,5.659e-01,5.098e-02,1.550e-01,2.829e-01,2.275e-01,3.611e-01,5.656e-02,2.289e-01
+GCH1,4193,GTP binding,GO:0005525,molecular function,25,5,2.250e-01,2.927e-01,1.404e-01,5.293e-01,5.059e-02,1.584e-01,3.196e-01,2.261e-01,3.790e-01,7.277e-02,2.710e-01
+GCH1,4193,mitogen-activated protein kinase binding,GO:0051019,molecular function,25,5,2.290e-01,3.105e-01,1.602e-01,5.106e-01,2.028e-02,1.950e-01,2.689e-01,2.760e-01,3.492e-01,1.222e-01,2.100e-01
+GCH1,4193,zinc ion binding,GO:0008270,molecular function,25,5,2.314e-01,2.961e-01,1.555e-01,5.145e-01,3.219e-02,1.842e-01,2.907e-01,2.447e-01,3.581e-01,1.025e-01,2.360e-01
+GCH1,4193,GTPase activity,GO:0003924,molecular function,25,5,2.380e-01,2.961e-01,1.633e-01,5.055e-01,3.385e-02,1.932e-01,2.933e-01,2.447e-01,3.581e-01,1.037e-01,2.572e-01
+GCH1,4193,protein-containing complex,GO:0032991,cellular component,25,343,2.578e-01,3.105e-01,1.947e-01,4.749e-01,1.414e-02,2.280e-01,2.914e-01,2.760e-01,3.492e-01,1.624e-01,2.335e-01
+GCH1,4193,nucleus,GO:0005634,cellular component,25,26,2.615e-01,3.076e-01,1.596e-01,4.943e-01,8.978e-02,1.394e-01,4.904e-01,2.007e-01,4.714e-01,5.360e-02,4.753e-01
+GCH1,4193,nuclear membrane,GO:0031965,cellular component,25,6,2.617e-01,3.105e-01,2.026e-01,4.676e-01,7.165e-03,2.443e-01,2.804e-01,2.760e-01,3.492e-01,1.852e-01,2.216e-01
+GCH1,4193,GTP cyclohydrolase I activity,GO:0003934,molecular function,25,2,2.763e-01,3.193e-01,2.149e-01,4.551e-01,1.935e-02,2.390e-01,3.194e-01,2.688e-01,3.793e-01,1.703e-01,2.712e-01
+GCH1,4193,cytosol,GO:0005829,cellular component,25,11,2.904e-01,3.138e-01,2.202e-01,4.445e-01,5.184e-02,1.963e-01,4.295e-01,2.339e-01,4.211e-01,1.190e-01,4.074e-01
+GCH1,4193,regulation of removal of superoxide radicals,GO:2000121,biological process,25,6,2.932e-01,3.215e-01,2.349e-01,4.369e-01,2.292e-02,2.456e-01,3.500e-01,2.670e-01,3.871e-01,1.799e-01,3.067e-01
+GCH1,4193,dopamine biosynthetic process,GO:0042416,biological process,25,4,3.009e-01,3.600e-01,2.347e-01,4.283e-01,6.275e-02,1.855e-01,4.879e-01,2.845e-01,4.554e-01,1.150e-01,4.791e-01
+GCH1,4193,protein binding,GO:0005515,molecular function,25,161,3.159e-01,3.473e-01,2.469e-01,4.159e-01,6.851e-02,1.869e-01,5.339e-01,2.350e-01,5.132e-01,1.198e-01,5.090e-01
+GCH1,4193,response to lipopolysaccharide,GO:0032496,biological process,25,6,3.186e-01,3.479e-01,2.589e-01,4.123e-01,4.524e-02,2.267e-01,4.478e-01,2.724e-01,4.443e-01,1.522e-01,4.405e-01
+GCH1,4193,positive regulation of nitric-oxide synthase activity,GO:0051000,biological process,25,3,3.289e-01,3.835e-01,2.784e-01,3.967e-01,4.578e-02,2.273e-01,4.757e-01,3.470e-01,4.238e-01,1.654e-01,4.686e-01
+GCH1,4193,regulation of blood pressure,GO:0008217,biological process,25,8,4.002e-01,4.298e-01,3.576e-01,3.378e-01,5.145e-02,2.687e-01,5.959e-01,3.469e-01,5.325e-01,2.103e-01,6.083e-01
+GCH1,4193,response to interferon-gamma,GO:0034341,biological process,25,3,4.022e-01,4.084e-01,3.629e-01,3.415e-01,3.283e-03,3.886e-01,4.162e-01,3.992e-01,4.178e-01,3.510e-01,3.753e-01
+GCH1,4193,response to tumor necrosis factor,GO:0034612,biological process,25,3,4.106e-01,4.084e-01,3.746e-01,3.338e-01,2.873e-03,3.985e-01,4.232e-01,3.992e-01,4.178e-01,3.642e-01,3.853e-01
+OSBP2,8504,sterol binding,GO:0032934,molecular function,9,7,1.608e-01,1.893e-01,3.979e-02,7.339e-01,3.810e-02,1.508e-01,1.715e-01,1.294e-01,2.769e-01,2.169e-02,7.299e-02
+OSBP2,8504,cholesterol binding,GO:0015485,molecular function,9,5,1.758e-01,1.893e-01,6.373e-02,6.601e-01,5.037e-02,1.537e-01,2.010e-01,1.294e-01,2.769e-01,2.887e-02,1.407e-01
+OSBP2,8504,plasma membrane,GO:0005886,cellular component,9,16,1.961e-01,2.022e-01,1.127e-01,5.713e-01,2.487e-02,1.697e-01,2.266e-01,1.544e-01,2.649e-01,7.838e-02,1.621e-01
+OSBP2,8504,intracellular membrane-bounded organelle,GO:0043231,cellular component,9,34,1.971e-01,2.022e-01,1.009e-01,5.886e-01,3.871e-02,1.709e-01,2.274e-01,1.544e-01,2.649e-01,5.667e-02,1.795e-01
+OSBP2,8504,membrane,GO:0016020,cellular component,9,33,2.211e-01,2.022e-01,1.465e-01,5.258e-01,2.624e-02,1.803e-01,2.711e-01,1.544e-01,2.649e-01,1.034e-01,2.076e-01
+OSBP2,8504,perinuclear endoplasmic reticulum,GO:0097038,cellular component,9,2,2.267e-01,2.022e-01,1.505e-01,5.200e-01,3.473e-02,1.755e-01,2.928e-01,1.544e-01,2.649e-01,9.489e-02,2.388e-01
+OSBP2,8504,cytosol,GO:0005829,cellular component,9,11,2.319e-01,2.022e-01,1.614e-01,5.098e-01,9.722e-03,2.134e-01,2.519e-01,1.544e-01,2.649e-01,1.419e-01,1.835e-01
+OSBP2,8504,protein binding,GO:0005515,molecular function,9,161,2.389e-01,2.136e-01,1.689e-01,5.013e-01,1.525e-02,2.145e-01,2.661e-01,1.620e-01,2.814e-01,1.384e-01,2.061e-01
+OSBP2,8504,sterol transporter activity,GO:0015248,molecular function,9,4,3.957e-01,3.454e-01,3.454e-01,3.391e-01,7.058e-02,2.282e-01,6.863e-01,1.637e-01,7.287e-01,1.637e-01,7.287e-01
+MTPN,15667,F-actin capping protein complex,GO:0008290,cellular component,6,3,2.532e-01,3.639e-01,1.370e-01,5.201e-01,9.911e-02,1.462e-01,4.386e-01,1.794e-01,7.380e-01,3.438e-02,5.463e-01
+MTPN,15667,regulation of cell size,GO:0008361,biological process,6,7,2.601e-01,4.208e-01,1.944e-01,4.725e-01,3.565e-02,1.974e-01,3.427e-01,2.504e-01,7.071e-01,1.235e-01,3.059e-01
+MTPN,15667,cytoplasm,GO:0005737,cellular component,6,20,2.614e-01,4.208e-01,1.842e-01,4.781e-01,5.565e-02,1.721e-01,3.971e-01,2.504e-01,7.071e-01,9.382e-02,3.616e-01
+MTPN,15667,nucleus,GO:0005634,cellular component,6,26,3.779e-01,4.330e-01,3.117e-01,3.482e-01,1.019e-01,1.847e-01,7.732e-01,2.437e-01,7.695e-01,1.264e-01,7.689e-01
+MTPN,15667,positive regulation of cardiac muscle hypertrophy,GO:0010613,biological process,6,5,5.472e-01,6.087e-01,5.277e-01,2.403e-01,2.002e-02,4.786e-01,6.257e-01,4.956e-01,7.476e-01,4.515e-01,6.169e-01
+MTPN,15667,regulation of barbed-end actin filament capping,GO:2000812,biological process,6,5,5.600e-01,6.113e-01,5.414e-01,2.299e-01,3.363e-02,4.369e-01,7.177e-01,4.844e-01,7.715e-01,4.109e-01,7.132e-01
+AOC3,550,identical protein binding,GO:0042802,molecular function,22,11,1.588e-01,9.753e-02,2.261e-02,8.196e-01,8.329e-03,1.483e-01,1.701e-01,8.252e-02,1.153e-01,2.009e-02,2.543e-02
+AOC3,550,endoplasmic reticulum,GO:0005783,cellular component,22,11,1.588e-01,9.753e-02,3.714e-02,7.425e-01,1.050e-02,1.483e-01,1.701e-01,8.252e-02,1.153e-01,3.133e-02,4.403e-02
+AOC3,550,amine metabolic process,GO:0009308,biological process,22,10,1.592e-01,9.753e-02,3.202e-02,7.656e-01,2.423e-02,1.489e-01,1.702e-01,8.252e-02,1.153e-01,2.186e-02,4.691e-02
+AOC3,550,Golgi apparatus,GO:0005794,cellular component,22,5,1.597e-01,9.753e-02,4.686e-02,7.083e-01,2.475e-02,1.484e-01,1.719e-01,8.252e-02,1.153e-01,3.134e-02,7.009e-02
+AOC3,550,calcium ion binding,GO:0005509,molecular function,22,5,1.598e-01,9.753e-02,3.246e-02,7.651e-01,4.951e-02,1.474e-01,1.732e-01,8.252e-02,1.153e-01,1.486e-02,7.089e-02
+AOC3,550,primary amine oxidase activity,GO:0008131,molecular function,22,2,1.607e-01,9.753e-02,5.365e-02,6.880e-01,2.239e-02,1.485e-01,1.740e-01,8.252e-02,1.153e-01,3.744e-02,7.686e-02
+AOC3,550,integral component of membrane,GO:0016021,cellular component,22,8,1.615e-01,9.753e-02,4.913e-02,7.018e-01,7.663e-03,1.534e-01,1.702e-01,8.252e-02,1.153e-01,4.311e-02,5.600e-02
+AOC3,550,protein heterodimerization activity,GO:0046982,molecular function,22,2,1.618e-01,9.753e-02,5.645e-02,6.807e-01,2.014e-02,1.499e-01,1.747e-01,8.252e-02,1.153e-01,4.091e-02,7.788e-02
+AOC3,550,quinone binding,GO:0048038,molecular function,22,4,1.623e-01,9.753e-02,4.892e-02,7.025e-01,4.759e-02,1.483e-01,1.776e-01,8.252e-02,1.153e-01,2.291e-02,1.045e-01
+AOC3,550,copper ion binding,GO:0005507,molecular function,22,8,1.661e-01,1.009e-01,5.661e-02,6.801e-01,2.614e-02,1.536e-01,1.797e-01,9.020e-02,1.128e-01,3.716e-02,8.623e-02
+AOC3,550,early endosome,GO:0005769,cellular component,22,4,1.735e-01,1.052e-01,5.590e-02,6.801e-01,4.521e-02,1.553e-01,1.938e-01,8.348e-02,1.327e-01,2.752e-02,1.135e-01
+AOC3,550,microvillus,GO:0005902,cellular component,22,5,1.749e-01,1.064e-01,7.656e-02,6.326e-01,3.548e-02,1.534e-01,1.995e-01,8.010e-02,1.415e-01,4.441e-02,1.320e-01
+AOC3,550,cytoplasm,GO:0005737,cellular component,22,20,1.753e-01,1.099e-01,7.632e-02,6.345e-01,2.588e-02,1.534e-01,2.003e-01,9.832e-02,1.228e-01,5.180e-02,1.124e-01
+AOC3,550,plasma membrane,GO:0005886,cellular component,22,16,1.758e-01,1.127e-01,8.190e-02,6.239e-01,1.943e-02,1.577e-01,1.959e-01,9.864e-02,1.288e-01,6.101e-02,1.099e-01
+AOC3,550,cell surface,GO:0009986,cellular component,22,6,1.790e-01,1.119e-01,8.543e-02,6.170e-01,1.635e-02,1.617e-01,1.980e-01,1.036e-01,1.209e-01,6.691e-02,1.091e-01
+AOC3,550,cell adhesion,GO:0007155,biological process,22,12,1.831e-01,1.164e-01,8.740e-02,6.136e-01,1.182e-02,1.751e-01,1.915e-01,1.099e-01,1.232e-01,7.324e-02,1.043e-01
+AOC3,550,protein binding,GO:0005515,molecular function,22,161,1.874e-01,1.221e-01,1.006e-01,5.910e-01,6.833e-03,1.798e-01,1.953e-01,1.137e-01,1.310e-01,9.110e-02,1.111e-01
+AOC3,550,response to antibiotic,GO:0046677,biological process,22,10,2.045e-01,1.355e-01,1.173e-01,5.636e-01,3.371e-02,1.785e-01,2.343e-01,1.048e-01,1.753e-01,7.200e-02,1.911e-01
+AOC3,550,negative regulation of primary amine oxidase activity,GO:1902283,biological process,22,2,2.401e-01,1.742e-01,1.710e-01,4.987e-01,1.966e-02,2.068e-01,2.787e-01,1.387e-01,2.186e-01,1.324e-01,2.209e-01
+MEP1B,7020,identical protein binding,GO:0042802,molecular function,6,11,1.588e-01,2.373e-02,5.498e-03,9.378e-01,7.318e-03,1.483e-01,1.701e-01,1.687e-02,3.340e-02,3.313e-03,9.122e-03
+MEP1B,7020,metalloendopeptidase activity,GO:0004222,molecular function,6,5,1.588e-01,3.005e-02,1.379e-02,8.835e-01,1.293e-02,1.483e-01,1.701e-01,2.576e-02,3.506e-02,1.013e-02,1.878e-02
+MEP1B,7020,meprin A complex,GO:0017090,cellular component,6,3,1.588e-01,3.329e-02,2.198e-02,8.241e-01,6.458e-03,1.483e-01,1.701e-01,2.994e-02,3.702e-02,2.007e-02,2.408e-02
+MEP1B,7020,integral component of plasma membrane,GO:0005887,cellular component,6,11,1.588e-01,4.524e-02,3.898e-02,7.355e-01,1.778e-02,1.482e-01,1.702e-01,3.858e-02,5.305e-02,2.915e-02,5.213e-02
+MEP1B,7020,protein binding,GO:0005515,molecular function,6,161,1.592e-01,3.880e-02,3.569e-02,7.493e-01,2.644e-02,1.489e-01,1.702e-01,2.999e-02,5.021e-02,2.346e-02,5.429e-02
+MEP1A,7015,metalloendopeptidase activity,GO:0004222,molecular function,5,5,1.588e-01,3.713e-02,1.130e-02,8.992e-01,1.379e-02,1.483e-01,1.701e-01,3.123e-02,4.414e-02,7.389e-03,1.728e-02
+MEP1A,7015,meprin A complex,GO:0017090,cellular component,5,3,1.588e-01,4.131e-02,2.329e-02,8.150e-01,1.413e-02,1.483e-01,1.701e-01,3.975e-02,4.293e-02,1.891e-02,2.869e-02
+MEP1A,7015,extracellular exosome,GO:0070062,cellular component,5,26,1.592e-01,4.481e-02,4.335e-02,7.198e-01,5.138e-03,1.489e-01,1.702e-01,3.981e-02,5.043e-02,3.988e-02,4.712e-02
+MEP1A,7015,protein binding,GO:0005515,molecular function,5,161,1.601e-01,4.464e-02,4.056e-02,7.298e-01,1.845e-02,1.508e-01,1.701e-01,3.943e-02,5.054e-02,3.005e-02,5.474e-02
+PPIB,9255,chaperone-mediated protein folding,GO:0061077,biological process,23,6,1.592e-01,2.348e-01,4.019e-02,7.308e-01,8.720e-03,1.489e-01,1.702e-01,2.182e-01,2.526e-01,3.485e-02,4.634e-02
+PPIB,9255,endoplasmic reticulum,GO:0005783,cellular component,23,11,1.612e-01,2.458e-01,5.288e-02,6.905e-01,2.838e-02,1.486e-01,1.749e-01,2.339e-01,2.583e-01,3.344e-02,8.363e-02
+PPIB,9255,positive regulation by host of viral process,GO:0044794,biological process,23,4,1.618e-01,2.348e-01,4.780e-02,7.052e-01,2.307e-02,1.520e-01,1.723e-01,2.182e-01,2.526e-01,3.287e-02,6.951e-02
+PPIB,9255,positive regulation by host of viral genome replication,GO:0044829,biological process,23,3,1.657e-01,2.378e-01,4.900e-02,7.021e-01,2.074e-02,1.565e-01,1.754e-01,2.204e-01,2.565e-01,3.490e-02,6.879e-02
+PPIB,9255,protein folding,GO:0006457,biological process,23,8,1.670e-01,2.348e-01,5.451e-02,6.855e-01,2.532e-02,1.613e-01,1.729e-01,2.182e-01,2.526e-01,3.634e-02,8.176e-02
+PPIB,9255,cytoplasm,GO:0005737,cellular component,23,20,1.737e-01,2.578e-01,6.955e-02,6.483e-01,3.011e-02,1.518e-01,1.989e-01,2.366e-01,2.810e-01,4.374e-02,1.106e-01
+PPIB,9255,intracellular membrane-bounded organelle,GO:0043231,cellular component,23,34,1.952e-01,2.687e-01,7.956e-02,6.207e-01,6.885e-02,1.393e-01,2.734e-01,1.929e-01,3.744e-01,2.941e-02,2.152e-01
+PPIB,9255,nucleoplasm,GO:0005654,cellular component,23,10,2.049e-01,3.049e-01,1.247e-01,5.536e-01,3.152e-02,1.642e-01,2.557e-01,2.511e-01,3.703e-01,7.991e-02,1.945e-01
+PPIB,9255,membrane,GO:0016020,cellular component,23,33,2.344e-01,3.164e-01,1.555e-01,5.113e-01,4.962e-02,1.642e-01,3.345e-01,2.471e-01,4.051e-01,8.098e-02,2.985e-01
+PPIB,9255,protein stabilization,GO:0050821,biological process,23,2,2.500e-01,3.368e-01,1.730e-01,4.909e-01,5.205e-02,1.698e-01,3.682e-01,2.684e-01,4.225e-01,9.105e-02,3.288e-01
+PPIB,9255,extracellular exosome,GO:0070062,cellular component,23,26,2.549e-01,3.344e-01,1.808e-01,4.848e-01,4.393e-02,1.879e-01,3.457e-01,2.567e-01,4.357e-01,1.011e-01,3.233e-01
+PPIB,9255,perinuclear region of cytoplasm,GO:0048471,cellular component,23,5,2.673e-01,3.591e-01,2.034e-01,4.644e-01,2.998e-02,2.114e-01,3.380e-01,3.333e-01,3.871e-01,1.413e-01,2.928e-01
+PPIB,9255,nucleus,GO:0005634,cellular component,23,26,2.683e-01,3.521e-01,1.950e-01,4.670e-01,5.770e-02,1.758e-01,4.097e-01,2.761e-01,4.489e-01,9.392e-02,4.049e-01
+PPIB,9255,RNA binding,GO:0003723,molecular function,23,39,2.757e-01,3.688e-01,2.163e-01,4.545e-01,1.172e-02,2.517e-01,3.019e-01,3.436e-01,3.957e-01,1.873e-01,2.498e-01
+PPIB,9255,protein peptidyl-prolyl isomerization,GO:0000413,biological process,23,3,3.176e-01,3.815e-01,2.387e-01,4.221e-01,7.088e-02,1.917e-01,5.259e-01,2.762e-01,5.268e-01,1.003e-01,5.679e-01
+PPIB,9255,cyclosporin A binding,GO:0016018,molecular function,23,3,3.489e-01,4.158e-01,2.793e-01,3.834e-01,8.280e-02,1.886e-01,6.454e-01,2.781e-01,6.218e-01,1.168e-01,6.678e-01
+PPIB,9255,neutrophil chemotaxis,GO:0030593,biological process,23,3,3.615e-01,4.015e-01,3.176e-01,3.719e-01,1.956e-02,3.128e-01,4.177e-01,3.848e-01,4.190e-01,2.590e-01,3.896e-01
+PPIB,9255,protein binding,GO:0005515,molecular function,23,161,3.726e-01,4.030e-01,3.315e-01,3.622e-01,1.857e-02,3.205e-01,4.331e-01,3.873e-01,4.194e-01,2.728e-01,4.028e-01
+PPIB,9255,peptidyl-prolyl cis-trans isomerase activity,GO:0003755,molecular function,23,3,3.728e-01,4.158e-01,3.158e-01,3.646e-01,5.892e-02,2.394e-01,5.806e-01,3.305e-01,5.231e-01,1.667e-01,5.982e-01
+PPIB,9255,RNA polymerase binding,GO:0070063,molecular function,23,4,3.754e-01,4.078e-01,3.341e-01,3.599e-01,2.210e-02,3.138e-01,4.490e-01,3.833e-01,4.338e-01,2.654e-01,4.205e-01
+PPIB,9255,bone development,GO:0060348,biological process,23,3,3.848e-01,4.290e-01,3.408e-01,3.483e-01,5.433e-02,2.490e-01,5.948e-01,3.773e-01,4.878e-01,1.908e-01,6.084e-01
+PPIB,9255,positive regulation of multicellular organism growth,GO:0040018,biological process,23,4,4.120e-01,4.477e-01,3.701e-01,3.312e-01,4.448e-02,2.896e-01,5.862e-01,3.739e-01,5.360e-01,2.355e-01,5.816e-01
+PPIB,9255,focal adhesion,GO:0005925,cellular component,23,3,4.302e-01,4.427e-01,3.940e-01,3.204e-01,1.686e-02,3.743e-01,4.944e-01,3.787e-01,5.174e-01,3.366e-01,4.611e-01
+PDPR,30264,mitochondrial matrix,GO:0005759,cellular component,5,3,2.344e-01,2.416e-01,1.600e-01,5.076e-01,4.140e-02,1.698e-01,3.235e-01,1.552e-01,3.762e-01,9.463e-02,2.707e-01
+PDPR,30264,oxidoreductase activity,GO:0016491,molecular function,5,86,2.444e-01,2.416e-01,1.630e-01,5.030e-01,5.016e-02,1.778e-01,3.359e-01,1.552e-01,3.762e-01,8.208e-02,3.236e-01
+PDPR,30264,mitochondrion,GO:0005739,cellular component,5,7,2.718e-01,2.416e-01,2.096e-01,4.599e-01,2.053e-02,2.308e-01,3.202e-01,1.552e-01,3.762e-01,1.630e-01,2.697e-01
+PDPR,30264,cytoplasm,GO:0005737,cellular component,5,20,2.731e-01,2.433e-01,2.047e-01,4.592e-01,5.062e-02,1.832e-01,4.070e-01,1.543e-01,3.837e-01,1.136e-01,3.686e-01
+MUC1,7508,p53 binding,GO:0002039,molecular function,18,2,1.588e-01,1.613e-01,1.500e-02,8.714e-01,1.959e-02,1.483e-01,1.701e-01,1.372e-01,1.897e-01,9.833e-03,2.289e-02
+MUC1,7508,positive regulation of transcription from RNA polymerase II promoter in response to stress,GO:0036003,biological process,18,16,1.588e-01,1.613e-01,3.237e-02,7.636e-01,1.977e-02,1.483e-01,1.701e-01,1.372e-01,1.897e-01,2.367e-02,4.427e-02
+MUC1,7508,regulation of transcription from RNA polymerase II promoter in response to stress,GO:0043618,biological process,18,12,1.588e-01,1.613e-01,3.464e-02,7.537e-01,2.695e-02,1.483e-01,1.701e-01,1.372e-01,1.897e-01,2.255e-02,5.322e-02
+MUC1,7508,"DNA damage response, signal transduction by p53 class mediator resulting in transcription of p21 class mediator",GO:0006978,biological process,18,3,1.601e-01,1.733e-01,5.009e-02,6.987e-01,1.520e-02,1.502e-01,1.706e-01,1.556e-01,1.931e-01,3.902e-02,6.432e-02
+MUC1,7508,RNA polymerase II cis-regulatory region sequence-specific DNA binding,GO:0000978,molecular function,18,17,1.700e-01,1.733e-01,6.689e-02,6.557e-01,1.037e-02,1.565e-01,1.847e-01,1.556e-01,1.931e-01,5.708e-02,7.839e-02
+MUC1,7508,negative regulation of intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator,GO:1902166,biological process,18,4,1.748e-01,1.733e-01,7.630e-02,6.351e-01,1.594e-02,1.588e-01,1.925e-01,1.556e-01,1.931e-01,5.994e-02,9.713e-02
+MUC1,7508,extracellular exosome,GO:0070062,cellular component,18,26,1.799e-01,1.733e-01,8.858e-02,6.117e-01,3.592e-03,1.712e-01,1.889e-01,1.556e-01,1.931e-01,8.399e-02,9.342e-02
+MUC1,7508,"DNA damage response, signal transduction by p53 class mediator resulting in cell cycle arrest",GO:0006977,biological process,18,4,1.799e-01,1.733e-01,8.492e-02,6.181e-01,1.543e-02,1.728e-01,1.873e-01,1.556e-01,1.931e-01,6.722e-02,1.073e-01
+MUC1,7508,plasma membrane,GO:0005886,cellular component,18,16,1.817e-01,1.733e-01,9.264e-02,6.045e-01,4.163e-03,1.722e-01,1.916e-01,1.556e-01,1.931e-01,8.705e-02,9.858e-02
+MUC1,7508,protein binding,GO:0005515,molecular function,18,161,1.997e-01,1.769e-01,1.174e-01,5.651e-01,1.333e-02,1.866e-01,2.138e-01,1.566e-01,2.000e-01,9.718e-02,1.419e-01
+MUC1,7508,vesicle,GO:0031982,cellular component,18,5,2.002e-01,1.759e-01,1.149e-01,5.681e-01,2.397e-02,1.755e-01,2.285e-01,1.542e-01,2.008e-01,8.155e-02,1.618e-01
+MUC1,7508,negative regulation of cell adhesion mediated by integrin,GO:0033629,biological process,18,4,2.026e-01,1.834e-01,1.204e-01,5.599e-01,2.640e-02,1.675e-01,2.451e-01,1.551e-01,2.170e-01,8.340e-02,1.739e-01
+MUC1,7508,extracellular space,GO:0005615,cellular component,18,21,2.048e-01,1.804e-01,1.257e-01,5.536e-01,1.225e-02,1.885e-01,2.225e-01,1.580e-01,2.059e-01,1.057e-01,1.496e-01
+MUC1,7508,negative regulation of transcription by competitive promoter binding,GO:0010944,biological process,18,2,2.207e-01,1.901e-01,1.469e-01,5.261e-01,1.739e-02,2.005e-01,2.430e-01,1.718e-01,2.103e-01,1.156e-01,1.866e-01
+MUC1,7508,transcription coregulator activity,GO:0003712,molecular function,18,5,2.213e-01,1.931e-01,1.486e-01,5.246e-01,8.184e-03,2.038e-01,2.403e-01,1.736e-01,2.148e-01,1.330e-01,1.661e-01
+MUC1,7508,chromatin,GO:0000785,cellular component,18,7,2.792e-01,2.413e-01,2.188e-01,4.505e-01,2.763e-02,2.240e-01,3.479e-01,1.795e-01,3.243e-01,1.573e-01,3.045e-01
+MUC1,7508,apical plasma membrane,GO:0016324,cellular component,18,3,2.977e-01,2.627e-01,2.431e-01,4.304e-01,1.538e-02,2.622e-01,3.381e-01,2.133e-01,3.236e-01,2.030e-01,2.912e-01
+MUC1,7508,positive regulation of histone H4 acetylation,GO:0090240,biological process,18,4,3.671e-01,3.219e-01,3.219e-01,3.684e-01,2.287e-02,3.029e-01,4.449e-01,2.523e-01,4.108e-01,2.523e-01,4.108e-01
+NPL,16781,identical protein binding,GO:0042802,molecular function,2,11,1.588e-01,2.297e-02,1.149e-02,8.999e-01,1.028e-02,1.483e-01,1.701e-01,1.642e-02,3.215e-02,8.208e-03,1.607e-02
+NPL,16781,protein binding,GO:0005515,molecular function,2,161,1.734e-01,6.629e-02,6.629e-02,6.545e-01,4.386e-02,1.494e-01,2.012e-01,3.344e-02,1.314e-01,3.344e-02,1.314e-01
+NEC1,8743,serine-type endopeptidase activity,GO:0004252,molecular function,6,3,1.699e-01,1.692e-01,5.957e-02,6.728e-01,1.645e-02,1.549e-01,1.862e-01,1.211e-01,2.364e-01,4.593e-02,7.726e-02
+NEC1,8743,protein processing,GO:0016485,biological process,6,17,1.753e-01,1.692e-01,8.022e-02,6.271e-01,2.064e-02,1.575e-01,1.952e-01,1.211e-01,2.364e-01,5.853e-02,1.099e-01
+NEC1,8743,peptide hormone processing,GO:0016486,biological process,6,13,1.855e-01,1.692e-01,9.311e-02,6.023e-01,3.275e-02,1.560e-01,2.206e-01,1.211e-01,2.364e-01,5.750e-02,1.508e-01
+NEC1,8743,extracellular space,GO:0005615,cellular component,6,21,2.345e-01,1.859e-01,1.630e-01,5.072e-01,2.158e-02,2.000e-01,2.750e-01,1.454e-01,2.377e-01,1.218e-01,2.181e-01
+NEC1,8743,neuron projection,GO:0043005,cellular component,6,19,2.411e-01,2.070e-01,1.737e-01,4.956e-01,2.249e-02,2.020e-01,2.879e-01,1.997e-01,2.145e-01,1.290e-01,2.339e-01
+NEC1,8743,membrane,GO:0016020,cellular component,6,33,2.459e-01,1.882e-01,1.754e-01,4.928e-01,2.994e-02,1.981e-01,3.052e-01,1.447e-01,2.448e-01,1.179e-01,2.609e-01
+MOXD1,21063,copper ion binding,GO:0005507,molecular function,10,8,1.641e-01,1.201e-01,4.929e-02,7.014e-01,1.306e-02,1.542e-01,1.746e-01,7.277e-02,1.982e-01,3.965e-02,6.128e-02
+MOXD1,21063,endoplasmic reticulum membrane,GO:0005789,cellular component,10,5,1.735e-01,1.201e-01,3.460e-02,7.528e-01,7.526e-02,1.499e-01,2.008e-01,7.277e-02,1.982e-01,1.062e-02,1.127e-01
+MOXD1,21063,octopamine biosynthetic process,GO:0006589,biological process,10,6,1.758e-01,1.201e-01,4.679e-02,7.079e-01,6.683e-02,1.495e-01,2.067e-01,7.277e-02,1.982e-01,1.668e-02,1.313e-01
+MOXD1,21063,extracellular space,GO:0005615,cellular component,10,21,1.788e-01,1.387e-01,8.774e-02,6.132e-01,6.122e-03,1.680e-01,1.904e-01,9.843e-02,1.954e-01,8.001e-02,9.622e-02
+MOXD1,21063,secretory granule membrane,GO:0030667,cellular component,10,14,1.821e-01,1.308e-01,7.779e-02,6.311e-01,3.047e-02,1.659e-01,1.999e-01,8.034e-02,2.130e-01,4.926e-02,1.228e-01
+MOXD1,21063,dopamine catabolic process,GO:0042420,biological process,10,3,1.850e-01,1.221e-01,7.503e-02,6.340e-01,5.109e-02,1.453e-01,2.356e-01,7.172e-02,2.078e-01,3.506e-02,1.606e-01
+MOXD1,21063,norepinephrine biosynthetic process,GO:0042421,biological process,10,3,1.883e-01,1.222e-01,6.496e-02,6.534e-01,7.052e-02,1.406e-01,2.521e-01,7.167e-02,2.083e-01,2.252e-02,1.874e-01
+MOXD1,21063,protein binding,GO:0005515,molecular function,10,161,1.998e-01,1.449e-01,1.198e-01,5.619e-01,6.202e-03,1.890e-01,2.114e-01,1.056e-01,1.989e-01,1.096e-01,1.308e-01
+MOXD1,21063,dopamine beta-monooxygenase activity,GO:0004500,molecular function,10,2,3.017e-01,2.376e-01,2.284e-01,4.299e-01,7.461e-02,1.727e-01,5.272e-01,1.059e-01,5.329e-01,9.495e-02,5.495e-01
+TAF3,17303,transcription factor TFIID complex,GO:0005669,cellular component,9,4,1.588e-01,9.309e-02,1.627e-02,8.685e-01,4.939e-03,1.483e-01,1.701e-01,6.852e-02,1.265e-01,1.485e-02,1.783e-02
+TAF3,17303,nucleoplasm,GO:0005654,cellular component,9,10,1.610e-01,9.309e-02,3.986e-02,7.322e-01,1.618e-02,1.519e-01,1.706e-01,6.852e-02,1.265e-01,3.068e-02,5.179e-02
+TAF3,17303,maintenance of protein location in nucleus,GO:0051457,biological process,9,4,1.649e-01,9.309e-02,3.948e-02,7.345e-01,3.458e-02,1.543e-01,1.763e-01,6.852e-02,1.265e-01,2.264e-02,6.885e-02
+TAF3,17303,negative regulation of transcription by RNA polymerase II,GO:0000122,biological process,9,25,1.733e-01,9.967e-02,7.680e-02,6.338e-01,2.240e-02,1.586e-01,1.894e-01,6.930e-02,1.433e-01,5.483e-02,1.076e-01
+TAF3,17303,protein binding,GO:0005515,molecular function,9,161,1.740e-01,9.967e-02,7.806e-02,6.315e-01,1.769e-02,1.580e-01,1.917e-01,6.930e-02,1.433e-01,5.972e-02,1.020e-01
+TAF3,17303,nucleus,GO:0005634,cellular component,9,26,1.752e-01,9.309e-02,7.067e-02,6.462e-01,2.577e-02,1.580e-01,1.942e-01,6.852e-02,1.265e-01,4.735e-02,1.055e-01
+TAF3,17303,nuclear membrane,GO:0031965,cellular component,9,6,1.765e-01,9.967e-02,7.739e-02,6.312e-01,3.215e-02,1.554e-01,2.005e-01,6.930e-02,1.433e-01,4.678e-02,1.280e-01
+TAF3,17303,negative regulation of DNA-binding transcription factor activity,GO:0043433,biological process,9,6,2.258e-01,1.441e-01,1.302e-01,5.394e-01,6.637e-02,1.536e-01,3.321e-01,6.785e-02,3.060e-01,5.059e-02,3.351e-01
+HMCN1,19194,collagen-containing extracellular matrix,GO:0062023,cellular component,7,16,1.588e-01,1.163e-01,3.806e-02,7.391e-01,1.800e-02,1.483e-01,1.701e-01,9.483e-02,1.427e-01,2.838e-02,5.104e-02
+HMCN1,19194,adherens junction,GO:0005912,cellular component,7,4,1.588e-01,1.163e-01,4.285e-02,7.216e-01,4.487e-03,1.483e-01,1.701e-01,9.483e-02,1.427e-01,3.981e-02,4.613e-02
+HMCN1,19194,heterophilic cell-cell adhesion via plasma membrane cell adhesion molecules,GO:0007157,biological process,7,2,1.775e-01,1.163e-01,8.365e-02,6.202e-01,2.469e-02,1.553e-01,2.029e-01,9.483e-02,1.427e-01,5.781e-02,1.211e-01
+HMCN1,19194,homophilic cell adhesion via plasma membrane adhesion molecules,GO:0007156,biological process,7,2,1.785e-01,1.163e-01,8.547e-02,6.167e-01,2.618e-02,1.548e-01,2.058e-01,9.483e-02,1.427e-01,5.787e-02,1.262e-01
+HMCN1,19194,extracellular exosome,GO:0070062,cellular component,7,26,1.833e-01,1.285e-01,8.849e-02,6.116e-01,1.588e-02,1.720e-01,1.953e-01,1.049e-01,1.574e-01,6.962e-02,1.125e-01
+HMCN1,19194,protein binding,GO:0005515,molecular function,7,161,2.145e-01,1.430e-01,1.359e-01,5.386e-01,3.206e-02,1.749e-01,2.630e-01,1.004e-01,2.038e-01,8.710e-02,2.119e-01
+HMCN1,19194,extracellular matrix structural constituent,GO:0005201,molecular function,7,8,2.223e-01,1.592e-01,1.516e-01,5.211e-01,9.880e-03,2.104e-01,2.347e-01,1.302e-01,1.946e-01,1.329e-01,1.729e-01
+CLN8,2079,cholesterol metabolic process,GO:0008203,biological process,9,7,1.601e-01,1.294e-01,4.404e-02,7.179e-01,2.362e-02,1.502e-01,1.706e-01,7.098e-02,2.359e-01,2.987e-02,6.493e-02
+CLN8,2079,ceramide metabolic process,GO:0006672,biological process,9,8,1.629e-01,1.294e-01,4.765e-02,7.046e-01,4.628e-02,1.447e-01,1.834e-01,7.098e-02,2.359e-01,2.289e-02,9.918e-02
+CLN8,2079,endoplasmic reticulum-Golgi intermediate compartment,GO:0005793,cellular component,9,2,1.660e-01,1.294e-01,4.882e-02,7.031e-01,6.302e-02,1.521e-01,1.812e-01,7.098e-02,2.359e-01,1.810e-02,1.317e-01
+CLN8,2079,phospholipid metabolic process,GO:0006644,biological process,9,25,1.701e-01,1.423e-01,7.248e-02,6.432e-01,1.511e-02,1.609e-01,1.798e-01,9.402e-02,2.154e-01,5.755e-02,9.128e-02
+CLN8,2079,endoplasmic reticulum,GO:0005783,cellular component,9,11,1.780e-01,1.333e-01,6.996e-02,6.454e-01,5.910e-02,1.526e-01,2.076e-01,7.105e-02,2.501e-01,2.779e-02,1.761e-01
+CLN8,2079,ceramide binding,GO:0097001,molecular function,9,5,1.826e-01,1.468e-01,8.289e-02,6.183e-01,4.963e-02,1.465e-01,2.275e-01,7.463e-02,2.890e-01,3.910e-02,1.757e-01
+CLN8,2079,protein binding,GO:0005515,molecular function,9,161,3.336e-01,3.334e-01,2.721e-01,3.998e-01,5.294e-02,2.218e-01,5.016e-01,1.858e-01,5.984e-01,1.488e-01,4.974e-01
+CLN8,2079,lipid homeostasis,GO:0055088,biological process,9,10,3.374e-01,3.276e-01,2.785e-01,3.944e-01,5.492e-02,2.199e-01,5.176e-01,1.844e-01,5.822e-01,1.557e-01,4.982e-01
+CLN8,2079,nervous system development,GO:0007399,biological process,9,2,5.015e-01,4.693e-01,4.693e-01,2.644e-01,5.696e-02,3.284e-01,7.658e-01,2.794e-01,7.884e-01,2.794e-01,7.884e-01
+ZFP28,17801,"DNA-binding transcription factor activity, RNA polymerase II-specific",GO:0000981,molecular function,4,7,1.588e-01,5.654e-02,2.303e-02,8.162e-01,4.834e-03,1.483e-01,1.701e-01,4.799e-02,6.662e-02,2.146e-02,2.471e-02
+ZFP28,17801,regulation of transcription by RNA polymerase II,GO:0006357,biological process,4,30,1.588e-01,5.654e-02,3.290e-02,7.611e-01,1.789e-02,1.483e-01,1.701e-01,4.799e-02,6.662e-02,2.475e-02,4.375e-02
+ZFP28,17801,RNA polymerase II cis-regulatory region sequence-specific DNA binding,GO:0000978,molecular function,4,17,1.762e-01,8.576e-02,7.306e-02,6.406e-01,2.865e-02,1.576e-01,1.970e-01,5.223e-02,1.408e-01,4.701e-02,1.135e-01
+ZFP28,17801,nucleus,GO:0005634,cellular component,4,26,1.981e-01,9.926e-02,9.926e-02,5.906e-01,4.093e-02,1.706e-01,2.300e-01,5.371e-02,1.835e-01,5.371e-02,1.835e-01
+LRIG2,20889,extracellular matrix,GO:0031012,cellular component,3,14,1.877e-01,1.391e-01,7.692e-02,6.288e-01,5.629e-02,1.410e-01,2.498e-01,9.954e-02,1.945e-01,3.359e-02,1.761e-01
+LRIG2,20889,extracellular space,GO:0005615,cellular component,3,21,1.902e-01,1.527e-01,9.887e-02,5.922e-01,3.252e-02,1.581e-01,2.288e-01,1.009e-01,2.311e-01,6.165e-02,1.586e-01
+LRIG2,20889,protein binding,GO:0005515,molecular function,3,161,2.194e-01,1.569e-01,1.432e-01,5.301e-01,2.525e-02,1.835e-01,2.625e-01,1.092e-01,2.253e-01,1.017e-01,2.014e-01
+MRC1,7228,receptor-mediated endocytosis,GO:0006898,biological process,6,8,1.695e-01,1.742e-01,6.165e-02,6.661e-01,4.479e-02,1.529e-01,1.879e-01,1.701e-01,1.784e-01,3.012e-02,1.262e-01
+MRC1,7228,cargo receptor activity,GO:0038024,molecular function,6,14,1.706e-01,1.797e-01,6.951e-02,6.498e-01,6.638e-03,1.574e-01,1.850e-01,1.651e-01,1.956e-01,6.282e-02,7.691e-02
+MRC1,7228,plasma membrane,GO:0005886,cellular component,6,16,1.917e-01,1.797e-01,1.091e-01,5.774e-01,9.293e-03,1.795e-01,2.047e-01,1.651e-01,1.956e-01,9.537e-02,1.248e-01
+MRC1,7228,protein binding,GO:0005515,molecular function,6,161,1.982e-01,1.797e-01,1.169e-01,5.660e-01,8.139e-03,1.856e-01,2.117e-01,1.651e-01,1.956e-01,1.041e-01,1.313e-01
+MRC1,7228,endosome membrane,GO:0010008,cellular component,6,8,3.130e-01,2.960e-01,2.622e-01,4.148e-01,1.125e-02,2.878e-01,3.405e-01,2.395e-01,3.659e-01,2.314e-01,2.970e-01
+MRC1,7228,signaling receptor activity,GO:0038023,molecular function,6,27,4.061e-01,3.794e-01,3.668e-01,3.327e-01,4.789e-02,2.787e-01,5.917e-01,2.479e-01,5.808e-01,2.242e-01,6.000e-01
+HYKK,34403,amino acid kinase activity,GO:0019202,molecular function,2,8,1.459e-01,1.039e-03,5.193e-04,9.793e-01,3.014e-03,1.178e-01,1.806e-01,3.408e-04,3.165e-03,1.704e-04,1.582e-03
+HYKK,34403,hydroxylysine kinase activity,GO:0047992,molecular function,2,3,2.018e-01,2.250e-02,2.250e-02,7.489e-01,1.507e-01,1.178e-01,3.457e-01,1.669e-03,3.035e-01,1.669e-03,3.035e-01
+CUTC,24271,cytoplasm,GO:0005737,cellular component,9,20,2.335e-01,4.376e-01,1.553e-01,5.122e-01,4.648e-02,1.657e-01,3.291e-01,3.345e-01,5.725e-01,8.467e-02,2.850e-01
+CUTC,24271,nucleoplasm,GO:0005654,cellular component,9,10,2.497e-01,4.376e-01,1.841e-01,4.841e-01,2.594e-02,2.023e-01,3.081e-01,3.345e-01,5.725e-01,1.333e-01,2.542e-01
+CUTC,24271,copper ion binding,GO:0005507,molecular function,9,8,2.977e-01,4.376e-01,2.408e-01,4.296e-01,3.459e-02,2.257e-01,3.926e-01,3.345e-01,5.725e-01,1.588e-01,3.653e-01
+CUTC,24271,nucleolus,GO:0005730,cellular component,9,5,3.052e-01,4.376e-01,2.410e-01,4.275e-01,4.633e-02,2.132e-01,4.370e-01,3.345e-01,5.725e-01,1.432e-01,4.058e-01
+CUTC,24271,protein tetramerization,GO:0051262,biological process,9,4,3.149e-01,4.376e-01,2.654e-01,4.119e-01,1.694e-02,2.735e-01,3.626e-01,3.345e-01,5.725e-01,2.194e-01,3.211e-01
+CUTC,24271,cytosol,GO:0005829,cellular component,9,11,3.317e-01,4.376e-01,2.799e-01,3.975e-01,3.823e-02,2.455e-01,4.481e-01,3.345e-01,5.725e-01,1.849e-01,4.235e-01
+CUTC,24271,copper ion homeostasis,GO:0055070,biological process,9,3,3.908e-01,4.376e-01,3.488e-01,3.485e-01,3.092e-02,3.035e-01,5.033e-01,3.345e-01,5.725e-01,2.529e-01,4.812e-01
+CUTC,24271,nucleus,GO:0005634,cellular component,9,26,4.099e-01,4.524e-01,3.525e-01,3.321e-01,7.533e-02,2.290e-01,7.339e-01,3.297e-01,6.206e-01,1.597e-01,7.784e-01
+CUTC,24271,protein binding,GO:0005515,molecular function,9,161,4.812e-01,4.846e-01,4.537e-01,2.843e-01,9.646e-03,4.489e-01,5.159e-01,4.188e-01,5.606e-01,4.170e-01,4.936e-01
+GALC,4115,galactosylceramide catabolic process,GO:0006683,biological process,3,4,1.588e-01,3.951e-02,1.885e-02,8.378e-01,4.395e-02,1.483e-01,1.701e-01,3.245e-02,4.810e-02,8.792e-03,4.041e-02
+GALC,4115,lysosome,GO:0005764,cellular component,3,12,1.588e-01,4.697e-02,3.448e-02,7.549e-01,2.983e-02,1.482e-01,1.702e-01,3.941e-02,5.598e-02,2.123e-02,5.598e-02
+GALC,4115,galactosylceramidase activity,GO:0004336,molecular function,3,2,1.690e-01,5.648e-02,5.466e-02,6.851e-01,2.389e-02,1.529e-01,1.868e-01,3.886e-02,8.209e-02,3.730e-02,8.010e-02
+HERC2,4868,cellular response to DNA damage stimulus,GO:0006974,biological process,11,12,2.036e-01,5.870e-01,1.165e-01,5.644e-01,3.641e-02,1.738e-01,2.386e-01,4.768e-01,7.227e-01,6.894e-02,1.969e-01
+HERC2,4868,ubiquitin protein ligase binding,GO:0031625,molecular function,11,2,3.041e-01,5.870e-01,2.446e-01,4.266e-01,3.468e-02,2.359e-01,3.922e-01,4.768e-01,7.227e-01,1.629e-01,3.674e-01
+HERC2,4868,cytoplasm,GO:0005737,cellular component,11,20,3.097e-01,5.870e-01,2.568e-01,4.181e-01,2.348e-02,2.578e-01,3.721e-01,4.768e-01,7.227e-01,1.960e-01,3.365e-01
+HERC2,4868,cytosol,GO:0005829,cellular component,11,11,3.719e-01,5.870e-01,3.296e-01,3.636e-01,1.621e-02,3.231e-01,4.281e-01,4.768e-01,7.227e-01,2.780e-01,3.909e-01
+HERC2,4868,plasma membrane,GO:0005886,cellular component,11,16,4.306e-01,5.870e-01,3.983e-01,3.185e-01,6.868e-03,4.090e-01,4.533e-01,4.768e-01,7.227e-01,3.732e-01,4.252e-01
+HERC2,4868,protein binding,GO:0005515,molecular function,11,161,4.341e-01,5.870e-01,3.993e-01,3.169e-01,1.970e-02,3.696e-01,5.100e-01,4.768e-01,7.227e-01,3.320e-01,4.803e-01
+HERC2,4868,nucleus,GO:0005634,cellular component,11,26,4.532e-01,5.870e-01,4.143e-01,2.990e-01,5.617e-02,2.929e-01,7.013e-01,4.768e-01,7.227e-01,2.413e-01,7.111e-01
+HERC2,4868,membrane,GO:0016020,cellular component,11,33,4.543e-01,5.870e-01,4.237e-01,3.021e-01,1.293e-02,4.089e-01,5.048e-01,4.768e-01,7.227e-01,3.757e-01,4.778e-01
+HERC2,4868,ubiquitin protein ligase activity,GO:0061630,molecular function,11,4,4.815e-01,6.306e-01,4.481e-01,2.803e-01,4.821e-02,3.344e-01,6.935e-01,5.195e-01,7.654e-01,2.863e-01,7.014e-01
+HERC2,4868,protein ubiquitination,GO:0016567,biological process,11,7,5.150e-01,6.400e-01,4.818e-01,2.541e-01,6.419e-02,3.238e-01,8.193e-01,5.184e-01,7.900e-01,2.713e-01,8.557e-01
+HERC2,4868,SUMO binding,GO:0032183,molecular function,11,3,6.742e-01,6.650e-01,6.650e-01,1.578e-01,3.861e-02,5.337e-01,8.516e-01,5.171e-01,8.552e-01,5.171e-01,8.552e-01
+HACL1,17856,identical protein binding,GO:0042802,molecular function,14,11,1.588e-01,5.441e-02,1.276e-02,8.888e-01,1.459e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,8.416e-03,1.935e-02
+HACL1,17856,methyl-branched fatty acid metabolic process,GO:0097089,biological process,14,5,1.588e-01,5.441e-02,1.392e-02,8.712e-01,2.956e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,7.049e-03,2.750e-02
+HACL1,17856,magnesium ion binding,GO:0000287,molecular function,14,3,1.588e-01,5.441e-02,1.779e-02,8.463e-01,2.939e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,9.996e-03,3.168e-02
+HACL1,17856,phytanic acid metabolic process,GO:1903512,biological process,14,3,1.588e-01,5.441e-02,2.018e-02,8.357e-01,1.604e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,1.561e-02,2.609e-02
+HACL1,17856,fatty acid alpha-oxidation,GO:0001561,biological process,14,3,1.588e-01,5.441e-02,2.989e-02,7.765e-01,2.533e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,2.004e-02,4.458e-02
+HACL1,17856,protein targeting to peroxisome,GO:0006625,biological process,14,6,1.588e-01,5.441e-02,3.103e-02,7.692e-01,5.487e-03,1.483e-01,1.701e-01,3.812e-02,7.768e-02,2.838e-02,3.392e-02
+HACL1,17856,fatty acid metabolic process,GO:0006631,biological process,14,15,1.588e-01,5.441e-02,3.235e-02,7.637e-01,1.877e-02,1.483e-01,1.701e-01,3.812e-02,7.768e-02,2.397e-02,4.367e-02
+HACL1,17856,intracellular membrane-bounded organelle,GO:0043231,cellular component,14,34,1.602e-01,6.725e-02,4.628e-02,7.109e-01,2.798e-02,1.495e-01,1.716e-01,4.587e-02,9.859e-02,2.924e-02,7.324e-02
+HACL1,17856,thiamine pyrophosphate binding,GO:0030976,molecular function,14,7,1.610e-01,6.215e-02,3.673e-02,7.458e-01,5.380e-02,1.463e-01,1.773e-01,3.370e-02,1.146e-01,1.577e-02,8.554e-02
+HACL1,17856,nucleoplasm,GO:0005654,cellular component,14,10,1.641e-01,6.225e-02,4.210e-02,7.247e-01,2.139e-02,1.542e-01,1.746e-01,4.256e-02,9.107e-02,2.961e-02,5.986e-02
+HACL1,17856,peroxisome,GO:0005777,cellular component,14,11,1.699e-01,8.300e-02,7.162e-02,6.448e-01,2.286e-02,1.554e-01,1.859e-01,5.970e-02,1.154e-01,5.060e-02,1.014e-01
+HACL1,17856,ATP binding,GO:0005524,molecular function,14,4,1.711e-01,7.156e-02,5.693e-02,6.785e-01,5.062e-02,1.525e-01,1.919e-01,4.042e-02,1.267e-01,2.570e-02,1.261e-01
+HACL1,17856,protein binding,GO:0005515,molecular function,14,161,1.817e-01,9.511e-02,8.562e-02,6.151e-01,3.564e-02,1.556e-01,2.121e-01,6.325e-02,1.430e-01,4.956e-02,1.479e-01
+HACL1,17856,carbon-carbon lyase activity,GO:0016830,molecular function,14,17,2.014e-01,1.264e-01,1.166e-01,5.652e-01,2.796e-02,1.656e-01,2.450e-01,9.227e-02,1.731e-01,7.896e-02,1.722e-01
+ACBP,2313,blood microparticle,GO:0072562,cellular component,4,4,1.833e-01,1.219e-01,9.390e-02,6.013e-01,2.547e-02,1.588e-01,2.116e-01,7.726e-02,1.924e-01,6.412e-02,1.375e-01
+ACBP,2313,extracellular matrix,GO:0031012,cellular component,4,14,1.898e-01,1.324e-01,7.420e-02,6.329e-01,6.534e-02,1.385e-01,2.601e-01,7.616e-02,2.301e-01,2.836e-02,1.941e-01
+ACBP,2313,extracellular space,GO:0005615,cellular component,4,21,1.937e-01,1.219e-01,1.074e-01,5.789e-01,2.838e-02,1.638e-01,2.290e-01,7.726e-02,1.924e-01,7.096e-02,1.624e-01
+ACBP,2313,extracellular exosome,GO:0070062,cellular component,4,26,1.958e-01,1.219e-01,1.088e-01,5.767e-01,2.770e-02,1.662e-01,2.308e-01,7.726e-02,1.924e-01,7.304e-02,1.622e-01
+RND3,671,cytoplasmic vesicle,GO:0031410,cellular component,17,30,1.588e-01,2.229e-01,4.040e-02,7.302e-01,7.240e-03,1.483e-01,1.701e-01,1.569e-01,3.166e-01,3.589e-02,4.547e-02
+RND3,671,GTPase activity,GO:0003924,molecular function,17,5,1.690e-01,2.229e-01,6.074e-02,6.694e-01,2.433e-02,1.543e-01,1.850e-01,1.569e-01,3.166e-01,4.107e-02,8.982e-02
+RND3,671,protein kinase binding,GO:0019901,molecular function,17,16,1.767e-01,2.229e-01,6.477e-02,6.575e-01,5.243e-02,1.512e-01,2.065e-01,1.569e-01,3.166e-01,2.840e-02,1.477e-01
+RND3,671,cortical cytoskeleton organization,GO:0030865,biological process,17,5,1.872e-01,2.229e-01,9.805e-02,5.937e-01,3.374e-02,1.541e-01,2.275e-01,1.569e-01,3.166e-01,5.972e-02,1.610e-01
+RND3,671,plasma membrane,GO:0005886,cellular component,17,16,1.904e-01,2.229e-01,1.038e-01,5.839e-01,3.378e-02,1.549e-01,2.340e-01,1.569e-01,3.166e-01,6.322e-02,1.706e-01
+RND3,671,cell cortex,GO:0005938,cellular component,17,3,2.029e-01,2.229e-01,1.103e-01,5.718e-01,4.985e-02,1.548e-01,2.659e-01,1.569e-01,3.166e-01,5.288e-02,2.299e-01
+RND3,671,GTP binding,GO:0005525,molecular function,17,5,2.036e-01,2.328e-01,1.261e-01,5.529e-01,1.288e-02,1.867e-01,2.221e-01,1.754e-01,3.090e-01,1.051e-01,1.514e-01
+RND3,671,intracellular membrane-bounded organelle,GO:0043231,cellular component,17,34,2.222e-01,2.328e-01,1.417e-01,5.302e-01,3.883e-02,1.748e-01,2.823e-01,1.754e-01,3.090e-01,8.251e-02,2.435e-01
+RND3,671,establishment or maintenance of cell polarity,GO:0007163,biological process,17,14,2.223e-01,2.328e-01,1.470e-01,5.251e-01,2.852e-02,1.793e-01,2.757e-01,1.754e-01,3.090e-01,1.004e-01,2.151e-01
+RND3,671,cytoskeleton,GO:0005856,cellular component,17,11,2.328e-01,2.328e-01,1.629e-01,5.070e-01,2.547e-02,1.898e-01,2.857e-01,1.754e-01,3.090e-01,1.170e-01,2.268e-01
+RND3,671,cell projection,GO:0042995,cellular component,17,8,2.372e-01,2.328e-01,1.674e-01,5.009e-01,3.206e-02,1.846e-01,3.049e-01,1.754e-01,3.090e-01,1.107e-01,2.533e-01
+RND3,671,actin filament organization,GO:0007015,biological process,17,16,2.406e-01,2.414e-01,1.677e-01,5.005e-01,3.277e-02,1.887e-01,3.068e-01,1.830e-01,3.184e-01,1.091e-01,2.577e-01
+RND3,671,protein binding,GO:0005515,molecular function,17,161,2.676e-01,2.430e-01,2.056e-01,4.635e-01,2.217e-02,2.229e-01,3.213e-01,1.841e-01,3.208e-01,1.558e-01,2.714e-01
+RND3,671,focal adhesion,GO:0005925,cellular component,17,3,2.750e-01,2.494e-01,2.171e-01,4.537e-01,1.204e-02,2.467e-01,3.065e-01,1.976e-01,3.147e-01,1.878e-01,2.510e-01
+RND3,671,regulation of cell shape,GO:0008360,biological process,17,7,2.843e-01,2.900e-01,2.071e-01,4.496e-01,7.500e-02,1.629e-01,4.961e-01,1.598e-01,5.263e-01,8.584e-02,4.996e-01
+RND3,671,regulation of actin cytoskeleton organization,GO:0032956,biological process,17,11,3.128e-01,3.081e-01,2.201e-01,4.242e-01,1.050e-01,1.491e-01,6.563e-01,1.446e-01,6.564e-01,6.401e-02,7.569e-01
+RND3,671,cell migration,GO:0016477,biological process,17,36,5.600e-01,5.396e-01,5.396e-01,2.304e-01,3.521e-02,4.422e-01,7.094e-01,4.091e-01,7.118e-01,4.091e-01,7.118e-01
+APOD,612,cholesterol binding,GO:0015485,molecular function,19,5,2.168e-01,5.461e-01,1.357e-01,5.386e-01,3.476e-02,1.743e-01,2.697e-01,4.265e-01,6.993e-01,8.455e-02,2.176e-01
+APOD,612,glucose metabolic process,GO:0006006,biological process,19,8,2.337e-01,5.461e-01,1.515e-01,5.156e-01,5.104e-02,1.638e-01,3.335e-01,4.265e-01,6.993e-01,7.876e-02,2.916e-01
+APOD,612,cytoplasm,GO:0005737,cellular component,19,20,2.351e-01,5.461e-01,1.589e-01,5.085e-01,4.317e-02,1.717e-01,3.220e-01,4.265e-01,6.993e-01,9.195e-02,2.747e-01
+APOD,612,negative regulation of monocyte chemotactic protein-1 production,GO:0071638,biological process,19,3,2.447e-01,5.461e-01,1.540e-01,5.109e-01,5.974e-02,1.711e-01,3.500e-01,4.265e-01,6.993e-01,6.925e-02,3.424e-01
+APOD,612,lipid metabolic process,GO:0006629,biological process,19,18,2.529e-01,5.461e-01,1.873e-01,4.814e-01,2.014e-02,2.167e-01,2.951e-01,4.265e-01,6.993e-01,1.456e-01,2.410e-01
+APOD,612,negative regulation of smooth muscle cell proliferation,GO:0048662,biological process,19,4,2.558e-01,5.461e-01,1.934e-01,4.763e-01,1.151e-02,2.323e-01,2.815e-01,4.265e-01,6.993e-01,1.672e-01,2.236e-01
+APOD,612,extracellular exosome,GO:0070062,cellular component,19,26,2.982e-01,5.461e-01,2.362e-01,4.333e-01,3.721e-02,2.247e-01,3.956e-01,4.265e-01,6.993e-01,1.523e-01,3.661e-01
+APOD,612,negative regulation of protein import into nucleus,GO:0042308,biological process,19,6,3.344e-01,5.656e-01,2.855e-01,3.952e-01,2.426e-02,2.750e-01,4.066e-01,4.473e-01,7.151e-01,2.190e-01,3.723e-01
+APOD,612,extracellular space,GO:0005615,cellular component,19,21,3.499e-01,5.461e-01,3.021e-01,3.826e-01,2.547e-02,2.858e-01,4.284e-01,4.265e-01,6.993e-01,2.305e-01,3.961e-01
+APOD,612,protein binding,GO:0005515,molecular function,19,161,3.506e-01,5.461e-01,2.920e-01,3.803e-01,6.667e-02,2.098e-01,5.860e-01,4.265e-01,6.993e-01,1.503e-01,5.670e-01
+APOD,612,perinuclear region of cytoplasm,GO:0048471,cellular component,19,5,4.430e-01,5.506e-01,4.059e-01,3.048e-01,5.424e-02,2.982e-01,6.581e-01,4.320e-01,7.018e-01,2.537e-01,6.495e-01
+APOD,612,response to reactive oxygen species,GO:0000302,biological process,19,11,4.469e-01,5.835e-01,4.103e-01,3.060e-01,4.122e-02,3.275e-01,6.099e-01,4.869e-01,6.993e-01,2.751e-01,6.120e-01
+APOD,612,extracellular region,GO:0005576,cellular component,19,11,4.727e-01,5.740e-01,4.412e-01,2.859e-01,4.433e-02,3.424e-01,6.525e-01,4.537e-01,7.262e-01,3.028e-01,6.427e-01
+APOD,612,negative regulation of focal adhesion assembly,GO:0051895,biological process,19,5,4.865e-01,5.973e-01,4.548e-01,2.746e-01,5.317e-02,3.241e-01,7.302e-01,4.635e-01,7.697e-01,2.792e-01,7.411e-01
+APOD,612,negative regulation of cytokine production involved in inflammatory response,GO:1900016,biological process,19,3,4.978e-01,5.865e-01,4.693e-01,2.688e-01,4.460e-02,3.555e-01,6.969e-01,4.604e-01,7.472e-01,3.154e-01,6.982e-01
+APOD,612,negative regulation of T cell migration,GO:2000405,biological process,19,5,5.140e-01,5.801e-01,4.897e-01,2.580e-01,4.017e-02,3.860e-01,6.845e-01,4.574e-01,7.358e-01,3.527e-01,6.799e-01
+APOD,612,negative regulation of smooth muscle cell-matrix adhesion,GO:2000098,biological process,19,3,5.449e-01,5.973e-01,5.243e-01,2.391e-01,3.513e-02,4.198e-01,7.073e-01,4.635e-01,7.697e-01,3.908e-01,7.034e-01
+APOD,612,negative regulation of platelet-derived growth factor receptor signaling pathway,GO:0010642,biological process,19,6,6.085e-01,6.372e-01,5.952e-01,1.986e-01,3.551e-02,4.765e-01,7.771e-01,5.150e-01,7.883e-01,4.572e-01,7.749e-01
+APOD,612,negative regulation of lipoprotein lipid oxidation,GO:0060588,biological process,19,4,7.187e-01,7.760e-01,7.059e-01,1.141e-01,7.086e-02,4.820e-01,1.072e+00,6.037e-01,9.975e-01,4.571e-01,1.090e+00
+FMO5,3773,drug metabolic process,GO:0017144,biological process,8,5,1.588e-01,7.736e-02,2.133e-02,8.256e-01,4.420e-02,1.483e-01,1.701e-01,5.677e-02,1.054e-01,1.045e-02,4.351e-02
+FMO5,3773,endoplasmic reticulum,GO:0005783,cellular component,8,11,1.588e-01,7.929e-02,3.148e-02,7.673e-01,6.306e-03,1.483e-01,1.701e-01,5.545e-02,1.134e-01,2.851e-02,3.477e-02
+FMO5,3773,NADPH oxidation,GO:0070995,biological process,8,2,1.614e-01,7.990e-02,3.592e-02,7.478e-01,2.021e-02,1.524e-01,1.709e-01,5.505e-02,1.160e-01,2.585e-02,4.991e-02
+FMO5,3773,aldehyde oxidase activity,GO:0004031,molecular function,8,3,1.802e-01,1.072e-01,5.362e-02,6.887e-01,6.332e-02,1.704e-01,1.905e-01,6.514e-02,1.766e-01,1.995e-02,1.441e-01
+FMO5,3773,cytosol,GO:0005829,cellular component,8,11,1.917e-01,1.200e-01,9.097e-02,6.046e-01,4.319e-02,1.522e-01,2.414e-01,6.314e-02,2.280e-01,4.863e-02,1.702e-01
+FMO5,3773,"N,N-dimethylaniline monooxygenase activity",GO:0004499,molecular function,8,2,1.966e-01,1.212e-01,1.012e-01,5.880e-01,3.832e-02,1.686e-01,2.292e-01,6.482e-02,2.265e-01,5.784e-02,1.771e-01
+FMO5,3773,monooxygenase activity,GO:0004497,molecular function,8,62,2.232e-01,1.337e-01,1.337e-01,5.388e-01,5.034e-02,1.718e-01,2.900e-01,6.522e-02,2.739e-01,6.522e-02,2.739e-01
+NLGN2,14290,neuron cell-cell adhesion,GO:0007158,biological process,13,2,1.758e-01,4.065e-01,7.463e-02,6.385e-01,1.595e-02,1.710e-01,1.807e-01,3.823e-01,4.323e-01,5.855e-02,9.512e-02
+NLGN2,14290,synaptic vesicle endocytosis,GO:0048488,biological process,13,4,2.039e-01,4.065e-01,1.264e-01,5.526e-01,8.886e-03,1.906e-01,2.182e-01,3.823e-01,4.323e-01,1.116e-01,1.432e-01
+NLGN2,14290,integral component of plasma membrane,GO:0005887,cellular component,13,11,2.051e-01,4.065e-01,1.098e-01,5.708e-01,5.715e-02,1.517e-01,2.773e-01,3.823e-01,4.323e-01,4.820e-02,2.501e-01
+NLGN2,14290,synapse,GO:0045202,cellular component,13,18,2.820e-01,4.087e-01,2.246e-01,4.468e-01,1.362e-02,2.549e-01,3.120e-01,3.841e-01,4.348e-01,1.906e-01,2.647e-01
+NLGN2,14290,presynaptic membrane assembly,GO:0097105,biological process,13,3,2.898e-01,4.065e-01,2.335e-01,4.390e-01,1.412e-02,2.577e-01,3.259e-01,3.823e-01,4.323e-01,1.985e-01,2.747e-01
+NLGN2,14290,postsynaptic membrane assembly,GO:0097104,biological process,13,3,2.966e-01,4.065e-01,2.428e-01,4.309e-01,1.334e-02,2.656e-01,3.311e-01,3.823e-01,4.323e-01,2.086e-01,2.827e-01
+NLGN2,14290,neurexin family protein binding,GO:0042043,molecular function,13,2,3.099e-01,4.336e-01,2.495e-01,4.215e-01,3.982e-02,2.255e-01,4.258e-01,3.772e-01,4.983e-01,1.593e-01,3.909e-01
+NLGN2,14290,modulation of chemical synaptic transmission,GO:0050804,biological process,13,24,3.101e-01,4.374e-01,2.519e-01,4.186e-01,4.537e-02,2.198e-01,4.375e-01,3.972e-01,4.818e-01,1.535e-01,4.134e-01
+NLGN2,14290,positive regulation of insulin secretion,GO:0032024,biological process,13,5,3.468e-01,4.310e-01,3.028e-01,3.835e-01,6.256e-03,3.272e-01,3.675e-01,4.047e-01,4.590e-01,2.830e-01,3.239e-01
+NLGN2,14290,cell surface,GO:0009986,cellular component,13,6,3.493e-01,4.456e-01,2.921e-01,3.833e-01,5.608e-02,2.239e-01,5.449e-01,3.689e-01,5.382e-01,1.574e-01,5.421e-01
+NLGN2,14290,chemical synaptic transmission,GO:0007268,biological process,13,15,4.073e-01,4.758e-01,3.624e-01,3.294e-01,6.589e-02,2.425e-01,6.841e-01,4.070e-01,5.563e-01,1.819e-01,7.221e-01
+NLGN2,14290,signaling receptor activity,GO:0038023,molecular function,13,27,4.705e-01,4.838e-01,4.428e-01,2.905e-01,1.376e-02,4.225e-01,5.239e-01,4.338e-01,5.395e-01,3.915e-01,5.009e-01
+NLGN2,14290,positive regulation of protein localization to synapse,GO:1902474,biological process,13,5,5.023e-01,5.069e-01,4.772e-01,2.676e-01,3.065e-02,4.009e-01,6.292e-01,4.169e-01,6.164e-01,3.711e-01,6.136e-01
+CSPG2,2464,collagen-containing extracellular matrix,GO:0062023,cellular component,9,16,1.860e-01,4.181e-01,6.850e-02,6.458e-01,6.716e-02,1.389e-01,2.489e-01,2.828e-01,6.179e-01,2.510e-02,1.869e-01
+CSPG2,2464,extracellular matrix,GO:0031012,cellular component,9,14,2.138e-01,4.426e-01,1.151e-01,5.601e-01,6.747e-02,1.377e-01,3.318e-01,3.283e-01,5.969e-01,4.678e-02,2.830e-01
+CSPG2,2464,extracellular space,GO:0005615,cellular component,9,21,2.712e-01,4.459e-01,2.090e-01,4.586e-01,3.316e-02,2.091e-01,3.518e-01,3.343e-01,5.948e-01,1.410e-01,3.097e-01
+CSPG2,2464,extracellular region,GO:0005576,cellular component,9,11,3.152e-01,4.459e-01,2.627e-01,4.107e-01,3.891e-02,2.295e-01,4.329e-01,3.343e-01,5.948e-01,1.666e-01,4.142e-01
+CSPG2,2464,protein binding,GO:0005515,molecular function,9,161,3.398e-01,4.459e-01,2.922e-01,3.908e-01,1.874e-02,2.938e-01,3.931e-01,3.343e-01,5.948e-01,2.396e-01,3.562e-01
+CSPG2,2464,membrane,GO:0016020,cellular component,9,33,3.408e-01,4.459e-01,2.916e-01,3.878e-01,4.102e-02,2.483e-01,4.678e-01,3.343e-01,5.948e-01,1.905e-01,4.464e-01
+CSPG2,2464,osteoblast differentiation,GO:0001649,biological process,9,2,3.740e-01,4.459e-01,3.304e-01,3.607e-01,3.404e-02,2.904e-01,4.817e-01,3.343e-01,5.948e-01,2.348e-01,4.649e-01
+CSPG2,2464,skeletal system development,GO:0001501,biological process,9,3,4.563e-01,4.585e-01,4.261e-01,2.979e-01,3.291e-02,3.596e-01,5.791e-01,3.322e-01,6.328e-01,3.167e-01,5.733e-01
+CSPG2,2464,central nervous system development,GO:0007417,biological process,9,3,4.881e-01,4.595e-01,4.595e-01,2.762e-01,3.887e-02,3.731e-01,6.385e-01,3.315e-01,6.369e-01,3.315e-01,6.369e-01
+VMO1,30387,extracellular exosome,GO:0070062,cellular component,2,26,2.399e-01,2.012e-01,1.720e-01,4.976e-01,1.797e-02,2.084e-01,2.761e-01,1.469e-01,2.757e-01,1.365e-01,2.169e-01
+VMO1,30387,extracellular space,GO:0005615,cellular component,2,21,2.635e-01,2.012e-01,2.012e-01,4.670e-01,2.620e-02,2.136e-01,3.249e-01,1.469e-01,2.757e-01,1.469e-01,2.757e-01
+RAB32,9772,mitochondrial outer membrane,GO:0005741,cellular component,25,3,1.588e-01,1.272e-01,2.241e-02,8.180e-01,2.658e-02,1.483e-01,1.701e-01,1.076e-01,1.503e-01,1.456e-02,3.449e-02
+RAB32,9772,GTP-dependent protein binding,GO:0030742,molecular function,25,2,1.588e-01,1.272e-01,2.585e-02,7.989e-01,1.814e-02,1.483e-01,1.701e-01,1.076e-01,1.503e-01,1.972e-02,3.387e-02
+RAB32,9772,melanosome assembly,GO:1903232,biological process,25,3,1.588e-01,1.272e-01,2.973e-02,7.763e-01,1.512e-02,1.483e-01,1.701e-01,1.076e-01,1.503e-01,2.346e-02,3.766e-02
+RAB32,9772,melanosome organization,GO:0032438,biological process,25,3,1.588e-01,1.272e-01,3.472e-02,7.530e-01,1.724e-02,1.483e-01,1.701e-01,1.076e-01,1.503e-01,2.644e-02,4.560e-02
+RAB32,9772,endoplasmic reticulum,GO:0005783,cellular component,25,11,1.588e-01,1.272e-01,3.776e-02,7.407e-01,2.349e-02,1.483e-01,1.701e-01,1.076e-01,1.503e-01,2.593e-02,5.500e-02
+RAB32,9772,protein localization to membrane,GO:0072657,biological process,25,23,1.588e-01,1.272e-01,4.127e-02,7.269e-01,4.470e-03,1.483e-01,1.701e-01,1.076e-01,1.503e-01,3.831e-02,4.446e-02
+RAB32,9772,mitochondrion,GO:0005739,cellular component,25,7,1.614e-01,1.272e-01,4.851e-02,7.035e-01,6.080e-03,1.528e-01,1.705e-01,1.076e-01,1.503e-01,4.380e-02,5.372e-02
+RAB32,9772,melanosome membrane,GO:0033162,cellular component,25,3,1.617e-01,1.283e-01,4.200e-02,7.255e-01,3.558e-02,1.521e-01,1.720e-01,1.076e-01,1.530e-01,2.369e-02,7.444e-02
+RAB32,9772,early endosome,GO:0005769,cellular component,25,4,1.622e-01,1.297e-01,5.060e-02,6.971e-01,1.409e-02,1.547e-01,1.702e-01,1.142e-01,1.474e-01,4.017e-02,6.374e-02
+RAB32,9772,intracellular protein transport,GO:0006886,biological process,25,20,1.654e-01,1.293e-01,5.705e-02,6.807e-01,3.550e-03,1.571e-01,1.742e-01,1.073e-01,1.559e-01,5.385e-02,6.044e-02
+RAB32,9772,phagocytic vesicle,GO:0045335,cellular component,25,6,1.687e-01,1.293e-01,5.137e-02,6.942e-01,2.488e-02,1.543e-01,1.845e-01,1.073e-01,1.559e-01,3.440e-02,7.671e-02
+RAB32,9772,endomembrane system,GO:0012505,cellular component,25,2,1.731e-01,1.384e-01,6.827e-02,6.507e-01,3.504e-02,1.536e-01,1.950e-01,1.063e-01,1.801e-01,3.908e-02,1.193e-01
+RAB32,9772,melanosome,GO:0042470,cellular component,25,2,1.770e-01,1.455e-01,8.046e-02,6.269e-01,5.618e-03,1.664e-01,1.884e-01,1.359e-01,1.557e-01,7.378e-02,8.774e-02
+RAB32,9772,endosome to melanosome transport,GO:0035646,biological process,25,2,1.798e-01,1.467e-01,8.549e-02,6.165e-01,2.764e-02,1.571e-01,2.059e-01,1.052e-01,2.044e-01,5.621e-02,1.300e-01
+RAB32,9772,AP-1 adaptor complex binding,GO:0035650,molecular function,25,2,2.084e-01,1.738e-01,1.204e-01,5.594e-01,3.119e-02,1.762e-01,2.463e-01,1.260e-01,2.397e-01,7.766e-02,1.866e-01
+RAB32,9772,membrane,GO:0016020,cellular component,25,33,2.096e-01,1.738e-01,1.159e-01,5.627e-01,5.307e-02,1.572e-01,2.793e-01,1.072e-01,2.818e-01,5.307e-02,2.531e-01
+RAB32,9772,BLOC-2 complex binding,GO:0036461,molecular function,25,2,2.133e-01,1.738e-01,1.277e-01,5.492e-01,3.246e-02,1.777e-01,2.561e-01,1.260e-01,2.397e-01,8.134e-02,2.006e-01
+RAB32,9772,GTPase activity,GO:0003924,molecular function,25,5,2.142e-01,1.921e-01,1.356e-01,5.400e-01,2.081e-02,1.837e-01,2.497e-01,1.476e-01,2.500e-01,1.015e-01,1.811e-01
+RAB32,9772,AP-3 adaptor complex binding,GO:0035651,molecular function,25,2,2.152e-01,1.738e-01,1.324e-01,5.429e-01,3.268e-02,1.766e-01,2.623e-01,1.260e-01,2.397e-01,8.470e-02,2.071e-01
+RAB32,9772,trans-Golgi network,GO:0005802,cellular component,25,3,2.211e-01,1.804e-01,1.413e-01,5.311e-01,3.476e-02,1.742e-01,2.807e-01,1.274e-01,2.555e-01,8.906e-02,2.242e-01
+RAB32,9772,antigen processing and presentation,GO:0019882,biological process,25,16,2.267e-01,1.930e-01,1.536e-01,5.187e-01,1.154e-02,2.090e-01,2.458e-01,1.527e-01,2.439e-01,1.316e-01,1.792e-01
+RAB32,9772,phagosome maturation,GO:0090382,biological process,25,3,2.359e-01,1.939e-01,1.646e-01,5.054e-01,2.234e-02,2.002e-01,2.779e-01,1.470e-01,2.557e-01,1.219e-01,2.224e-01
+RAB32,9772,mitochondrion organization,GO:0007005,biological process,25,13,2.658e-01,2.122e-01,2.034e-01,4.655e-01,2.305e-02,2.229e-01,3.169e-01,1.559e-01,2.888e-01,1.524e-01,2.716e-01
+RAB32,9772,protein binding,GO:0005515,molecular function,25,161,2.737e-01,2.198e-01,2.110e-01,4.570e-01,3.219e-02,2.137e-01,3.505e-01,1.520e-01,3.180e-01,1.425e-01,3.124e-01
+RAB32,9772,mitochondria-associated endoplasmic reticulum membrane,GO:0044233,cellular component,25,2,3.072e-01,2.563e-01,2.493e-01,4.196e-01,4.992e-02,2.079e-01,4.538e-01,1.533e-01,4.286e-01,1.452e-01,4.280e-01
+LDAH,26145,lipid storage,GO:0019915,biological process,2,4,2.012e-01,1.056e-01,8.819e-02,6.056e-01,6.547e-02,1.516e-01,2.670e-01,3.121e-02,3.574e-01,3.341e-02,2.328e-01
+LDAH,26145,lipid droplet,GO:0005811,cellular component,2,4,2.253e-01,1.056e-01,1.048e-01,5.703e-01,8.849e-02,1.421e-01,3.571e-01,3.121e-02,3.574e-01,3.061e-02,3.591e-01
+GATA4,4173,DNA-binding transcription activator activity,GO:0001216,molecular function,27,3,1.588e-01,6.894e-02,1.101e-02,9.056e-01,2.438e-03,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.006e-02,1.205e-02
+GATA4,4173,atrial septum secundum morphogenesis,GO:0003290,biological process,27,2,1.588e-01,6.894e-02,1.455e-02,8.817e-01,2.380e-03,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.379e-02,1.536e-02
+GATA4,4173,RNA polymerase II transcription regulatory region sequence-specific DNA binding,GO:0000977,molecular function,27,5,1.588e-01,6.894e-02,1.470e-02,8.801e-01,6.352e-03,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.270e-02,1.703e-02
+GATA4,4173,transcription factor binding,GO:0008134,molecular function,27,5,1.588e-01,6.894e-02,1.391e-02,8.773e-01,2.081e-02,1.483e-01,1.701e-01,5.975e-02,7.955e-02,8.440e-03,2.293e-02
+GATA4,4173,"DNA-binding transcription activator activity, RNA polymerase II-specific",GO:0001228,molecular function,27,3,1.588e-01,6.894e-02,1.514e-02,8.754e-01,1.134e-02,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.205e-02,1.903e-02
+GATA4,4173,"DNA-binding transcription factor activity, RNA polymerase II-specific",GO:0000981,molecular function,27,7,1.588e-01,6.894e-02,1.942e-02,8.428e-01,1.424e-02,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.562e-02,2.413e-02
+GATA4,4173,regulation of transcription by RNA polymerase II,GO:0006357,biological process,27,30,1.588e-01,6.894e-02,2.244e-02,8.170e-01,3.529e-02,1.483e-01,1.701e-01,5.975e-02,7.955e-02,1.252e-02,4.021e-02
+GATA4,4173,"positive regulation of transcription, DNA-templated",GO:0045893,biological process,27,25,1.588e-01,7.008e-02,2.344e-02,8.139e-01,1.247e-02,1.483e-01,1.701e-01,6.172e-02,7.958e-02,1.950e-02,2.818e-02
+GATA4,4173,transcription regulatory region sequence-specific DNA binding,GO:0000976,molecular function,27,14,1.588e-01,7.074e-02,2.406e-02,8.099e-01,1.673e-02,1.483e-01,1.701e-01,6.269e-02,7.982e-02,1.874e-02,3.089e-02
+GATA4,4173,RNA polymerase II transcription factor binding,GO:0001085,molecular function,27,2,1.588e-01,7.074e-02,2.410e-02,8.069e-01,3.477e-02,1.483e-01,1.701e-01,6.269e-02,7.982e-02,1.370e-02,4.238e-02
+GATA4,4173,sequence-specific double-stranded DNA binding,GO:1990837,molecular function,27,14,1.588e-01,7.522e-02,3.495e-02,7.521e-01,1.615e-02,1.483e-01,1.701e-01,6.846e-02,8.264e-02,2.709e-02,4.508e-02
+GATA4,4173,atrial septum morphogenesis,GO:0060413,biological process,27,5,1.592e-01,7.823e-02,4.124e-02,7.271e-01,2.209e-03,1.489e-01,1.702e-01,7.665e-02,7.983e-02,3.976e-02,4.279e-02
+GATA4,4173,DNA-binding transcription factor activity,GO:0003700,molecular function,27,8,1.592e-01,7.522e-02,3.490e-02,7.519e-01,1.358e-02,1.489e-01,1.702e-01,6.846e-02,8.264e-02,2.799e-02,4.351e-02
+GATA4,4173,positive regulation of transcription by RNA polymerase II,GO:0045944,biological process,27,37,1.609e-01,8.387e-02,4.687e-02,7.085e-01,1.454e-02,1.510e-01,1.716e-01,7.583e-02,9.276e-02,3.677e-02,5.976e-02
+GATA4,4173,DNA binding,GO:0003677,molecular function,27,20,1.637e-01,8.586e-02,4.046e-02,7.298e-01,3.779e-02,1.528e-01,1.754e-01,6.309e-02,1.169e-01,2.205e-02,7.426e-02
+GATA4,4173,RNA polymerase II cis-regulatory region sequence-specific DNA binding,GO:0000978,molecular function,27,17,1.687e-01,9.522e-02,5.560e-02,6.830e-01,2.556e-02,1.535e-01,1.855e-01,7.477e-02,1.213e-01,3.677e-02,8.408e-02
+GATA4,4173,response to drug,GO:0042493,biological process,27,13,1.731e-01,1.090e-01,7.242e-02,6.418e-01,2.851e-02,1.575e-01,1.902e-01,7.702e-02,1.542e-01,4.647e-02,1.129e-01
+GATA4,4173,nucleus,GO:0005634,cellular component,27,26,1.766e-01,1.133e-01,7.317e-02,6.411e-01,2.147e-02,1.639e-01,1.904e-01,9.138e-02,1.404e-01,5.246e-02,1.020e-01
+GATA4,4173,nuclear body,GO:0016604,cellular component,27,14,1.891e-01,1.292e-01,9.728e-02,5.949e-01,3.052e-02,1.579e-01,2.265e-01,9.773e-02,1.707e-01,6.264e-02,1.511e-01
+GATA4,4173,male gonad development,GO:0008584,biological process,27,2,1.934e-01,1.329e-01,9.845e-02,5.933e-01,3.160e-02,1.712e-01,2.184e-01,9.285e-02,1.903e-01,6.153e-02,1.575e-01
+GATA4,4173,aortic valve morphogenesis,GO:0003180,biological process,27,2,1.980e-01,1.472e-01,1.173e-01,5.652e-01,1.289e-02,1.807e-01,2.170e-01,1.247e-01,1.736e-01,9.752e-02,1.411e-01
+GATA4,4173,co-SMAD binding,GO:0070410,molecular function,27,2,2.135e-01,1.589e-01,1.392e-01,5.360e-01,8.967e-03,1.991e-01,2.289e-01,1.451e-01,1.741e-01,1.230e-01,1.575e-01
+GATA4,4173,intestinal epithelial cell differentiation,GO:0060575,biological process,27,4,2.152e-01,1.605e-01,1.385e-01,5.363e-01,2.170e-02,1.828e-01,2.534e-01,1.284e-01,2.005e-01,1.030e-01,1.862e-01
+GATA4,4173,protein binding,GO:0005515,molecular function,27,161,2.260e-01,1.804e-01,1.526e-01,5.189e-01,2.320e-02,1.920e-01,2.661e-01,1.401e-01,2.324e-01,1.121e-01,2.076e-01
+GATA4,4173,RNA polymerase II transcription regulator complex,GO:0090575,cellular component,27,41,2.796e-01,2.242e-01,1.860e-01,4.645e-01,9.113e-02,1.483e-01,5.272e-01,9.408e-02,5.343e-01,6.519e-02,5.305e-01
+GATA4,4173,endocardial cushion development,GO:0003197,biological process,27,2,3.123e-01,2.731e-01,2.629e-01,4.141e-01,1.608e-02,2.729e-01,3.575e-01,2.336e-01,3.194e-01,2.198e-01,3.144e-01
+GATA4,4173,cell fate commitment,GO:0045165,biological process,27,38,4.164e-01,3.693e-01,3.647e-01,3.147e-01,9.261e-02,2.200e-01,7.880e-01,1.737e-01,7.850e-01,1.693e-01,7.856e-01
+NOP2,7867,ribosomal large subunit assembly,GO:0000027,biological process,12,3,1.592e-01,1.009e-01,2.435e-02,7.807e-01,6.320e-02,1.489e-01,1.702e-01,4.596e-02,2.217e-01,6.311e-03,9.397e-02
+NOP2,7867,rRNA base methylation,GO:0070475,biological process,12,3,1.640e-01,1.009e-01,3.770e-02,7.400e-01,6.120e-02,1.528e-01,1.759e-01,4.596e-02,2.217e-01,1.401e-02,1.015e-01
+NOP2,7867,nucleolus,GO:0005730,cellular component,12,5,1.718e-01,1.381e-01,6.771e-02,6.537e-01,1.503e-02,1.552e-01,1.902e-01,1.015e-01,1.881e-01,5.370e-02,8.539e-02
+NOP2,7867,protein binding,GO:0005515,molecular function,12,161,1.759e-01,1.393e-01,7.930e-02,6.285e-01,2.465e-02,1.627e-01,1.902e-01,1.029e-01,1.887e-01,5.462e-02,1.151e-01
+NOP2,7867,RNA methylation,GO:0001510,biological process,12,11,1.824e-01,1.083e-01,6.284e-02,6.602e-01,7.340e-02,1.429e-01,2.328e-01,5.598e-02,2.095e-01,2.057e-02,1.920e-01
+NOP2,7867,rRNA (cytosine-C5-)-methyltransferase activity,GO:0009383,molecular function,12,3,1.829e-01,1.085e-01,5.385e-02,6.750e-01,9.634e-02,1.510e-01,2.217e-01,4.777e-02,2.463e-01,1.068e-02,2.716e-01
+NOP2,7867,regulation of signal transduction by p53 class mediator,GO:1901796,biological process,12,6,1.891e-01,1.414e-01,9.579e-02,5.982e-01,2.286e-02,1.723e-01,2.074e-01,1.054e-01,1.898e-01,6.815e-02,1.346e-01
+NOP2,7867,maturation of LSU-rRNA,GO:0000470,biological process,12,6,1.901e-01,1.381e-01,8.670e-02,6.132e-01,3.634e-02,1.670e-01,2.165e-01,1.015e-01,1.881e-01,5.040e-02,1.492e-01
+NOP2,7867,RNA binding,GO:0003723,molecular function,12,39,2.194e-01,1.746e-01,1.411e-01,5.317e-01,3.396e-02,1.748e-01,2.753e-01,1.251e-01,2.436e-01,8.810e-02,2.260e-01
+NOP2,7867,positive regulation of cell population proliferation,GO:0008284,biological process,12,32,2.916e-01,2.315e-01,2.236e-01,4.390e-01,5.993e-02,1.842e-01,4.616e-01,1.201e-01,4.465e-01,1.089e-01,4.591e-01
+ZAR1,20436,translation,GO:0006412,biological process,4,8,1.656e-01,1.130e-01,4.091e-02,7.296e-01,5.397e-02,1.526e-01,1.798e-01,7.408e-02,1.723e-01,1.758e-02,9.519e-02
+ZAR1,20436,cytoplasm,GO:0005737,cellular component,4,20,1.707e-01,1.106e-01,4.863e-02,7.017e-01,3.950e-02,1.519e-01,1.918e-01,7.416e-02,1.650e-01,2.593e-02,9.121e-02
+ZAR1,20436,mRNA binding involved in posttranscriptional gene silencing,GO:1903231,molecular function,4,3,1.851e-01,1.214e-01,9.106e-02,6.068e-01,1.869e-02,1.722e-01,1.990e-01,9.163e-02,1.609e-01,6.873e-02,1.206e-01
+ZAR1,20436,protein binding,GO:0005515,molecular function,4,161,2.750e-01,2.167e-01,2.167e-01,4.547e-01,8.799e-04,2.739e-01,2.762e-01,2.144e-01,2.190e-01,2.144e-01,2.190e-01
+ZNFX1,29271,RNA binding,GO:0003723,molecular function,3,39,2.721e-01,4.133e-01,2.014e-01,4.624e-01,5.005e-02,1.834e-01,4.035e-01,2.731e-01,6.255e-01,1.122e-01,3.615e-01
+ZNFX1,29271,heterochromatin assembly by small RNA,GO:0031048,biological process,3,2,3.310e-01,4.133e-01,2.756e-01,4.008e-01,3.766e-02,2.448e-01,4.476e-01,2.731e-01,6.255e-01,1.821e-01,4.171e-01
+ZNFX1,29271,nuclear RNA-directed RNA polymerase complex,GO:0031380,cellular component,3,3,5.168e-01,4.898e-01,4.898e-01,2.513e-01,5.781e-02,3.507e-01,7.616e-01,3.174e-01,7.560e-01,3.174e-01,7.560e-01
+PRTG,26373,extracellular space,GO:0005615,cellular component,1,21,3.155e-01,2.619e-01,2.619e-01,4.130e-01,3.209e-02,2.435e-01,4.089e-01,1.845e-01,3.717e-01,1.845e-01,3.717e-01
+HMCN2,21293,collagen-containing extracellular matrix,GO:0062023,cellular component,3,16,1.610e-01,9.066e-02,3.808e-02,7.400e-01,5.738e-02,1.463e-01,1.773e-01,5.441e-02,1.511e-01,1.546e-02,9.376e-02
+HMCN2,21293,extracellular matrix,GO:0031012,cellular component,3,14,1.880e-01,1.017e-01,6.160e-02,6.609e-01,7.243e-02,1.397e-01,2.532e-01,5.270e-02,1.963e-01,2.078e-02,1.826e-01
+HMCN2,21293,extracellular space,GO:0005615,cellular component,3,21,1.961e-01,1.272e-01,1.151e-01,5.679e-01,2.261e-02,1.697e-01,2.266e-01,8.001e-02,2.022e-01,8.288e-02,1.599e-01
+PRSS8,9491,sodium channel regulator activity,GO:0017080,molecular function,6,3,1.781e-01,1.663e-01,8.275e-02,6.224e-01,4.892e-03,1.676e-01,1.892e-01,1.171e-01,2.362e-01,7.682e-02,8.914e-02
+PRSS8,9491,extracellular exosome,GO:0070062,cellular component,6,26,1.851e-01,1.663e-01,9.445e-02,6.008e-01,1.911e-02,1.645e-01,2.083e-01,1.171e-01,2.362e-01,7.139e-02,1.250e-01
+PRSS8,9491,plasma membrane,GO:0005886,cellular component,6,16,1.864e-01,1.663e-01,9.589e-02,5.977e-01,2.631e-02,1.594e-01,2.180e-01,1.171e-01,2.362e-01,6.543e-02,1.405e-01
+PRSS8,9491,extracellular space,GO:0005615,cellular component,6,21,2.060e-01,1.663e-01,1.253e-01,5.534e-01,2.366e-02,1.730e-01,2.453e-01,1.171e-01,2.362e-01,9.032e-02,1.738e-01
+PRSS8,9491,protein binding,GO:0005515,molecular function,6,161,2.182e-01,1.729e-01,1.427e-01,5.305e-01,2.741e-02,1.806e-01,2.636e-01,1.206e-01,2.479e-01,9.769e-02,2.084e-01
+PRSS8,9491,positive regulation of sodium ion transport,GO:0010765,biological process,6,5,3.233e-01,2.685e-01,2.685e-01,4.056e-01,4.129e-02,2.339e-01,4.470e-01,1.690e-01,4.267e-01,1.690e-01,4.267e-01
+PTPRJ,9673,peptidyl-tyrosine dephosphorylation,GO:0035335,biological process,33,4,1.588e-01,1.044e-01,1.288e-02,8.926e-01,5.628e-03,1.483e-01,1.701e-01,6.781e-02,1.607e-01,1.094e-02,1.515e-02
+PTPRJ,9673,delta-catenin binding,GO:0070097,molecular function,33,2,1.588e-01,1.044e-01,1.729e-02,8.583e-01,1.426e-02,1.483e-01,1.701e-01,6.781e-02,1.607e-01,1.308e-02,2.286e-02
+PTPRJ,9673,positive regulation of cell adhesion,GO:0045785,biological process,33,7,1.588e-01,1.044e-01,1.633e-02,8.569e-01,3.329e-02,1.483e-01,1.701e-01,6.781e-02,1.607e-01,8.909e-03,2.993e-02
+PTPRJ,9673,beta-catenin binding,GO:0008013,molecular function,33,2,1.588e-01,1.044e-01,1.772e-02,8.568e-01,8.619e-03,1.483e-01,1.701e-01,6.781e-02,1.607e-01,1.518e-02,2.069e-02
+PTPRJ,9673,gamma-catenin binding,GO:0045295,molecular function,33,2,1.588e-01,1.044e-01,1.777e-02,8.565e-01,8.431e-03,1.483e-01,1.701e-01,6.781e-02,1.607e-01,1.523e-02,2.073e-02
+PTPRJ,9673,protein kinase binding,GO:0019901,molecular function,33,16,1.588e-01,1.044e-01,2.618e-02,7.956e-01,6.336e-03,1.483e-01,1.701e-01,6.781e-02,1.607e-01,2.376e-02,2.885e-02
+PTPRJ,9673,negative regulation of cell growth,GO:0030308,biological process,33,15,1.588e-01,1.044e-01,2.933e-02,7.783e-01,1.802e-02,1.483e-01,1.701e-01,6.781e-02,1.607e-01,2.214e-02,3.887e-02
+PTPRJ,9673,mitogen-activated protein kinase binding,GO:0051019,molecular function,33,5,1.588e-01,1.073e-01,3.789e-02,7.396e-01,4.934e-03,1.483e-01,1.701e-01,6.871e-02,1.675e-01,3.499e-02,4.103e-02
+PTPRJ,9673,cadherin binding,GO:0045296,molecular function,33,3,1.588e-01,1.073e-01,3.109e-02,7.709e-01,4.269e-02,1.482e-01,1.702e-01,6.871e-02,1.675e-01,1.582e-02,6.111e-02
+PTPRJ,9673,negative regulation of cell population proliferation,GO:0008285,biological process,33,31,1.610e-01,1.049e-01,3.728e-02,7.422e-01,1.876e-02,1.519e-01,1.706e-01,6.765e-02,1.627e-01,2.761e-02,5.034e-02
+PTPRJ,9673,negative regulation of cell migration,GO:0030336,biological process,33,26,1.618e-01,1.078e-01,4.394e-02,7.181e-01,1.931e-02,1.528e-01,1.712e-01,6.860e-02,1.695e-01,3.208e-02,6.019e-02
+PTPRJ,9673,cell-cell junction,GO:0005911,cellular component,33,15,1.649e-01,1.078e-01,4.723e-02,7.076e-01,2.608e-02,1.543e-01,1.763e-01,6.860e-02,1.695e-01,3.081e-02,7.239e-02
+PTPRJ,9673,negative regulation of vascular permeability,GO:0043116,biological process,33,3,1.677e-01,1.151e-01,6.240e-02,6.657e-01,1.577e-02,1.554e-01,1.810e-01,7.453e-02,1.777e-01,4.846e-02,8.036e-02
+PTPRJ,9673,regulation of cell adhesion,GO:0030155,biological process,33,11,1.677e-01,1.078e-01,5.011e-02,6.981e-01,2.404e-02,1.535e-01,1.833e-01,6.860e-02,1.695e-01,3.395e-02,7.394e-02
+PTPRJ,9673,platelet-derived growth factor receptor signaling pathway,GO:0048008,biological process,33,5,1.694e-01,1.108e-01,4.915e-02,7.017e-01,4.616e-02,1.532e-01,1.874e-01,6.915e-02,1.775e-01,2.350e-02,1.028e-01
+PTPRJ,9673,negative regulation of MAP kinase activity,GO:0043407,biological process,33,6,1.714e-01,1.136e-01,5.750e-02,6.772e-01,4.266e-02,1.541e-01,1.906e-01,6.936e-02,1.861e-01,2.902e-02,1.139e-01
+PTPRJ,9673,negative regulation of protein kinase B signaling,GO:0051898,biological process,33,3,1.740e-01,1.115e-01,6.375e-02,6.609e-01,3.772e-02,1.509e-01,2.006e-01,7.003e-02,1.777e-01,3.561e-02,1.142e-01
+PTPRJ,9673,platelet-derived growth factor receptor binding,GO:0005161,molecular function,33,2,1.744e-01,1.136e-01,7.008e-02,6.464e-01,3.683e-02,1.541e-01,1.973e-01,6.936e-02,1.861e-01,3.906e-02,1.258e-01
+PTPRJ,9673,positive chemotaxis,GO:0050918,biological process,33,10,1.785e-01,1.183e-01,7.766e-02,6.304e-01,3.625e-02,1.546e-01,2.061e-01,7.460e-02,1.876e-01,4.448e-02,1.356e-01
+PTPRJ,9673,negative regulation of T cell receptor signaling pathway,GO:0050860,biological process,33,4,1.796e-01,1.178e-01,7.619e-02,6.324e-01,4.631e-02,1.518e-01,2.125e-01,6.910e-02,2.010e-01,3.696e-02,1.571e-01
+PTPRJ,9673,plasma membrane,GO:0005886,cellular component,33,16,1.823e-01,1.329e-01,9.234e-02,6.048e-01,1.058e-02,1.698e-01,1.957e-01,1.081e-01,1.633e-01,7.890e-02,1.081e-01
+PTPRJ,9673,protein dephosphorylation,GO:0006470,biological process,33,12,1.869e-01,1.370e-01,1.015e-01,5.894e-01,1.239e-02,1.722e-01,2.027e-01,1.083e-01,1.731e-01,8.457e-02,1.217e-01
+PTPRJ,9673,protein binding,GO:0005515,molecular function,33,161,1.889e-01,1.402e-01,9.878e-02,5.936e-01,1.584e-02,1.759e-01,2.028e-01,1.292e-01,1.521e-01,7.841e-02,1.245e-01
+PTPRJ,9673,negative regulation of epidermal growth factor receptor signaling pathway,GO:0042059,biological process,33,7,1.923e-01,1.206e-01,8.792e-02,6.078e-01,5.878e-02,1.548e-01,2.388e-01,6.938e-02,2.095e-01,3.557e-02,2.173e-01
+PTPRJ,9673,positive regulation of protein kinase B signaling,GO:0051897,biological process,33,3,1.956e-01,1.379e-01,9.648e-02,5.929e-01,5.560e-02,1.399e-01,2.735e-01,7.797e-02,2.439e-01,4.390e-02,2.120e-01
+PTPRJ,9673,cell surface,GO:0009986,cellular component,33,6,1.975e-01,1.410e-01,1.161e-01,5.670e-01,1.454e-02,1.799e-01,2.168e-01,1.123e-01,1.771e-01,9.413e-02,1.432e-01
+PTPRJ,9673,extracellular exosome,GO:0070062,cellular component,33,26,1.993e-01,1.458e-01,1.204e-01,5.611e-01,4.582e-03,1.989e-01,1.997e-01,1.292e-01,1.647e-01,1.128e-01,1.285e-01
+PTPRJ,9673,negative regulation of platelet-derived growth factor receptor signaling pathway,GO:0010642,biological process,33,6,2.059e-01,1.472e-01,1.220e-01,5.564e-01,3.768e-02,1.622e-01,2.614e-01,9.643e-02,2.247e-01,7.094e-02,2.099e-01
+PTPRJ,9673,positive regulation of focal adhesion assembly,GO:0051894,biological process,33,5,2.114e-01,1.560e-01,1.287e-01,5.468e-01,4.085e-02,1.577e-01,2.834e-01,1.026e-01,2.371e-01,7.425e-02,2.232e-01
+PTPRJ,9673,protein tyrosine phosphatase activity,GO:0004725,molecular function,33,9,2.134e-01,1.541e-01,1.356e-01,5.397e-01,2.373e-02,1.797e-01,2.534e-01,1.105e-01,2.147e-01,9.780e-02,1.881e-01
+PTPRJ,9673,immunological synapse,GO:0001772,cellular component,33,2,2.197e-01,1.556e-01,1.442e-01,5.289e-01,2.445e-02,1.851e-01,2.608e-01,1.117e-01,2.169e-01,1.031e-01,2.018e-01
+PTPRJ,9673,phosphatase activity,GO:0016791,molecular function,33,71,4.445e-01,4.073e-01,4.073e-01,3.034e-01,5.580e-02,2.941e-01,6.717e-01,2.487e-01,6.670e-01,2.487e-01,6.670e-01
