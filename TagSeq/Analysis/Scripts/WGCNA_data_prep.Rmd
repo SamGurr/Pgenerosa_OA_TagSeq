@@ -1,0 +1,121 @@
+---
+title: "WGCNA_data_prep"
+author: "Samuel Gurr"
+date: "February 4, 2021"
+output: html_document
+---
+
+# README: Objective of this script is to merge the following data.frames/tables
+(1) 'Master_Exp.Treatment_Metadata.csv' - output from Count.Matrix_Stats.Filter.Rmd. This file contains all treatment data, expoeriment date, replicate tank ID, and sample name 
+(2) Phenotype data from Gurr et al. 2020 (bioRxiv, in review in JEB) - all data was loaded into the WGCNA folder. Data from github
+NOTE: TagSeq gene exoression data is NOT from the same animals with phenotypic measurements BUT from the sample replicate tank and timepoint.
+a.) "Gurr.etal_TAOC_Protein_Organic.biomass" = total antioxidant capacity, total protein, and organic biomass AFDW taken from on the same date and replicate tank
+b.) "Gurr.etal_Shell.length"                 = shell legnth of animals used for respirometry (N = 3 per replicate tank-1 timepoint-1)
+c.) "Gurr.etal_Respiration.Biovolume"        = respiration rate (ug-1 hour-1 individual-1) and biovoume measurements (N = 1 per replicate tank-1 timepoint-1; measured as the mean for each PreSens respiration vial)
+
+# Set-up
+
+### Load libraries
+```{r  load library}
+library(dplyr)
+library(reshape2)
+print(getwd()) # working directory is the scipts folder 
+```
+
+# LOAD DATA:
+
+```{r  load_data}
+print(getwd())  # working directory is the scipts folder 
+Master.treatment.data <- read.csv("../../Analysis/Data/Master_Exp.Treatment_Metadata.csv", sep=',', header=TRUE) # read the output count matrix - NOTE: TRIMMED at 30 phred threshold!
+Resp.Biovol.master       <- read.csv(file="../../Analysis/Data/WGCNA/Gurr.etal_Respiration.Biovolume.csv", sep=',', header=TRUE)
+Shell.Length.master      <- read.csv(file="../../Analysis/Data/WGCNA/Gurr.etal_Shell.length.csv", sep=',', header=TRUE)
+TAOC.Protein.AFDW.master <- read.csv(file="../../Analysis/Data/WGCNA/Gurr.etal_TAOC_Protein_Organic.biomass.csv", sep=',', header=TRUE)
+```
+
+### summarize and merge data by tank ID
+```{r  Shell.Length}
+unique(Shell.Length.master$Date)
+Shell.Length <- Shell.Length.master %>% 
+  dplyr::filter(Date %in% c(20190731,20190807, 20190814)) %>%  # call   "DAY7"  "DAY14" "DAY21"
+   dplyr::group_by(Date,Tank.ID) %>% 
+  summarise(mean.Shell.Length = mean(Length))
+Shell.Length <- na.omit(Shell.Length)
+dim(Shell.Length)
+Shell.Length$Date_Tank.ID <- paste(Shell.Length$Date, Shell.Length$Tank.ID, sep= "_")
+Shell.Length <- melt(Shell.Length, id.vars = c('Date','Tank.ID','Date_Tank.ID'))
+```
+
+
+```{r  Resp.Biovol}
+unique(Resp.Biovol.master$Date)
+Resp.Biovol <- Resp.Biovol.master %>% 
+  dplyr::select(c(1,2,3,15,16)) %>% 
+  dplyr::filter(Date %in% c(20190731,20190807, 20190814)) %>%  # call "DAY7"  "DAY14" "DAY21"
+  dplyr::group_by(Date,Tank.ID) %>% 
+  dplyr::summarise(mean.Resp.ugLhrindiv = mean(resp.COUNT.µg.L.hr.indiv), # note resp rate per individual - corrected from raw data on 3 individuals measurement-1
+                                              mean.Biovol = mean(mean_biovolume))
+dim(Resp.Biovol)
+Resp.Biovol$Date_Tank.ID <- paste(Resp.Biovol$Date, Resp.Biovol$Tank.ID, sep= "_")
+Resp.Biovol <- melt(Resp.Biovol, id.vars = c('Date','Tank.ID','Date_Tank.ID'))
+```
+
+```{r  TAOC.Protein.AFDW}
+
+TAOC.Protein.AFDW.master.OM <- TAOC.Protein.AFDW.master %>%  dplyr::filter(!ID %in% c('1477', '1438', '1594', '1570', '1606', '1551', '1563','349', '357', '337',  '450','1588', '1483'))
+# ommit the duplicates that were either negative TAOC or rerun due to tech error
+TAOC.Protein.AFDW <- TAOC.Protein.AFDW.master.OM %>% 
+  dplyr::select(c(1,3:8)) %>% 
+  dplyr::filter(Date %in% c(20190731,20190814)) %>%  # call   "DAY7"  "DAY14" "DAY21"
+  dplyr::group_by(Date, Tank.ID) %>% 
+  dplyr::summarise(mean.µmol.CRE.g.protein = mean(µmol.CRE.g.protein), 
+                   mean.AFDW = mean(mgTOTAL_AFDW), 
+                   mean.mgProt.mgAFDW = mean(mgProtein.mgAFDW))
+dim(TAOC.Protein.AFDW)
+TAOC.Protein.AFDW$Date_Tank.ID <- paste(TAOC.Protein.AFDW$Date, TAOC.Protein.AFDW$Tank.ID, sep= "_")
+TAOC.Protein.AFDW <- melt(TAOC.Protein.AFDW, id.vars = c('Date','Tank.ID','Date_Tank.ID'))
+```
+
+```{r  rbind_phys}
+
+Master.Phys.data <- rbind(TAOC.Protein.AFDW, Resp.Biovol, Shell.Length)
+Master.Phys.data<- Master.Phys.data[-3]
+dim(Master.Phys.data)
+```
+
+```{r  rbind_treament.data}
+
+Treatment_Date <- Master.treatment.data %>%  
+  dplyr::filter(Date %in% c(20190731,20190807,20190814)) %>% 
+  dplyr::select('Date','Tank.ID', 'All_Treatment', 'Primary_Treatment', 'Second_Treament' ,'Third_Treatment') 
+Treatment_Date.melt <- melt(Treatment_Date, id.vars = c('Date','Tank.ID'))
+
+Master.Metadata <- rbind(Master.Phys.data, Treatment_Date.melt)
+```
+
+
+
+```{r  merge_TagSeqSampleID}
+Seq.ID_Date <- Master.treatment.data %>% dplyr::select('Sample.Name','Date','Tank.ID')
+
+# common column to bind
+Seq.ID_Date$Date_Tank.ID <- paste(Seq.ID_Date$Date,Seq.ID_Date$Tank.ID)
+Master.Metadata$Date_Tank.ID <- paste(Master.Metadata$Date,Master.Metadata$Tank.ID)
+
+Master.Metadata_TagSeq.ID <- merge(Master.Metadata, Seq.ID_Date, by = 'Date_Tank.ID')
+
+Master.Metadata_TagSeq.ID.dcast <- dcast(Master.Metadata_TagSeq.ID, Sample.Name ~ variable)
+
+Master.Metadata_TagSeq.ID.dcast.merge <-  merge(Master.Metadata_TagSeq.ID.dcast, Seq.ID_Date[1:3], by = 'Sample.Name')
+
+colnames(Master.Metadata_TagSeq.ID.dcast.merge)
+
+Master.FINAL <-  Master.Metadata_TagSeq.ID.dcast.merge[,c(12,13,1,8:11,2:7)] %>% group_by(Date) %>% arrange(desc(Primary_Treatment), .by_group = TRUE)
+```
+
+```{r  write_output}
+write.csv(Master.FINAL,paste(path.out,"Master_Phyenotype.and.Exp.Treatment_Metadata.csv"))
+```
+
+
+
+

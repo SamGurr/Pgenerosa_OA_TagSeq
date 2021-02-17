@@ -1,0 +1,15 @@
+Day,Treatment,Pairwise.compare,DEGs_total,DEGs_UP,DEGs_DOWN
+0,Primary,A_v_M,14,11,3
+7,Primary,A_v_M,106,62,44
+7,Second,A_v_M,106,,
+7,Second,A_v_S,2,,
+7,Second,M_v_S,1,,
+14,Primary,A_v_M,421,315,106
+14,Second,A_v_M,0,0,0
+14,Second,A_v_S,0,0,0
+14,Second,M_v_S,0,0,0
+21,Primary,A_v_M,155,101,54
+21,Second,A_v_M,1,,
+21,Second,A_v_S,1,,
+21,Second,M_v_S,0,0,0
+21,Thid,A_v_M,0,0,0

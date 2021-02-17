@@ -1,0 +1,5 @@
+"","Day","Treatment","DEGs_upreg","numHGNC_upreg","percHGNC_upreg","DEGs_dwnreg","numHGNC_dwnreg","percHGNC_dwnreg"
+"1","0","Ambient_v_Moderate",11,4,36.3636363636364,3,2,66.6666666666667
+"2","7","Ambient_v_Moderate",62,40,64.5161290322581,44,16,36.3636363636364
+"3","14","Ambient_v_Moderate",315,210,66.6666666666667,54,26,48.1481481481481
+"4","21","Ambient_v_Moderate",101,56,55.4455445544555,54,26,48.1481481481481

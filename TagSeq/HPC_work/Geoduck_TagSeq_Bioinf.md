@@ -112,7 +112,7 @@ sbatch fastqc_raw.sh
 *exit bluewaves and run from terminal*
 - save to gitrepo as multiqc_clean.html
 ```
-scp samuel_gurr@bluewaves.uri.edu:/data/putnamlab/sgurr/Geoduck_TagSeq/output/fastp_mutliQC/multiqc_report.html  C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics
+scp samuel_gurr@bluewaves.uri.edu:/data/putnamlab/sgurr/Geoduck_TagSeq/output/fastp_mutliQC/multiqc_report.html  C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output
 ```
 
 ### IMPORTANT! Quality check multiqc.html before you proceed!

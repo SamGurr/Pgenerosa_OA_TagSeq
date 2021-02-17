@@ -1,0 +1,85 @@
+id	term	lev	value	seq
+"nuclear-transcribed mRNA catabolic process, nonsense-mediated decay"	GO:0000184	2	-1.22482383135187	PGEN_.00g006280
+"nuclear-transcribed mRNA catabolic process"	GO:0000956	2	-1.22482383135187	PGEN_.00g006280
+"mRNA catabolic process"	GO:0006402	4	-1.22482383135187	PGEN_.00g006280
+"RNA catabolic process"	GO:0006401	1	-1.22482383135187	PGEN_.00g006280
+"negative regulation of gene expression"	GO:0010629	2	-1.22482383135187	PGEN_.00g006280
+"mRNA metabolic process"	GO:0016071	1	-1.22482383135187	PGEN_.00g006280
+"RNA metabolic process"	GO:0016070	1	-1.22482383135187	PGEN_.00g006280
+"regulation of gene expression"	GO:0010468	1	-1.22482383135187	PGEN_.00g006280
+"negative regulation of macromolecule metabolic process"	GO:0010605	2	-1.22482383135187	PGEN_.00g006280
+"negative regulation of metabolic process"	GO:0009892	1	-1.22482383135187	PGEN_.00g006280
+"regulation of metabolic process"	GO:0019222	1	-1.22482383135187	PGEN_.00g006280
+"regulation of lipid metabolic process"	GO:0019216	1	-1.22482383135187	PGEN_.00g006280
+""	GO:0080090		-1.22482383135187	PGEN_.00g006280
+"angiogenesis"	GO:0001525	1	2.64575190091117	PGEN_.00g078470
+""	GO:0048646		2.64575190091117	PGEN_.00g078470
+"in utero embryonic development"	GO:0001701	1	2.64575190091117	PGEN_.00g078470
+""	GO:0043009		2.64575190091117	PGEN_.00g078470
+"heart looping"	GO:0001947	1	2.64575190091117	PGEN_.00g078470
+"embryonic heart tube morphogenesis"	GO:0003143	1	2.64575190091117	PGEN_.00g078470
+"suckling behavior"	GO:0001967	2	2.64575190091117	PGEN_.00g078470
+"feeding behavior"	GO:0007631	2	2.64575190091117	PGEN_.00g078470
+"behavior"	GO:0007610	1	2.64575190091117	PGEN_.00g078470
+"biological_process"	GO:0008150	0	2.64575190091117	PGEN_.00g078470
+"heart morphogenesis"	GO:0003007	2	2.64575190091117	PGEN_.00g078470
+"animal organ morphogenesis"	GO:0009887	3	2.64575190091117	PGEN_.00g078470
+"anatomical structure morphogenesis"	GO:0009653	2	2.64575190091117	PGEN_.00g078470
+"developmental process"	GO:0032502	1	2.64575190091117	PGEN_.00g078470
+"cardiac right ventricle formation"	GO:0003219	2	2.64575190091117	PGEN_.00g078470
+"cardiac ventricle formation"	GO:0003211	1	2.64575190091117	PGEN_.00g078470
+"cardiac chamber formation"	GO:0003207	1	2.64575190091117	PGEN_.00g078470
+"cardiac neural crest cell migration involved in outflow tract morphogenesis"	GO:0003253	2	2.64575190091117	PGEN_.00g078470
+"neural crest cell migration"	GO:0001755	2	2.64575190091117	PGEN_.00g078470
+""	GO:0060973		2.64575190091117	PGEN_.00g078470
+"ameboidal-type cell migration"	GO:0001667	1	2.64575190091117	PGEN_.00g078470
+"cell migration"	GO:0016477	1	2.64575190091117	PGEN_.00g078470
+"regulation of secondary heart field cardioblast proliferation"	GO:0003266	1	2.64575190091117	PGEN_.00g078470
+"regulation of cardioblast proliferation"	GO:0003264	1	2.64575190091117	PGEN_.00g078470
+"apoptotic process involved in heart morphogenesis"	GO:0003278	1	2.64575190091117	PGEN_.00g078470
+""	GO:0060561		2.64575190091117	PGEN_.00g078470
+"regulation of transcription, DNA-templated"	GO:0006355	1	2.64575190091117	PGEN_.00g078470
+"regulation of gene expression"	GO:0010468	1	2.64575190091117	PGEN_.00g078470
+""	GO:1903506		2.64575190091117	PGEN_.00g078470
+""	GO:2000112		2.64575190091117	PGEN_.00g078470
+"heart development"	GO:0007507	1	2.64575190091117	PGEN_.00g078470
+""	GO:0048513		2.64575190091117	PGEN_.00g078470
+"adult heart development"	GO:0007512	1	2.64575190091117	PGEN_.00g078470
+"mesenchymal cell proliferation"	GO:0010463	3	2.64575190091117	PGEN_.00g078470
+"cell population proliferation"	GO:0008283	2	2.64575190091117	PGEN_.00g078470
+"cellular process"	GO:0009987	1	2.64575190091117	PGEN_.00g078470
+"positive regulation of cardiac muscle hypertrophy"	GO:0010613	2	2.64575190091117	PGEN_.00g078470
+"regulation of cardiac muscle hypertrophy"	GO:0010611	1	2.64575190091117	PGEN_.00g078470
+"positive regulation of muscle hypertrophy"	GO:0014742	1	2.64575190091117	PGEN_.00g078470
+"regulation of muscle hypertrophy"	GO:0014743	1	2.64575190091117	PGEN_.00g078470
+"positive regulation of gene expression"	GO:0010628	2	2.64575190091117	PGEN_.00g078470
+"positive regulation of macromolecule metabolic process"	GO:0010604	2	2.64575190091117	PGEN_.00g078470
+"positive regulation of metabolic process"	GO:0009893	1	2.64575190091117	PGEN_.00g078470
+"regulation of metabolic process"	GO:0019222	1	2.64575190091117	PGEN_.00g078470
+"negative regulation of gene expression"	GO:0010629	2	2.64575190091117	PGEN_.00g078470
+"negative regulation of macromolecule metabolic process"	GO:0010605	2	2.64575190091117	PGEN_.00g078470
+"negative regulation of metabolic process"	GO:0009892	1	2.64575190091117	PGEN_.00g078470
+"negative regulation of cardiac muscle cell apoptotic process"	GO:0010667	2	2.64575190091117	PGEN_.00g078470
+"negative regulation of striated muscle cell apoptotic process"	GO:0010664	2	2.64575190091117	PGEN_.00g078470
+"regulation of cardiac muscle cell apoptotic process"	GO:0010665	2	2.64575190091117	PGEN_.00g078470
+"negative regulation of muscle cell apoptotic process"	GO:0010656	1	2.64575190091117	PGEN_.00g078470
+"regulation of striated muscle cell apoptotic process"	GO:0010662	1	2.64575190091117	PGEN_.00g078470
+"regulation of muscle cell apoptotic process"	GO:0010660	1	2.64575190091117	PGEN_.00g078470
+"neural crest cell development"	GO:0014032	1	2.64575190091117	PGEN_.00g078470
+"mesenchymal cell development"	GO:0014031	1	2.64575190091117	PGEN_.00g078470
+""	GO:0048864		2.64575190091117	PGEN_.00g078470
+"DNA-dependent DNA replication"	GO:0006261	1	-2.71200880764221	PGEN_.00g258390
+"DNA replication"	GO:0006260	1	-2.71200880764221	PGEN_.00g258390
+"DNA repair"	GO:0006281	3	-2.71200880764221	PGEN_.00g258390
+"DNA metabolic process"	GO:0006259	1	-2.71200880764221	PGEN_.00g258390
+"cellular response to DNA damage stimulus"	GO:0006974	2	-2.71200880764221	PGEN_.00g258390
+"cellular response to stress"	GO:0033554	1	-2.71200880764221	PGEN_.00g258390
+"response to stress"	GO:0006950	1	-2.71200880764221	PGEN_.00g258390
+"regulation of DNA repair"	GO:0006282	1	-2.71200880764221	PGEN_.00g258390
+""	GO:0051052		-2.71200880764221	PGEN_.00g258390
+""	GO:2001020		-2.71200880764221	PGEN_.00g258390
+"DNA recombination"	GO:0006310	1	-2.71200880764221	PGEN_.00g258390
+"cell adhesion"	GO:0007155	2	-2.38485625955447	PGEN_.00g261200
+"cellular process"	GO:0009987	1	-2.38485625955447	PGEN_.00g261200
+"biological adhesion"	GO:0022610	1	-2.38485625955447	PGEN_.00g261200
+"biological_process"	GO:0008150	0	-2.38485625955447	PGEN_.00g261200

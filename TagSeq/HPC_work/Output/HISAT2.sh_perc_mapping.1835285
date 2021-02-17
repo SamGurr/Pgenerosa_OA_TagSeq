@@ -1,0 +1,2052 @@
+Settings:
+  Output files: "./Pgenerosa_ref.*.ht2"
+  Line rate: 6 (line is 64 bytes)
+  Lines per side: 1 (side is 64 bytes)
+  Offset rate: 4 (one in 16)
+  FTable chars: 10
+  Strings: unpacked
+  Local offset rate: 3 (one in 8)
+  Local fTable chars: 6
+  Local sequence length: 57344
+  Local sequence overlap between two consecutive indexes: 1024
+  Endianness: little
+  Actual local endianness: little
+  Sanity checking: disabled
+  Assertions: disabled
+  Random seed: 0
+  Sizeofs: void*:8, int:4, long:8, size_t:8
+Input files DNA, FASTA:
+  ../../../refs/Panopea-generosa-v1.0.fa
+Reading reference sizes
+  Time reading reference sizes: 00:00:06
+Calculating joined length
+Writing header
+Reserving space for joined string
+Joining reference sequences
+  Time to join reference sequences: 00:00:04
+  Time to read SNPs and splice sites: 00:00:00
+Using parameters --bmax 146973968 --dcv 1024
+  Doing ahead-of-time memory usage test
+  Passed!  Constructing with these parameters: --bmax 146973968 --dcv 1024
+Constructing suffix-array element generator
+Converting suffix-array elements to index image
+Allocating ftab, absorbFtab
+Entering GFM loop
+Exited GFM loop
+fchr[A]: 0
+fchr[C]: 259567700
+fchr[G]: 391960400
+fchr[T]: 524347498
+fchr[$]: 783861161
+Exiting GFM::buildToDisk()
+Returning from initFromVector
+Wrote 266840009 bytes to primary GFM file: ./Pgenerosa_ref.1.ht2
+Wrote 195965296 bytes to secondary GFM file: ./Pgenerosa_ref.2.ht2
+Re-opening _in1 and _in2 as input streams
+Returning from GFM constructor
+Returning from initFromVector
+Wrote 366000283 bytes to primary GFM file: ./Pgenerosa_ref.5.ht2
+Wrote 199556150 bytes to secondary GFM file: ./Pgenerosa_ref.6.ht2
+Re-opening _in5 and _in5 as input streams
+Returning from HierEbwt constructor
+Headers:
+    len: 783861161
+    gbwtLen: 783861162
+    nodes: 783861162
+    sz: 195965291
+    gbwtSz: 195965291
+    lineRate: 6
+    offRate: 4
+    offMask: 0xfffffff0
+    ftabChars: 10
+    eftabLen: 0
+    eftabSz: 0
+    ftabLen: 1048577
+    ftabSz: 4194308
+    offsLen: 48991323
+    offsSz: 195965292
+    lineSz: 64
+    sideSz: 64
+    sideGbwtSz: 48
+    sideGbwtLen: 192
+    numSides: 4082611
+    numLines: 4082611
+    gbwtTotLen: 261287104
+    gbwtTotSz: 261287104
+    reverse: 0
+    linearFM: Yes
+Total time for call to driver() for forward index: 00:08:58
+3059098 reads; of these:
+  3059098 (100.00%) were unpaired; of these:
+    2094518 (68.47%) aligned 0 times
+    909534 (29.73%) aligned exactly 1 time
+    55046 (1.80%) aligned >1 times
+31.53% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3035540 reads; of these:
+  3035540 (100.00%) were unpaired; of these:
+    2088722 (68.81%) aligned 0 times
+    892610 (29.41%) aligned exactly 1 time
+    54208 (1.79%) aligned >1 times
+31.19% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2722308 reads; of these:
+  2722308 (100.00%) were unpaired; of these:
+    1930559 (70.92%) aligned 0 times
+    742730 (27.28%) aligned exactly 1 time
+    49019 (1.80%) aligned >1 times
+29.08% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2680010 reads; of these:
+  2680010 (100.00%) were unpaired; of these:
+    1906619 (71.14%) aligned 0 times
+    726107 (27.09%) aligned exactly 1 time
+    47284 (1.76%) aligned >1 times
+28.86% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2324726 reads; of these:
+  2324726 (100.00%) were unpaired; of these:
+    1602268 (68.92%) aligned 0 times
+    678759 (29.20%) aligned exactly 1 time
+    43699 (1.88%) aligned >1 times
+31.08% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2298534 reads; of these:
+  2298534 (100.00%) were unpaired; of these:
+    1591899 (69.26%) aligned 0 times
+    663634 (28.87%) aligned exactly 1 time
+    43001 (1.87%) aligned >1 times
+30.74% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2604751 reads; of these:
+  2604751 (100.00%) were unpaired; of these:
+    1898730 (72.89%) aligned 0 times
+    660455 (25.36%) aligned exactly 1 time
+    45566 (1.75%) aligned >1 times
+27.11% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2556537 reads; of these:
+  2556537 (100.00%) were unpaired; of these:
+    1868520 (73.09%) aligned 0 times
+    643211 (25.16%) aligned exactly 1 time
+    44806 (1.75%) aligned >1 times
+26.91% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2558224 reads; of these:
+  2558224 (100.00%) were unpaired; of these:
+    1772034 (69.27%) aligned 0 times
+    740471 (28.94%) aligned exactly 1 time
+    45719 (1.79%) aligned >1 times
+30.73% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2531830 reads; of these:
+  2531830 (100.00%) were unpaired; of these:
+    1762939 (69.63%) aligned 0 times
+    723943 (28.59%) aligned exactly 1 time
+    44948 (1.78%) aligned >1 times
+30.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2772562 reads; of these:
+  2772562 (100.00%) were unpaired; of these:
+    1544071 (55.69%) aligned 0 times
+    1139733 (41.11%) aligned exactly 1 time
+    88758 (3.20%) aligned >1 times
+44.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2721702 reads; of these:
+  2721702 (100.00%) were unpaired; of these:
+    1520039 (55.85%) aligned 0 times
+    1113662 (40.92%) aligned exactly 1 time
+    88001 (3.23%) aligned >1 times
+44.15% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4412018 reads; of these:
+  4412018 (100.00%) were unpaired; of these:
+    3248791 (73.64%) aligned 0 times
+    1094828 (24.81%) aligned exactly 1 time
+    68399 (1.55%) aligned >1 times
+26.36% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4401016 reads; of these:
+  4401016 (100.00%) were unpaired; of these:
+    3252472 (73.90%) aligned 0 times
+    1080282 (24.55%) aligned exactly 1 time
+    68262 (1.55%) aligned >1 times
+26.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2856186 reads; of these:
+  2856186 (100.00%) were unpaired; of these:
+    1978282 (69.26%) aligned 0 times
+    818504 (28.66%) aligned exactly 1 time
+    59400 (2.08%) aligned >1 times
+30.74% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2821220 reads; of these:
+  2821220 (100.00%) were unpaired; of these:
+    1964124 (69.62%) aligned 0 times
+    798641 (28.31%) aligned exactly 1 time
+    58455 (2.07%) aligned >1 times
+30.38% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2708848 reads; of these:
+  2708848 (100.00%) were unpaired; of these:
+    1903449 (70.27%) aligned 0 times
+    753000 (27.80%) aligned exactly 1 time
+    52399 (1.93%) aligned >1 times
+29.73% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2681985 reads; of these:
+  2681985 (100.00%) were unpaired; of these:
+    1891991 (70.54%) aligned 0 times
+    738300 (27.53%) aligned exactly 1 time
+    51694 (1.93%) aligned >1 times
+29.46% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2309954 reads; of these:
+  2309954 (100.00%) were unpaired; of these:
+    1669417 (72.27%) aligned 0 times
+    600207 (25.98%) aligned exactly 1 time
+    40330 (1.75%) aligned >1 times
+27.73% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2285063 reads; of these:
+  2285063 (100.00%) were unpaired; of these:
+    1657664 (72.54%) aligned 0 times
+    587772 (25.72%) aligned exactly 1 time
+    39627 (1.73%) aligned >1 times
+27.46% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2974943 reads; of these:
+  2974943 (100.00%) were unpaired; of these:
+    2190739 (73.64%) aligned 0 times
+    734799 (24.70%) aligned exactly 1 time
+    49405 (1.66%) aligned >1 times
+26.36% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2963505 reads; of these:
+  2963505 (100.00%) were unpaired; of these:
+    2195484 (74.08%) aligned 0 times
+    719718 (24.29%) aligned exactly 1 time
+    48303 (1.63%) aligned >1 times
+25.92% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2217519 reads; of these:
+  2217519 (100.00%) were unpaired; of these:
+    1507181 (67.97%) aligned 0 times
+    662797 (29.89%) aligned exactly 1 time
+    47541 (2.14%) aligned >1 times
+32.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2189823 reads; of these:
+  2189823 (100.00%) were unpaired; of these:
+    1496504 (68.34%) aligned 0 times
+    645955 (29.50%) aligned exactly 1 time
+    47364 (2.16%) aligned >1 times
+31.66% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2701507 reads; of these:
+  2701507 (100.00%) were unpaired; of these:
+    1814588 (67.17%) aligned 0 times
+    831742 (30.79%) aligned exactly 1 time
+    55177 (2.04%) aligned >1 times
+32.83% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2668655 reads; of these:
+  2668655 (100.00%) were unpaired; of these:
+    1804841 (67.63%) aligned 0 times
+    809662 (30.34%) aligned exactly 1 time
+    54152 (2.03%) aligned >1 times
+32.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3108921 reads; of these:
+  3108921 (100.00%) were unpaired; of these:
+    2218298 (71.35%) aligned 0 times
+    838911 (26.98%) aligned exactly 1 time
+    51712 (1.66%) aligned >1 times
+28.65% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3084154 reads; of these:
+  3084154 (100.00%) were unpaired; of these:
+    2211153 (71.69%) aligned 0 times
+    821993 (26.65%) aligned exactly 1 time
+    51008 (1.65%) aligned >1 times
+28.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2599268 reads; of these:
+  2599268 (100.00%) were unpaired; of these:
+    1825157 (70.22%) aligned 0 times
+    727078 (27.97%) aligned exactly 1 time
+    47033 (1.81%) aligned >1 times
+29.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2568190 reads; of these:
+  2568190 (100.00%) were unpaired; of these:
+    1810879 (70.51%) aligned 0 times
+    711066 (27.69%) aligned exactly 1 time
+    46245 (1.80%) aligned >1 times
+29.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2858589 reads; of these:
+  2858589 (100.00%) were unpaired; of these:
+    2058031 (71.99%) aligned 0 times
+    744757 (26.05%) aligned exactly 1 time
+    55801 (1.95%) aligned >1 times
+28.01% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2832959 reads; of these:
+  2832959 (100.00%) were unpaired; of these:
+    2049490 (72.34%) aligned 0 times
+    728528 (25.72%) aligned exactly 1 time
+    54941 (1.94%) aligned >1 times
+27.66% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2557023 reads; of these:
+  2557023 (100.00%) were unpaired; of these:
+    2012041 (78.69%) aligned 0 times
+    516842 (20.21%) aligned exactly 1 time
+    28140 (1.10%) aligned >1 times
+21.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2518342 reads; of these:
+  2518342 (100.00%) were unpaired; of these:
+    1985533 (78.84%) aligned 0 times
+    504539 (20.03%) aligned exactly 1 time
+    28270 (1.12%) aligned >1 times
+21.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2706108 reads; of these:
+  2706108 (100.00%) were unpaired; of these:
+    1862956 (68.84%) aligned 0 times
+    791591 (29.25%) aligned exactly 1 time
+    51561 (1.91%) aligned >1 times
+31.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2688372 reads; of these:
+  2688372 (100.00%) were unpaired; of these:
+    1860993 (69.22%) aligned 0 times
+    776341 (28.88%) aligned exactly 1 time
+    51038 (1.90%) aligned >1 times
+30.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3787903 reads; of these:
+  3787903 (100.00%) were unpaired; of these:
+    2705228 (71.42%) aligned 0 times
+    1009008 (26.64%) aligned exactly 1 time
+    73667 (1.94%) aligned >1 times
+28.58% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3755940 reads; of these:
+  3755940 (100.00%) were unpaired; of these:
+    2695635 (71.77%) aligned 0 times
+    988239 (26.31%) aligned exactly 1 time
+    72066 (1.92%) aligned >1 times
+28.23% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2717041 reads; of these:
+  2717041 (100.00%) were unpaired; of these:
+    1892936 (69.67%) aligned 0 times
+    770883 (28.37%) aligned exactly 1 time
+    53222 (1.96%) aligned >1 times
+30.33% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2692935 reads; of these:
+  2692935 (100.00%) were unpaired; of these:
+    1882952 (69.92%) aligned 0 times
+    757482 (28.13%) aligned exactly 1 time
+    52501 (1.95%) aligned >1 times
+30.08% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2635083 reads; of these:
+  2635083 (100.00%) were unpaired; of these:
+    1851030 (70.25%) aligned 0 times
+    732125 (27.78%) aligned exactly 1 time
+    51928 (1.97%) aligned >1 times
+29.75% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2616212 reads; of these:
+  2616212 (100.00%) were unpaired; of these:
+    1844773 (70.51%) aligned 0 times
+    719953 (27.52%) aligned exactly 1 time
+    51486 (1.97%) aligned >1 times
+29.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2678409 reads; of these:
+  2678409 (100.00%) were unpaired; of these:
+    1983800 (74.07%) aligned 0 times
+    654180 (24.42%) aligned exactly 1 time
+    40429 (1.51%) aligned >1 times
+25.93% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2641382 reads; of these:
+  2641382 (100.00%) were unpaired; of these:
+    1961498 (74.26%) aligned 0 times
+    640910 (24.26%) aligned exactly 1 time
+    38974 (1.48%) aligned >1 times
+25.74% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+1908261 reads; of these:
+  1908261 (100.00%) were unpaired; of these:
+    1313143 (68.81%) aligned 0 times
+    557244 (29.20%) aligned exactly 1 time
+    37874 (1.98%) aligned >1 times
+31.19% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+1887570 reads; of these:
+  1887570 (100.00%) were unpaired; of these:
+    1307701 (69.28%) aligned 0 times
+    542383 (28.73%) aligned exactly 1 time
+    37486 (1.99%) aligned >1 times
+30.72% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3481520 reads; of these:
+  3481520 (100.00%) were unpaired; of these:
+    2372364 (68.14%) aligned 0 times
+    1043619 (29.98%) aligned exactly 1 time
+    65537 (1.88%) aligned >1 times
+31.86% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3436537 reads; of these:
+  3436537 (100.00%) were unpaired; of these:
+    2353452 (68.48%) aligned 0 times
+    1018784 (29.65%) aligned exactly 1 time
+    64301 (1.87%) aligned >1 times
+31.52% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3523858 reads; of these:
+  3523858 (100.00%) were unpaired; of these:
+    2576607 (73.12%) aligned 0 times
+    891855 (25.31%) aligned exactly 1 time
+    55396 (1.57%) aligned >1 times
+26.88% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3498705 reads; of these:
+  3498705 (100.00%) were unpaired; of these:
+    2571632 (73.50%) aligned 0 times
+    871988 (24.92%) aligned exactly 1 time
+    55085 (1.57%) aligned >1 times
+26.50% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2613428 reads; of these:
+  2613428 (100.00%) were unpaired; of these:
+    1988768 (76.10%) aligned 0 times
+    585119 (22.39%) aligned exactly 1 time
+    39541 (1.51%) aligned >1 times
+23.90% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2578784 reads; of these:
+  2578784 (100.00%) were unpaired; of these:
+    1968989 (76.35%) aligned 0 times
+    570537 (22.12%) aligned exactly 1 time
+    39258 (1.52%) aligned >1 times
+23.65% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3858701 reads; of these:
+  3858701 (100.00%) were unpaired; of these:
+    2763556 (71.62%) aligned 0 times
+    1028423 (26.65%) aligned exactly 1 time
+    66722 (1.73%) aligned >1 times
+28.38% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3821830 reads; of these:
+  3821830 (100.00%) were unpaired; of these:
+    2750099 (71.96%) aligned 0 times
+    1005888 (26.32%) aligned exactly 1 time
+    65843 (1.72%) aligned >1 times
+28.04% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3717822 reads; of these:
+  3717822 (100.00%) were unpaired; of these:
+    2602695 (70.01%) aligned 0 times
+    1048617 (28.21%) aligned exactly 1 time
+    66510 (1.79%) aligned >1 times
+29.99% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3684139 reads; of these:
+  3684139 (100.00%) were unpaired; of these:
+    2592168 (70.36%) aligned 0 times
+    1025660 (27.84%) aligned exactly 1 time
+    66311 (1.80%) aligned >1 times
+29.64% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3204693 reads; of these:
+  3204693 (100.00%) were unpaired; of these:
+    2203014 (68.74%) aligned 0 times
+    936655 (29.23%) aligned exactly 1 time
+    65024 (2.03%) aligned >1 times
+31.26% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3161019 reads; of these:
+  3161019 (100.00%) were unpaired; of these:
+    2182098 (69.03%) aligned 0 times
+    915008 (28.95%) aligned exactly 1 time
+    63913 (2.02%) aligned >1 times
+30.97% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2624448 reads; of these:
+  2624448 (100.00%) were unpaired; of these:
+    1840680 (70.14%) aligned 0 times
+    736676 (28.07%) aligned exactly 1 time
+    47092 (1.79%) aligned >1 times
+29.86% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2594505 reads; of these:
+  2594505 (100.00%) were unpaired; of these:
+    1830416 (70.55%) aligned 0 times
+    717656 (27.66%) aligned exactly 1 time
+    46433 (1.79%) aligned >1 times
+29.45% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2957990 reads; of these:
+  2957990 (100.00%) were unpaired; of these:
+    2184657 (73.86%) aligned 0 times
+    723497 (24.46%) aligned exactly 1 time
+    49836 (1.68%) aligned >1 times
+26.14% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2932435 reads; of these:
+  2932435 (100.00%) were unpaired; of these:
+    2176621 (74.23%) aligned 0 times
+    706906 (24.11%) aligned exactly 1 time
+    48908 (1.67%) aligned >1 times
+25.77% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2310724 reads; of these:
+  2310724 (100.00%) were unpaired; of these:
+    1657102 (71.71%) aligned 0 times
+    607522 (26.29%) aligned exactly 1 time
+    46100 (2.00%) aligned >1 times
+28.29% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2279913 reads; of these:
+  2279913 (100.00%) were unpaired; of these:
+    1643745 (72.10%) aligned 0 times
+    590250 (25.89%) aligned exactly 1 time
+    45918 (2.01%) aligned >1 times
+27.90% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3319395 reads; of these:
+  3319395 (100.00%) were unpaired; of these:
+    2356003 (70.98%) aligned 0 times
+    905855 (27.29%) aligned exactly 1 time
+    57537 (1.73%) aligned >1 times
+29.02% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3291852 reads; of these:
+  3291852 (100.00%) were unpaired; of these:
+    2347544 (71.31%) aligned 0 times
+    887588 (26.96%) aligned exactly 1 time
+    56720 (1.72%) aligned >1 times
+28.69% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2007648 reads; of these:
+  2007648 (100.00%) were unpaired; of these:
+    1377849 (68.63%) aligned 0 times
+    586037 (29.19%) aligned exactly 1 time
+    43762 (2.18%) aligned >1 times
+31.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+1981783 reads; of these:
+  1981783 (100.00%) were unpaired; of these:
+    1366880 (68.97%) aligned 0 times
+    572104 (28.87%) aligned exactly 1 time
+    42799 (2.16%) aligned >1 times
+31.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2563051 reads; of these:
+  2563051 (100.00%) were unpaired; of these:
+    1771239 (69.11%) aligned 0 times
+    735710 (28.70%) aligned exactly 1 time
+    56102 (2.19%) aligned >1 times
+30.89% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2540495 reads; of these:
+  2540495 (100.00%) were unpaired; of these:
+    1763712 (69.42%) aligned 0 times
+    721181 (28.39%) aligned exactly 1 time
+    55602 (2.19%) aligned >1 times
+30.58% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2487083 reads; of these:
+  2487083 (100.00%) were unpaired; of these:
+    1703624 (68.50%) aligned 0 times
+    734500 (29.53%) aligned exactly 1 time
+    48959 (1.97%) aligned >1 times
+31.50% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2452426 reads; of these:
+  2452426 (100.00%) were unpaired; of these:
+    1686692 (68.78%) aligned 0 times
+    717647 (29.26%) aligned exactly 1 time
+    48087 (1.96%) aligned >1 times
+31.22% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3465335 reads; of these:
+  3465335 (100.00%) were unpaired; of these:
+    2550526 (73.60%) aligned 0 times
+    852499 (24.60%) aligned exactly 1 time
+    62310 (1.80%) aligned >1 times
+26.40% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3425774 reads; of these:
+  3425774 (100.00%) were unpaired; of these:
+    2526844 (73.76%) aligned 0 times
+    837930 (24.46%) aligned exactly 1 time
+    61000 (1.78%) aligned >1 times
+26.24% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2357930 reads; of these:
+  2357930 (100.00%) were unpaired; of these:
+    1639111 (69.51%) aligned 0 times
+    675197 (28.64%) aligned exactly 1 time
+    43622 (1.85%) aligned >1 times
+30.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2339433 reads; of these:
+  2339433 (100.00%) were unpaired; of these:
+    1634355 (69.86%) aligned 0 times
+    662496 (28.32%) aligned exactly 1 time
+    42582 (1.82%) aligned >1 times
+30.14% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2085729 reads; of these:
+  2085729 (100.00%) were unpaired; of these:
+    1496074 (71.73%) aligned 0 times
+    553764 (26.55%) aligned exactly 1 time
+    35891 (1.72%) aligned >1 times
+28.27% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2071448 reads; of these:
+  2071448 (100.00%) were unpaired; of these:
+    1495102 (72.18%) aligned 0 times
+    540964 (26.12%) aligned exactly 1 time
+    35382 (1.71%) aligned >1 times
+27.82% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2146317 reads; of these:
+  2146317 (100.00%) were unpaired; of these:
+    1487972 (69.33%) aligned 0 times
+    617127 (28.75%) aligned exactly 1 time
+    41218 (1.92%) aligned >1 times
+30.67% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2129961 reads; of these:
+  2129961 (100.00%) were unpaired; of these:
+    1485247 (69.73%) aligned 0 times
+    603692 (28.34%) aligned exactly 1 time
+    41022 (1.93%) aligned >1 times
+30.27% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2670686 reads; of these:
+  2670686 (100.00%) were unpaired; of these:
+    1844332 (69.06%) aligned 0 times
+    777981 (29.13%) aligned exactly 1 time
+    48373 (1.81%) aligned >1 times
+30.94% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2641251 reads; of these:
+  2641251 (100.00%) were unpaired; of these:
+    1833868 (69.43%) aligned 0 times
+    759992 (28.77%) aligned exactly 1 time
+    47391 (1.79%) aligned >1 times
+30.57% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2129641 reads; of these:
+  2129641 (100.00%) were unpaired; of these:
+    1514356 (71.11%) aligned 0 times
+    576129 (27.05%) aligned exactly 1 time
+    39156 (1.84%) aligned >1 times
+28.89% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2108074 reads; of these:
+  2108074 (100.00%) were unpaired; of these:
+    1507403 (71.51%) aligned 0 times
+    562022 (26.66%) aligned exactly 1 time
+    38649 (1.83%) aligned >1 times
+28.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3040937 reads; of these:
+  3040937 (100.00%) were unpaired; of these:
+    2038917 (67.05%) aligned 0 times
+    944864 (31.07%) aligned exactly 1 time
+    57156 (1.88%) aligned >1 times
+32.95% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3013775 reads; of these:
+  3013775 (100.00%) were unpaired; of these:
+    2031006 (67.39%) aligned 0 times
+    926404 (30.74%) aligned exactly 1 time
+    56365 (1.87%) aligned >1 times
+32.61% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2670741 reads; of these:
+  2670741 (100.00%) were unpaired; of these:
+    1976116 (73.99%) aligned 0 times
+    645205 (24.16%) aligned exactly 1 time
+    49420 (1.85%) aligned >1 times
+26.01% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2641978 reads; of these:
+  2641978 (100.00%) were unpaired; of these:
+    1960271 (74.20%) aligned 0 times
+    633004 (23.96%) aligned exactly 1 time
+    48703 (1.84%) aligned >1 times
+25.80% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2580253 reads; of these:
+  2580253 (100.00%) were unpaired; of these:
+    1808526 (70.09%) aligned 0 times
+    722905 (28.02%) aligned exactly 1 time
+    48822 (1.89%) aligned >1 times
+29.91% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2554697 reads; of these:
+  2554697 (100.00%) were unpaired; of these:
+    1799048 (70.42%) aligned 0 times
+    707099 (27.68%) aligned exactly 1 time
+    48550 (1.90%) aligned >1 times
+29.58% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+1978733 reads; of these:
+  1978733 (100.00%) were unpaired; of these:
+    1319217 (66.67%) aligned 0 times
+    614685 (31.06%) aligned exactly 1 time
+    44831 (2.27%) aligned >1 times
+33.33% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+1933442 reads; of these:
+  1933442 (100.00%) were unpaired; of these:
+    1292228 (66.84%) aligned 0 times
+    597201 (30.89%) aligned exactly 1 time
+    44013 (2.28%) aligned >1 times
+33.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2267143 reads; of these:
+  2267143 (100.00%) were unpaired; of these:
+    1571402 (69.31%) aligned 0 times
+    654459 (28.87%) aligned exactly 1 time
+    41282 (1.82%) aligned >1 times
+30.69% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2247505 reads; of these:
+  2247505 (100.00%) were unpaired; of these:
+    1566118 (69.68%) aligned 0 times
+    640902 (28.52%) aligned exactly 1 time
+    40485 (1.80%) aligned >1 times
+30.32% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3311345 reads; of these:
+  3311345 (100.00%) were unpaired; of these:
+    2447559 (73.91%) aligned 0 times
+    803048 (24.25%) aligned exactly 1 time
+    60738 (1.83%) aligned >1 times
+26.09% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3292840 reads; of these:
+  3292840 (100.00%) were unpaired; of these:
+    2448833 (74.37%) aligned 0 times
+    784088 (23.81%) aligned exactly 1 time
+    59919 (1.82%) aligned >1 times
+25.63% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3037801 reads; of these:
+  3037801 (100.00%) were unpaired; of these:
+    2120642 (69.81%) aligned 0 times
+    853416 (28.09%) aligned exactly 1 time
+    63743 (2.10%) aligned >1 times
+30.19% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3016128 reads; of these:
+  3016128 (100.00%) were unpaired; of these:
+    2118329 (70.23%) aligned 0 times
+    834393 (27.66%) aligned exactly 1 time
+    63406 (2.10%) aligned >1 times
+29.77% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2936156 reads; of these:
+  2936156 (100.00%) were unpaired; of these:
+    2047694 (69.74%) aligned 0 times
+    828576 (28.22%) aligned exactly 1 time
+    59886 (2.04%) aligned >1 times
+30.26% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2922436 reads; of these:
+  2922436 (100.00%) were unpaired; of these:
+    2048897 (70.11%) aligned 0 times
+    814267 (27.86%) aligned exactly 1 time
+    59272 (2.03%) aligned >1 times
+29.89% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3573689 reads; of these:
+  3573689 (100.00%) were unpaired; of these:
+    2607670 (72.97%) aligned 0 times
+    905344 (25.33%) aligned exactly 1 time
+    60675 (1.70%) aligned >1 times
+27.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3557780 reads; of these:
+  3557780 (100.00%) were unpaired; of these:
+    2611306 (73.40%) aligned 0 times
+    886531 (24.92%) aligned exactly 1 time
+    59943 (1.68%) aligned >1 times
+26.60% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3465404 reads; of these:
+  3465404 (100.00%) were unpaired; of these:
+    2613310 (75.41%) aligned 0 times
+    801798 (23.14%) aligned exactly 1 time
+    50296 (1.45%) aligned >1 times
+24.59% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3450027 reads; of these:
+  3450027 (100.00%) were unpaired; of these:
+    2614210 (75.77%) aligned 0 times
+    786241 (22.79%) aligned exactly 1 time
+    49576 (1.44%) aligned >1 times
+24.23% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2900738 reads; of these:
+  2900738 (100.00%) were unpaired; of these:
+    2107644 (72.66%) aligned 0 times
+    743862 (25.64%) aligned exactly 1 time
+    49232 (1.70%) aligned >1 times
+27.34% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2887872 reads; of these:
+  2887872 (100.00%) were unpaired; of these:
+    2109753 (73.06%) aligned 0 times
+    729421 (25.26%) aligned exactly 1 time
+    48698 (1.69%) aligned >1 times
+26.94% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2932477 reads; of these:
+  2932477 (100.00%) were unpaired; of these:
+    2180824 (74.37%) aligned 0 times
+    700750 (23.90%) aligned exactly 1 time
+    50903 (1.74%) aligned >1 times
+25.63% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2921849 reads; of these:
+  2921849 (100.00%) were unpaired; of these:
+    2182238 (74.69%) aligned 0 times
+    689755 (23.61%) aligned exactly 1 time
+    49856 (1.71%) aligned >1 times
+25.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2727915 reads; of these:
+  2727915 (100.00%) were unpaired; of these:
+    1972256 (72.30%) aligned 0 times
+    709976 (26.03%) aligned exactly 1 time
+    45683 (1.67%) aligned >1 times
+27.70% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2710636 reads; of these:
+  2710636 (100.00%) were unpaired; of these:
+    1969793 (72.67%) aligned 0 times
+    695337 (25.65%) aligned exactly 1 time
+    45506 (1.68%) aligned >1 times
+27.33% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2078079 reads; of these:
+  2078079 (100.00%) were unpaired; of these:
+    1590654 (76.54%) aligned 0 times
+    454612 (21.88%) aligned exactly 1 time
+    32813 (1.58%) aligned >1 times
+23.46% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2056263 reads; of these:
+  2056263 (100.00%) were unpaired; of these:
+    1578930 (76.79%) aligned 0 times
+    445112 (21.65%) aligned exactly 1 time
+    32221 (1.57%) aligned >1 times
+23.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2120767 reads; of these:
+  2120767 (100.00%) were unpaired; of these:
+    1504942 (70.96%) aligned 0 times
+    570881 (26.92%) aligned exactly 1 time
+    44944 (2.12%) aligned >1 times
+29.04% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2101955 reads; of these:
+  2101955 (100.00%) were unpaired; of these:
+    1499701 (71.35%) aligned 0 times
+    558380 (26.56%) aligned exactly 1 time
+    43874 (2.09%) aligned >1 times
+28.65% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2702730 reads; of these:
+  2702730 (100.00%) were unpaired; of these:
+    1943331 (71.90%) aligned 0 times
+    708580 (26.22%) aligned exactly 1 time
+    50819 (1.88%) aligned >1 times
+28.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2674665 reads; of these:
+  2674665 (100.00%) were unpaired; of these:
+    1929220 (72.13%) aligned 0 times
+    695398 (26.00%) aligned exactly 1 time
+    50047 (1.87%) aligned >1 times
+27.87% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3730202 reads; of these:
+  3730202 (100.00%) were unpaired; of these:
+    2572600 (68.97%) aligned 0 times
+    1084490 (29.07%) aligned exactly 1 time
+    73112 (1.96%) aligned >1 times
+31.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3696243 reads; of these:
+  3696243 (100.00%) were unpaired; of these:
+    2563662 (69.36%) aligned 0 times
+    1060770 (28.70%) aligned exactly 1 time
+    71811 (1.94%) aligned >1 times
+30.64% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2773313 reads; of these:
+  2773313 (100.00%) were unpaired; of these:
+    2054137 (74.07%) aligned 0 times
+    670129 (24.16%) aligned exactly 1 time
+    49047 (1.77%) aligned >1 times
+25.93% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2771675 reads; of these:
+  2771675 (100.00%) were unpaired; of these:
+    2065442 (74.52%) aligned 0 times
+    657186 (23.71%) aligned exactly 1 time
+    49047 (1.77%) aligned >1 times
+25.48% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3046876 reads; of these:
+  3046876 (100.00%) were unpaired; of these:
+    2179621 (71.54%) aligned 0 times
+    806706 (26.48%) aligned exactly 1 time
+    60549 (1.99%) aligned >1 times
+28.46% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3027592 reads; of these:
+  3027592 (100.00%) were unpaired; of these:
+    2180862 (72.03%) aligned 0 times
+    786853 (25.99%) aligned exactly 1 time
+    59877 (1.98%) aligned >1 times
+27.97% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2430906 reads; of these:
+  2430906 (100.00%) were unpaired; of these:
+    1743487 (71.72%) aligned 0 times
+    638965 (26.29%) aligned exactly 1 time
+    48454 (1.99%) aligned >1 times
+28.28% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2400040 reads; of these:
+  2400040 (100.00%) were unpaired; of these:
+    1729403 (72.06%) aligned 0 times
+    622609 (25.94%) aligned exactly 1 time
+    48028 (2.00%) aligned >1 times
+27.94% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2624333 reads; of these:
+  2624333 (100.00%) were unpaired; of these:
+    1876848 (71.52%) aligned 0 times
+    699120 (26.64%) aligned exactly 1 time
+    48365 (1.84%) aligned >1 times
+28.48% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2610600 reads; of these:
+  2610600 (100.00%) were unpaired; of these:
+    1877066 (71.90%) aligned 0 times
+    684929 (26.24%) aligned exactly 1 time
+    48605 (1.86%) aligned >1 times
+28.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3222016 reads; of these:
+  3222016 (100.00%) were unpaired; of these:
+    2567784 (79.69%) aligned 0 times
+    612087 (19.00%) aligned exactly 1 time
+    42145 (1.31%) aligned >1 times
+20.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3169328 reads; of these:
+  3169328 (100.00%) were unpaired; of these:
+    2529727 (79.82%) aligned 0 times
+    598150 (18.87%) aligned exactly 1 time
+    41451 (1.31%) aligned >1 times
+20.18% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3358653 reads; of these:
+  3358653 (100.00%) were unpaired; of these:
+    2397100 (71.37%) aligned 0 times
+    899148 (26.77%) aligned exactly 1 time
+    62405 (1.86%) aligned >1 times
+28.63% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3343846 reads; of these:
+  3343846 (100.00%) were unpaired; of these:
+    2397410 (71.70%) aligned 0 times
+    884305 (26.45%) aligned exactly 1 time
+    62131 (1.86%) aligned >1 times
+28.30% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2959695 reads; of these:
+  2959695 (100.00%) were unpaired; of these:
+    2229469 (75.33%) aligned 0 times
+    683556 (23.10%) aligned exactly 1 time
+    46670 (1.58%) aligned >1 times
+24.67% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2922234 reads; of these:
+  2922234 (100.00%) were unpaired; of these:
+    2207931 (75.56%) aligned 0 times
+    668249 (22.87%) aligned exactly 1 time
+    46054 (1.58%) aligned >1 times
+24.44% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2946942 reads; of these:
+  2946942 (100.00%) were unpaired; of these:
+    2174051 (73.77%) aligned 0 times
+    727591 (24.69%) aligned exactly 1 time
+    45300 (1.54%) aligned >1 times
+26.23% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2938612 reads; of these:
+  2938612 (100.00%) were unpaired; of these:
+    2177794 (74.11%) aligned 0 times
+    715588 (24.35%) aligned exactly 1 time
+    45230 (1.54%) aligned >1 times
+25.89% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2634086 reads; of these:
+  2634086 (100.00%) were unpaired; of these:
+    1850960 (70.27%) aligned 0 times
+    737582 (28.00%) aligned exactly 1 time
+    45544 (1.73%) aligned >1 times
+29.73% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2611255 reads; of these:
+  2611255 (100.00%) were unpaired; of these:
+    1845981 (70.69%) aligned 0 times
+    720754 (27.60%) aligned exactly 1 time
+    44520 (1.70%) aligned >1 times
+29.31% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2903762 reads; of these:
+  2903762 (100.00%) were unpaired; of these:
+    2139634 (73.68%) aligned 0 times
+    712649 (24.54%) aligned exactly 1 time
+    51479 (1.77%) aligned >1 times
+26.32% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2883096 reads; of these:
+  2883096 (100.00%) were unpaired; of these:
+    2135890 (74.08%) aligned 0 times
+    696924 (24.17%) aligned exactly 1 time
+    50282 (1.74%) aligned >1 times
+25.92% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2245113 reads; of these:
+  2245113 (100.00%) were unpaired; of these:
+    1652977 (73.63%) aligned 0 times
+    553227 (24.64%) aligned exactly 1 time
+    38909 (1.73%) aligned >1 times
+26.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2234145 reads; of these:
+  2234145 (100.00%) were unpaired; of these:
+    1653306 (74.00%) aligned 0 times
+    542092 (24.26%) aligned exactly 1 time
+    38747 (1.73%) aligned >1 times
+26.00% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2287521 reads; of these:
+  2287521 (100.00%) were unpaired; of these:
+    1574624 (68.84%) aligned 0 times
+    668719 (29.23%) aligned exactly 1 time
+    44178 (1.93%) aligned >1 times
+31.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2261797 reads; of these:
+  2261797 (100.00%) were unpaired; of these:
+    1563167 (69.11%) aligned 0 times
+    654719 (28.95%) aligned exactly 1 time
+    43911 (1.94%) aligned >1 times
+30.89% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3671221 reads; of these:
+  3671221 (100.00%) were unpaired; of these:
+    2523889 (68.75%) aligned 0 times
+    1076865 (29.33%) aligned exactly 1 time
+    70467 (1.92%) aligned >1 times
+31.25% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3629058 reads; of these:
+  3629058 (100.00%) were unpaired; of these:
+    2508628 (69.13%) aligned 0 times
+    1051476 (28.97%) aligned exactly 1 time
+    68954 (1.90%) aligned >1 times
+30.87% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3521206 reads; of these:
+  3521206 (100.00%) were unpaired; of these:
+    2563053 (72.79%) aligned 0 times
+    896472 (25.46%) aligned exactly 1 time
+    61681 (1.75%) aligned >1 times
+27.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3510285 reads; of these:
+  3510285 (100.00%) were unpaired; of these:
+    2570867 (73.24%) aligned 0 times
+    877956 (25.01%) aligned exactly 1 time
+    61462 (1.75%) aligned >1 times
+26.76% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2869319 reads; of these:
+  2869319 (100.00%) were unpaired; of these:
+    2141362 (74.63%) aligned 0 times
+    676322 (23.57%) aligned exactly 1 time
+    51635 (1.80%) aligned >1 times
+25.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2854548 reads; of these:
+  2854548 (100.00%) were unpaired; of these:
+    2145281 (75.15%) aligned 0 times
+    658413 (23.07%) aligned exactly 1 time
+    50854 (1.78%) aligned >1 times
+24.85% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2709890 reads; of these:
+  2709890 (100.00%) were unpaired; of these:
+    2026691 (74.79%) aligned 0 times
+    634218 (23.40%) aligned exactly 1 time
+    48981 (1.81%) aligned >1 times
+25.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2694767 reads; of these:
+  2694767 (100.00%) were unpaired; of these:
+    2026851 (75.21%) aligned 0 times
+    619011 (22.97%) aligned exactly 1 time
+    48905 (1.81%) aligned >1 times
+24.79% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3093600 reads; of these:
+  3093600 (100.00%) were unpaired; of these:
+    2357166 (76.19%) aligned 0 times
+    687742 (22.23%) aligned exactly 1 time
+    48692 (1.57%) aligned >1 times
+23.81% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3067881 reads; of these:
+  3067881 (100.00%) were unpaired; of these:
+    2344439 (76.42%) aligned 0 times
+    674835 (22.00%) aligned exactly 1 time
+    48607 (1.58%) aligned >1 times
+23.58% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2838147 reads; of these:
+  2838147 (100.00%) were unpaired; of these:
+    2071174 (72.98%) aligned 0 times
+    714222 (25.17%) aligned exactly 1 time
+    52751 (1.86%) aligned >1 times
+27.02% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2830501 reads; of these:
+  2830501 (100.00%) were unpaired; of these:
+    2075727 (73.33%) aligned 0 times
+    702448 (24.82%) aligned exactly 1 time
+    52326 (1.85%) aligned >1 times
+26.67% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3868097 reads; of these:
+  3868097 (100.00%) were unpaired; of these:
+    2793291 (72.21%) aligned 0 times
+    1011165 (26.14%) aligned exactly 1 time
+    63641 (1.65%) aligned >1 times
+27.79% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3848571 reads; of these:
+  3848571 (100.00%) were unpaired; of these:
+    2795360 (72.63%) aligned 0 times
+    990289 (25.73%) aligned exactly 1 time
+    62922 (1.63%) aligned >1 times
+27.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2837184 reads; of these:
+  2837184 (100.00%) were unpaired; of these:
+    1999884 (70.49%) aligned 0 times
+    783383 (27.61%) aligned exactly 1 time
+    53917 (1.90%) aligned >1 times
+29.51% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2820015 reads; of these:
+  2820015 (100.00%) were unpaired; of these:
+    1999261 (70.90%) aligned 0 times
+    767460 (27.21%) aligned exactly 1 time
+    53294 (1.89%) aligned >1 times
+29.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3233849 reads; of these:
+  3233849 (100.00%) were unpaired; of these:
+    2352742 (72.75%) aligned 0 times
+    825069 (25.51%) aligned exactly 1 time
+    56038 (1.73%) aligned >1 times
+27.25% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3224009 reads; of these:
+  3224009 (100.00%) were unpaired; of these:
+    2358292 (73.15%) aligned 0 times
+    810002 (25.12%) aligned exactly 1 time
+    55715 (1.73%) aligned >1 times
+26.85% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3481805 reads; of these:
+  3481805 (100.00%) were unpaired; of these:
+    2533295 (72.76%) aligned 0 times
+    889645 (25.55%) aligned exactly 1 time
+    58865 (1.69%) aligned >1 times
+27.24% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3467476 reads; of these:
+  3467476 (100.00%) were unpaired; of these:
+    2536384 (73.15%) aligned 0 times
+    873024 (25.18%) aligned exactly 1 time
+    58068 (1.67%) aligned >1 times
+26.85% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2764925 reads; of these:
+  2764925 (100.00%) were unpaired; of these:
+    2004668 (72.50%) aligned 0 times
+    706266 (25.54%) aligned exactly 1 time
+    53991 (1.95%) aligned >1 times
+27.50% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2749606 reads; of these:
+  2749606 (100.00%) were unpaired; of these:
+    2004072 (72.89%) aligned 0 times
+    692600 (25.19%) aligned exactly 1 time
+    52934 (1.93%) aligned >1 times
+27.11% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2969271 reads; of these:
+  2969271 (100.00%) were unpaired; of these:
+    2113563 (71.18%) aligned 0 times
+    799828 (26.94%) aligned exactly 1 time
+    55880 (1.88%) aligned >1 times
+28.82% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2945731 reads; of these:
+  2945731 (100.00%) were unpaired; of these:
+    2109915 (71.63%) aligned 0 times
+    780229 (26.49%) aligned exactly 1 time
+    55587 (1.89%) aligned >1 times
+28.37% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2488703 reads; of these:
+  2488703 (100.00%) were unpaired; of these:
+    1796329 (72.18%) aligned 0 times
+    648422 (26.05%) aligned exactly 1 time
+    43952 (1.77%) aligned >1 times
+27.82% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2464415 reads; of these:
+  2464415 (100.00%) were unpaired; of these:
+    1790391 (72.65%) aligned 0 times
+    630578 (25.59%) aligned exactly 1 time
+    43446 (1.76%) aligned >1 times
+27.35% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3447963 reads; of these:
+  3447963 (100.00%) were unpaired; of these:
+    2521587 (73.13%) aligned 0 times
+    871346 (25.27%) aligned exactly 1 time
+    55030 (1.60%) aligned >1 times
+26.87% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3414247 reads; of these:
+  3414247 (100.00%) were unpaired; of these:
+    2509969 (73.51%) aligned 0 times
+    850277 (24.90%) aligned exactly 1 time
+    54001 (1.58%) aligned >1 times
+26.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3926418 reads; of these:
+  3926418 (100.00%) were unpaired; of these:
+    2848029 (72.54%) aligned 0 times
+    1010144 (25.73%) aligned exactly 1 time
+    68245 (1.74%) aligned >1 times
+27.46% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3902755 reads; of these:
+  3902755 (100.00%) were unpaired; of these:
+    2846607 (72.94%) aligned 0 times
+    989173 (25.35%) aligned exactly 1 time
+    66975 (1.72%) aligned >1 times
+27.06% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2721061 reads; of these:
+  2721061 (100.00%) were unpaired; of these:
+    1946455 (71.53%) aligned 0 times
+    726573 (26.70%) aligned exactly 1 time
+    48033 (1.77%) aligned >1 times
+28.47% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2709885 reads; of these:
+  2709885 (100.00%) were unpaired; of these:
+    1947477 (71.87%) aligned 0 times
+    714329 (26.36%) aligned exactly 1 time
+    48079 (1.77%) aligned >1 times
+28.13% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2760892 reads; of these:
+  2760892 (100.00%) were unpaired; of these:
+    1976177 (71.58%) aligned 0 times
+    729094 (26.41%) aligned exactly 1 time
+    55621 (2.01%) aligned >1 times
+28.42% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2740742 reads; of these:
+  2740742 (100.00%) were unpaired; of these:
+    1974702 (72.05%) aligned 0 times
+    710515 (25.92%) aligned exactly 1 time
+    55525 (2.03%) aligned >1 times
+27.95% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2667672 reads; of these:
+  2667672 (100.00%) were unpaired; of these:
+    2292274 (85.93%) aligned 0 times
+    344549 (12.92%) aligned exactly 1 time
+    30849 (1.16%) aligned >1 times
+14.07% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2652471 reads; of these:
+  2652471 (100.00%) were unpaired; of these:
+    2282634 (86.06%) aligned 0 times
+    338327 (12.76%) aligned exactly 1 time
+    31510 (1.19%) aligned >1 times
+13.94% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2928861 reads; of these:
+  2928861 (100.00%) were unpaired; of these:
+    2172147 (74.16%) aligned 0 times
+    704247 (24.05%) aligned exactly 1 time
+    52467 (1.79%) aligned >1 times
+25.84% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2911139 reads; of these:
+  2911139 (100.00%) were unpaired; of these:
+    2166716 (74.43%) aligned 0 times
+    691834 (23.77%) aligned exactly 1 time
+    52589 (1.81%) aligned >1 times
+25.57% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3817303 reads; of these:
+  3817303 (100.00%) were unpaired; of these:
+    2767255 (72.49%) aligned 0 times
+    975894 (25.57%) aligned exactly 1 time
+    74154 (1.94%) aligned >1 times
+27.51% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3768889 reads; of these:
+  3768889 (100.00%) were unpaired; of these:
+    2746057 (72.86%) aligned 0 times
+    950074 (25.21%) aligned exactly 1 time
+    72758 (1.93%) aligned >1 times
+27.14% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2970923 reads; of these:
+  2970923 (100.00%) were unpaired; of these:
+    2266510 (76.29%) aligned 0 times
+    658746 (22.17%) aligned exactly 1 time
+    45667 (1.54%) aligned >1 times
+23.71% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2952869 reads; of these:
+  2952869 (100.00%) were unpaired; of these:
+    2262146 (76.61%) aligned 0 times
+    645826 (21.87%) aligned exactly 1 time
+    44897 (1.52%) aligned >1 times
+23.39% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3544733 reads; of these:
+  3544733 (100.00%) were unpaired; of these:
+    2517250 (71.01%) aligned 0 times
+    947585 (26.73%) aligned exactly 1 time
+    79898 (2.25%) aligned >1 times
+28.99% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3484250 reads; of these:
+  3484250 (100.00%) were unpaired; of these:
+    2476868 (71.09%) aligned 0 times
+    929398 (26.67%) aligned exactly 1 time
+    77984 (2.24%) aligned >1 times
+28.91% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3572270 reads; of these:
+  3572270 (100.00%) were unpaired; of these:
+    2578397 (72.18%) aligned 0 times
+    931008 (26.06%) aligned exactly 1 time
+    62865 (1.76%) aligned >1 times
+27.82% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3540379 reads; of these:
+  3540379 (100.00%) were unpaired; of these:
+    2569320 (72.57%) aligned 0 times
+    909102 (25.68%) aligned exactly 1 time
+    61957 (1.75%) aligned >1 times
+27.43% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3347314 reads; of these:
+  3347314 (100.00%) were unpaired; of these:
+    2506987 (74.90%) aligned 0 times
+    784453 (23.44%) aligned exactly 1 time
+    55874 (1.67%) aligned >1 times
+25.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3325139 reads; of these:
+  3325139 (100.00%) were unpaired; of these:
+    2501337 (75.23%) aligned 0 times
+    768013 (23.10%) aligned exactly 1 time
+    55789 (1.68%) aligned >1 times
+24.77% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2689117 reads; of these:
+  2689117 (100.00%) were unpaired; of these:
+    1962068 (72.96%) aligned 0 times
+    675944 (25.14%) aligned exactly 1 time
+    51105 (1.90%) aligned >1 times
+27.04% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2675465 reads; of these:
+  2675465 (100.00%) were unpaired; of these:
+    1964959 (73.44%) aligned 0 times
+    660031 (24.67%) aligned exactly 1 time
+    50475 (1.89%) aligned >1 times
+26.56% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2264035 reads; of these:
+  2264035 (100.00%) were unpaired; of these:
+    1761477 (77.80%) aligned 0 times
+    466830 (20.62%) aligned exactly 1 time
+    35728 (1.58%) aligned >1 times
+22.20% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2245906 reads; of these:
+  2245906 (100.00%) were unpaired; of these:
+    1756314 (78.20%) aligned 0 times
+    453915 (20.21%) aligned exactly 1 time
+    35677 (1.59%) aligned >1 times
+21.80% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3427392 reads; of these:
+  3427392 (100.00%) were unpaired; of these:
+    2531136 (73.85%) aligned 0 times
+    841023 (24.54%) aligned exactly 1 time
+    55233 (1.61%) aligned >1 times
+26.15% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3396715 reads; of these:
+  3396715 (100.00%) were unpaired; of these:
+    2520908 (74.22%) aligned 0 times
+    820831 (24.17%) aligned exactly 1 time
+    54976 (1.62%) aligned >1 times
+25.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2759406 reads; of these:
+  2759406 (100.00%) were unpaired; of these:
+    1969192 (71.36%) aligned 0 times
+    739589 (26.80%) aligned exactly 1 time
+    50625 (1.83%) aligned >1 times
+28.64% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2736138 reads; of these:
+  2736138 (100.00%) were unpaired; of these:
+    1964317 (71.79%) aligned 0 times
+    721407 (26.37%) aligned exactly 1 time
+    50414 (1.84%) aligned >1 times
+28.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3436489 reads; of these:
+  3436489 (100.00%) were unpaired; of these:
+    2480209 (72.17%) aligned 0 times
+    888590 (25.86%) aligned exactly 1 time
+    67690 (1.97%) aligned >1 times
+27.83% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3426886 reads; of these:
+  3426886 (100.00%) were unpaired; of these:
+    2488666 (72.62%) aligned 0 times
+    871205 (25.42%) aligned exactly 1 time
+    67015 (1.96%) aligned >1 times
+27.38% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3306393 reads; of these:
+  3306393 (100.00%) were unpaired; of these:
+    2442005 (73.86%) aligned 0 times
+    801904 (24.25%) aligned exactly 1 time
+    62484 (1.89%) aligned >1 times
+26.14% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3296605 reads; of these:
+  3296605 (100.00%) were unpaired; of these:
+    2446680 (74.22%) aligned 0 times
+    787208 (23.88%) aligned exactly 1 time
+    62717 (1.90%) aligned >1 times
+25.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3755076 reads; of these:
+  3755076 (100.00%) were unpaired; of these:
+    2693781 (71.74%) aligned 0 times
+    987073 (26.29%) aligned exactly 1 time
+    74222 (1.98%) aligned >1 times
+28.26% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3738983 reads; of these:
+  3738983 (100.00%) were unpaired; of these:
+    2698616 (72.18%) aligned 0 times
+    965746 (25.83%) aligned exactly 1 time
+    74621 (2.00%) aligned >1 times
+27.82% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2919456 reads; of these:
+  2919456 (100.00%) were unpaired; of these:
+    2020303 (69.20%) aligned 0 times
+    835556 (28.62%) aligned exactly 1 time
+    63597 (2.18%) aligned >1 times
+30.80% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2905122 reads; of these:
+  2905122 (100.00%) were unpaired; of these:
+    2020662 (69.56%) aligned 0 times
+    821701 (28.28%) aligned exactly 1 time
+    62759 (2.16%) aligned >1 times
+30.44% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3497949 reads; of these:
+  3497949 (100.00%) were unpaired; of these:
+    2503862 (71.58%) aligned 0 times
+    932524 (26.66%) aligned exactly 1 time
+    61563 (1.76%) aligned >1 times
+28.42% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3483901 reads; of these:
+  3483901 (100.00%) were unpaired; of these:
+    2507399 (71.97%) aligned 0 times
+    915399 (26.28%) aligned exactly 1 time
+    61103 (1.75%) aligned >1 times
+28.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2875071 reads; of these:
+  2875071 (100.00%) were unpaired; of these:
+    1971044 (68.56%) aligned 0 times
+    841523 (29.27%) aligned exactly 1 time
+    62504 (2.17%) aligned >1 times
+31.44% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2841749 reads; of these:
+  2841749 (100.00%) were unpaired; of these:
+    1959555 (68.96%) aligned 0 times
+    820950 (28.89%) aligned exactly 1 time
+    61244 (2.16%) aligned >1 times
+31.04% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3066355 reads; of these:
+  3066355 (100.00%) were unpaired; of these:
+    2346006 (76.51%) aligned 0 times
+    675710 (22.04%) aligned exactly 1 time
+    44639 (1.46%) aligned >1 times
+23.49% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3058703 reads; of these:
+  3058703 (100.00%) were unpaired; of these:
+    2349623 (76.82%) aligned 0 times
+    664281 (21.72%) aligned exactly 1 time
+    44799 (1.46%) aligned >1 times
+23.18% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3704190 reads; of these:
+  3704190 (100.00%) were unpaired; of these:
+    2667294 (72.01%) aligned 0 times
+    973579 (26.28%) aligned exactly 1 time
+    63317 (1.71%) aligned >1 times
+27.99% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3685724 reads; of these:
+  3685724 (100.00%) were unpaired; of these:
+    2670942 (72.47%) aligned 0 times
+    951570 (25.82%) aligned exactly 1 time
+    63212 (1.72%) aligned >1 times
+27.53% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3191189 reads; of these:
+  3191189 (100.00%) were unpaired; of these:
+    2347889 (73.57%) aligned 0 times
+    786410 (24.64%) aligned exactly 1 time
+    56890 (1.78%) aligned >1 times
+26.43% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3170865 reads; of these:
+  3170865 (100.00%) were unpaired; of these:
+    2342655 (73.88%) aligned 0 times
+    771743 (24.34%) aligned exactly 1 time
+    56467 (1.78%) aligned >1 times
+26.12% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2927335 reads; of these:
+  2927335 (100.00%) were unpaired; of these:
+    2181447 (74.52%) aligned 0 times
+    696463 (23.79%) aligned exactly 1 time
+    49425 (1.69%) aligned >1 times
+25.48% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2906506 reads; of these:
+  2906506 (100.00%) were unpaired; of these:
+    2175284 (74.84%) aligned 0 times
+    682875 (23.49%) aligned exactly 1 time
+    48347 (1.66%) aligned >1 times
+25.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2907190 reads; of these:
+  2907190 (100.00%) were unpaired; of these:
+    2086936 (71.79%) aligned 0 times
+    766218 (26.36%) aligned exactly 1 time
+    54036 (1.86%) aligned >1 times
+28.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2900913 reads; of these:
+  2900913 (100.00%) were unpaired; of these:
+    2094856 (72.21%) aligned 0 times
+    752438 (25.94%) aligned exactly 1 time
+    53619 (1.85%) aligned >1 times
+27.79% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2281546 reads; of these:
+  2281546 (100.00%) were unpaired; of these:
+    1634737 (71.65%) aligned 0 times
+    605101 (26.52%) aligned exactly 1 time
+    41708 (1.83%) aligned >1 times
+28.35% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2260577 reads; of these:
+  2260577 (100.00%) were unpaired; of these:
+    1628244 (72.03%) aligned 0 times
+    590899 (26.14%) aligned exactly 1 time
+    41434 (1.83%) aligned >1 times
+27.97% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2816468 reads; of these:
+  2816468 (100.00%) were unpaired; of these:
+    2043550 (72.56%) aligned 0 times
+    723816 (25.70%) aligned exactly 1 time
+    49102 (1.74%) aligned >1 times
+27.44% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2793290 reads; of these:
+  2793290 (100.00%) were unpaired; of these:
+    2037508 (72.94%) aligned 0 times
+    707224 (25.32%) aligned exactly 1 time
+    48558 (1.74%) aligned >1 times
+27.06% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2770171 reads; of these:
+  2770171 (100.00%) were unpaired; of these:
+    2004460 (72.36%) aligned 0 times
+    713094 (25.74%) aligned exactly 1 time
+    52617 (1.90%) aligned >1 times
+27.64% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2751083 reads; of these:
+  2751083 (100.00%) were unpaired; of these:
+    2002039 (72.77%) aligned 0 times
+    696861 (25.33%) aligned exactly 1 time
+    52183 (1.90%) aligned >1 times
+27.23% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2416315 reads; of these:
+  2416315 (100.00%) were unpaired; of these:
+    1787168 (73.96%) aligned 0 times
+    586699 (24.28%) aligned exactly 1 time
+    42448 (1.76%) aligned >1 times
+26.04% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2402413 reads; of these:
+  2402413 (100.00%) were unpaired; of these:
+    1787385 (74.40%) aligned 0 times
+    572710 (23.84%) aligned exactly 1 time
+    42318 (1.76%) aligned >1 times
+25.60% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2361644 reads; of these:
+  2361644 (100.00%) were unpaired; of these:
+    1694535 (71.75%) aligned 0 times
+    621746 (26.33%) aligned exactly 1 time
+    45363 (1.92%) aligned >1 times
+28.25% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2348101 reads; of these:
+  2348101 (100.00%) were unpaired; of these:
+    1695815 (72.22%) aligned 0 times
+    607182 (25.86%) aligned exactly 1 time
+    45104 (1.92%) aligned >1 times
+27.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2639119 reads; of these:
+  2639119 (100.00%) were unpaired; of these:
+    1925639 (72.97%) aligned 0 times
+    666261 (25.25%) aligned exactly 1 time
+    47219 (1.79%) aligned >1 times
+27.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2635336 reads; of these:
+  2635336 (100.00%) were unpaired; of these:
+    1935182 (73.43%) aligned 0 times
+    652912 (24.78%) aligned exactly 1 time
+    47242 (1.79%) aligned >1 times
+26.57% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2772265 reads; of these:
+  2772265 (100.00%) were unpaired; of these:
+    1991973 (71.85%) aligned 0 times
+    731060 (26.37%) aligned exactly 1 time
+    49232 (1.78%) aligned >1 times
+28.15% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2751677 reads; of these:
+  2751677 (100.00%) were unpaired; of these:
+    1987359 (72.22%) aligned 0 times
+    715629 (26.01%) aligned exactly 1 time
+    48689 (1.77%) aligned >1 times
+27.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2282433 reads; of these:
+  2282433 (100.00%) were unpaired; of these:
+    1624344 (71.17%) aligned 0 times
+    612229 (26.82%) aligned exactly 1 time
+    45860 (2.01%) aligned >1 times
+28.83% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2262907 reads; of these:
+  2262907 (100.00%) were unpaired; of these:
+    1621740 (71.67%) aligned 0 times
+    596164 (26.35%) aligned exactly 1 time
+    45003 (1.99%) aligned >1 times
+28.33% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2260494 reads; of these:
+  2260494 (100.00%) were unpaired; of these:
+    1578720 (69.84%) aligned 0 times
+    636450 (28.16%) aligned exactly 1 time
+    45324 (2.01%) aligned >1 times
+30.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2243002 reads; of these:
+  2243002 (100.00%) were unpaired; of these:
+    1574659 (70.20%) aligned 0 times
+    623398 (27.79%) aligned exactly 1 time
+    44945 (2.00%) aligned >1 times
+29.80% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3267309 reads; of these:
+  3267309 (100.00%) were unpaired; of these:
+    2432426 (74.45%) aligned 0 times
+    786465 (24.07%) aligned exactly 1 time
+    48418 (1.48%) aligned >1 times
+25.55% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3255856 reads; of these:
+  3255856 (100.00%) were unpaired; of these:
+    2433461 (74.74%) aligned 0 times
+    775140 (23.81%) aligned exactly 1 time
+    47255 (1.45%) aligned >1 times
+25.26% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2260492 reads; of these:
+  2260492 (100.00%) were unpaired; of these:
+    1578601 (69.83%) aligned 0 times
+    633239 (28.01%) aligned exactly 1 time
+    48652 (2.15%) aligned >1 times
+30.17% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2238686 reads; of these:
+  2238686 (100.00%) were unpaired; of these:
+    1572039 (70.22%) aligned 0 times
+    618551 (27.63%) aligned exactly 1 time
+    48096 (2.15%) aligned >1 times
+29.78% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2198053 reads; of these:
+  2198053 (100.00%) were unpaired; of these:
+    1580846 (71.92%) aligned 0 times
+    569322 (25.90%) aligned exactly 1 time
+    47885 (2.18%) aligned >1 times
+28.08% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2184198 reads; of these:
+  2184198 (100.00%) were unpaired; of these:
+    1580515 (72.36%) aligned 0 times
+    557005 (25.50%) aligned exactly 1 time
+    46678 (2.14%) aligned >1 times
+27.64% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2343413 reads; of these:
+  2343413 (100.00%) were unpaired; of these:
+    1614509 (68.90%) aligned 0 times
+    676996 (28.89%) aligned exactly 1 time
+    51908 (2.22%) aligned >1 times
+31.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2322080 reads; of these:
+  2322080 (100.00%) were unpaired; of these:
+    1611853 (69.41%) aligned 0 times
+    658765 (28.37%) aligned exactly 1 time
+    51462 (2.22%) aligned >1 times
+30.59% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2169884 reads; of these:
+  2169884 (100.00%) were unpaired; of these:
+    1598408 (73.66%) aligned 0 times
+    529862 (24.42%) aligned exactly 1 time
+    41614 (1.92%) aligned >1 times
+26.34% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2147612 reads; of these:
+  2147612 (100.00%) were unpaired; of these:
+    1587149 (73.90%) aligned 0 times
+    519438 (24.19%) aligned exactly 1 time
+    41025 (1.91%) aligned >1 times
+26.10% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3125154 reads; of these:
+  3125154 (100.00%) were unpaired; of these:
+    2276680 (72.85%) aligned 0 times
+    794613 (25.43%) aligned exactly 1 time
+    53861 (1.72%) aligned >1 times
+27.15% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3104499 reads; of these:
+  3104499 (100.00%) were unpaired; of these:
+    2274083 (73.25%) aligned 0 times
+    777302 (25.04%) aligned exactly 1 time
+    53114 (1.71%) aligned >1 times
+26.75% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4412375 reads; of these:
+  4412375 (100.00%) were unpaired; of these:
+    3193993 (72.39%) aligned 0 times
+    1139237 (25.82%) aligned exactly 1 time
+    79145 (1.79%) aligned >1 times
+27.61% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4388131 reads; of these:
+  4388131 (100.00%) were unpaired; of these:
+    3194224 (72.79%) aligned 0 times
+    1115091 (25.41%) aligned exactly 1 time
+    78816 (1.80%) aligned >1 times
+27.21% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4380839 reads; of these:
+  4380839 (100.00%) were unpaired; of these:
+    3168003 (72.31%) aligned 0 times
+    1130249 (25.80%) aligned exactly 1 time
+    82587 (1.89%) aligned >1 times
+27.69% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4349823 reads; of these:
+  4349823 (100.00%) were unpaired; of these:
+    3162914 (72.71%) aligned 0 times
+    1105405 (25.41%) aligned exactly 1 time
+    81504 (1.87%) aligned >1 times
+27.29% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4452005 reads; of these:
+  4452005 (100.00%) were unpaired; of these:
+    3288934 (73.88%) aligned 0 times
+    1091959 (24.53%) aligned exactly 1 time
+    71112 (1.60%) aligned >1 times
+26.12% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4415137 reads; of these:
+  4415137 (100.00%) were unpaired; of these:
+    3280738 (74.31%) aligned 0 times
+    1063692 (24.09%) aligned exactly 1 time
+    70707 (1.60%) aligned >1 times
+25.69% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3392695 reads; of these:
+  3392695 (100.00%) were unpaired; of these:
+    2478561 (73.06%) aligned 0 times
+    857399 (25.27%) aligned exactly 1 time
+    56735 (1.67%) aligned >1 times
+26.94% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3382012 reads; of these:
+  3382012 (100.00%) were unpaired; of these:
+    2484708 (73.47%) aligned 0 times
+    841613 (24.88%) aligned exactly 1 time
+    55691 (1.65%) aligned >1 times
+26.53% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3321556 reads; of these:
+  3321556 (100.00%) were unpaired; of these:
+    2431230 (73.20%) aligned 0 times
+    831491 (25.03%) aligned exactly 1 time
+    58835 (1.77%) aligned >1 times
+26.80% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3283493 reads; of these:
+  3283493 (100.00%) were unpaired; of these:
+    2414151 (73.52%) aligned 0 times
+    811703 (24.72%) aligned exactly 1 time
+    57639 (1.76%) aligned >1 times
+26.48% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3359490 reads; of these:
+  3359490 (100.00%) were unpaired; of these:
+    2373376 (70.65%) aligned 0 times
+    926301 (27.57%) aligned exactly 1 time
+    59813 (1.78%) aligned >1 times
+29.35% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3331035 reads; of these:
+  3331035 (100.00%) were unpaired; of these:
+    2365712 (71.02%) aligned 0 times
+    906767 (27.22%) aligned exactly 1 time
+    58556 (1.76%) aligned >1 times
+28.98% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3598007 reads; of these:
+  3598007 (100.00%) were unpaired; of these:
+    2441046 (67.84%) aligned 0 times
+    1087284 (30.22%) aligned exactly 1 time
+    69677 (1.94%) aligned >1 times
+32.16% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3558253 reads; of these:
+  3558253 (100.00%) were unpaired; of these:
+    2428779 (68.26%) aligned 0 times
+    1060439 (29.80%) aligned exactly 1 time
+    69035 (1.94%) aligned >1 times
+31.74% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3060172 reads; of these:
+  3060172 (100.00%) were unpaired; of these:
+    2110799 (68.98%) aligned 0 times
+    892728 (29.17%) aligned exactly 1 time
+    56645 (1.85%) aligned >1 times
+31.02% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3035163 reads; of these:
+  3035163 (100.00%) were unpaired; of these:
+    2105617 (69.37%) aligned 0 times
+    873793 (28.79%) aligned exactly 1 time
+    55753 (1.84%) aligned >1 times
+30.63% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2718539 reads; of these:
+  2718539 (100.00%) were unpaired; of these:
+    1806362 (66.45%) aligned 0 times
+    853486 (31.40%) aligned exactly 1 time
+    58691 (2.16%) aligned >1 times
+33.55% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2689267 reads; of these:
+  2689267 (100.00%) were unpaired; of these:
+    1797680 (66.85%) aligned 0 times
+    833472 (30.99%) aligned exactly 1 time
+    58115 (2.16%) aligned >1 times
+33.15% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2530341 reads; of these:
+  2530341 (100.00%) were unpaired; of these:
+    1831249 (72.37%) aligned 0 times
+    654646 (25.87%) aligned exactly 1 time
+    44446 (1.76%) aligned >1 times
+27.63% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2517732 reads; of these:
+  2517732 (100.00%) were unpaired; of these:
+    1833141 (72.81%) aligned 0 times
+    640701 (25.45%) aligned exactly 1 time
+    43890 (1.74%) aligned >1 times
+27.19% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2313500 reads; of these:
+  2313500 (100.00%) were unpaired; of these:
+    1644558 (71.09%) aligned 0 times
+    624730 (27.00%) aligned exactly 1 time
+    44212 (1.91%) aligned >1 times
+28.91% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2269511 reads; of these:
+  2269511 (100.00%) were unpaired; of these:
+    1619023 (71.34%) aligned 0 times
+    607544 (26.77%) aligned exactly 1 time
+    42944 (1.89%) aligned >1 times
+28.66% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2114931 reads; of these:
+  2114931 (100.00%) were unpaired; of these:
+    1396573 (66.03%) aligned 0 times
+    671907 (31.77%) aligned exactly 1 time
+    46451 (2.20%) aligned >1 times
+33.97% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2084150 reads; of these:
+  2084150 (100.00%) were unpaired; of these:
+    1383885 (66.40%) aligned 0 times
+    654552 (31.41%) aligned exactly 1 time
+    45713 (2.19%) aligned >1 times
+33.60% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3715430 reads; of these:
+  3715430 (100.00%) were unpaired; of these:
+    2699575 (72.66%) aligned 0 times
+    957456 (25.77%) aligned exactly 1 time
+    58399 (1.57%) aligned >1 times
+27.34% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3706607 reads; of these:
+  3706607 (100.00%) were unpaired; of these:
+    2707423 (73.04%) aligned 0 times
+    941807 (25.41%) aligned exactly 1 time
+    57377 (1.55%) aligned >1 times
+26.96% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+4011602 reads; of these:
+  4011602 (100.00%) were unpaired; of these:
+    2925955 (72.94%) aligned 0 times
+    1019943 (25.42%) aligned exactly 1 time
+    65704 (1.64%) aligned >1 times
+27.06% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3983138 reads; of these:
+  3983138 (100.00%) were unpaired; of these:
+    2920667 (73.33%) aligned 0 times
+    998217 (25.06%) aligned exactly 1 time
+    64254 (1.61%) aligned >1 times
+26.67% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3156670 reads; of these:
+  3156670 (100.00%) were unpaired; of these:
+    2227181 (70.55%) aligned 0 times
+    872520 (27.64%) aligned exactly 1 time
+    56969 (1.80%) aligned >1 times
+29.45% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+3134326 reads; of these:
+  3134326 (100.00%) were unpaired; of these:
+    2224485 (70.97%) aligned 0 times
+    854417 (27.26%) aligned exactly 1 time
+    55424 (1.77%) aligned >1 times
+29.03% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2941080 reads; of these:
+  2941080 (100.00%) were unpaired; of these:
+    2137545 (72.68%) aligned 0 times
+    748302 (25.44%) aligned exactly 1 time
+    55233 (1.88%) aligned >1 times
+27.32% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+2915931 reads; of these:
+  2915931 (100.00%) were unpaired; of these:
+    2125017 (72.88%) aligned 0 times
+    736871 (25.27%) aligned exactly 1 time
+    54043 (1.85%) aligned >1 times
+27.12% overall alignment rate
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
