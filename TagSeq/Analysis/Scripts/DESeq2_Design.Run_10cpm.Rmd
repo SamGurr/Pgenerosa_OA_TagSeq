@@ -101,7 +101,7 @@ Const.DEGs.list <- list(Const.DEGs.annotated$Gene.ID) # 12 degs contant upreg or
 ### experiment metadata [from Count_Matrix_Stats.Filter.R]  - convert characaters to factors for DESeq2
 all.exp_data  <- read.csv(file="../Data/filtered_counts/all.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
-d0.exp_data   <- read.csv(file="../Data/filtered_counts/day0.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.1factor)
+d0.exp_data   <- read.csv(file="../Data/filtered_counts/day0.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
 d7.exp_data   <- read.csv(file="../Data/filtered_counts/day7.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
 
@@ -492,27 +492,77 @@ table(test2$padj<0.05) #  10 DEGs (same as above)
 
 
 
-# Primary Treatmetn M v A ========================================================================================================== #
+# Primary Treatmetn A v M ========================================================================================================== #
 
+# group by contrast
 res.d7.primary <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentAM", "All_TreatmentAS"),c("All_TreatmentMA", "All_TreatmentMM", "All_TreatmentMS")),  alpha= 0.05)
-table(res.d7.primary$padj<0.05) #  108 DEGs (same as above)
+table(res.d7.primary$padj<0.05) #  108 DEGs 
+
+# main effect model (mo interaction term)
+res.d7.primary_main <- results(dds.d7.main, contrast = c("Primary_Treatment", "A", "M"),  alpha= 0.05)
+table(res.d7.primary_main$padj<0.05) #  98 DEGs 
+
+# full model 
+res.d7.primary_fullmod <- results(dds.d7, contrast = c("Primary_Treatment", "A", "M"),  alpha= 0.05)
+table(res.d7.primary_fullmod$padj<0.05) #  10 DEGs 
+
+# Group contrast - this tests the full model effect above - appears the interaction term in fullmod is the pariwise effect under the reference level in treatment 2
+res.d7.primary_grouptest<- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentMA")),  alpha= 0.05) # look here at the group - same genes are DEGs
+table(res.d7.primary_grouptest$padj<0.05) #  10 DEGs (same as above?)
+
 
 # Secondary treatment A v M ========================================================================================================= #
 
+# group by contrast
 res.d7.Second_AM <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAM", "All_TreatmentMM")),  alpha= 0.05)
 table(res.d7.Second_AM$padj<0.05) # 106 DEGs
+
+# main effect model (mo interaction term)
+res.d7.Second_AM_main <- results(dds.d7.main, contrast = c("Second_Treament", "A", "M"),  alpha= 0.05)
+table(res.d7.Second_AM_main$padj<0.05) #  94 DEGs 
+
+# full model 
+res.d7.Second_AM_fullmod <- results(dds.d7, contrast = c("Second_Treament", "A", "M"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AA and AM
+table(res.d7.Second_AM_fullmod$padj<0.05) #  0 DEGs 
+
+# Group contrast - test the putative pariwise comparison with the ref level in fullmod
+res.d7.Second_AM_grouptest<- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAM")),  alpha= 0.05) # look here at the group constrasts
+table(res.d7.Second_AM_grouptest$padj<0.05) #  0 DEGs (same as above?)
+
 
 # Secondary treatment A v S ========================================================================================================= #
 
 res.d7.Second_AS <- results(dds.d7.group, contrast = list(c("All_TreatmentAA", "All_TreatmentMA"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
 table(res.d7.Second_AS$padj<0.05) #  2 DEGs
 
+# main effect model (mo interaction term)
+res.d7.Second_AS_main <- results(dds.d7.main, contrast = c("Second_Treament", "A", "S"),  alpha= 0.05)
+table(res.d7.Second_AS_main$padj<0.05) #  2 DEGs 
+
+# full model 
+res.d7.Second_AS_fullmod <- results(dds.d7, contrast = c("Second_Treament", "A", "S"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AA and AS
+table(res.d7.Second_AS_fullmod$padj<0.05) #  10 DEGs 
+
+# Group contrast - test the putative pariwise comparison with the ref level in fullmod
+res.d7.Second_AS_grouptest<- results(dds.d7.group, contrast = list(("All_TreatmentAA"),("All_TreatmentAS")),  alpha= 0.05) # look here at the group constrasts
+table(res.d7.Second_AS_grouptest$padj<0.05) #  10 DEGs (same as above?)
+
 # Secondary treatment M v S ========================================================================================================= #
 
 res.d7.Second_MS <- results(dds.d7.group, contrast = list(c("All_TreatmentAM", "All_TreatmentMM"),c("All_TreatmentAS", "All_TreatmentMS")),  alpha= 0.05)
 table(res.d7.Second_MS$padj<0.05) #  13 DEGs
 
+# main effect model (mo interaction term)
+res.d7.Second_MS_main <- results(dds.d7.main, contrast = c("Second_Treament", "M", "S"),  alpha= 0.05)
+table(res.d7.Second_MS_main$padj<0.05) #  14 DEGs 
 
+# full model 
+res.d7.Second_MS_fullmod <- results(dds.d7, contrast = c("Second_Treament", "M", "S"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AM and AS
+table(res.d7.Second_MS_fullmod$padj<0.05) #  0 DEGs 
+
+# Group contrast - test the putative pariwise comparison with the ref level in fullmod
+res.d7.Second_MS_grouptest<- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentAS")),  alpha= 0.05) # look here at the group constrasts
+table(res.d7.Second_MS_grouptest$padj<0.05) #  0 DEGs (same as above?)
 
 # TABLES  &  Volcano Plots
 
@@ -520,14 +570,18 @@ table(res.d7.Second_MS$padj<0.05) #  13 DEGs
 
 # Primary Treatmetn M v A ========================================================================================================= #
 
-
+# DEGs total for the primary treatment effect
 d7.numDEGs_padj               <- data.frame(table(res.d7.primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d7_primary.ordered <- res.d7.primary[order(res.d7.primary$padj), ] # Order by adjusted p-value - 110 DEGs
 d7.num.UpReg                  <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
 d7.num.DownReg                <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
 d7.total                      <- sum(d7.num.DownReg,d7.num.UpReg) # 106 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
-# Histogram
+
+
+
+
+# Histogram(s) 
 png("../Output/DESeq2/Day7/Day7.Primary.FDR_hist.png", 1000, 1000, pointsize=20)
 hist(res.d7.primary$pvalue, breaks=20, col="grey") # view histogram,  
 abline(h=c( (nrow(res.d7.primary)*0.05), 
@@ -536,12 +590,39 @@ abline(h=c( (nrow(res.d7.primary)*0.05),
                   col=c("blue", "red", "red"), lty=c(1,2), lwd=c(1, 3)) # add line at 
 dev.off()
 
-# Write results csv
+
+
+
+# Write results csv ( here I output the four tests of the primary treatment to run a Venn diagram on shared genes - sanity check to test what these models are doing differently)
+# group results 
 resdata.d7.primary  <- merge(as.data.frame(res.d7_primary.ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d7.primary)[1] <- "Gene"
 resdata.d7.primary <- resdata.d7.primary[order(resdata.d7.primary$padj), ] # Order by adjusted p-value
 path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/Day7/' # call path
 write.csv(resdata.d7.primary, paste(path_out.d7,"Day7.Primary_DESeq2results.csv")) # write
+
+# main effect model
+resdata.d7.primary_main  <- merge(as.data.frame(res.d7.primary_main), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.primary_main)[1] <- "Gene"
+resdata.d7.primary_main <- resdata.d7.primary_main[order(resdata.d7.primary_main$padj), ] # Order by adjusted p-value
+path_out.d7.tests = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/Day7/D7_res_model_tests/' # call path
+write.csv(resdata.d7.primary_main, paste(path_out.d7.tests,"Day7.Primary_res_main.mod.csv")) # write
+
+# full model
+resdata.d7.primary_fullmod  <- merge(as.data.frame(res.d7.primary_fullmod), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.primary_fullmod)[1] <- "Gene"
+resdata.d7.primary_fullmod <- resdata.d7.primary_fullmod[order(resdata.d7.primary_fullmod$padj), ] # Order by adjusted p-value
+path_out.d7.tests = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/Day7/D7_res_model_tests/' # call path
+write.csv(resdata.d7.primary_fullmod, paste(path_out.d7.tests,"Day7.Primary_res_full.mod.csv")) # write
+
+# group test of full model
+resdata.d7.primary_grouptest  <- merge(as.data.frame(res.d7.primary_grouptest), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.primary_grouptest)[1] <- "Gene"
+resdata.d7.primary_grouptest <- resdata.d7.primary_grouptest[order(resdata.d7.primary_grouptest$padj), ] # Order by adjusted p-value
+path_out.d7.tests = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/Day7/D7_res_model_tests/' # call path
+write.csv(resdata.d7.primary_grouptest, paste(path_out.d7.tests,"Day7.Primary_res_grouptest.mod.csv")) # write
+
+
 
 # volcano plot 
 # Set max.overlapos to infinite globally to allow muliple labels that overlap in the volcano plots 
@@ -584,7 +665,7 @@ dev.off()
 
 # Secondary treatment A v S ========================================================================================================= #
 
-
+# DEGs total for the primary treatment effect
 d7.numDEGs_padj_S.AM               <- data.frame(table(res.d7.Second_AM$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d7.Second_AM_ordered           <- res.d7.Second_AM[order(res.d7.Second_AM$padj), ] # Order by adjusted p-value - 110 DEGs
 d7.num.UpReg_S.AM                  <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] >= 1) == TRUE) #  LFC >= 1
@@ -592,7 +673,9 @@ d7.num.DownReg_S.AM                <- sum((res.d7.Second_AM_ordered$log2FoldChan
 d7.total_Sec.AM                    <- sum(d7.num.UpReg_S.AM,d7.num.DownReg_S.AM) # 102 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
 
-# Histogram
+
+
+# Histogram(s)
 png("../Output/DESeq2/Day7/Day7.Second_AM.FDR_hist.png", 1000, 1000, pointsize=20)
 hist(res.d7.Second_AM$pvalue, breaks=20, col="grey") # view histogram,  
 abline(h=c( (nrow(res.d7.Second_AM)*0.05), 
@@ -600,7 +683,12 @@ abline(h=c( (nrow(res.d7.Second_AM)*0.05),
             ((table(res.d7.Second_AM$padj < 0.05)[2]) + (nrow(res.d7.Second_AM)*0.05)) ),
                   col=c("blue", "red", "red"), lty=c(1,2), lwd=c(1, 3)) # add line at 
 dev.off()
+
+
+
+
 # Write results csv
+# group results 
 resdata.d7.second.AM  <- merge(as.data.frame(res.d7.Second_AM_ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d7.second.AM)[1] <- "Gene"
 resdata.d7.second.AM <- resdata.d7.second.AM[order(resdata.d7.second.AM$padj), ] # Order by adjusted p-value

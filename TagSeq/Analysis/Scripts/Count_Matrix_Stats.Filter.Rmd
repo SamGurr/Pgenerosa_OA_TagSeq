@@ -119,6 +119,63 @@ sum(gene_sums_gtr0 == TRUE) # 29318 total genes with unique transcript reads
 ```
 
 
+```{r  raw_reads_by_Day}
+raw.cts.all <- raw_counts.matrix
+
+# ========================================================== 
+# DAY 0  raw counts
+# ========================================================== 
+# About: run dyplr 'antijoin' to call cts columns that match 'Sample.Name' in the data frame 'exp.data.d0'
+raw.cts.d0 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d0$Sample.Name, colnames(raw_counts.merged.as.table))))]
+raw.cts.d0 <- data.frame(raw.cts.d0[,-1], row.names=raw.cts.d0[,1])
+raw.cts.d0  <-as.matrix(raw.cts.d0, row.names="transcript_id")
+ncol(raw.cts.d0) # 8  samples from just Day 0
+nrow(raw.cts.d0) # 34947 total genes
+colnames(raw.cts.d0) == exp.data.d0$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
+
+# ========================================================== 
+# DAY 7  raw counts
+# ========================================================== 
+# About: run dyplr 'antijoin' to call cts columns that match 'Sample.Name' in the data frame 'exp.data.d0'
+raw.cts.d7 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d7$Sample.Name, colnames(raw_counts.merged.as.table))))]
+raw.cts.d7 <- data.frame(raw.cts.d7[,-1], row.names=raw.cts.d7[,1])
+raw.cts.d7  <-as.matrix(raw.cts.d7, row.names="transcript_id")
+ncol(raw.cts.d7) # 36  samples from just Day 7
+nrow(raw.cts.d7) # 34947 total genes
+colnames(raw.cts.d7) == exp.data.d7$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
+
+# ========================================================== 
+# DAY 14 raw counts
+# ========================================================== 
+# About: run dyplr 'antijoin' to call cts columns that match 'Sample.Name' in the data frame 'exp.data.d0'
+raw.cts.d14 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d14$Sample.Name, colnames(raw_counts.merged.as.table))))]
+raw.cts.d14 <- data.frame(raw.cts.d14[,-1], row.names=raw.cts.d14[,1])
+raw.cts.d14  <-as.matrix(raw.cts.d14, row.names="transcript_id")
+ncol(raw.cts.d14) # 35  samples from just Day 14
+nrow(raw.cts.d14) # 34947 total genes
+colnames(raw.cts.d14) == exp.data.d14$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
+
+# ========================================================== 
+# DAY 21  raw counts
+# ========================================================== 
+# About: run dyplr 'antijoin' to call cts columns that match 'Sample.Name' in the data frame 'exp.data.d0'
+raw.cts.d21 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d21$Sample.Name, colnames(raw_counts.merged.as.table))))]
+raw.cts.d21 <- data.frame(raw.cts.d21[,-1], row.names=raw.cts.d21[,1])
+raw.cts.d21  <-as.matrix(raw.cts.d21, row.names="transcript_id")
+ncol(raw.cts.d21) # 8  samples from just Day 21
+nrow(raw.cts.d21) # 34947 total genes
+colnames(raw.cts.d21) == exp.data.d21$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
+
+
+# write csv
+write.csv(raw.cts.d0,"../Data/filtered_counts/raw.day0.counts.csv") # 'path' called in previous # write .csv section
+write.csv(raw.cts.d7,"../Data/filtered_counts/raw.day7.counts.csv") # 'path' called in previous # write .csv section
+write.csv(raw.cts.d14,"../Data/filtered_counts/raw.day14.counts.csv") # 'path' called in previous # write .csv section
+write.csv(raw.cts.d21,"../Data/filtered_counts/raw.day21.counts.csv") # 'path' called in previous # write .csv section
+
+```
+
+
 
 
 # Filter read counts 
