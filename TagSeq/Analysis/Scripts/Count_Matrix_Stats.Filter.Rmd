@@ -54,7 +54,7 @@ write.csv(Mstr.Ref,paste(path.out,"Master_Exp.Treatment_Metadata.csv"))
 ```
 
 
-```{r  }
+```{r  experiment data}
 #================= #
 # ALL TIMEPOINTS:
 # call all experiment design treatments as 'exp.data'
@@ -88,7 +88,7 @@ write.csv(exp.data.d21,paste(path," day21.exp.data.csv"))
 ```
 
 
-```{r  }
+```{r  raw counts}
 ncol(raw_counts) # 282 samples (not counting gene ID column) - should be 141 samples, need to sum columns by unique ID
 raw_counts.merged <- data.frame(raw_counts[,-1], row.names=raw_counts[,1]) # call new dataframe with first column now as row names, now all row values are numeric
 names(raw_counts.merged) <- sapply(strsplit(names(raw_counts.merged), "_"), '[', 1) # split the column names by "_" delimiter  and call the first field SG##
@@ -189,8 +189,8 @@ Resulting umber of genes summarized in knitr table and output to TagSeq\Analysis
 
 
 
-### (1) LENIENT CUT-OFF [ 3 CPM IN 50% SAMPLES ]
-```{r  3 CPM 50% SAMPLES}
+### (1) LENIENT CUT-OFF [ 5 CPM IN 50% SAMPLES ]
+```{r  5 CPM 50% SAMPLES}
 # ========================================================== 
 #
 # ALL TIMEPOINTS (3 CPM in 50% samples using edgeR)
@@ -201,12 +201,12 @@ cts.matrix.all <- raw_counts.matrix
 hist_1_all <- hist(colSums(cts.matrix.all)) # view the colSums of our all samples  - notice the read sums are around 1 million
 CPM.all <- cpm(cts.matrix.all) # Obtain CPMs (counts oer million) using egdeR
 head(CPM.all) # Have a look at the output
-thresh.all <- CPM.all > 3 # Which values in myCPM are greater than 3?
+thresh.all <- CPM.all > 5 # Which values in myCPM are greater than 3?
 head(thresh.all) # This produces a logical matrix with TRUEs and FALSES
 rowSums(head(thresh.all)) # Summary of how many TRUEs there are in each row
 table(rowSums(thresh.all)) # 2618 genes with TRUE in all 141 samples 
 keep.all <- rowSums(thresh.all) >= (ncol(thresh.all)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.all) # FALSE 26598 & TRUE  8349 -- more than 2/3 of the genes did not pass
+summary(keep.all) # FALSE 23057 & TRUE  11890 -- half of the genes did not pass
 cts.matrix.all.filtered <- cts.matrix.all[keep.all,] # Subset the rows of countdata to keep the more highly expressed genes
 
 hist_1_all<-qplot((colSums(cts.matrix.all.filtered)) , geom="histogram")
@@ -229,14 +229,14 @@ colnames(cts.matrix.d0) == exp.data.d0$Sample.Name # check if TRUE, means the sa
  # view the colSums of our Day0 samples  - notice the read sums are around 1 million
 CPM.d0 <- cpm(cts.matrix.d0) # Obtain CPMs (counts oer million) using egdeR
 head(CPM.d0) # Have a look at the output
-thresh.d0 <- CPM.d0 > 3 # Which values in myCPM are greater than 3?
+thresh.d0 <- CPM.d0 > 5 # Which values in myCPM are greater than 3?
 head(thresh.d0) # This produces a logical matrix with TRUEs and FALSES
 rowSums(head(thresh.d0)) # Summary of how many TRUEs there are in each row
 table(rowSums(thresh.d0)) # 9631 genes with TRUE in all 8 samples 
 keep.d0 <- rowSums(thresh.d0) >= (ncol(thresh.d0)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d0) # FALSE 19798 & TRUE 15149 -- more than half of the genes did not pass
+summary(keep.d0) # FALSE 22283 & TRUE 12664 -- half of the genes did not pass
 cts.matrix.d0.filtered <- cts.matrix.d0[keep.d0,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d0.filtered) # 15110 genes & 8 samples
+dim(cts.matrix.d0.filtered) # 12664 genes & 8 samples
 
 hist_1_d0<-qplot((colSums(cts.matrix.d0.filtered)) , geom="histogram")
 d0_1_numgenes <- dim(cts.matrix.d0.filtered)[1]
@@ -246,7 +246,7 @@ d0_1_samp <- dim(cts.matrix.d0.filtered)[2]
 
 # ========================================================== 
 #
-# DAY 7 (3 CPM in 50% samples using edgeR)
+# DAY 7 (5 CPM in 50% samples using edgeR)
 # ========================================================== 
 cts.merged.d7 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d7$Sample.Name, colnames(raw_counts.merged.as.table))))]
 cts.merged.d7 <- data.frame(cts.merged.d7[,-1], row.names=cts.merged.d7[,1])
@@ -257,14 +257,14 @@ colnames(cts.matrix.d7) == exp.data.d7$Sample.Name # check if TRUE, means the sa
  # view the colSums of our Day7 samples 
 CPM.d7 <- cpm(cts.matrix.d7) # Obtain CPMs (counts oer million) using egdeR
 head(CPM.d7) # Have a look at the output
-thresh.d7 <- CPM.d7 > 3 # Which values in myCPM are greater than 3?
+thresh.d7 <- CPM.d7 > 5 # Which values in myCPM are greater than 3?
 head(thresh.d7) # This produces a logical matrix with TRUEs and FALSES
 rowSums(head(thresh.d7)) # Summary of how many TRUEs there are in each row
 table(rowSums(thresh.d7)) # 6880 genes with TRUE in all 36 samples 
 keep.d7 <- rowSums(thresh.d7) >= (ncol(thresh.d7)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d7) # FALSE 20825 & TRUE 14122 -- more than half of the genes did not pass
+summary(keep.d7) # FALSE 22934 & TRUE 12013 -- more than half of the genes did not pass
 cts.matrix.d7.filtered <- cts.matrix.d7[keep.d7,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d7.filtered) # 14082 genes & 36 samples
+dim(cts.matrix.d7.filtered) # 12013 genes & 36 samples
 
 hist_1_d7<-qplot((colSums(cts.matrix.d7.filtered)) , geom="histogram")
 d7_1_numgenes <- dim(cts.matrix.d7.filtered)[1]
@@ -273,7 +273,7 @@ d7_1_samp <- dim(cts.matrix.d7.filtered)[2]
 
 # ========================================================== 
 #
-# DAY 14 (3 CPM in 50% samples using edgeR)
+# DAY 14 (5 CPM in 50% samples using edgeR)
 # ========================================================== 
 cts.merged.d14 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d14$Sample.Name, colnames(raw_counts.merged.as.table))))]
 cts.merged.d14 <- data.frame(cts.merged.d14[,-1], row.names=cts.merged.d14[,1])
@@ -284,14 +284,14 @@ UT_seq_map %>% dplyr::filter(Sample.Name == "SG92") # there was no sample in SG9
 # pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
 CPM.d14 <- cpm(cts.matrix.d14) # Obtain CPMs (counts oer million) using egdeR
 head(CPM.d14) # Have a look at the output
-thresh.d14 <- CPM.d14 > 3 # Which values in myCPM are greater than 3?
+thresh.d14 <- CPM.d14 > 5 # Which values in myCPM are greater than 3?
 head(thresh.d14) # This produces a logical matrix with TRUEs and FALSES
 rowSums(head(thresh.d14)) # Summary of how many TRUEs there are in each row
 table(rowSums(thresh.d14)) # 6473 genes with TRUE in all 35 samples 
 keep.d14 <- rowSums(thresh.d14) >= (ncol(thresh.d14)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d14) # FALSE 20710 & TRUE 14237 -- more than half of the genes did not pass
+summary(keep.d14) # FALSE 22812 & TRUE 12135 -- more than half of the genes did not pass
 cts.matrix.d14.filtered <- cts.matrix.d14[keep.d14,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d14.filtered) # 14406 genes & 35 samples
+dim(cts.matrix.d14.filtered) # 12135 genes & 35 samples
 
 hist_1_d14<-qplot((colSums(cts.matrix.d14.filtered)) , geom="histogram")
 d14_1_numgenes <- dim(cts.matrix.d14.filtered)[1]
@@ -300,7 +300,7 @@ d14_1_samp <- dim(cts.matrix.d14.filtered)[2]
 
 # ========================================================== 
 #
-# DAY 21  (3 CPM in 50% samples using edgeR)
+# DAY 21  (5 CPM in 50% samples using edgeR)
 # ========================================================== 
 cts.merged.d21 <- raw_counts.merged.as.table[,c(1,na.omit(match(exp.data.d21$Sample.Name, colnames(raw_counts.merged.as.table))))]
 cts.merged.d21 <- data.frame(cts.merged.d21[,-1], row.names=cts.merged.d21[,1])
@@ -310,14 +310,14 @@ colnames(cts.matrix.d21) == exp.data.d21$Sample.Name # check if TRUE, means the 
 # pre-filtering; genes ommitted if < 3 counts per million reads in 50% of samples
 CPM.d21 <- cpm(cts.matrix.d21) # Obtain CPMs (counts oer million) using egdeR
 head(CPM.d21) # Have a look at the output
-thresh.d21 <- CPM.d21 > 3 # filter CPM by threshold
+thresh.d21 <- CPM.d21 > 5 # filter CPM by threshold
 head(thresh.d21) # This produces a logical matrix with TRUEs and FALSES
 rowSums(head(thresh.d21)) # Summary of how many TRUEs there are in each row
 table(rowSums(thresh.d21)) # 5219 genes with TRUE in all 62 samples 
 keep.d21 <- rowSums(thresh.d21) >= (ncol(thresh.d21)/2) # we would like to keep genes that have at least 50% TRUES in each row of thresh
-summary(keep.d21) # FALSE 21104 & TRUE 13843 -- more than three quarters of the genes did not pass
+summary(keep.d21) # FALSE 23147 & TRUE 11800 -- more than three quarters of the genes did not pass
 cts.matrix.d21.filtered <- cts.matrix.d21[keep.d21,] # Subset the rows of countdata to keep the more highly expressed genes
-dim(cts.matrix.d21.filtered) # 13807 genes &  62 samples
+dim(cts.matrix.d21.filtered) # 11800 genes &  62 samples
 
 
 hist_1_d21<-qplot((colSums(cts.matrix.d21.filtered)) , geom="histogram")
@@ -325,17 +325,17 @@ d21_1_numgenes <- dim(cts.matrix.d21.filtered)[1]
 d21_1_samp <- dim(cts.matrix.d21.filtered)[2]
 
 
-png("../Data/filtered_counts/Histograms_3cpm_50perc.png", 1000, 1000, pointsize=20)
+png("../Data/filtered_counts/Histograms_5cpm_50perc.png", 1000, 1000, pointsize=20)
 plot_grid(hist_1_all, hist_1_d0, hist_1_d7, hist_1_d14, hist_1_d21)
 dev.off()
 
 
 # write csv
-write.csv(cts.matrix.all.filtered,"../Data/filtered_counts/all.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
-write.csv(cts.matrix.d0.filtered,"../Data/filtered_counts/day0.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
-write.csv(cts.matrix.d7.filtered,"../Data/filtered_counts/day7.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
-write.csv(cts.matrix.d14.filtered,"../Data/filtered_counts/day14.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
-write.csv(cts.matrix.d21.filtered,"../Data/filtered_counts/day21.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
+write.csv(cts.matrix.all.filtered,"../Data/filtered_counts/all.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
+write.csv(cts.matrix.d0.filtered,"../Data/filtered_counts/day0.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
+write.csv(cts.matrix.d7.filtered,"../Data/filtered_counts/day7.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
+write.csv(cts.matrix.d14.filtered,"../Data/filtered_counts/day14.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
+write.csv(cts.matrix.d21.filtered,"../Data/filtered_counts/day21.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
 
 ```
 

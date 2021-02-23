@@ -26,6 +26,11 @@ day7.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests
 day7.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests/ Day7.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 day7.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests/ Day7.Primary_res_grouptest.full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 
+# Day 14 check
+day14.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_main.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_grouptest.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+
 
 
 # call only sig DEGs - osolate just the gene names - rename column to day
@@ -74,15 +79,38 @@ grouptest_day7.primaryDE_DOWN$Day <- "Day7"
 
 
 # Day14 primary treatment effect  ------------------------------------------------------------------------ #
+# group mod
 day14.primaryDE_UP <- day14.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1) %>%  dplyr::select('Gene')
 day14.primaryDE_UP$Dir <- "upregulated"
 day14.primaryDE_UP$Day <- "Day14"
 day14.primaryDE_DOWN <- day14.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1) %>%  dplyr::select('Gene')
 day14.primaryDE_DOWN$Dir <- "downregulated"
 day14.primaryDE_DOWN$Day <- "Day14"
+# main mod - remember this is the opposite ddirection 
+main_day14.primaryDE_UP <- day14.primaryDE_mainmod %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1) %>%  dplyr::select('Gene')
+main_day14.primaryDE_UP$Dir <- "upregulated"
+main_day14.primaryDE_UP$Day <- "Day14"
+main_day14.primaryDE_DOWN <- day14.primaryDE_mainmod %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1)  %>%  dplyr::select('Gene')
+main_day14.primaryDE_DOWN$Dir <- "downregulated"
+main_day14.primaryDE_DOWN$Day <- "Day14"
+# full mod
+full_day14.primaryDE_UP <- day14.primaryDE_fullmod %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1) %>%  dplyr::select('Gene')
+full_day14.primaryDE_UP$Dir <- "upregulated"
+full_day14.primaryDE_UP$Day <- "Day14"
+full_day14.primaryDE_DOWN <- day14.primaryDE_fullmod %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1)  %>%  dplyr::select('Gene')
+full_day14.primaryDE_DOWN$Dir <- "downregulated"
+full_day14.primaryDE_DOWN$Day <- "Day14"
+# group test of the full mod
+grouptest_day14.primaryDE_UP <- day14.primaryDE_grouptest %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1) %>%  dplyr::select('Gene')
+grouptest_day14.primaryDE_UP$Dir <- "upregulated"
+grouptest_day14.primaryDE_UP$Day <- "Day14"
+grouptest_day14.primaryDE_DOWN <- day14.primaryDE_grouptest %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1)  %>%  dplyr::select('Gene')
+grouptest_day14.primaryDE_DOWN$Dir <- "downregulated"
+grouptest_day14.primaryDE_DOWN$Day <- "Day14"
 
 # Day21 primary treatment effect  ------------------------------------------------------------------------ #
-day21.primaryDE_UP <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1)  %>%  dplyr::select('Gene')
+# group mod
+ay21.primaryDE_UP <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1)  %>%  dplyr::select('Gene')
 day21.primaryDE_UP$Dir <- "upregulated"
 day21.primaryDE_UP$Day <- "Day21"
 day21.primaryDE_DOWN <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1)  %>%  dplyr::select('Gene')
@@ -165,8 +193,6 @@ Venn_primary <- grid.arrange(up.venn2_w0, down.venn2_w0, ncol=2, nrow=1, clip="o
 
 
 
-
-
 # Day 7 sanity check of module design   ------------------------------------------------------------------------ #
 
 
@@ -198,6 +224,35 @@ Day7_Venn_primary_tests <- grid.arrange(up.venn2_day7_mods, down.venn2__day7_mod
 
 
 
+# Day 14 sanity check of module design   ------------------------------------------------------------------------ #
+
+
+
+UPREG.Day14_primary_allmods <- list(
+  Full.Mod_A_v_M                  = full_day14.primaryDE_UP$Gene, 
+  GroupTest_AA_v_MA               = grouptest_day14.primaryDE_UP$Gene, 
+  Main.Mod_A_v_M                  = main_day14.primaryDE_UP$Gene, 
+  Group.Mod_AA.AM.AS_v_MA.MM.MS   = day14.primaryDE_UP$Gene
+)
+DWNREG.Day14_primary_allmods <- list(
+  Full.Mod_A_v_M                  = full_day14.primaryDE_DOWN$Gene, 
+  GroupTest_AA_v_MA               = grouptest_day14.primaryDE_DOWN$Gene, 
+  Main.Mod_A_v_M                  = main_day14.primaryDE_DOWN$Gene, 
+  Group.Mod_AA.AM.AS_v_MA.MM.MS   = day14.primaryDE_DOWN$Gene
+)
+
+# Venn Diagram
+up.venn2_day14_mods <- ggvenn(UPREG.Day14_primary_allmods, 
+                             fill_color = c("white", "#E69F00", "#56B4E9", "#009E73"),
+                             stroke_size = 0.5, set_name_size = 4)
+up.venn2_day14_mods <- up.venn2_day14_mods + ggtitle("UPREGULATED: Day 14 mod tests (primary treatment)")
+down.venn2__day14_mods <- ggvenn(DWNREG.Day14_primary_allmods, 
+                                fill_color = c("white", "#E69F00", "#56B4E9", "#009E73"),
+                                stroke_size = 0.5, set_name_size = 4)
+down.venn2__day14_mods <- down.venn2__day14_mods + ggtitle("DOWNREGULATED: Day 14 mod tests (primary treatment)")
+Day14_Venn_primary_tests <- grid.arrange(up.venn2_day14_mods, down.venn2__day14_mods, ncol=2, nrow=1, clip="off")
+
+
 
 
 
@@ -212,4 +267,8 @@ dev.off()
 
 pdf("Analysis/Output/DESeq2/Day7/D7_res_model_tests/Venn_DE_Day7_test.pdf")
 grid.arrange(up.venn2_day7_mods, down.venn2__day7_mods, ncol=1, nrow=2, clip="off")
+dev.off()
+
+pdf("Analysis/Output/DESeq2/Day14/D14_res_model_tests/Venn_DE_Day14_test.pdf")
+grid.arrange(up.venn2_day14_mods, down.venn2__day14_mods, ncol=1, nrow=2, clip="off")
 dev.off()
