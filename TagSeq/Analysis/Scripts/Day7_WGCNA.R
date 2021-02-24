@@ -8,116 +8,203 @@
 library(WGCNA) # note: this was previously installed with the command `BiocManager::install("WGCNA")`
 library(dplyr)
 library(zoo)
+library(DESeq2)
+
+# for heatmap 
+# library(devtools)
+# install_github("jokergoo/ComplexHeatmap") first run these - commented out to avoid running a second time...
+library(ComplexHeatmap)
+library(circlize)
+
+
 
 # SET WORKING DIRECTORY AND LOAD DATA
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 # LOAD DATA
 # Tagaseq filtered counts 
-day7.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day7.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day7.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
 # Treatment and Phenotype data
 Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 d7.Treatment_Phenotype.data     <- Master.Treatment_Phenotype.data %>%  dplyr ::filter(Date %in% 20190731) # split for day 7 data 
 
-# check the data 
-
-# Day 7 
-dim(day7.counts.matrix) # 37 columns - 36 samples not counting 'x' and 'Gene.ID'
-names(day7.counts.matrix)[1] <- 'Gene.ID'
-dim(d7.Treatment_Phenotype.data) # 36 total rows unique for each sample ID
 
 # The following setting is important, do not omit.
-#options(stringsAsFactors = FALSE)
+options(stringsAsFactors = FALSE)
 
 # =================================================================================== #
 #
 #
-# Day 7 WGCNA 
+# Day 7 WGCNA - PREPROCESSING THE DATA INPUT 
+#
+#  Read here for the pre processing steps using WGCNA!
+#  https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/1471-2105-9-559.pdf
+# =================================================================================== #
+
+
+# filter low values - note: this is pre filteres for < 5 CPM in 50% of samples - less strict than the DESeq2 analysis
+dim(day7.counts.matrix) # 12013  rows (genes) -   37  samples  not counting 'x' and 'Gene.ID'
+(day7.counts.matrix)[1] # ommit the first line and transpose in the next line 
+d7.data = as.data.frame(t(day7.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+dim(d7.data) # 36 12013
+
+
+
+# trait data ========================================================== #
+
+# Phenotype trait and Treatment data
+dim(d7.Treatment_Phenotype.data) #  36 rows and 14 columns
+names(d7.Treatment_Phenotype.data) # look at the 14 columns 
+d7.Treatment_Phenotype.data = d7.Treatment_Phenotype.data[, -c(1:3,5,8)]; # remove columns that hold information we do not need. (i.e. tankks, Third treatment, All treatment group, etc.)
+dim(d7.Treatment_Phenotype.data) # 36 rows and  9 columns
+
+
+# count data  ========================================================== #
+
+
+# fix(d21.data) # view the data - as you see all columns are now genes but filled as V1, V2, V3...
+names(d7.data) = day7.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d7.data) = names(day7.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d7.data_matrix <- data.frame(day7.counts.matrix[,-1], row.names=day7.counts.matrix[,1]) 
+
+
+# create dds objects to transform data 
+dds.d7 <- DESeqDataSetFromMatrix(countData = d7.data_matrix,
+                                  colData = d7.Treatment_Phenotype.data, design = ~ 1) # DESeq Data Set (dds)
+# DESeq Data Set (dds)
+# NOTE: ~1 stands for no design; user will need to add a design for differential testing
+# however for our purpose of just creating an onbject to transform, we do not need a design here...
+
+
+# transform the data 
+dds.d7_vst <- vst(dds.d7) # transform it vst
+dds.d7_vst <- assay(dds.d7_vst) # call only the transformed coutns in the dds object
+dds.d7_vst <- t(dds.d7_vst) # transpose columns to rows and vice versa
+
+# =================================================================================== #
+#
+#
+# Day 7 WGCNA Sample tree 
 #
 #
 # =================================================================================== #
 
-dim(day7.counts.matrix) #  8548  genes  37 samples; should have 36 columns of just samples 
-(day7.counts.matrix)[1] # ommit this and transpose in the next line 
-d7.data = as.data.frame(t(day7.counts.matrix[, -1])) # ommit all columns but samples and transpose
-# fix(d7.data) # view the data - as you see all columns are now genes but filled as V1, V2, V3...
-names(d7.data) = day7.counts.matrix$Gene.ID # assigns column names (previous jsut numbered) as the gene ID 
-rownames(d7.data) = names(day7.counts.matrix)[-1]; # assigns the row names as the sample ID
-dim(d7.data) # 36 8548
-#fix(d7.data)
-gsg = goodSamplesGenes(d7.data, verbose = 3);  # We first check for genes and samples with too many missing values:
+dim(dds.d7_vst) #  12013 genes; 36  samples
+
+gsg = goodSamplesGenes(dds.d7_vst, verbose = 3);  # We first check for genes and samples with too many missing values:
 gsg$allOK # If the statement returns TRUE, all genes have passed the cuts. 
 
-
 # determine outlier samples 
-sampleTree = hclust(dist(d7.data), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
+sampleTree = hclust(dist(dds.d7_vst), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
 sizeGrWindow(12,9) # The user should change the dimensions if the window is too large or too small.
 par(cex = 0.6);
 par(mar = c(0,4,2,0))
+
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_Precut.png", 1000, 1000, pointsize=20)
 plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
      cex.axis = 1.5, cex.main = 2) # appears there are two outliers SG55 and SG 105; can remove by hand or an automatic appraoch 
-abline(h = 30000, col = "red") # add line to plot to show the cut-off od outlier samples (30000) SG90
-clust = cutreeStatic(sampleTree, cutHeight = 30000, minSize = 10) # Determine cluster under the line
-table(clust) # 0 = cut; 1 = kept; says it will cut 1 and save 35 
-keepSamples = (clust==1) # call the 35 from clust at position 1
-d7.data = d7.data[keepSamples, ]
-nGenes = ncol(d7.data) # number of genes ==  8548 
-nSamples = nrow(d7.data) # number of samples ==  35
+abline(h = 100, col = "red") # add line to plot to show the cut-off od outlier samples (40000) SG105 and SG55
+dev.off()
 
-# Phenotype trait and Treatment data
-dim(d7.Treatment_Phenotype.data) # 36 rows and 14 columns
-names(d7.Treatment_Phenotype.data) # look at the 14 columns 
-d7.Treatment_Phenotype.data = d7.Treatment_Phenotype.data[, -c(1:3, 5, 8)]; # remove columns that hold information we do not need.
-dim(d7.Treatment_Phenotype.data) # 36 rows and 9 columns
-d7.Treatment_Phenotype.data$Group <- paste(d7.Treatment_Phenotype.data$Primary_Treatment, d7.Treatment_Phenotype.data$Second_Treament,  sep ="")
+clust = cutreeStatic(sampleTree, cutHeight = 100, minSize = 10) # Determine cluster under the line
+table(clust) # 0 = cut; 1 = kept; says it will cut 2 and save 60 
+keepSamples = (clust==1) # call the 30 from clust at position 1
+dds.d7_vst = dds.d7_vst[keepSamples, ] # integreat the boolean 'keepsamples' to ommit oultilers determined in the sample tree above 
+nGenes = ncol(dds.d7_vst) # number of genes == 12013 
+nSamples = nrow(dds.d7_vst) # number of samples == 30  - the cut tree removed 6 samples 
+
+
+sampleTree2 = hclust(dist(dds.d7_vst), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_Postcut.png", 1000, 1000, pointsize=20)
+plot(sampleTree2, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
+     cex.axis = 1.5, cex.main = 2)
+dev.off()
+
+
+# based on outlier removall... call Trait data ===================================================== #
+dim(dds.d7_vst) # transformed count data now  has 30 samples - 6 cut in the tree step above 
+dim(d7.Treatment_Phenotype.data) # trait data has  36 samples - not yet cut! 
 
 # Form a data frame analogous to expression data that will hold the clinical traits.
-d7.Samples = rownames(d7.data);# start new variable 'd7.Samples' calling the row names of the gene data (sample as 'Mouse' in trait data)
+d7.Samples = rownames(dds.d7_vst);# start new variable 'd21.Samples' calling the row names of the gene data (sample as 'Mouse' in trait data)
 TreatRows = match(d7.Samples, d7.Treatment_Phenotype.data$Sample.Name); # match the names 
 d7.Traits = d7.Treatment_Phenotype.data[TreatRows, -1]; # removes the row numbers
 rownames(d7.Traits) = d7.Treatment_Phenotype.data[TreatRows, 1]; # inserts the new traitRows - matches sample treatments
-dim(d7.Traits) # 35 Samples 9 columns (primary, second, and third treatment)
-all(rownames(d7.Traits) == rownames(d7.data))  # should be TRUE
-fix(d7.Traits) # view the data
+dim(d7.Traits) #  30 Samples 8 columns (primary and second treatment) - note: no Third treatment because that occured Days 14-21, after this sampling day
+all(rownames(d7.Traits) == rownames(dds.d7_vst))  # should be TRUE
+dim(d7.Traits) #  30  8
 
 
-# Form a data frame analogous to expression data that will hold the clinical traits.
-# d7.Samples = rownames(d7.data);# start new variable 'd7.Samples' calling the row names of the gene data (sample as 'Mouse' in trait data)
-# TreatRows = match(d7.Samples, d7.treatment$Sample.Name); # match the names 
-# d7.Traits = as.data.frame(d7.treatment[TreatRows, -1]); # removes the row numbers
-# d7.Traits
-# rownames(d7.Traits) = d7.treatment[TreatRows, 1]; # inserts the new traitRows - matches sample treatments
-# colnames(d7.Traits)[1] <- "Treatment"
-# d7.Traits$Treatment <- as.factor(d7.Traits$Treatment)
-# dim(d7.Traits) # 60 Samples 3 columns (primary, second, and third treatment)
-# all(rownames(d7.Traits) == rownames(d7.data))  # should be TRUE
+# ALL TRAITS 
+d7.Traits
+# ONLY TREATMENTS
+d7.Traits.treat<- d7.Traits[,c(1:2)]
+# ONLY PHYSIOLOGY
+d7.Traits.phys<- d7.Traits[,c(3:(ncol(d7.Traits)))]
+
 
 
 
 # Re-cluster samples
-sampleTree2 = hclust(dist(d7.data), method = "average")
+
+# All Traits
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_AllTraits.png", 1000, 1000, pointsize=20)
+sampleTree2 = hclust(dist(dds.d7_vst), method = "average")
 traitColors = labels2colors(d7.Traits); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColors, # Plot the sample dendrogram and the colors underneath.
                     groupLabels = names(d7.Traits), 
                     main = "Sample dendrogram and trait heatmap")
+dev.off()
 
-save(d7.data, d7.Traits, file = "Analysis/Output/WGCNA/d.7-dataInput.RData")
+# Treatment Only
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_TreatmentOnly.png", 1000, 1000, pointsize=20)
+traitColors_treat = labels2colors(d7.Traits.treat); # Convert traits to a color representation: white means low, red means high, grey means missing entry
+plotDendroAndColors(sampleTree2, traitColors_treat, # Plot the sample dendrogram and the colors underneath.
+                    groupLabels = names(d7.Traits.treat), 
+                    main = "Sample dendrogram and trait heatmap")
+dev.off()
 
+# Phys Only
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_PhysOnly.png", 1000, 1000, pointsize=20)
+traitColors_phys = labels2colors(d7.Traits.phys); # Convert traits to a color representation: white means low, red means high, grey means missing entry
+plotDendroAndColors(sampleTree2, traitColors_phys, # Plot the sample dendrogram and the colors underneath.
+                    groupLabels = names(d7.Traits.phys), 
+                    main = "Sample dendrogram and trait heatmap")
+dev.off()
+
+
+# save data
+save(dds.d7_vst, d7.Traits, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput.RData")
+save(dds.d7_vst, d7.Traits.phys, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput_treatmentonly.RData")
+save(dds.d7_vst, d7.Traits.treat, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput_physonly.RData")
+
+
+# write the vst transformed data 
+write.csv(dds.d7_vst, "Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.csv") # write
 
 
 # soft threshold ============================================================================== #
+
+
+
 # Choose a set of soft-thresholding powers
 powers = c(c(1:10), seq(from = 12, to=20, by=2))
 # Call the network topology analysis function
-sft = pickSoftThreshold(d7.data, powerVector = powers, verbose = 5) # ...wait for this to finish
-
-
-# pickSoftThreshold ------------------------------------------------------------------------- #
-# performs the analysis of network topology and aids the
+sft = pickSoftThreshold(dds.d7_vst, powerVector = powers, verbose = 5) #...wait for this to finish
+# pickSoftThreshold 
+#  performs the analysis of network topology and aids the
 # user in choosing a proper soft-thresholding power.
 # The user chooses a set of candidate powers (the function provides suitable default values)
 # function returns a set of network indices that should be inspected
-# Plot the results:
+
+
+
+
+# pickSoftThreshold ------------------------------------------------------------------------- #
+
+
+
 sizeGrWindow(9, 5)
+png("Analysis/Output/WGCNA/Day7/Day7_ScaleTopology_SoftThresh.png", 1000, 1000, pointsize=20)
 par(mfrow = c(1,2));
 cex1 = 0.9;
 # Scale-free topology fit index as a function of the soft-thresholding power
@@ -133,6 +220,8 @@ plot(sft$fitIndices[,1], sft$fitIndices[,5],
      xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
      main = paste("Mean connectivity"))
 text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
+dev.off()
+
 
 # The left panel shows the scale-free fit index (y-axis) 
 # as a function of the soft-thresholding power (x-axis). 
@@ -142,14 +231,13 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 # The right panel displays the mean connectivity
 # (degree, y-axis) as a function of the soft-thresholding power (x-axis).
 
-
 #=====================================================================================
 #
 #  Constructing the gene network and identifying modules
 #
 #=====================================================================================
 # Constructing the gene network and identifying modules is now a simple function call:
-# soft thresholding power 12,
+# soft thresholding power 4,
 # relatively large minimum module size of 30,
 # medium sensitivity (deepSplit=2) to cluster splitting.
 # mergeCutHeight is the threshold for merging of modules.
@@ -158,44 +246,45 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 
 # NOTE: you will get this message "Error: REAL() can only be applied to a 'numeric', not a 'integer'"
 # if your data is not all as numeric - set as numeric with lapply below BEFORE running 'blockwiseModules'
-total_cols <- length(colnames(d7.data))
-d7.data[2:total_cols] = lapply(d7.data[2:total_cols], as.numeric)
+# total_cols <- length(colnames(dds.d21_vst)) # run this if ou data isnt already numeric
+# dds.d21_vst[2:total_cols] = lapply(dds.d21_vst[2:total_cols], as.numeric) # run this if ou data isnt already numeric
 
-net = blockwiseModules(d7.data, power = 12,
+net = blockwiseModules(dds.d7_vst, power = 4,
                        TOMType = "unsigned", minModuleSize = 30,
                        reassignThreshold = 0, mergeCutHeight = 0.25,
                        numericLabels = TRUE, pamRespectsDendro = FALSE,
                        saveTOMs = TRUE,
-                       saveTOMFileBase = "Analysis/Output/WGCNA/d7.Geoduck", 
+                       saveTOMFileBase = "Analysis/Output/WGCNA/Day7/d7.Geoduck", 
                        verbose = 3) #... wait for this to finish 
 
 net$colors # the module assignmen
 net$MEs # contains the module eigengenes of the modules.
 table(net$colors)
-# there are 13  modules in order of decending size
-# note 0 is reserved for genes outside of all modules (2308) 
+# there are 19  modules in order of decending size
+# note 0 is reserved for genes outside of all modules (2602 genes) 
 
 #=====================================================================================
 #
 #  The hierarchical clustering dendrogram (tree) used for the module identification 
 #
 #=====================================================================================
+
 # The hierarchical clustering dendrogram (tree) used for the module identification 
 # open a graphics window
 sizeGrWindow(12, 9)
 # Convert labels to colors for plotting
 moduleColors = labels2colors(net$colors)
 # Plot the dendrogram and the module colors underneath
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram.png", 1000, 1000, pointsize=20)
 plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
                     "Module colors",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
-
-
+dev.off()
 
 #=====================================================================================
 #
-#  Quantifying Eigengenes and module trait associations
+#  Quantifying module{trait associations
 #
 #=====================================================================================
 # identify modules that are signiFcantly
@@ -205,63 +294,221 @@ plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
 # we simply correlate eigengenes with external traits and look for the most signicant associations:
 
 # Define numbers of genes and samples
-nGenes = ncol(d7.data); # 8548
-nSamples = nrow(d7.data); # 35
+nGenes = ncol(dds.d7_vst); # 12013
+nSamples = nrow(dds.d7_vst); #  30
 # Recalculate MEs with color labels
-MEs0 = moduleEigengenes(d7.data, moduleColors)$eigengenes 
+MEs0 = moduleEigengenes(dds.d7_vst, moduleColors)$eigengenes 
 MEs = orderMEs(MEs0) # reorders the columns (colors/modules)
 
+
+# write csv - save the module eigengenes
+write.csv(MEs, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
+
+
 # change chanracter treatments to integers
-d7.Traits$Primary_Treatment <- as.factor(d7.Traits$Primary_Treatment) # convert to factor before numeric
-d7.Traits$Primary_Treatment <- as.numeric(d7.Traits$Primary_Treatment)# now convet to numeric for WGCNA
+# ALL TRAIT DATA
+d7.Traits$Primary_Treatment <- as.factor(d7.Traits$Primary_Treatment)
+d7.Traits$Primary_Treatment <- as.numeric(d7.Traits$Primary_Treatment)
 
-d7.Traits$Second_Treament <- as.factor(d7.Traits$Second_Treament) # convert to factor before numeric
-d7.Traits$Second_Treament <- as.numeric(d7.Traits$Second_Treament)# now convet to numeric for WGCNA
-
-d7.Traits$Group <- as.factor(d7.Traits$Group) # convert to factor before numeric
-d7.Traits$Group <- as.numeric(d7.Traits$Group)# now convet to numeric for WGCNA
+d7.Traits$Second_Treament <- as.factor(d7.Traits$Second_Treament)
+d7.Traits$Second_Treament <- as.numeric(d7.Traits$Second_Treament)
 
 
+# TREATMENT ONLY 
+d7.Traits.treat$Primary_Treatment <- as.factor(d7.Traits.treat$Primary_Treatment)
+d7.Traits.treat$Primary_Treatment <- as.numeric(d7.Traits.treat$Primary_Treatment)
+
+d7.Traits.treat$Second_Treament <- as.factor(d7.Traits.treat$Second_Treament)
+d7.Traits.treat$Second_Treament <- as.numeric(d7.Traits.treat$Second_Treament)
+
+
+# Module trait correlation ------------------------------------------------------- #
+# ALL TRAIT DATA
+dim(d7.Traits)  # 30  8
+dim(MEs)  # 30 38
 moduleTraitCor = cor(MEs, d7.Traits, use = "p");
 moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
+# TREATMENT ONLY 
+moduleTraitCor_treatonly = cor(MEs, d7.Traits.treat, use = "p");
+moduleTraitPvalue_treatonly = corPvalueStudent(moduleTraitCor_treatonly, nSamples);
+# PHYSIOLOGY  ONLY 
+moduleTraitCor_physonly = cor(MEs, d7.Traits.phys, use = "p");
+moduleTraitPvalue_physonly = corPvalueStudent(moduleTraitCor_physonly, nSamples);
 
 
 #=====================================================================================
 #
-#  CREATE HEATMAP
+#  labeled heatmap
 #
 #=====================================================================================
 
-
+# ALL TRAITS ------------------------------------------------------------------------- # 
 sizeGrWindow(10,10)
 # Will display correlations and their p-values
-textMatrix =  paste(signif(moduleTraitCor, 2), "\n(",
-                    signif(moduleTraitPvalue, 1), ")", sep = "");
-dim(textMatrix) = dim(moduleTraitCor)
-par(mar = c(9, 9, 6, 3));
+d7.AllTraits.matrix <-  paste(signif(moduleTraitCor, 2), "\n(",
+                               signif(moduleTraitPvalue, 1), ")", sep = "");
+
+#dim(d21.AllTraits.text) == dim(moduleTraitCor)
+par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
+png("Analysis/Output/WGCNA/Day7/Day7_AllTraits_heatmap.png", 500, 1000, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor,
                xLabels = names(d7.Traits),
                yLabels = names(MEs),
                ySymbols = names(MEs),
                colorLabels = TRUE,
                colors = blueWhiteRed(50),
-               textMatrix = textMatrix,
+               textMatrix = d7.AllTraits.matrix,
                setStdMargins = FALSE,
-               cex.text = 0.6,
-               zlim = c(-.7,.7),
-               main = paste("DAY 7: Module-trait relationships"))
+               cex.text = 0.5,
+               zlim = c(-0.6,0.6),
+               main = paste("Module-trait relationships - All traits"))
+dev.off()
+
+
+# this heatmap looks better
+d7.AllTraits.text <-  as.matrix(signif(moduleTraitCor, 3))
+pa = cluster::pam(moduleTraitCor, k = 3)
+col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
+png("Analysis/Output/WGCNA/Day7/Day7_AllTraits_heatmap2.png", 500, 1000, pointsize=20)
+Heatmap(moduleTraitCor, 
+        name = "gene_cor", 
+        rect_gp = gpar(col = "grey", lwd = 1),
+        column_title = "Day 7 WGCNA - All traits", 
+        column_title_gp = gpar(fontsize = 12, fontface = "bold"),
+        # row_title = "WGCNA modules",
+        #row_km = 4, 
+        column_km = 3,
+        row_split = paste0("clstr", pa$clustering),
+        row_gap = unit(5, "mm"),
+        column_gap = unit(5, "mm"),
+        # grid.text(matrix(textMatrix)),
+        # border = TRUE,
+        border = TRUE,
+        col = col_fun,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sprintf("%.1f", d7.AllTraits.text[i, j]), x, y, gp = gpar(fontsize = 10))
+        })
+dev.off()
 
 # The analysis identifies the several significant 
-# module{trait associations. We will concentrate on TAOC as the trait
+# module{trait associations. We will concentrate on weight as the trait
 # of interest.
 
-# concentrate on mean umol CRE g protein as the trait of interest (strongest module yellow)
 
+
+# TREATMENT ONLY ------------------------------------------------------------------------- # 
+sizeGrWindow(10,10)
+# Will display correlations and their p-values
+d7.Treatments.matrix <-  paste(signif(moduleTraitCor_treatonly, 2), "\n(",
+                                signif(moduleTraitCor_treatonly, 1), ")", sep = "")
+
+
+#dim(textMatrix) == dim(moduleTraitCor_treatonly)
+par(mar = c(8, 9.5, 5, 3));
+# Display the correlation values within a heatmap plot
+png("Analysis/Output/WGCNA/Day7/Day7_Treatments_heatmap.png", 500, 1000, pointsize=20)
+labeledHeatmap(Matrix = moduleTraitCor_treatonly,
+               xLabels = names(d7.Traits.treat),
+               yLabels = names(MEs),
+               ySymbols = names(MEs),
+               colorLabels = TRUE,
+               colors = blueWhiteRed(50),
+               textMatrix = d7.Treatments.matrix,
+               setStdMargins = FALSE,
+               cex.text = 0.5,
+               zlim = c(-0.6,0.6),
+               main = paste("Module-trait relationships - Treatments only"))
+dev.off()
+
+
+
+# this heatmap looks better
+d7.Treatments.text <-  as.matrix(signif(moduleTraitCor_treatonly, 3))
+pa = cluster::pam(d7.Treatments.text, k = 3)
+col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
+png("Analysis/Output/WGCNA/Day7/Day7_Treatments_heatmap2.png", 500, 1000, pointsize=20)
+Heatmap(moduleTraitCor_treatonly, 
+        name = "gene_cor", 
+        rect_gp = gpar(col = "grey", lwd = 1),
+        column_title = "Day 7 WGCNA - Treatments only", 
+        column_title_gp = gpar(fontsize = 12, fontface = "bold"),
+        # row_title = "WGCNA modules",
+        #row_km = 4, 
+        column_km = 1,
+        row_split = paste0("clstr", pa$clustering),
+        row_gap = unit(5, "mm"),
+        column_gap = unit(5, "mm"),
+        # grid.text(matrix(textMatrix)),
+        # border = TRUE,
+        border = TRUE,
+        col = col_fun,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sprintf("%.1f", d7.Treatments.text[i, j]), x, y, gp = gpar(fontsize = 10))
+        })
+dev.off()
+
+# The analysis identifies the several significant 
+# module{trait associations. We will concentrate on weight as the trait
+# of interest.
+
+
+
+# PHYSIOLOGY ONLY  ------------------------------------------------------------------------- # 
+sizeGrWindow(10,10)
+# Will display correlations and their p-values
+d7.Phys.matrix = paste(signif(moduleTraitCor_physonly, 2), "\n(",
+                        signif(moduleTraitPvalue_physonly, 1), ")", sep = "")
+
+par(mar = c(8, 9.5, 5, 3));
+# Display the correlation values within a heatmap plot
+png("Analysis/Output/WGCNA/Day7/Day7_PhysOnly_heatmap.png", 500, 1000, pointsize=20)
+labeledHeatmap(Matrix = moduleTraitCor_physonly,
+               xLabels = names(d7.Traits.phys),
+               yLabels = names(MEs),
+               ySymbols = names(MEs),
+               colorLabels = TRUE,
+               colors = blueWhiteRed(50),
+               textMatrix = d7.Phys.matrix,
+               setStdMargins = FALSE,
+               cex.text = 0.5,
+               zlim = c(-0.5,0.5),
+               main = paste("Module-trait relationships - Phys only"))
+dev.off()
+
+
+
+# this heatmap looks better
+d7.Phys.text <-  as.matrix(signif(moduleTraitCor_physonly, 3))
+pa = cluster::pam(d7.Phys.text, k = 3)
+col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
+png("Analysis/Output/WGCNA/Day7/Day7_PhysOnly_heatmap2.png", 500, 1000, pointsize=20)
+Heatmap(moduleTraitCor_physonly, 
+        name = "gene_cor", 
+        rect_gp = gpar(col = "grey", lwd = 1),
+        column_title = "Day 7 WGCNA - Physiology only", 
+        column_title_gp = gpar(fontsize = 12, fontface = "bold"),
+        # row_title = "WGCNA modules",
+        #row_km = 4, 
+        column_km = 3,
+        row_split = paste0("clstr", pa$clustering),
+        row_gap = unit(5, "mm"),
+        column_gap = unit(5, "mm"),
+        # grid.text(matrix(textMatrix)),
+        # border = TRUE,
+        border = TRUE,
+        col = col_fun,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sprintf("%.1f", d7.Phys.text[i, j]), x, y, gp = gpar(fontsize = 10))
+        })
+dev.off()
+# The analysis identifies the several significant 
+# module{trait associations. We will concentrate on weight as the trait
+# of interest.
 
 #=====================================================================================
 #
-#  TAOC in PINK module! CREATE DATAFRAMES 
+#  Shell Length in violet module! CREATE DATAFRAMES 
 #
 #=====================================================================================
 # Gene relationship to trait and important modules: 
@@ -269,89 +516,54 @@ labeledHeatmap(Matrix = moduleTraitCor,
 
 # We quantify associations of individual genes with our trait of interest (TAOC)
 
-# Define variable weight containing the weight column of d7.Traits
-TAOC = as.data.frame(d7.Traits$mean.µmol.CRE.g.protein); # -0.53 in yellow module
-names(TAOC) = "TAOC"
+# Define variable weight containing the aTAOC column 
+ShellLength = as.data.frame(d7.Traits$mean.Shell.Length); # -0.53 in yellow module
+names(ShellLength) = "ShellLength"
 
 # names (colors) of the modules
 modNames = substring(names(MEs), 3) # name all the modules, from 3rd character on (first two are ME)
 
-geneModuleMembership = as.data.frame(cor(d7.data, MEs, use = "p"));
+geneModuleMembership = as.data.frame(cor(dds.d7_vst, MEs, use = "p"));
 MMPvalue = as.data.frame(corPvalueStudent(as.matrix(geneModuleMembership), nSamples));
 
 names(geneModuleMembership) = paste("MM", modNames, sep="");
 names(MMPvalue) = paste("p.MM", modNames, sep="");
 
-# TAOC 
-TAOC_geneTraitSignificance = as.data.frame(cor(d7.data, TAOC, use = "p"));
-TAOC_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(TAOC_geneTraitSignificance), nSamples));
+# TAOC
+ShellLength_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, ShellLength, use = "p"));
+ShellLength_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(ShellLength_geneTraitSignificance), nSamples));
 
-names(TAOC_geneTraitSignificance) = paste("GS.taoc", names(TAOC), sep="");
-names(TAOC_GSPvalue) = paste("p.GS.taoc", names(TAOC), sep="");
+names(ShellLength_geneTraitSignificance) = paste("GS.ShellLength", names(ShellLength), sep="");
+names(ShellLength_GSPvalue) = paste("p.GS.ShellLength", names(ShellLength), sep="");
 
 
 
-#  PLOT TAOC IN THE PINK MODULE
-
-module = "pink"
-column = match(module, modNames);
-moduleGenes = moduleColors==module;
-
-sizeGrWindow(7, 7);
-par(mfrow = c(1,1));
-pink.TAOC <- verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
-                   abs(TAOC_geneTraitSignificance[moduleGenes, 1]),
-                   xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for TOAC",
-                   main = paste("Day7 TAOC 'pink': Module membership vs. gene significance\n"),
-                   cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "red")
-
-#  PLOT TAOC IN THE PINK MODULE
-
-module = "green"
-column = match(module, modNames);
-moduleGenes = moduleColors==module;
-
-sizeGrWindow(7, 7);
-par(mfrow = c(1,1));
-green.TAOC <- verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
-                   abs(TAOC_geneTraitSignificance[moduleGenes, 1]),
-                   xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for TOAC",
-                   main = paste("Day7 TAOC 'green': Module membership vs. gene significance\n"),
-                   cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "green")
-
-#  PLOT TAOC IN THE PINK MODULE
-
-module = "blue"
+#  PLOT mean.µmol.CRE.g.protein in the MAGENTA module
+unique(moduleColors)
+module = "violet"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 
 sizeGrWindow(7, 7);
 par(mfrow = c(1,1));
 verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
-                   abs(TAOC_geneTraitSignificance[moduleGenes, 1]),
+                   abs(ShellLength_geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for TOAC",
-                   main = paste("Day7 TAOC 'blue': Module membership vs. gene significance\n"),
-                   cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "blue")
-
-
+                   ylab = "Gene significance for Shell length",
+                   main = paste("Day7 shell length 'VIOLET': Module membership vs. gene significance\n"),
+                   cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "black")
 
 #=====================================================================================
 #
-#    CALL THE GENES OF INTEREST IN THE MODULES (i.e. yellow and tan - refer to heatmap)
+#   COUNT GENES OF INTEREST IN  MODULES (i.e. violet- refer to heatmap)
 #
 #=====================================================================================
 
-
-length(names(d7.data)[moduleColors=="pink"]) # 65 total genes in the pink module
-length(names(d7.data)[moduleColors=="green"]) # 149 total genes in the green module
-length(names(d7.data)[moduleColors=="blue"]) # 510 total genes in the blue module
+length(colnames(dds.d7_vst)[moduleColors=="violet"]) # 48 total genes in the violet module
 
 #=====================================================================================
 #
-#  Load in the annotation 
+#  Call annotation data to get module gene data (prep for downstream GO)
 #
 #=====================================================================================
 
@@ -374,34 +586,35 @@ sum(is.na(probes2annot))
 # Create the starting data frame
 
 
-#   TAOC dataframe --------------------------------------------------------------------------- # 
-names(TAOC_geneTraitSignificance)
-names(TAOC_GSPvalue)
-geneInfo_TAOC = data.frame(substanceBXH = probes,
-                       geneSymbol = annot$V1[probes2annot],
-                       #LocusLinkID = annot$LocusLinkID[probes2annot],
-                       moduleColor = moduleColors,
-                       Uniprot = annot$V5[probes2annot],
-                       HGNC = annot$V6[probes2annot],
-                       GO.terms = annot$V8[probes2annot],
-                       GO.description = annot$V9[probes2annot],
-                       TAOC_geneTraitSignificance, # call this specific to the module and trait of interest
-                       TAOC_GSPvalue)              # call this specific to the module and trait of interest
-View(geneInfo_TAOC)
-modOrder = order(-abs(cor(MEs, TAOC, use = "p"))); # order by the strength of the correlation between module and trait values for each sample
+#   TAOC dataframe - grey60 --------------------------------------------------------------------------- # 
+names(ShellLength_geneTraitSignificance)
+names(ShellLength_GSPvalue)
+geneInfo_ShellLength = data.frame(substanceBXH = probes,
+                                  geneSymbol = annot$V1[probes2annot],
+                                  #LocusLinkID = annot$LocusLinkID[probes2annot],
+                                  moduleColor = moduleColors,
+                                  Uniprot = annot$V5[probes2annot],
+                                  HGNC = annot$V6[probes2annot],
+                                  GO.terms = annot$V8[probes2annot],
+                                  GO.description = annot$V9[probes2annot],
+                                  ShellLength_geneTraitSignificance, # call this specific to the module and trait of interest
+                                  ShellLength_GSPvalue)              # call this specific to the module and trait of interest
+View(geneInfo_ShellLength)
+modOrder = order(-abs(cor(MEs, ShellLength, use = "p"))); # order by the strength of the correlation between module and trait values for each sample
 
 for (mod in 1:ncol(geneModuleMembership)) # Add module membership information in the chosen order
 {
-  oldNames = names(geneInfo_TAOC)
-  geneInfo_TAOC = data.frame(geneInfo_TAOC, geneModuleMembership[, modOrder[mod]], 
-                         MMPvalue[, modOrder[mod]]);
-  names(geneInfo_TAOC) = c(oldNames, paste("MM.", modNames[modOrder[mod]], sep=""),
-                       paste("p.MM.", modNames[modOrder[mod]], sep=""))
+  oldNames = names(geneInfo_ShellLength)
+  geneInfo_ShellLength = data.frame(geneInfo_ShellLength, geneModuleMembership[, modOrder[mod]], 
+                                    MMPvalue[, modOrder[mod]]);
+  names(geneInfo_ShellLength) = c(oldNames, paste("MM.", modNames[modOrder[mod]], sep=""),
+                                  paste("p.MM.", modNames[modOrder[mod]], sep=""))
 }
 # Order the genes in the geneInfo variable first by module color, then by geneTraitSignificance
-geneOrder = order(geneInfo_TAOC$moduleColor, -abs(geneInfo_TAOC$GS.taocTAOC));
-geneInfo_TAOC = geneInfo_TAOC[geneOrder, ]
-View(geneInfo_TAOC)
+geneOrder = order(geneInfo_ShellLength$moduleColor, -abs(geneInfo_ShellLength$GS.ShellLengthShellLength));
+geneInfo_ShellLength = geneInfo_ShellLength[geneOrder, ]
+View(geneInfo_ShellLength)
+
 
 
 #=====================================================================================
@@ -410,21 +623,18 @@ View(geneInfo_TAOC)
 #
 #=====================================================================================
 # call the module of interest for follow-up GO analysis 
-# Yellow module and TAOC 
-d7.WGCNA_TAOC.Pink.Mod.Gen <- geneInfo_TAOC %>%  dplyr::filter(moduleColor %in% 'pink')
-d7.WGCNA_TAOC.Green.Mod.Gen <- geneInfo_TAOC %>%  dplyr::filter(moduleColor %in% 'green')
-d7.WGCNA_TAOC.Blue.Mod.Gen <- geneInfo_TAOC %>%  dplyr::filter(moduleColor %in% 'blue')
 
-write.csv(d7.WGCNA_TAOC.Pink.Mod.Gen, file = "Analysis/Output/WGCNA/d7.WGCNA_TAOC.Pink.Mod.Gen.csv")
-write.csv(d7.WGCNA_TAOC.Green.Mod.Gen, file = "Analysis/Output/WGCNA/d7.WGCNA_TAOC.Green.Mod.Gen.csv")
-write.csv(d7.WGCNA_TAOC.Blue.Mod.Gen, file = "Analysis/Output/WGCNA/d7.WGCNA_TAOC.Blue.Mod.Gen.csv")
+
+write.csv(geneInfo_ShellLength, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")
 
 
 
 #=====================================================================================
 #
-#  Plotting expression in the red module
-#
+#  LOAD DATA for the following
+#  Plot (1) Linear regressions of eigengenes for each module
+#       (2) Eigengen exp by treatment  for modules of interest (review heatmaps)
+#       (3) Go terms for modules of interest (review heatmaps)
 #=====================================================================================
 
 # SET WORKING DIRECTORY AND LOAD DATA
@@ -438,178 +648,270 @@ library(reshape2)
 library(ggplot2)
 library(Rmisc)
 library(ggpubr)
-
+library(tibble)
+library(hrbrthemes)
+library(gridExtra)
 # Load data 
-d7_WGCNA_PinkMod <- read.csv("Analysis/Output/WGCNA/d7.WGCNA_TAOC.Pink.Mod.Gen.csv")
-d7_WGCNA_GreenMod <- read.csv("Analysis/Output/WGCNA/d7.WGCNA_TAOC.Green.Mod.Gen.csv")
-d7_WGCNA_BlueMod <- read.csv("Analysis/Output/WGCNA/d7.WGCNA_TAOC.Blue.Mod.Gen.csv")
-
-d7_counts_filtered <- read.csv("Analysis/Data/filtered_counts/day7.counts.filtered_10cpm50perc.csv")
+d7_ModEigen <- read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
+d7_Annot_ModuleMembership <-  read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")
+d7_vst_data <- read.csv("Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.csv")
 Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 
+
+
+#=====================================================================================
+#
+#  Prep and merge datasets for plotting
+# 
+#=====================================================================================
 # Prep data to merge
-d7_WGCNA_PinkMod <- d7_WGCNA_PinkMod[-c(1:2)] # ommit the redundant gene name columns buut keep 'geneSymbol'
-dim(d7_WGCNA_PinkMod) #  65 26
+# module membership
+d7_Annot_ModuleMembership <- d7_Annot_ModuleMembership[-c(1:2)] # ommit the redundant gene name columns buut keep 'geneSymbol'
+dim(d7_Annot_ModuleMembership) #  12013    84
 
-names(d7_counts_filtered)[1] <- "geneSymbol" # remname the gene name column to 'geneSymbol'
-dim(d7_counts_filtered) #  8548   37
-View(d7_counts_filtered)
+# module eigengenes
+names(d7_ModEigen)[1] <- "Sample.Name"
 
-
-# transform count data (vst in DESeq2)
-d7_counts_filtered.matrix <- data.matrix(d7_counts_filtered[,-1]) # create matrix - remove 'geneSymbol'
-d7_counts_matrix.vst <- vst(d7_counts_filtered.matrix)
-View(d7_counts_matrix.vst)
-d7_vst_counts <- data.frame(d7_counts_matrix.vst)
-d7_vst_counts$geneSymbol <- d7_counts_filtered[,1] # insert 'geneSymbol'
-View(d7_vst_counts)
+# normalized count data (same used for the dds object and WGCNA analysis)
+d7_vst_data_t <- as.data.frame(t(d7_vst_data[, -(1)])) # trsnpose columns names to rows (genes) 
+colnames(d7_vst_data_t) <- d7_vst_data[, 1] # name the columns as the rows in previous dataset (sample IDS)
+d7_vst_data_t<- d7_vst_data_t %>% tibble::rownames_to_column("geneSymbol") # "geneSymbol" - create column and remname the gene name column to 'geneSymbol'
 
 
-
-
-
-
-###################################### #
-# Pink Module 
-###################################### #
+# merge Master datasets
+# GO terms
+d7_GOTermsMaster.Modules<-  merge(d7_Annot_ModuleMembership, d7_vst_data_t, by = "geneSymbol")
+dim(d7_GOTermsMaster.Modules) # 12013   114
+# Eigengenes and traits
+d7_EigenTraitMaster<-  merge(d7_ModEigen, Master.Treatment_Phenotype.data, by = "Sample.Name")
+dim(d7_EigenTraitMaster) # 30 52
 
 
 
 
-# merge
-d7_pink.module <-  merge(d7_WGCNA_PinkMod, d7_vst_counts, by = "geneSymbol")
-dim(d7_pink.module) # 65 62
-View(d7_pink.module)
+#=====================================================================================
+# 
+# Linear regression plots Eigenengene expression with Traits for EACH module       
+#
+#=====================================================================================
 
-# total dataset ---
-colnames(d7_pink.module)
+# lets loop this through to get a bunch of plots 
+phys <- d7_EigenTraitMaster[,c(47:52)]
+modules <- d7_EigenTraitMaster[,c(2:39)]
 
-# Plot the vst transformed by treatment and by Total protein to visualize the effect of the pink module genes significant in WGCNA 
-# vst read count date - narrow the columns - reshape and rename
-d7.pink.module.vst <- d7_pink.module[,c(1, 27:62)]
-colnames(d7.pink.module.vst) # check if you have the gene name and all samples 
-d7.pink.module.vst_MELT <- melt(d7.pink.module.vst, id=("geneSymbol")) # melt using reshape2
 
-names(d7.pink.module.vst_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names
+library(ggpmisc)
 
-unique(Master.Treatment_Phenotype.data$Date)
+for(i in 1:ncol(modules)) {
+  module_color <- substr(names(modules)[i], 3,12)
+  moduledata <- modules[,i]
+  
+  par(mfrow=c(3,2))
+  
+  my.formula <- y ~ x
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,1])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[1])) +
+    theme_bw()
+  p1 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[1]), sep =' ')) + theme(legend.position="none")
+  
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,2])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[2])) +
+    theme_bw()
+  p2 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[2]), sep =' ')) + theme(legend.position="none")
+  
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,3])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[3])) +
+    theme_bw()
+  p3 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[3]), sep =' ')) + theme(legend.position="none")
+  
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,4])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[4])) +
+    theme_bw()
+  p4 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[4]), sep =' ')) + theme(legend.position="none")
+  
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,5])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[5])) +
+    theme_bw()
+  p5 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[5]), sep =' ')) + theme(legend.position="none")
+  
+  p <- ggplot(d7_EigenTraitMaster, 
+              aes(x=moduledata, y=phys[,6])) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x="Eigengene expression by sample", y = paste(names(phys)[6])) +
+    theme_bw()
+  p6 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[6]), sep =' ')) + theme(legend.position="none")
+  
+  # save plot grid 
+  #png("Analysis/Output/WGCNA/Day21/Day21_PhysOnly_heatmap2.png", 1000, 1000, pointsize=20)
+  ggarrange(p1, p2, p3, p4, p5, p6, ncol = 2, nrow = 3)
+  ggsave(paste0("Analysis/Output/WGCNA/Day7/EigengenePlots/Day7_EigengenePlot_", module_color, ".png"))
+}
+
+
+
+#===================================================================================== 
+# 
+# EXPLORE THE Expression of each module (for loop plots!)
+#
+# evidence from the heatmaps and the regression shwo strong module membership and eigenenge cor strength with lighcyan 
+# in response to treatment (primary specifically) and Total Antioxidant capacity 
+#
+#=====================================================================================
+
+modcolor <- as.data.frame(unique(d7_Annot_ModuleMembership$moduleColor))
+names(modcolor)[1] <- "color"
+
 # experiment treatment and total protein data - narrow the columns 
 exp.phys_data <- Master.Treatment_Phenotype.data %>% 
   dplyr::filter(Date %in% 20190731) %>%  # filter out Day 21 data only 
-  dplyr::select(c('Sample.Name', 'All_Treatment', 'Primary_Treatment', 'Second_Treament', 'mean.µmol.CRE.g.protein')) # call select columns - Day 7 had primary and second treaet - TAOC is the WGCNA of interest
-
-# merge by common row values 'Sample.Name'
-merged_pinkModvst_expdata <- merge(d7.pink.module.vst_MELT, exp.phys_data, by ='Sample.Name')
-
-meanEXp <- merged_pinkModvst_expdata %>% 
-  select(c('Sample.Name','vst_Expression','Primary_Treatment', 'Second_Treament')) %>% 
-  group_by(Sample.Name, Primary_Treatment, Second_Treament) %>%
-  dplyr::summarize(mean.vstExp = mean(vst_Expression), 
-                   sd.vsdtExp = sd(vst_Expression),
-                   na.rm=TRUE)
-# summarize datasets further by treatment period
-# remember:this is a mean of a mean!! First we complete mean vst exp by sample id (compiling all red module genes) - next all sample IDs by the treatment period (below
-# I will use these for mean SE plots 
-# Primary treatment
-meanEXp_Summary.Prim <- meanEXp %>% 
-  group_by(Primary_Treatment) %>%
-  dplyr::summarize(mean = mean(mean.vstExp), 
-                   sd = sd(mean.vstExp),
-                   n = n(), 
-                   se = sd/sqrt(n))
-# Second treatment
-meanEXp_Summary.Sec <- meanEXp %>% 
-  group_by(Second_Treament,Primary_Treatment) %>%
-  dplyr::summarize(mean = mean(mean.vstExp), 
-                   sd = sd(mean.vstExp),
-                   n = n(), 
-                   se = sd/sqrt(n))
+  dplyr::select(c('Sample.Name', 'All_Treatment', 'Primary_Treatment', 'Second_Treament', 'mean.µmol.CRE.g.protein')) # call select columns
 
 
+for(i in 1:nrow(modcolor)) {
+  
+  # vst read count date - narrow the columns - reshape and rename
+  Mod_geneIDs <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% modcolor[i,]) %>%  dplyr::select("geneSymbol")
+  d7_vst_Mod <- d7_vst_data_t %>% dplyr::filter(geneSymbol %in% Mod_geneIDs[,1])
+  d7_vst_Mod_MELT <- melt(d7_vst_Mod, id=("geneSymbol")) # melt using reshape2
+  names(d7_vst_Mod_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names
+  
+  # merge by common row values 'Sample.Name'
+  merged_Expdata_Mod <- merge(d7_vst_Mod_MELT, exp.phys_data, by ='Sample.Name')
+  
+  # mean Exp response table 
+  meanEXp_Mod <- merged_Expdata_Mod %>% 
+    select(c('Sample.Name','vst_Expression','Primary_Treatment', 'Second_Treament')) %>% 
+    group_by(Sample.Name, Primary_Treatment, Second_Treament) %>%
+    dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                     sd.vsdtExp = sd(vst_Expression),
+                     na.rm=TRUE)
+  
+  # summarize datasets further by treatment period
+  # remember:this is a mean of a mean!! First we complete mean vst exp by sample id (compiling all red module genes) - next all sample IDs by the treatment period (below
+  # I will use these for mean SE plots 
+  # Primary treatment
+  meanEXp_Summary.Prim_Mod <- meanEXp_Mod %>% 
+    group_by(Primary_Treatment) %>%
+    dplyr::summarize(mean = mean(mean.vstExp), 
+                     sd = sd(mean.vstExp),
+                     n = n(), 
+                     se = sd/sqrt(n))
+  # Second treatment
+  meanEXp_Summary.Sec_Mod <- meanEXp_Mod %>% 
+    group_by(Second_Treament,Primary_Treatment) %>%
+    dplyr::summarize(mean = mean(mean.vstExp), 
+                     sd = sd(mean.vstExp),
+                     n = n(), 
+                     se = sd/sqrt(n))
 
-# Mean SE plots --------- #
+  # PLOT
+  # The errorbars overlapped, so use position_dodge to move them horizontally
+  pd <- position_dodge(0.3) # move them .05 to the left and right
+  
+  # Primary treatment mean sd plot
+  min_p1 <- min(meanEXp_Summary.Prim_Mod$mean) - max(meanEXp_Summary.Prim_Mod$se)
+  max_p1 <- max(meanEXp_Summary.Prim_Mod$mean) + max(meanEXp_Summary.Prim_Mod$se)
+  
+  Primary.vst.Mod <- ggplot(meanEXp_Summary.Prim_Mod, aes(x=Primary_Treatment, y=mean, fill=Primary_Treatment)) +  # , colour=supp, group=supp))
+    theme_bw() +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
+    geom_line(position=pd) +
+    geom_point(position=pd, size = 4, shape=21) +            
+    xlab("Primary pCO2 treatment") +
+    ylab(NULL) +                 # note the mean was first by sample ID THEN by treatment
+    scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+    # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+    ggtitle(paste("Day 21 WGCNA", modcolor[i,], "Module VST GeneExp", sep =' ')) +
+    # expand_limits(y=0) +                                                    # Expand y range
+    scale_y_continuous(limits=c((min_p1), (max_p1))) +
+    theme(text = element_text(size=15))
+  
+  
+  # Second treatment mean sd plot
+  min_p2 <- min(meanEXp_Summary.Sec_Mod$mean) - max(meanEXp_Summary.Sec_Mod$se)
+  max_p2 <- max(meanEXp_Summary.Sec_Mod$mean) + max(meanEXp_Summary.Sec_Mod$se)
+  
+  Sec.vst.Mod <- ggplot(meanEXp_Summary.Sec_Mod, aes(x=Second_Treament, y=mean, fill=Primary_Treatment, group=Primary_Treatment)) +
+    theme_bw() +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
+    geom_line(position=pd) +
+    geom_point(position=pd, size = 4, shape=21) +            
+    xlab("Second pCO2 treatment") +
+    ylab(paste(modcolor[i,]," Module VST Gene Expression (Mean +/- SE)", sep = ' ')) +                 # note the mean was first by sample ID THEN by treatment
+    scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+    # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+    # ggtitle("Day 21 WGCNA red' Module VST GeneExp") +
+    # expand_limits(y=0) +                                                    # Expand y range
+    scale_y_continuous(limits=c((min_p2), (max_p2))) +
+    theme(text = element_text(size=15))
 
-
-
-
-# The errorbars overlapped, so use position_dodge to move them horizontally
-pd <- position_dodge(0.1) # move them .05 to the left and right
-
-
-# Primary treatment mean sd plot
-Primary.vst <- ggplot(meanEXp_Summary.Prim, aes(x=Primary_Treatment, y=mean, fill=Primary_Treatment)) +  # , colour=supp, group=supp))
-  theme_bw() +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
-  geom_line(position=pd) +
-  geom_point(position=pd, size = 4, shape=21) +            
-  xlab("Primary pCO2 treatment") +
-  ylab(NULL) +                 # note the mean was first by sample ID THEN by treatment
-  scale_fill_manual(values=c("#56B4E9","#E69F00")) +
-  # scale_color_manual(values=c("#56B4E9","#E69F00")) +
-  ggtitle("Day 7 WGCNA 'pink' Module VST GeneExp") +
-  # expand_limits(y=0) +                                                    # Expand y range
-  scale_y_continuous(limits=c(3, 5.5)) +
-  theme(text = element_text(size=15))
-
-
-# Second treatment mean sd plot
-Sec.vst <- ggplot(meanEXp_Summary.Sec, aes(x=Second_Treament, y=mean, fill=Primary_Treatment, group=Primary_Treatment)) +
-  theme_bw() +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
-  geom_line(position=pd) +
-  geom_point(position=pd, size = 4, shape=21) +            
-  xlab("Second pCO2 treatment") +
-  ylab("Pink Module VST Gene Expression (Mean +/- SE)") +                 # note the mean was first by sample ID THEN by treatment
-  scale_fill_manual(values=c("#56B4E9","#E69F00")) +
-  # scale_color_manual(values=c("#56B4E9","#E69F00")) +
-  # ggtitle("Day 21 WGCNA red' Module VST GeneExp") +
-  # expand_limits(y=0) +                                                    # Expand y range
-  scale_y_continuous(limits=c(3, 5.5)) +
-  theme(text = element_text(size=15))
-
-
-# Total protein by vst expression
-meanExp_TAOC <- merged_pinkModvst_expdata %>% 
-  group_by(Sample.Name) %>%
-  dplyr::summarize(mean.Exp = mean(vst_Expression), 
-                   sd.Exp = sd(vst_Expression),
-                   mean.TAOC = mean(mean.µmol.CRE.g.protein), 
-                   sd.TAOC = sd(mean.µmol.CRE.g.protein))
-meanExp_TAOC # notice cd total protein is 0 - this is becasue total protein was the same value regarless of the gene.ID within sample
-
-meanExp_TAOC_2 <- merge(meanExp_TAOC,meanEXp, by = "Sample.Name")
-
-# two obvious outliers > 50
-ggplot(meanExp_TAOC, aes(x=mean.TAOC, y=mean.Exp)) +
-  geom_point(shape=1) +    # Use hollow circles
-  geom_smooth()            # Add a loess smoothed fit curve with confidence region
-
-meanExp_total.protein.OM <- meanExp_TAOC %>% filter(mean.TAOC > 0.5) # remove the outliers and plot again
-
-ggplot(meanExp_total.protein.OM, aes(x=mean.TAOC, y=mean.Exp)) +
-  geom_point(shape=1) +    # Use hollow circles
-  geom_smooth()            # Add a loess smoothed fit curve with confidence region
-
-
-# Total protein and expression plot
-TotalProtein_vst.Exp <- ggplot(meanExp_total.protein.OM, aes(x=mean.totalprotein, y=mean.Exp)) +
-  geom_point(shape=1) +    # Use hollow circles
-  geom_smooth()   +        # Add a loess smoothed fit curve with confidence region
-  theme_bw() +
-  scale_y_continuous(limits=c(3, 5.5)) +
-  theme(text = element_text(size=15))
-
-
-#  grid arrange the three plots 
-# save plot
-png("Analysis/Output/WGCNA/Day7_vst.Exp_PinkModule.png", 500, 1000, pointsize=20)
-ggarrange(Primary.vst, Sec.vst,
-          plotlist = NULL,
-          ncol = 1,
-          nrow = 4,
-          labels = NULL)
-dev.off()
-
-
-
+  
+  # output 
+  
+  png(paste("Analysis/Output/WGCNA/Day7/ModuleExp_Treatment/Day7_Exp_Module",modcolor[i,],".png"), 600, 1000, pointsize=20)
+  print(ggarrange(Primary.vst.Mod, Sec.vst.Mod,         
+                  plotlist = NULL,
+                  ncol = 1,
+                  nrow = 2,
+                  labels = NULL))
+  dev.off()
+  
+}
 
