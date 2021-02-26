@@ -808,7 +808,7 @@ for(i in 1:ncol(modules)) {
 
 #===================================================================================== 
 # 
-# EXPLORE THE Expression of each module (for loop plots!)
+# EXPLORE THE Expression of each module (for loop plots!) BY TREATMENT
 #
 # evidence from the heatmaps and the regression shwo strong module membership and eigenenge cor strength with lighcyan 
 # in response to treatment (primary specifically) and Total Antioxidant capacity 
@@ -820,8 +820,7 @@ names(modcolor)[1] <- "color"
 
 # experiment treatment and total protein data - narrow the columns 
 exp.phys_data <- Master.Treatment_Phenotype.data %>% 
-  dplyr::filter(Date %in% 20190731) %>%  # filter out Day 21 data only 
-  dplyr::select(c('Sample.Name', 'All_Treatment', 'Primary_Treatment', 'Second_Treament', 'mean.µmol.CRE.g.protein')) # call select columns
+  dplyr::filter(Date %in% 20190731) # filter out Day 7 data only 
 
 
 for(i in 1:nrow(modcolor)) {
@@ -905,7 +904,7 @@ for(i in 1:nrow(modcolor)) {
   
   # output 
   
-  png(paste("Analysis/Output/WGCNA/Day7/ModuleExp_Treatment/Day7_Exp_Module",modcolor[i,],".png"), 600, 1000, pointsize=20)
+  png(paste("Analysis/Output/WGCNA/Day7/ModuleExpression_Treatment/Day7_Exp_Module",modcolor[i,],".png"), 600, 1000, pointsize=20)
   print(ggarrange(Primary.vst.Mod, Sec.vst.Mod,         
                   plotlist = NULL,
                   ncol = 1,
@@ -915,3 +914,304 @@ for(i in 1:nrow(modcolor)) {
   
 }
 
+
+
+#===================================================================================== 
+# 
+# EXPLORE THE Expression of each module (for loop plots!)  BY PHENOTYPE 
+#
+# evidence from the heatmaps and the regression shwo strong module membership and eigenenge cor strength with lighcyan 
+# in response to treatment (primary specifically) and Total Antioxidant capacity 
+#
+#=====================================================================================
+
+
+
+for(i in 1:nrow(modcolor)) {
+  module_color <- modcolor[i,] # call the color character 
+  
+  # vst read count date - narrow the columns - reshape and rename
+  Mod_geneIDs <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% module_color) %>%  dplyr::select("geneSymbol") # all geneSymbols (IDs) WITHIN the looped module color 
+  d7_vst_Mod <- d7_vst_data_t %>% dplyr::filter(geneSymbol %in% Mod_geneIDs[,1]) # call the transposed vst count data and filer for the module color 
+  d7_vst_Mod_MELT <- melt(d7_vst_Mod, id=("geneSymbol")) # melt using reshape2 - ('un-transpose')
+  names(d7_vst_Mod_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names to merge next
+  
+  # merge by common row values 'Sample.Name'
+  merged_Expdata_Mod <- merge(d7_vst_Mod_MELT, exp.phys_data, by ='Sample.Name') # merge
+  
+  # mean Exp response table 
+  meanExp_Mod <- merged_Expdata_Mod %>% 
+    group_by(Sample.Name) %>%
+    dplyr::summarize(n = n(), 
+                     mean.vstExp = mean(vst_Expression), 
+                     sd.vsdtExp = sd(vst_Expression),
+                     se.vsdtExp = sd.vsdtExp/sqrt(n)) # mean expression for each sample ID 
+  
+  merged_Expdata_phystreat <- merged_Expdata_Mod %>%  # condence down the 'merged_Expdata_Mod' file to merge with 'meanExp_Mod'
+    dplyr::select(c("Sample.Name", "Primary_Treatment", "Second_Treament", "mean.µmol.CRE.g.protein",
+                    "mean.AFDW", "mean.mgProt.mgAFDW", "mean.Resp.ugLhrindiv", "mean.Biovol", "mean.Shell.Length"))
+  
+  meanExp_Mod.MASTER <- unique(merge(meanExp_Mod, merged_Expdata_phystreat, by = "Sample.Name")) # call only unqiue values 
+ 
+  phys <- meanExp_Mod.MASTER[, 8:13]  # call only the phys columns for the subseqent for loop - plotting each 
+  
+  dir.create(paste0("Analysis/Output/WGCNA/Day7/ModuleExpresion_Phenotype/",module_color), showWarnings = FALSE)
+  
+  for(m in 1:ncol(phys)) {
+   # phys[,m] # the column
+   # names(phys)[m] # the name of the column 
+  
+  
+  Primary_plot <- ggplot(meanExp_Mod.MASTER, 
+          aes(x=phys[,m], y=mean.vstExp, fill = Primary_Treatment, colour = Primary_Treatment, group = Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
+     scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+     geom_smooth(method=lm , alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+     stat_poly_eq(formula = my.formula,
+                  eq.with.lhs = "italic(hat(y))~`=`~",
+                  aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                  parse = TRUE)  + 
+     geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+     scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+     labs(x=(names(phys)[m]), y = paste("WGCNA module",module_color,'mean.vstExp', sep = ' ')) +
+     theme_bw()
+ 
+   PrimSec_facetplot <- ggplot(meanExp_Mod.MASTER, 
+                        aes(x=phys[,m], y=mean.vstExp, fill = Primary_Treatment, colour = Primary_Treatment, group = Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
+    scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+    geom_smooth(method=lm , alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+    stat_poly_eq(formula = my.formula,
+                 eq.with.lhs = "italic(hat(y))~`=`~",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                 parse = TRUE)  + 
+    geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+    scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+    labs(x=(names(phys)[m]), y = paste("WGCNA module",module_color,'mean.vstExp', sep = ' ')) +
+    theme_bw()+
+    facet_wrap(~Second_Treament) 
+  PrimSec_facetplot <- PrimSec_facetplot + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[m]), sep =' ')) + theme(legend.position="none")
+  
+  png(paste("Analysis/Output/WGCNA/Day7/ModuleExpresion_Phenotype/",module_color,"/Day7_Exp_Module_",module_color, "_",(names(phys)[m]),".png", sep = ''), 600, 1000, pointsize=20)
+  print(ggarrange(Primary_plot, PrimSec_facetplot,         
+                  plotlist = NULL,
+                  ncol = 1,
+                  nrow = 2,
+                  labels = NULL))
+  dev.off()
+  }
+  
+}
+   
+
+
+
+#===================================================================================== 
+# magenta MODULE CONTINUED....
+# 
+# goseq - load the annotation and prepare the four steps for goseq!
+#
+#===================================================================================== 
+
+### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+
+
+# build annotation file to merge with the mean LFC tables
+annot.condenced <- Geoduck_annotation[,c(1,3:9)]
+annot.condenced$gene.length <- annot.condenced$V4 - annot.condenced$V3
+annot.condenced <- annot.condenced[,-c(2,3)]
+names(annot.condenced) <- c('Gene.ID', 'Uniprot', 'HGNC', 'fxn', 'Go.terms', 'Go.fxns','gene.length')
+
+
+
+
+# merge with the master gene annotation file 'annot.condenced' to get all desired info of just the magenta genes
+GO_magenta_MASTER <- merge(GO_magenta,annot.condenced, by ='Gene.ID')
+
+
+# Prepare dataframe(s) and vectors for goseq 
+### (1) Format 'GO.term' for goseq from the P.generosa annotation .fna file 'Geoduck_annotation'
+# GO terms data (ALL)
+Geoduck_GOterms <- as.data.frame(Geoduck_annotation) %>% dplyr::select(c('V1','V8'))
+colnames(Geoduck_GOterms)[1:2] <- c('transcript.ID', 'GO.terms') # call gene name and the GO terms - (Uniprot ID 'V5')
+splitted <- strsplit(as.character(Geoduck_GOterms$GO.terms), ";") #slit into multiple GO ids
+GO.terms <- data.frame(v1 = rep.int(Geoduck_GOterms$transcript.ID, sapply(splitted, length)), v2 = unlist(splitted)) #list all genes with each of their GO terms in a single row
+
+### (2) Unique Genes - vector based on all unique mapped reads 
+# Construct a named vector of all target genes for goseq
+GO_unique.genes.all <- as.vector(unique(Geoduck_annotation$V1)) # call all unique genes for GO analysis (goseq)
+
+### (3) Gene length 
+# length vector  
+GO_gene.length <- Geoduck_annotation %>% dplyr::mutate(length = V4-V3) %>%  dplyr::select(c("V1","length"))
+names(GO_gene.length)[1] <- "Gene.ID"
+#GO_gene.length_merge <- merge(GO_gene.length, GO_magenta_genes, by = "Gene.ID")
+length_vector <- GO_gene.length$length
+
+### (4) Call modules of interest (i.e. magenta module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
+# Example: 0 = not in magenta; 1 = in magenta
+# magenta module  ------------------------------------------- #
+GO_magenta <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'magenta') # %>%  dplyr::select("geneSymbol")
+GO_magenta_genes <- GO_magenta[1]
+names(GO_magenta_genes)[1] <- "Gene.ID" # 162 genws in the magenta module 
+
+
+GO_magenta_integer <- as.integer(GO_unique.genes.all%in%(GO_magenta_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
+names(GO_magenta_integer)=GO_unique.genes.all
+View(GO_magenta_integer)
+
+
+# Review what we have for goseq....
+
+# (1) Go terms ---------------- #
+#  head(GO.terms)
+
+# (2) ID vector --------------- #
+# head(GO_unique.genes.all)
+
+# (3) Length vector ----------- #
+# head(length_vector)
+
+# (4) Binary DEG vectors ------ # 
+# head(GO_magenta_integer)  
+
+#===================================================================================== 
+# magenta MODULE CONTINUED....
+# 
+# It's goseq time!!!
+# Calculate Probability Weighting Function
+#===================================================================================== 
+
+#Calculate Probability Weighting Function (using 'nullp')
+magenta.pwf<-nullp(GO_magenta_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+
+#===================================================================================== 
+# magenta MODULE CONTINUED....
+# 
+# It's goseq time!!!
+#  Run goseq
+#===================================================================================== 
+
+magenta.goseq<-goseq(magenta.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+
+# somegenes <- magenta.goseq %>%  dplyr::filter(ontology %in% 'CC') # xplore why there were no CC terms in the goseq plot
+# somegenes0.5CC <- somegenes %>% dplyr::filter(over_represented_pvalue < 0.1)
+#===================================================================================== 
+# magenta MODULE CONTINUED....
+# 
+# It's goseq time!!!
+# PLOTTING
+#===================================================================================== 
+library(forcats)
+#Find only enriched GO terms that are statistically significant at cutoff 
+magenta_enriched.GO.05.a<-magenta.goseq$category[magenta.goseq$over_represented_pvalue<.05] # change twice here
+magenta_enriched.GO.05<-data.frame(magenta_enriched.GO.05.a)
+colnames(magenta_enriched.GO.05) <- c("category")
+magenta_enriched.GO.05 <- merge(magenta_enriched.GO.05, magenta.goseq, by="category") # change here
+magenta_enriched.GO.05 <- magenta_enriched.GO.05[order(-magenta_enriched.GO.05$numDEInCat),]
+magenta_enriched.GO.05$term <- as.factor(magenta_enriched.GO.05$term)
+head(magenta_enriched.GO.05)
+
+magenta_MF <- subset(magenta_enriched.GO.05, ontology=="MF")
+magenta_MF <- magenta_MF[order(-magenta_MF$numDEInCat),]
+magenta_CC <- subset(magenta_enriched.GO.05, ontology=="CC")
+magenta_CC <- magenta_CC[order(-magenta_CC$numDEInCat),]
+magenta_BP <- subset(magenta_enriched.GO.05, ontology=="BP")
+magenta_BP <- magenta_BP[order(-magenta_BP$numDEInCat),]
+
+# Molecular Processes
+MFplot_magenta <- magenta_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+  ggplot( aes(x=term, y=numDEInCat) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+  geom_point(size=3, color="#69b3a2") +
+  coord_flip() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position="none"
+  ) +
+  xlab("") +
+  ylab("") +
+  ggtitle("Molecular Function") + #add a main title
+  theme(plot.title = element_text(face = 'bold', 
+                                  size = 12, 
+                                  hjust = 0)) +
+  theme_bw() + #Set background color 
+  theme(panel.border = element_blank(), # Set border
+        panel.grid.major = element_blank(), #Set major gridlines
+        panel.grid.minor = element_blank(), #Set minor gridlines
+        axis.line = element_line(colour = "black"), #Set axes color
+        plot.background=element_blank())#Set the plot background
+
+#Cellular Processes
+CCplot_magenta <- magenta_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+  ggplot( aes(x=term, y=numDEInCat) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+  geom_point(size=3, color="#69b3a2") +
+  coord_flip() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position="none"
+  ) +
+  xlab("") +
+  ylab("") +
+  ggtitle("Cellular Component") + #add a main title
+  theme(plot.title = element_text(face = 'bold', 
+                                  size = 12, 
+                                  hjust = 0)) +
+  theme_bw() + #Set background color 
+  theme(panel.border = element_blank(), # Set border
+        panel.grid.major = element_blank(), #Set major gridlines
+        panel.grid.minor = element_blank(), #Set minor gridlines
+        axis.line = element_line(colour = "black"), #Set axes color
+        plot.background=element_blank())#Set the plot background
+
+# Biological Processes 
+BPplot_magenta <- magenta_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+  ggplot( aes(x=term, y=numDEInCat) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+  geom_point(size=3, color="#69b3a2") +
+  coord_flip() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position="none") +
+  xlab("") +
+  ylab("") +
+  ggtitle("Biological Process") + #add a main title
+  theme(plot.title = element_text(face = 'bold', 
+                                  size = 12, 
+                                  hjust = 0)) +
+  theme_bw() + #Set background color 
+  theme(panel.border = element_blank(), # Set border
+        panel.grid.major = element_blank(), #Set major gridlines
+        panel.grid.minor = element_blank(), #Set minor gridlines
+        axis.line = element_line(colour = "black"), #Set axes color
+        plot.background=element_blank())#Set the plot background
+
+# merge MF CC BP plots - Light cyan
+num_magenta   <- dim(GO_magenta_genes)[1] # call num upregulated genes
+
+library(tidyr)
+GOplot.merge_magenta<- magenta_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+  mutate(term = fct_reorder(term, ontology)) %>%
+  ggplot( aes(x=term, y=numDEInCat) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+  geom_point(size=3, aes(colour = ontology)) +
+  coord_flip() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position="bottom"
+  ) +
+  xlab("") +
+  ylab("") +
+  ggtitle("GO: Day 7 WGCNA MEmagenta") +
+  geom_label(aes(x = 2, y = 7, label = paste(num_magenta, "MEmagenta genes"))) +
+  theme_bw() + #Set background color 
+  theme(panel.border = element_blank(), # Set border
+        panel.grid.major = element_blank(), #Set major gridlines
+        panel.grid.minor = element_blank(), #Set minor gridlines
+        axis.line = element_line(colour = "black"), #Set axes color
+        plot.background=element_blank()) #Set the plot background #set title attributes
+GOplot.merge_magenta

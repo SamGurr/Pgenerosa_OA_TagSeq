@@ -44,7 +44,7 @@ options(stringsAsFactors = FALSE)
 dim(day21counts.matrix) # 11800  rows (genes) -   63  samples  not counting 'x' and 'Gene.ID'
 (day21counts.matrix)[1] # ommit the first line and transpose in the next line 
 d21.data = as.data.frame(t(day21counts.matrix[, -(1)])) # ommit all columns but samples and transpose
-dim(d21.data)
+dim(d21.data) # 62 11800
 
  
 # trait data ========================================================== #
@@ -252,14 +252,14 @@ net = blockwiseModules(dds.d21_vst, power = 4,
                        reassignThreshold = 0, mergeCutHeight = 0.25,
                        numericLabels = TRUE, pamRespectsDendro = FALSE,
                        saveTOMs = TRUE,
-                       saveTOMFileBase = "Analysis/Output/WGCNA/d21.Geoduck", 
+                       saveTOMFileBase = "Analysis/Output/WGCNA/Day21/d21.Geoduck", 
                        verbose = 3) #... wait for this to finish 
 
-net$colors # the module assignmen
+net$colors # the module assignment
 net$MEs # contains the module eigengenes of the modules.
 table(net$colors)
 # there are 19  modules in order of decending size
-# note 0 is reserved for genes outside of all modules (3675 genes) 
+# note 0 is reserved for genes outside of all modules (3495 genes) 
 
 #=====================================================================================
 #
@@ -330,7 +330,7 @@ d21.Traits.treat$Third_Treatment <- as.numeric(d21.Traits.treat$Third_Treatment)
 # Module trait correlation ------------------------------------------------------- #
 # ALL TRAIT DATA
 dim(d21.Traits)  # 45  9
-dim(MEs)  # 45 27
+dim(MEs)  # 45 28
 moduleTraitCor = cor(MEs, d21.Traits, use = "p");
 moduleTraitPvalue = corPvalueStudent(moduleTraitCor, nSamples);
 # TREATMENT ONLY 
@@ -554,9 +554,9 @@ names(TAOC_GSPvalue) = paste("p.GS.TAOC", names(TAOC), sep="");
 
 
 
-#  PLOT mean.µmol.CRE.g.protein in the MAGENTA module
+#  PLOT mean.µmol.CRE.g.protein in the midnightblue module
 unique(moduleColors)
-module = "magenta"
+module = "midnightblue"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 
@@ -566,12 +566,12 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    abs(TAOC_geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
                    ylab = "Gene significance for TAOC",
-                   main = paste("Day21 total protein 'MAGENTA': Module membership vs. gene significance\n"),
+                   main = paste("Day21 total protein 'midnightblue': Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "black")
 
-#  PLOT mean.µmol.CRE.g.protein in the MAGENTA module
+#  PLOT mean.µmol.CRE.g.protein in the purple module
 unique(moduleColors)
-module = "lightcyan"
+module = "purple"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 
@@ -581,7 +581,7 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    abs(TAOC_geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
                    ylab = "Gene significance for TAOC",
-                   main = paste("Day21 total protein 'LIGHTCYAN': Module membership vs. gene significance\n"),
+                   main = paste("Day21 total protein 'purple': Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = "black")
 
 #=====================================================================================
@@ -591,8 +591,8 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
 #=====================================================================================
 
 
-length(colnames(dds.d21_vst)[moduleColors=="lightcyan"]) # 162 total genes in the lightcyan module
-length(colnames(dds.d21_vst)[moduleColors=="magenta"]) # 350 total genes in the magenta module
+length(colnames(dds.d21_vst)[moduleColors=="midnightblue"]) # 165 total genes in the lightcyan module
+#length(colnames(dds.d21_vst)[moduleColors=="magenta"]) # 350 total genes in the magenta module
 
 #=====================================================================================
 #
@@ -697,7 +697,7 @@ Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenoty
 # Prep data to merge
 # module membership
 d21_Annot_ModuleMembership <- d21_Annot_ModuleMembership[-c(1:2)] # ommit the redundant gene name columns buut keep 'geneSymbol'
-dim(d21_Annot_ModuleMembership) #  11800  62
+dim(d21_Annot_ModuleMembership) #  11800  64
 
 # module eigengenes
 names(d21_ModEigen)[1] <- "Sample.Name"
@@ -711,10 +711,10 @@ d21_vst_data_t<- d21_vst_data_t %>% tibble::rownames_to_column("geneSymbol") # "
 # merge Master datasets
 # GO terms
 d21_GOTermsMaster.Modules<-  merge(d21_Annot_ModuleMembership, d21_vst_data_t, by = "geneSymbol")
-dim(d21_GOTermsMaster.Modules) # 11800   107
+dim(d21_GOTermsMaster.Modules) # 11800   109
 # Eigengenes and traits
 d21_EigenTraitMaster<-  merge(d21_ModEigen, Master.Treatment_Phenotype.data, by = "Sample.Name")
-dim(d21_EigenTraitMaster) # 45 41
+dim(d21_EigenTraitMaster) # 45 42
 
 
 
@@ -726,8 +726,8 @@ dim(d21_EigenTraitMaster) # 45 41
 #=====================================================================================
 
 # lets loop this through to get a bunch of plots 
-phys <- d21_EigenTraitMaster[,c(36:41)]
-modules <- d21_EigenTraitMaster[,c(2:28)]
+phys <- d21_EigenTraitMaster[,c(37:42)]
+modules <- d21_EigenTraitMaster[,c(2:29)]
 
 
 library(ggpmisc)
@@ -852,8 +852,7 @@ names(modcolor)[1] <- "color"
 
 # experiment treatment and total protein data - narrow the columns 
 exp.phys_data <- Master.Treatment_Phenotype.data %>% 
-  dplyr::filter(Date %in% 20190814) %>%  # filter out Day 21 data only 
-  dplyr::select(c('Sample.Name', 'All_Treatment', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', 'mean.µmol.CRE.g.protein')) # call select columns
+  dplyr::filter(Date %in% 20190814)  # filter out Day 21 data only 
 
 
 for(i in 1:nrow(modcolor)) {
@@ -966,7 +965,7 @@ for(i in 1:nrow(modcolor)) {
   
   # output 
   
-  png(paste("Analysis/Output/WGCNA/Day21/ModuleExp_Treatment/Day21_Exp_Module",modcolor[i,],".png"), 600, 1000, pointsize=20)
+  png(paste("Analysis/Output/WGCNA/Day21/ModuleExpression_Treatment/Day21_Exp_Module",modcolor[i,],".png"), 600, 1000, pointsize=20)
   print(ggarrange(Primary.vst.Mod, Sec.vst.Mod, Third.vst.Mod,           
             plotlist = NULL,
             ncol = 1,
@@ -974,6 +973,115 @@ for(i in 1:nrow(modcolor)) {
             labels = NULL))
   dev.off()
 
+}
+
+
+
+#===================================================================================== 
+# 
+# EXPLORE THE Expression of each module (for loop plots!)  BY PHENOTYPE 
+#
+# evidence from the heatmaps and the regression shwo strong module membership and eigenenge cor strength with lighcyan 
+# in response to treatment (primary specifically) and Total Antioxidant capacity 
+#
+#=====================================================================================
+
+modcolor <- as.data.frame(unique(d21_Annot_ModuleMembership$moduleColor))
+names(modcolor)[1] <- "color"
+
+# experiment treatment and total protein data - narrow the columns 
+exp.phys_data <- Master.Treatment_Phenotype.data %>% 
+  dplyr::filter(Date %in% 20190814)  # filter out Day 21 data only 
+
+for(i in 1:nrow(modcolor)) {
+  module_color <- modcolor[i,] # call the color character 
+  
+  # vst read count date - narrow the columns - reshape and rename
+  Mod_geneIDs <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% module_color) %>%  dplyr::select("geneSymbol") # all geneSymbols (IDs) WITHIN the looped module color 
+  d21_vst_Mod <- d21_vst_data_t %>% dplyr::filter(geneSymbol %in% Mod_geneIDs[,1]) # call the transposed vst count data and filer for the module color 
+  d21_vst_Mod_MELT <- melt(d21_vst_Mod, id=("geneSymbol")) # melt using reshape2 - ('un-transpose')
+  names(d21_vst_Mod_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names to merge next
+  
+  # merge by common row values 'Sample.Name'
+  merged_Expdata_Mod <- merge(d21_vst_Mod_MELT, exp.phys_data, by ='Sample.Name') # merge
+  
+  # mean Exp response table 
+  meanExp_Mod <- merged_Expdata_Mod %>% 
+    group_by(Sample.Name) %>%
+    dplyr::summarize(n = n(), 
+                     mean.vstExp = mean(vst_Expression), 
+                     sd.vsdtExp = sd(vst_Expression),
+                     se.vsdtExp = sd.vsdtExp/sqrt(n)) # mean expression for each sample ID 
+  
+  merged_Expdata_phystreat <- merged_Expdata_Mod %>%  # condence down the 'merged_Expdata_Mod' file to merge with 'meanExp_Mod'
+    dplyr::select(c("Sample.Name", "Primary_Treatment", "Second_Treament", "Third_Treatment", "mean.µmol.CRE.g.protein",
+                    "mean.AFDW", "mean.mgProt.mgAFDW", "mean.Resp.ugLhrindiv", "mean.Biovol", "mean.Shell.Length"))
+  
+  meanExp_Mod.MASTER <- unique(merge(meanExp_Mod, merged_Expdata_phystreat, by = "Sample.Name")) # call only unqiue values 
+  
+  phys <- meanExp_Mod.MASTER[, 9:14]  # call only the phys columns for the subseqent for loop - plotting each 
+  
+  dir.create(paste0("Analysis/Output/WGCNA/Day21/ModuleExpresion_Phenotype/",module_color), showWarnings = FALSE)
+  
+  for(m in 1:ncol(phys)) {
+    # phys[,m] # the column
+    # names(phys)[m] # the name of the column 
+    
+    
+    Primary_plot <- ggplot(meanExp_Mod.MASTER, 
+                           aes(x=phys[,m], y=mean.vstExp, fill = Primary_Treatment, colour = Primary_Treatment, group = Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
+      scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+      geom_smooth(method=lm , alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+      stat_poly_eq(formula = my.formula,
+                   eq.with.lhs = "italic(hat(y))~`=`~",
+                   aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                   parse = TRUE)  + 
+      geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+      scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+      labs(x=(names(phys)[m]), y = paste("WGCNA module",module_color,'mean.vstExp', sep = ' ')) +
+      theme_bw()
+    
+    PrimSec_facetplot <- ggplot(meanExp_Mod.MASTER, 
+                                aes(x=phys[,m], y=mean.vstExp, fill = Primary_Treatment, colour = Primary_Treatment, group = Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
+      scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+      geom_smooth(method=lm , alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+      stat_poly_eq(formula = my.formula,
+                   eq.with.lhs = "italic(hat(y))~`=`~",
+                   aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                   parse = TRUE)  + 
+      geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+      scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+      labs(x=(names(phys)[m]), y = paste("WGCNA module",module_color,'mean.vstExp', sep = ' ')) +
+      theme_bw()+
+      facet_wrap(~Second_Treament) 
+    PrimSec_facetplot <- PrimSec_facetplot + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[m]), sep =' ')) + theme(legend.position="none")
+    
+    Third_facetplot <- ggplot(meanExp_Mod.MASTER, 
+                                aes(x=phys[,m], y=mean.vstExp, shape = Second_Treament, fill = Primary_Treatment, colour = Primary_Treatment, group = Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
+      scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
+      geom_smooth(method=lm , alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
+      stat_poly_eq(formula = my.formula,
+                   eq.with.lhs = "italic(hat(y))~`=`~",
+                   aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                   parse = TRUE)  + 
+      geom_point(aes(colour = factor(Primary_Treatment)), size = 3, shape = 19) +
+      scale_color_manual(values=c("#56B4E9", "#D55E00")) +
+      scale_shape_manual(values=c(16,15,17)) +
+      labs(x=(names(phys)[m]), y = paste("WGCNA module",module_color,'mean.vstExp', sep = ' ')) +
+      theme_bw()+
+      facet_wrap(~Third_Treatment) 
+    Third_facetplot <- Third_facetplot + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[m]), sep =' ')) + theme(legend.position="none")
+    
+    
+    png(paste("Analysis/Output/WGCNA/Day21/ModuleExpresion_Phenotype/",module_color,"/Day21_Exp_Module_",module_color, "_",(names(phys)[m]),".png", sep = ''), 600, 1000, pointsize=20)
+    print(ggarrange(Primary_plot, PrimSec_facetplot, Third_facetplot,         
+                    plotlist = NULL,
+                    ncol = 1,
+                    nrow = 3,
+                    labels = NULL))
+    dev.off()
+  }
+  
 }
 
 
@@ -987,17 +1095,17 @@ for(i in 1:nrow(modcolor)) {
 
 # Plot the vst transformed by treatment and by Total protein to visualize the effect of the red module genes significant in WGCNA 
 # vst read count date - narrow the columns - reshape and rename
-lightcyan_geneIDs <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'lightcyan') %>%  dplyr::select("geneSymbol")
-d21_vst_LighCyanModule <- d21_vst_data_t %>% dplyr::filter(geneSymbol %in% lightcyan_geneIDs[,1])
-d21_vst_LighCyanModule_MELT <- melt(d21_vst_LighCyanModule, id=("geneSymbol")) # melt using reshape2
-names(d21_vst_LighCyanModule_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names
+midnightblue_geneIDs <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'midnightblue') %>%  dplyr::select("geneSymbol")
+d21_vst_midnightblueModule <- d21_vst_data_t %>% dplyr::filter(geneSymbol %in% midnightblue_geneIDs[,1])
+d21_vst_midnightblueModule_MELT <- melt(d21_vst_midnightblueModule, id=("geneSymbol")) # melt using reshape2
+names(d21_vst_midnightblueModule_MELT)[(2:3)] <- c('Sample.Name', 'vst_Expression') # change column names
 
 
 # merge by common row values 'Sample.Name'
-merged_Expdata_LightCyan <- merge(d21_vst_LighCyanModule_MELT, exp.phys_data, by ='Sample.Name')
+merged_Expdata_midnightblue <- merge(d21_vst_midnightblueModule_MELT, exp.phys_data, by ='Sample.Name')
 
 # mean Exp response table 
-meanEXp_LightCyan <- merged_Expdata_LightCyan %>% 
+meanEXp_midnightblue <- merged_Expdata_midnightblue %>% 
                         select(c('Sample.Name','vst_Expression','Primary_Treatment', 'Second_Treament','Third_Treatment')) %>% 
                         group_by(Sample.Name, Primary_Treatment, Second_Treament, Third_Treatment) %>%
                         dplyr::summarize(mean.vstExp = mean(vst_Expression), 
@@ -1007,14 +1115,14 @@ meanEXp_LightCyan <- merged_Expdata_LightCyan %>%
 # remember:this is a mean of a mean!! First we complete mean vst exp by sample id (compiling all red module genes) - next all sample IDs by the treatment period (below
 # I will use these for mean SE plots 
 # Primary treatment
-meanEXp_Summary.Prim_LightCyan <- meanEXp_LightCyan %>% 
+meanEXp_Summary.Prim_midnightblue <- meanEXp_midnightblue %>% 
                                       group_by(Primary_Treatment) %>%
                                       dplyr::summarize(mean = mean(mean.vstExp), 
                                                        sd = sd(mean.vstExp),
                                                        n = n(), 
                                                        se = sd/sqrt(n))
 # Second treatment
-meanEXp_Summary.Sec_LightCyan <- meanEXp_LightCyan %>% 
+meanEXp_Summary.Sec_midnightblue <- meanEXp_midnightblue %>% 
                                       group_by(Second_Treament,Primary_Treatment) %>%
                                       dplyr::summarize(mean = mean(mean.vstExp), 
                                                        sd = sd(mean.vstExp),
@@ -1022,7 +1130,7 @@ meanEXp_Summary.Sec_LightCyan <- meanEXp_LightCyan %>%
                                                        se = sd/sqrt(n))
 
 # Third treatment
-meanEXp_Summary.Third_LightCyan  <- meanEXp_LightCyan %>% 
+meanEXp_Summary.Third_midnightblue  <- meanEXp_midnightblue %>% 
                                       group_by(Third_Treatment,Second_Treament,Primary_Treatment) %>%
                                       dplyr::summarize(mean = mean(mean.vstExp), 
                                                        sd = sd(mean.vstExp),
@@ -1041,7 +1149,7 @@ pd <- position_dodge(0.3) # move them .05 to the left and right
 
 
 # Primary treatment mean sd plot
-Primary.vst.LightCyan <- ggplot(meanEXp_Summary.Prim_LightCyan, aes(x=Primary_Treatment, y=mean, fill=Primary_Treatment)) +  # , colour=supp, group=supp))
+Primary.vst.midnightblue <- ggplot(meanEXp_Summary.Prim_midnightblue, aes(x=Primary_Treatment, y=mean, fill=Primary_Treatment)) +  # , colour=supp, group=supp))
                               theme_bw() +
                               geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
                               geom_line(position=pd) +
@@ -1050,20 +1158,20 @@ Primary.vst.LightCyan <- ggplot(meanEXp_Summary.Prim_LightCyan, aes(x=Primary_Tr
                               ylab(NULL) +                 # note the mean was first by sample ID THEN by treatment
                               scale_fill_manual(values=c("#56B4E9","#E69F00")) +
                               # scale_color_manual(values=c("#56B4E9","#E69F00")) +
-                              ggtitle("Day 21 WGCNA LightCyan Module VST GeneExp") +
+                              ggtitle("Day 21 WGCNA midnightblue Module VST GeneExp") +
                               # expand_limits(y=0) +                                                    # Expand y range
                               scale_y_continuous(limits=c(3.5, 4.5)) +
                               theme(text = element_text(size=15))
 
 
 # Second treatment mean sd plot
-Sec.vst.LightCyan <- ggplot(meanEXp_Summary.Sec_LightCyan, aes(x=Second_Treament, y=mean, fill=Primary_Treatment, group=Primary_Treatment)) +
+Sec.vst.midnightblue <- ggplot(meanEXp_Summary.Sec_midnightblue, aes(x=Second_Treament, y=mean, fill=Primary_Treatment, group=Primary_Treatment)) +
                               theme_bw() +
                               geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd) +
                               geom_line(position=pd) +
                               geom_point(position=pd, size = 4, shape=21) +            
                               xlab("Second pCO2 treatment") +
-                              ylab("LightCyan Module VST Gene Expression (Mean +/- SE)") +                 # note the mean was first by sample ID THEN by treatment
+                              ylab("midnightblue Module VST Gene Expression (Mean +/- SE)") +                 # note the mean was first by sample ID THEN by treatment
                               scale_fill_manual(values=c("#56B4E9","#E69F00")) +
                               # scale_color_manual(values=c("#56B4E9","#E69F00")) +
                               # ggtitle("Day 21 WGCNA red' Module VST GeneExp") +
@@ -1073,8 +1181,8 @@ Sec.vst.LightCyan <- ggplot(meanEXp_Summary.Sec_LightCyan, aes(x=Second_Treament
 
 
 # Third treatment mean sd plot
-meanEXp_Summary.Third_LightCyan$Prim.Sec_Treatment <- paste(meanEXp_Summary.Third_LightCyan$Primary_Treatment, meanEXp_Summary.Third_LightCyan$Second_Treament, sep='')
-Third.vst.LightCyan <- ggplot(meanEXp_Summary.Third_LightCyan, aes(x=Third_Treatment, y=mean, fill=Primary_Treatment, group=Prim.Sec_Treatment, alpha = Second_Treament)) +
+meanEXp_Summary.Third_midnightblue$Prim.Sec_Treatment <- paste(meanEXp_Summary.Third_midnightblue$Primary_Treatment, meanEXp_Summary.Third_midnightblue$Second_Treament, sep='')
+Third.vst.midnightblue <- ggplot(meanEXp_Summary.Third_midnightblue, aes(x=Third_Treatment, y=mean, fill=Primary_Treatment, group=Prim.Sec_Treatment, alpha = Second_Treament)) +
                               theme_bw() +
                               geom_errorbar(aes(ymin=mean-se, ymax=mean+se), colour="black", width=.1, position=pd,alpha = 1) +
                               geom_line(position=pd, colour="black",alpha = 1) +
@@ -1087,25 +1195,18 @@ Third.vst.LightCyan <- ggplot(meanEXp_Summary.Third_LightCyan, aes(x=Third_Treat
                               scale_y_continuous(limits=c(3.5, 4.5)) +
                               theme(text = element_text(size=15))
 
-# Total protein by vst expression
-meanExp_LightCyan_TAOC <- merged_Expdata_LightCyan %>% 
+# TAOC by vst expression
+meanExp_midnightblue_TAOC <- merged_Expdata_midnightblue %>% 
   group_by(Sample.Name, Primary_Treatment, Second_Treament, Third_Treatment) %>%
   dplyr::summarize(mean.Exp = mean(vst_Expression), 
                    sd.Exp = sd(vst_Expression),
                    mean.TAOC = mean(mean.µmol.CRE.g.protein), 
                    sd.TAOC = sd(mean.µmol.CRE.g.protein))
-meanExp_LightCyan_TAOC # notice cd total protein is 0 - this is becasue total protein was the same value regarless of the gene.ID within sample
+meanExp_midnightblue_TAOC # notice cd total protein is 0 - this is becasue total protein was the same value regarless of the gene.ID within sample
 
-
-# two obvious outliers > 50
-ggplot(meanExp_total.protein, aes(x=mean.totalprotein, y=mean.Exp)) +
-  geom_point(shape=1) +    # Use hollow circles
-  geom_smooth()            # Add a loess smoothed fit curve with confidence region
-
-meanExp_total.protein.OM <- meanExp_total.protein %>% filter(mean.totalprotein < 50) # remove the outliers and plot again
 
 # Total protein and expression plot
-TAOC_vst.Exp.LightCyan <- ggplot(meanExp_LightCyan_TAOC, aes(x=mean.TAOC, y=mean.Exp,
+TAOC_vst.Exp.midnightblue <- ggplot(meanExp_midnightblue_TAOC, aes(x=mean.TAOC, y=mean.Exp,
   color = Primary_Treatment, fill = Primary_Treatment, group=Primary_Treatment)) + # linetype= Primary_Treatment, group = Primary_Treatment
   scale_fill_manual(values=c("#56B4E9", "#D55E00")) +
   geom_smooth(method=lm , color="grey50", alpha = 0.1, se=TRUE, linetype = "dashed", formula = my.formula) + #, linetype = "dashed"
@@ -1124,8 +1225,8 @@ TAOC_vst.Exp.LightCyan <- ggplot(meanExp_LightCyan_TAOC, aes(x=mean.TAOC, y=mean
 
 #  grid arrange the three plots 
 # save plot
-png("Analysis/Output/WGCNA/Day21/Day21_vst.Exp_LightcyanModule.png", 1000, 1000, pointsize=20)
-ggarrange(Primary.vst.LightCyan, Sec.vst.LightCyan, Third.vst.LightCyan, TAOC_vst.Exp.LightCyan, 
+png("Analysis/Output/WGCNA/Day21/Day21_vst.Exp_midnightblueModule.png", 1000, 1000, pointsize=20)
+ggarrange(Primary.vst.midnightblue, Sec.vst.midnightblue, Third.vst.midnightblue, TAOC_vst.Exp.midnightblue, 
           plotlist = NULL,
           ncol = 2,
           nrow = 2,
@@ -1134,7 +1235,7 @@ dev.off()
 
 
 #===================================================================================== 
-# LIGHTCYAN MODULE CONTINUED....
+# midnightblue MODULE CONTINUED....
 # 
 # goseq - load the annotation and prepare the four steps for goseq!
 #
@@ -1153,8 +1254,8 @@ names(annot.condenced) <- c('Gene.ID', 'Uniprot', 'HGNC', 'fxn', 'Go.terms', 'Go
 
 
 
-# merge with the master gene annotation file 'annot.condenced' to get all desired info of just the lightcyan genes
-GO_lightcyan_MASTER <- merge(GO_lightcyan,annot.condenced, by ='Gene.ID')
+# merge with the master gene annotation file 'annot.condenced' to get all desired info of just the midnightblue genes
+GO_midnightblue_MASTER <- merge(GO_midnightblue,annot.condenced, by ='Gene.ID')
 
 
 # Prepare dataframe(s) and vectors for goseq 
@@ -1173,20 +1274,20 @@ GO_unique.genes.all <- as.vector(unique(Geoduck_annotation$V1)) # call all uniqu
 # length vector  
 GO_gene.length <- Geoduck_annotation %>% dplyr::mutate(length = V4-V3) %>%  dplyr::select(c("V1","length"))
 names(GO_gene.length)[1] <- "Gene.ID"
-#GO_gene.length_merge <- merge(GO_gene.length, GO_lightcyan_genes, by = "Gene.ID")
+#GO_gene.length_merge <- merge(GO_gene.length, GO_midnightblue_genes, by = "Gene.ID")
 length_vector <- GO_gene.length$length
 
-### (4) Call modules of interest (i.e. lightcyan module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
-# Example: 0 = not in lightcyan; 1 = in lightcyan
-# lightcyan module  ------------------------------------------- #
-GO_lightcyan <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'lightcyan') # %>%  dplyr::select("geneSymbol")
-GO_lightcyan_genes <- GO_lightcyan[3]
-names(GO_lightcyan_genes)[1] <- "Gene.ID" # 162 genws in the lightcyan module 
+### (4) Call modules of interest (i.e. midnightblue module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
+# Example: 0 = not in midnightblue; 1 = in midnightblue
+# midnightblue module  ------------------------------------------- #
+GO_midnightblue <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'midnightblue') # %>%  dplyr::select("geneSymbol")
+GO_midnightblue_genes <- GO_midnightblue[1] # call just the gene names column 
+names(GO_midnightblue_genes)[1] <- "Gene.ID" # 162 genws in the midnightblue module 
 
 
-GO_lightcyan_integer <- as.integer(GO_unique.genes.all%in%(GO_lightcyan_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_lightcyan_integer)=GO_unique.genes.all
-View(GO_lightcyan_integer)
+GO_midnightblue_integer <- as.integer(GO_unique.genes.all%in%(GO_midnightblue_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
+names(GO_midnightblue_integer)=GO_unique.genes.all
+View(GO_midnightblue_integer)
 
 
 # Review what we have for goseq....
@@ -1201,53 +1302,53 @@ View(GO_lightcyan_integer)
 # head(length_vector)
 
 # (4) Binary DEG vectors ------ # 
-# head(GO_lightcyan_integer)  
+# head(GO_midnightblue_integer)  
 
 #===================================================================================== 
-# LIGHTCYAN MODULE CONTINUED....
+# midnightblue MODULE CONTINUED....
 # 
 # It's goseq time!!!
 # Calculate Probability Weighting Function
 #===================================================================================== 
 
 #Calculate Probability Weighting Function (using 'nullp')
-Lightcyan.pwf<-nullp(GO_lightcyan_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+midnightblue.pwf<-nullp(GO_midnightblue_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
 
 #===================================================================================== 
-# LIGHTCYAN MODULE CONTINUED....
+# midnightblue MODULE CONTINUED....
 # 
 # It's goseq time!!!
 #  Run goseq
 #===================================================================================== 
 
-Lightcyan.goseq<-goseq(Lightcyan.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+midnightblue.goseq<-goseq(midnightblue.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 
 
 #===================================================================================== 
-# LIGHTCYAN MODULE CONTINUED....
+# midnightblue MODULE CONTINUED....
 # 
 # It's goseq time!!!
 # PLOTTING
 #===================================================================================== 
 library(forcats)
 #Find only enriched GO terms that are statistically significant at cutoff 
-Lightcyan_enriched.GO.05.a<-Lightcyan.goseq$category[Lightcyan.goseq$over_represented_pvalue<.05] # change twice here
-Lightcyan_enriched.GO.05<-data.frame(Lightcyan_enriched.GO.05.a)
-colnames(Lightcyan_enriched.GO.05) <- c("category")
-Lightcyan_enriched.GO.05 <- merge(Lightcyan_enriched.GO.05, Lightcyan.goseq, by="category") # change here
-Lightcyan_enriched.GO.05 <- Lightcyan_enriched.GO.05[order(-Lightcyan_enriched.GO.05$numDEInCat),]
-Lightcyan_enriched.GO.05$term <- as.factor(Lightcyan_enriched.GO.05$term)
-head(Lightcyan_enriched.GO.05)
+midnightblue_enriched.GO.05.a<-midnightblue.goseq$category[midnightblue.goseq$over_represented_pvalue<.05] # change twice here
+midnightblue_enriched.GO.05<-data.frame(midnightblue_enriched.GO.05.a)
+colnames(midnightblue_enriched.GO.05) <- c("category")
+midnightblue_enriched.GO.05 <- merge(midnightblue_enriched.GO.05, midnightblue.goseq, by="category") # change here
+midnightblue_enriched.GO.05 <- midnightblue_enriched.GO.05[order(-midnightblue_enriched.GO.05$numDEInCat),]
+midnightblue_enriched.GO.05$term <- as.factor(midnightblue_enriched.GO.05$term)
+head(midnightblue_enriched.GO.05)
 
-Lightcyan_MF <- subset(Lightcyan_enriched.GO.05, ontology=="MF")
-Lightcyan_MF <- Lightcyan_MF[order(-Lightcyan_MF$numDEInCat),]
-Lightcyan_CC <- subset(Lightcyan_enriched.GO.05, ontology=="CC")
-Lightcyan_CC <- Lightcyan_CC[order(-Lightcyan_CC$numDEInCat),]
-Lightcyan_BP <- subset(Lightcyan_enriched.GO.05, ontology=="BP")
-Lightcyan_BP <- Lightcyan_BP[order(-Lightcyan_BP$numDEInCat),]
+midnightblue_MF <- subset(midnightblue_enriched.GO.05, ontology=="MF")
+midnightblue_MF <- midnightblue_MF[order(-midnightblue_MF$numDEInCat),]
+midnightblue_CC <- subset(midnightblue_enriched.GO.05, ontology=="CC")
+midnightblue_CC <- midnightblue_CC[order(-midnightblue_CC$numDEInCat),]
+midnightblue_BP <- subset(midnightblue_enriched.GO.05, ontology=="BP")
+midnightblue_BP <- midnightblue_BP[order(-midnightblue_BP$numDEInCat),]
 
 # Molecular Processes
-MFplot_Lightcyan <- Lightcyan_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+MFplot_midnightblue <- midnightblue_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
   ggplot( aes(x=term, y=numDEInCat) ) +
   geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
   geom_point(size=3, color="#69b3a2") +
@@ -1271,7 +1372,7 @@ MFplot_Lightcyan <- Lightcyan_MF %>% mutate(term = fct_reorder(term, numDEInCat)
         plot.background=element_blank())#Set the plot background
 
 #Cellular Processes
-CCplot_Lightcyan <- Lightcyan_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+CCplot_midnightblue <- midnightblue_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
   ggplot( aes(x=term, y=numDEInCat) ) +
   geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
   geom_point(size=3, color="#69b3a2") +
@@ -1295,7 +1396,7 @@ CCplot_Lightcyan <- Lightcyan_CC %>% mutate(term = fct_reorder(term, numDEInCat)
         plot.background=element_blank())#Set the plot background
 
 # Biological Processes 
-BPplot_Lightcyan <- Lightcyan_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+BPplot_midnightblue <- midnightblue_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
   ggplot( aes(x=term, y=numDEInCat) ) +
   geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
   geom_point(size=3, color="#69b3a2") +
@@ -1318,10 +1419,10 @@ BPplot_Lightcyan <- Lightcyan_BP %>% mutate(term = fct_reorder(term, numDEInCat)
         plot.background=element_blank())#Set the plot background
 
 # merge MF CC BP plots - Light cyan
-num_Lightcyan   <- dim(GO_lightcyan_genes)[1] # call num upregulated genes
+num_midnightblue   <- dim(GO_midnightblue_genes)[1] # call num upregulated genes
 
 library(tidyr)
-GOplot.merge_lightcyan<- Lightcyan_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+GOplot.merge_midnightblue<- midnightblue_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
   mutate(term = fct_reorder(term, ontology)) %>%
   ggplot( aes(x=term, y=numDEInCat) ) +
   geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
@@ -1334,12 +1435,12 @@ GOplot.merge_lightcyan<- Lightcyan_enriched.GO.05 %>% drop_na(ontology) %>% muta
   ) +
   xlab("") +
   ylab("") +
-  ggtitle("GO: Day 21 WGCNA MElightcyan") +
-  geom_label(aes(x = 2, y = 7, label = paste(num_Lightcyan, "MElightcyan genes"))) +
+  ggtitle("GO: Day 21 WGCNA MEmidnightblue") +
+  geom_label(aes(x = 2, y = 7, label = paste(num_midnightblue, "MEmidnightblue genes"))) +
   theme_bw() + #Set background color 
   theme(panel.border = element_blank(), # Set border
         panel.grid.major = element_blank(), #Set major gridlines
         panel.grid.minor = element_blank(), #Set minor gridlines
         axis.line = element_line(colour = "black"), #Set axes color
         plot.background=element_blank()) #Set the plot background #set title attributes
-GOplot.merge_lightcyan
+GOplot.merge_midnightblue
