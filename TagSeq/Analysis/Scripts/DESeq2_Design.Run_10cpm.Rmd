@@ -1,11 +1,11 @@
 ---
-title: "geoduck_tagseq_analysis"
+title: "DESeq2_DEsign_Run_10cpm"
 author: "Samuel Gurr"
 date: "January 29, 2021"
 output:
-  html_document:
-    toc: true
-    toc_float: true
+html_document:
+toc: true
+toc_float: true
 ---
 
 # Setup: 
@@ -24,9 +24,7 @@ library(dplyr)
 library(GenomicFeatures)
 library(data.table)
 library(calibrate)
-
 library(affycoretools) # note: this was previously installed with the BiocManager::install("affycoretools")
-
 library(data.table)
 library(vsn)
 library(tidybulk)
@@ -343,7 +341,6 @@ dev.off()
 # NOTE: this will be longer dependent on filtered vs. unfiltered raw read count data for dds objects 
 ```{r run_dds}
 
-
 dds.d0 <- DESeq(dds.d0) # wait for this to complete....
 
 # RUN DESEQ2 model - view all the pariwise comparisons
@@ -404,8 +401,8 @@ Third:   Ambient v Moderate
 resd0.primary <- results(dds.d0, contrast=c("Primary_Treatment", "M", "A"), alpha = 0.05)
 d0.numDEGs_padj <-data.frame(table(resd0.primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 resd0.primary.ordered <- resd0.primary[order(resd0.primary$padj), ] # Order by adjusted p-value
-d0.num.DownReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
-d0.num.UpReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d0.num.DownReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] > 0) == TRUE) #  LFC >= 1
+d0.num.UpReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] < 0) == TRUE) # LFC >= 1
 d0.total <- sum(d0.num.DownReg,d0.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 # histogram of FDR
 png("../Output/DESeq2/Day0/Day0.FDR_hist.png", 1000, 1000, pointsize=20)
@@ -624,9 +621,9 @@ table(res.d7.Second_MS_grouptest$padj<0.05) #  0 DEGs (same as above?)
 # DEGs total for the primary treatment effect
 d7.numDEGs_padj               <- data.frame(table(res.d7.primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d7_primary.ordered <- res.d7.primary[order(res.d7.primary$padj), ] # Order by adjusted p-value - 110 DEGs
-d7.num.UpReg                  <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
-d7.num.DownReg                <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
-d7.total                      <- sum(d7.num.DownReg,d7.num.UpReg) # 106 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+d7.num.UpReg                  <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] > 0) == TRUE) #  LFC >= 1
+d7.num.DownReg                <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] < 0) == TRUE) # LFC >= 1
+d7.total                      <- sum(d7.num.DownReg,d7.num.UpReg) # 108 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
 
 
@@ -719,9 +716,9 @@ dev.off()
 # DEGs total for the primary treatment effect
 d7.numDEGs_padj_S.AM               <- data.frame(table(res.d7.Second_AM$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d7.Second_AM_ordered           <- res.d7.Second_AM[order(res.d7.Second_AM$padj), ] # Order by adjusted p-value - 110 DEGs
-d7.num.UpReg_S.AM                  <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] >= 1) == TRUE) #  LFC >= 1
-d7.num.DownReg_S.AM                <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] <= -1) == TRUE) # LFC >= 1
-d7.total_Sec.AM                    <- sum(d7.num.UpReg_S.AM,d7.num.DownReg_S.AM) # 102 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+d7.num.UpReg_S.AM                  <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] > 0) == TRUE) #  LFC >= 1
+d7.num.DownReg_S.AM                <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] < 0) == TRUE) # LFC >= 1
+d7.total_Sec.AM                    <- sum(d7.num.UpReg_S.AM,d7.num.DownReg_S.AM) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
 
 
@@ -760,6 +757,7 @@ EnhancedVolcano(res.d7.Second_AM,
                 labSize = 6.0,
                 colAlpha = 1,
                 legendPosition = 'right',
+                col = c('black', '#E69F00', '#D55E00', '#0072B2'), # colorblindness pallette
                 legendLabSize = 12,
                 legendIconSize = 4.0,
                 widthConnectors = 0.75)
@@ -992,9 +990,9 @@ table(res.d14.Second_MS_grouptest$padj<0.05) #  0 DEGs
 # table(res.d14_P.AvM_group$padj<0.05) 
 d14.numDEGs_padj               <-data.frame(table(res.d14_primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d14_primary.ordered        <- res.d14_primary[order(res.d14_primary$padj), ] # Order by adjusted p-value
-d14.num.UpReg                  <- sum((res.d14_primary.ordered$log2FoldChange[1:d14.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
-d14.num.DownReg                <- sum((res.d14_primary.ordered$log2FoldChange[1:d14.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
-d14.total                      <- sum(d14.num.DownReg,d14.num.UpReg) # 421 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1) - 507
+d14.num.UpReg                  <- sum((res.d14_primary.ordered$log2FoldChange[1:d14.numDEGs_padj] > 0) == TRUE) #  LFC >= 1
+d14.num.DownReg                <- sum((res.d14_primary.ordered$log2FoldChange[1:d14.numDEGs_padj] < 0) == TRUE) # LFC >= 1
+d14.total                      <- sum(d14.num.DownReg,d14.num.UpReg) # 429 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1) - 507
 
 # Histogram
 hist(res.d14_primary$pvalue, breaks=20, col="grey") # view histogram, 
@@ -1289,8 +1287,8 @@ table(res.d21.Third_grouptest$padj<0.05) #  0 DEGs
 
 d21.numDEGs_padj               <- data.frame(table(res.d21_primary$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d21_primary.ordered        <- res.d21_primary[order(res.d21_primary$padj), ] # Order by adjusted p-value
-d21.num.UpReg                  <- sum((res.d21_primary.ordered$log2FoldChange[1:d21.numDEGs_padj] >= 1) == TRUE) #  LFC >= 1
-d21.num.DownReg                <- sum((res.d21_primary.ordered$log2FoldChange[1:d21.numDEGs_padj] <= -1) == TRUE) # LFC >= 1
+d21.num.UpReg                  <- sum((res.d21_primary.ordered$log2FoldChange[1:d21.numDEGs_padj] > 0) == TRUE) #  LFC >= 1
+d21.num.DownReg                <- sum((res.d21_primary.ordered$log2FoldChange[1:d21.numDEGs_padj] < 0) == TRUE) # LFC >= 1
 d21.total                      <- sum(d21.num.DownReg,d21.num.UpReg) # 155 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1) - 230 genes
 # Histogram
 hist(res.d21_Prim_AvM_group$pvalue, breaks=20, col="grey") # view histogram,  
@@ -1464,19 +1462,19 @@ Primary.DEGs.table$DEGs_DOWN <- c(d0.num.DownReg, d7.num.DownReg, d14.num.DownRe
 
 # output tables for DEGs 
 # Day 0 
-DE_d0.primary <- merge(as.data.frame(resd0.primary), as.data.frame(counts(dds.d0, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange <= 1) %>% mutate(down = log2FoldChange >= -1) # remember! this model is M vA whereas the rest ate A v M
+DE_d0.primary <- merge(as.data.frame(resd0.primary), as.data.frame(counts(dds.d0, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange < 0) %>% mutate(down = log2FoldChange > 0) # remember! this model is M vA whereas the rest ate A v M
 write.csv(DE_d0.primary, "../Output/DESeq2/Day0/DE_Day0_Primary.csv")
 
 # Day 7 
-DE_d7.primary <- merge(as.data.frame(res.d7.primary), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+DE_d7.primary <- merge(as.data.frame(res.d7.primary), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
 write.csv(DE_d7.primary, "../Output/DESeq2/Day7/DE_Day7_Primary.csv")
 
 # Day 14 
-DE_d14.primary <- merge(as.data.frame(res.d14_primary), as.data.frame(counts(dds.d14, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+DE_d14.primary <- merge(as.data.frame(res.d14_primary), as.data.frame(counts(dds.d14, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
 write.csv(DE_d14.primary, "../Output/DESeq2/Day14/DE_Day14_Primary.csv")
 
 # Day 21
-DE_d21.primary <- merge(as.data.frame(res.d21_primary), as.data.frame(counts(dds.d21, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 1) %>% mutate(down = log2FoldChange < -1)
+DE_d21.primary <- merge(as.data.frame(res.d21_primary), as.data.frame(counts(dds.d21, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
 write.csv(DE_d21.primary, "../Output/DESeq2/Day21/DE_Day21_Primary.csv")
 
 
@@ -1516,7 +1514,7 @@ DE_freq.downreg.sum <- DE_freq.downreg %>% group_by(Freq) %>% summarise(num.tran
 Constant.upreg.IDs <- DE_freq.upreg  %>%  dplyr::filter(Freq == 3)
 Constant.downreg.IDs <- DE_freq.downreg  %>%  dplyr::filter(Freq == 3)
 
-knitr::kable(DEGs.table, caption = "Primary Treatment DEGs [10 cpm in 50%; FDR 0.05; padj <0.05; LFC >1]")
+knitr::kable(Primary.DEGs.table, caption = "Primary Treatment DEGs [10 cpm in 50%; FDR 0.05; padj <0.05; LFC >1]")
 knitr::kable(rbind(DE_freq.downreg.sum, DE_freq.upreg.sum),caption = "Primary Treatment DEGs, occurances on days 7, 14, 21: (1 = unique; 2 = d days; 3 = all days)")
 
 write.csv((rbind(DE_freq.downreg, DE_freq.upreg)), "../Output/DESeq2/Summary_Primary_DEGs_occurances_10CPM.csv")
@@ -1552,14 +1550,14 @@ for(i in 1:nrow(df_d7_group)) {
           DEGs.table$Treatment <- "full_interaction"
           DEGs.table$Pairwise.compare <- paste((substr(var, 14,15)), (substr(var2, 14,15)), sep = "_")
           DEGs.table$DEGs_total <- DEGs_total
-          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
-          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] > 0) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] < 0) == TRUE) 
           df.group <- data.frame(DEGs.table) # name dataframe for this single row
           d7.GROUP.DEGs_table <- rbind(d7.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
           unique.vars <- unique((substr(d7.GROUP.DEGs_table$Pairwise.compare,1,2)))
       } 
 }
-d7.full.interaction.DEGs <- d7.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA", d7.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+d7.full.interaction.DEGs <- d7.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA|AM_AA|AS_AA", d7.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
 
 # Day 14: ALL PAIRWISE COMPARISONS
 d14.GROUP.DEGs_table = data.frame() # start a data frame
@@ -1585,14 +1583,14 @@ for(i in 1:nrow(df_d14_group)) {
           DEGs.table$Treatment <- "full_interaction"
           DEGs.table$Pairwise.compare <- paste((substr(var, 14,15)), (substr(var2, 14,15)), sep = "_")
           DEGs.table$DEGs_total <- DEGs_total
-          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
-          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] > 0) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] < 0) == TRUE) 
           df.group <- data.frame(DEGs.table) # name dataframe for this single row
           d14.GROUP.DEGs_table <- rbind(d14.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
           unique.vars <- unique((substr(d14.GROUP.DEGs_table$Pairwise.compare,1,2)))
       } 
 }
-d14.full.interaction.DEGs <- d14.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA", d14.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+d14.full.interaction.DEGs <- d14.GROUP.DEGs_table[-grep("MM_A|MA_A|MS_A|MM_M|MS_MA|AM_AA|AS_AA", d14.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
 
 
 # Day 21: ALL PAIRWISE COMPARISONS
@@ -1619,16 +1617,16 @@ for(i in 1:nrow(df_d21_group)) {
           DEGs.table$Treatment <- "full_interaction"
           DEGs.table$Pairwise.compare <- paste((substr(var, 14,16)), (substr(var2, 14,16)), sep = "_")
           DEGs.table$DEGs_total <- DEGs_total
-          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] >= 1) == TRUE) 
-          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] <= -1) == TRUE) 
+          DEGs.table$DEGs_UP <- sum((res.order$log2FoldChange[1:(DEGs_total)] > 0) == TRUE) 
+          DEGs.table$DEGs_DOWN <- sum((res.order$log2FoldChange[1:(DEGs_total)] < 0) == TRUE) 
           df.group <- data.frame(DEGs.table) # name dataframe for this single row
           d21.GROUP.DEGs_table <- rbind(d21.GROUP.DEGs_table, df.group) # bind to a cumulative list dataframe
           unique.vars <- unique((substr(d21.GROUP.DEGs_table$Pairwise.compare,1,3)))
       } 
 }
 View(d21.GROUP.DEGs_table)
-d21.full.interaction.DEGs <- d21.GROUP.DEGs_table[-grep("MAA_A|MAM_A|MMA_A|MMM_A|MSA_A|MSM_A|MMA_M|MMM_M|MSA_M|MSM_M", d21.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
-
+d21.full.interaction.DEGs <- d21.GROUP.DEGs_table[-grep("MAA_A|MAM_A|MMA_A|MMM_A|MSA_A|MSM_A|MMA_MA|MMM_M|MSA_MA|MSM_MA|MAM_MAA", d21.GROUP.DEGs_table$Pairwise.compare),] # ommit redundant pairwise results - same pairwise in opposite direaction
+View(d21.full.interaction.DEGs)
 # knitr table
 knitr::kable(rbind(d7.full.interaction.DEGs, d14.full.interaction.DEGs, d21.full.interaction.DEGs), caption = "All pairwise DEGs in 'group' DESeq2 model")
 Summary_group_interactions <- rbind(d7.full.interaction.DEGs, d14.full.interaction.DEGs, d21.full.interaction.DEGs)
@@ -1642,60 +1640,6 @@ compile the Main Effects & Interaction terms for a summary table of all pariwise
 Primary.DEGs.table # primary results only 
 Summary_group_interactions # all the group interactions 
 ```
-
-
-# a prior hypothesis
-call genes of interact and plot their expression levelsin response to treatment 
-my a priori hypothesis can be found in the end of our bioRxiv in 2020 https://www.biorxiv.org/content/10.1101/2020.08.03.234955v1.full
-'Stress-induced attentuation of mitchondrial function' == reverse electron transport (RET) overproduces ROS in absence of stress acclimation; I hypothesize
-that NADH dehydrogenase (complex 1) will have greater expression in Ambient vs. Moderate. I further hypothesize that uncoupling proteins and sirtuins will be 
-upregulated in this naive phenotype to alleviate oxidative stress
-
-'Adaptive mitchondrial shift under moderate stress'    == lower antioxidant needed in the acclimatized phenotype partially due to upregulated AOX pathway, 
-I hypoothesize that AOX will be upregulated in the moderate conditioned animals 
-plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
-
-Genes of interest and PGEN ID 
-AOX                    == PGEN_.00g108770
-NADH dehydrogenase     == PGEN_.00g299160
-Cytochrome c reductase == PGEN_00g275780
-Sirtuin (SRT1)         == PGEN_.00g048200
-Uncoupling protein     == PGEN_.00g063670
-
-
-```{r a priori hypothesis testing}
-plotCounts(dds.d0, gene=which.min(resd0.primary$padj), intgroup="Primary_Treatment")
-plotCounts(dds.d0, gene=PGEN_.00g108770, intgroup="Primary_Treatment")
-
-
-# AOX
-AOX_0 <-plotCounts(dds.d0, gene="PGEN_.00g108770", intgroup="Primary_Treatment")
-AOX_7 <-plotCounts(dds.d7, gene="PGEN_.00g108770", intgroup="Primary_Treatment")
-AOX_14 <-plotCounts(dds.d14, gene="PGEN_.00g108770", intgroup="Primary_Treatment")
-AOX_21 <-plotCounts(dds.d21, gene="PGEN_.00g108770", intgroup="Primary_Treatment")
-
-# NADH dehydrogenase 
-NADH.dehy_0 <-plotCounts(dds.d0, gene="PGEN_.00g299160", intgroup="Primary_Treatment")
-NADH.dehy_7 <-plotCounts(dds.d7, gene="PGEN_.00g299160", intgroup="Primary_Treatment")
-NADH.dehy_14 <-plotCounts(dds.d14, gene="PGEN_.00g299160", intgroup="Primary_Treatment")
-NADH.dehy_21 <-plotCounts(dds.d21, gene="PGEN_.00g299160", intgroup="Primary_Treatment")
-
-# Sirtuin
-Sirtuin_0 <-plotCounts(dds.d0, gene="PGEN_.00g048200", intgroup="Primary_Treatment")
-Sirtuin_7 <-plotCounts(dds.d7, gene="PGEN_.00g048200", intgroup="Primary_Treatment")
-Sirtuin_14 <-plotCounts(dds.d14, gene="PGEN_.00g048200", intgroup="Primary_Treatment")
-Sirtuin_21 <-plotCounts(dds.d21, gene="PGEN_.00g048200", intgroup="Primary_Treatment")
-
-# Cyt_c (removed by DESeq2 filter)
-# Cyt_c_0 <-plotCounts(dds.d0, gene="PGEN_00g275780", intgroup="Primary_Treatment")
-# Cyt_c_7 <-plotCounts(dds.d7, gene="PGEN_00g275780", intgroup="Primary_Treatment")
-# Cyt_c_14 <-plotCounts(dds.d14, gene="PGEN_00g275780", intgroup="Primary_Treatment")
-# Cyt_c_21 <-plotCounts(dds.d21, gene="PGEN_00g275780", intgroup="Primary_Treatment")
-
-# Uncoupling protein 
-Uncoupl_21 <-plotCounts(dds.d21, gene="PGEN_.00g063670", intgroup="Primary_Treatment")
-```
-
 
 
 # Plotting
