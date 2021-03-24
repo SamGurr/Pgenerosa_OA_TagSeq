@@ -109,34 +109,34 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 abline(h = 110, col = "red") # add line to plot to show the cut-off od outlier samples (40000) SG105 and SG55
 dev.off()
 
-# cut ethe tree and ommit from the reads data 
-# clust = cutreeStatic(sampleTree, cutHeight = 110, minSize = 10) # Determine cluster under the line
-# table(clust) # 0 = cut; 1 = kept; says it will cut 2 and save 60 
-# # 'keepsamples' boolean to call the main dataset
-# keepSamples = (clust==1) # call the 30 from clust at position 1
-# # view the ommited samples from the tree
-# omittedsamples = (clust==0)
-# omSamples = dds.d14_vst[omittedsamples, ] 
-# nrow(omSamples) # should be 6
-# rownames(omSamples) # should be 6 - "SG90" "SG89" "SG62" "SG21" "SG22" "SG59" What treatments are these??
-# omSamplesData <- d14.Treatment_Phenotype.data %>% dplyr::filter(Sample.Name %in% (rownames(omSamples))) %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament')) # three Primary Ambient and three Primary Moderate 
-# # integrate keepsamples to the main read dataset 
-# dds.d14_vst = dds.d14_vst[keepSamples, ] # integreat the boolean 'keepsamples' to ommit oultilers determined in the sample tree above 
-# nGenes = ncol(dds.d14_vst) # number of genes == 12013 
-# nSamples = nrow(dds.d14_vst) # number of samples == 30  - the cut tree removed 6 samples 
+#cut ethe tree and ommit from the reads data
+clust = cutreeStatic(sampleTree, cutHeight = 110, minSize = 10) # Determine cluster under the line
+table(clust) # 0 = cut; 1 = kept; says it will cut 2 and save 60
+# 'keepsamples' boolean to call the main dataset
+keepSamples = (clust==1) # call the 30 from clust at position 1
+# view the ommited samples from the tree
+omittedsamples = (clust==0)
+omSamples = dds.d14_vst[omittedsamples, ]
+nrow(omSamples) # should be 8
+rownames(omSamples) # should be 6 - "SG90" "SG89" "SG62" "SG21" "SG22" "SG59" What treatments are these??
+omSamplesData <- d14.Treatment_Phenotype.data %>% dplyr::filter(Sample.Name %in% (rownames(omSamples))) %>% dplyr::select(c('Sample.Name', 'Primary_Treatment', 'Second_Treament')) # three Primary Ambient and three Primary Moderate
+# integrate keepsamples to the main read dataset
+dds.d14_vst = dds.d14_vst[keepSamples, ] # integreat the boolean 'keepsamples' to ommit oultilers determined in the sample tree above
+nGenes = ncol(dds.d14_vst) # number of genes == 8626
+nSamples = nrow(dds.d14_vst) # number of samples == 27  - the cut tree removed 6 samples
 
 
 
 # plot the tree with the 'keep samples' bollean (T/F) to ommit outlier samples 
-# sampleTree2 = hclust(dist(dds.d14_vst), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
-# png("Analysis/Output/WGCNA/day14/day14_ClusterTree_Postcut.png", 1000, 1000, pointsize=20)
-# plot(sampleTree2, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
-#      cex.axis = 1.5, cex.main = 2)
-# dev.off()
+sampleTree2 = hclust(dist(dds.d14_vst), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
+png("Analysis/Output/WGCNA/Day14/Day14_ClusterTree_Postcut.png", 1000, 1000, pointsize=20)
+plot(sampleTree2, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
+      cex.axis = 1.5, cex.main = 2)
+dev.off()
 
 
 # based on outlier removall... call Trait data ===================================================== #
-dim(dds.d14_vst) #  35 8626 
+dim(dds.d14_vst) #   27 8626 
 dim(d14.Treatment_Phenotype.data) # 35  3 - trait data has  36 samples - not yet cut! 
 
 # Form a data frame analogous to expression data that will hold the clinical traits.
@@ -146,7 +146,7 @@ d14.Traits = d14.Treatment_Phenotype.data[TreatRows, -1]; # removes the row numb
 rownames(d14.Traits) = d14.Treatment_Phenotype.data[TreatRows, 1]; # inserts the new traitRows - matches sample treatments
 dim(d14.Traits) #  35  Samples 2 columns (primary and second treatment) - note: no Third treatment because that occured Days 14-21, after this sampling day
 all(rownames(d14.Traits) == rownames(dds.d14_vst))  # should be TRUE
-dim(d14.Traits) #  35  2
+dim(d14.Traits) #  27  2
 
 
 # ===================================================================================
@@ -270,7 +270,7 @@ write.csv(dds.d14_vst, "Analysis/Output/WGCNA/Day14/Day14_vstTransformed_WGCNAda
 # soft threshold
 # ===================================================================================
 
-
+dim(dds.d14_vst) #  27 8626
 # Choose a set of soft-thresholding powers
 powers = c(c(1:10), seq(from = 12, to=20, by=2))
 # Call the network topology analysis function
@@ -314,38 +314,98 @@ dev.off() # output
 # Step 1 = create adjacency matrix 
 #
 #=====================================================================================
-softPower = 3 # set your soft threshold based on the plots above 
-adjacency = adjacency(dds.d14_vst, power = softPower) # this takes a long time.. just wait...
+softPower = 6 # set your soft threshold based on the plots above 
+# signed 
+# signed 
+adjacency_unsign = adjacency(dds.d14_vst, power = softPower, type="unsigned") # this takes a long time.. just wait...
+
+# unsigned 
+adjacency_sign = adjacency(dds.d14_vst, power = softPower, type="signed") # this takes a long time.. just wait...
+
+#what is the default?
+adjacency = adjacency(dds.d14_vst, power = softPower)
+
 #=====================================================================================
 #
 #  Step 2: Turn adjacency into topological overlap
-#
+# Calculation of the topological overlap matrix, (TOM)
+# and the corresponding dissimilarity, from a given adjacency matrix.
+# Why signed??? Why unsigned???
+# https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
+# https://www.rdocumentation.org/packages/WGCNA/versions/1.69/topics/adjacency
+# https://ramellose.github.io/networktutorials/wgcna.html
+# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/TechnicalReports/signedTOM.pdf
 #=====================================================================================
-TOM = TOMsimilarity(adjacency)  # this takes a long time.. just wait...
-dissTOM = 1-TOM
+# TOM is used to 'reinforce' the direct connection between nodes. 
+# in case of 'unsigned' networks, you can have triplet nodes in which the correlation signs are NOT reinforcing and goes UNADDRESSED 
+# unisgned == loose information on the sign of underlying correlations - assumes the neigboring cannection can always be 
+# considered "reinforcing" the direct connection; considered strong negative correlation as HIGH connection strength
+# possible to result in connection between  triplets of nodes with dissimilar signs
+# signed == considers negative correaltion between nodes as unconnected (conection strength near 0) 
+# an attempt to take into account the cases when the neighboring node is NOT reinforcing 
+# signed network the connection strength of nodes with negative correlation is zero so the situation (triplet with anti-reinforcing correlations) cannot arise 
+
+# signed
+TOM_sign = TOMsimilarity(adjacency_sign, TOMType="signed")  # this takes a long time.. just wait...
+# unsigned 
+TOM_unsign = TOMsimilarity(adjacency_unsign, TOMType="unsigned")  # this takes a long time.. just wait... (shorter than unsigned)
+# what is the default?
+TOM = TOMsimilarity(adjacency)  # this takes a long time.. just wait... NOTE; wihtout indicating the TOMtype you are running "unsigned"
+# NOTE: feault above calls the unsigned TOM - below I graph the dendrogram and module color tables (of genes per module) and you 
+# can see that the default and calling the unsigned are exactly the same - further note that the dendrogram really demonstrates the ddifferences 
+# between the signed and unsigned - the signed TOM and adjacency matrix separates connected nodes and yields vst Exp trajectory in opposing directions 
+# in downstream analysis - I ran both signed and unsigned all the way through and founnd 'signed' as superior to the unsigned network to call distint expression trajectories 
+dissTOM        = 1-TOM
+dissTOM_sign   = 1-TOM_sign
+dissTOM_unsign = 1-TOM_unsign
+
 #=====================================================================================
 #
 #  Step 3:Call the hierarchical clustering function - plot the tree
 #
 #=====================================================================================
 # Call the hierarchical clustering function
-geneTree = hclust(as.dist(dissTOM), method = "average");
+geneTree        = hclust(as.dist(dissTOM), method = "average");
+geneTree_sign   = hclust(as.dist(dissTOM_sign), method = "average");
+geneTree_unsign = hclust(as.dist(dissTOM_unsign), method = "average");
+
 # Plot the resulting clustering tree (dendrogram)
 sizeGrWindow(12,9)
+
 plot(geneTree, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
      labels = FALSE, hang = 0.04);
+
+plot(geneTree_sign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+     labels = FALSE, hang = 0.04);
+
+plot(geneTree_unsign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+     labels = FALSE, hang = 0.04);
+
+
 #=====================================================================================
 #
 #  Step 4: Set module size and 'cutreeDynamic' to create clusters 
 #
 #=====================================================================================
 # We like large modules, so we set the minimum module size relatively high:
-minModuleSize = 50; # set this for the subseqent call...
+minModuleSize = 100; # set this for the subseqent call...
 # Module identification using dynamic tree cut:
 dynamicMods = cutreeDynamic(dendro = geneTree, distM = dissTOM,
                             deepSplit = 1, pamRespectsDendro = FALSE,
                             minClusterSize = minModuleSize);
 table(dynamicMods) # number of genes per module 
+
+# sign
+dynamicMods_sign = cutreeDynamic(dendro = geneTree_sign, distM = dissTOM_sign,
+                                 deepSplit = 1, pamRespectsDendro = FALSE,
+                                 minClusterSize = minModuleSize);
+table(dynamicMods_sign) # number of genes per module - signed modules - more of them here all over 300 genes 
+
+# unsign
+dynamicMods_unsign = cutreeDynamic(dendro = geneTree_unsign, distM = dissTOM_unsign,
+                                   deepSplit = 1, pamRespectsDendro = FALSE,
+                                   minClusterSize = minModuleSize);
+table(dynamicMods_unsign) # number of genes per module EXACTLY THE SAME AS THE MODS CALLED ON DEFAULTS
 #=====================================================================================
 #
 #  Step 5: convert numeric network to colors and plot the dendrogram
@@ -353,41 +413,79 @@ table(dynamicMods) # number of genes per module
 #=====================================================================================
 # Convert numeric lables into colors
 dynamicColors = labels2colors(dynamicMods) # add colors to module labels (previously numbers)
-  table(dynamicColors) # lets look at this table...
+table(dynamicColors) # lets look at this table...
 # Plot the dendrogram and colors underneath
 sizeGrWindow(8,6)
 plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05,
-                    main = "Gene dendrogram and module colors")
+                    main = "Gene dendrogram and module colors") # DEFAULT CALL - look at the noise in the module calls!
+
+# signed TOM
+# Convert numeric lables into colors
+dynamicColors_sign = labels2colors(dynamicMods_sign) # add colors to module labels (previously numbers)
+table(dynamicColors_sign) # lets look at this table...
+# Plot the dendrogram and colors underneath
+sizeGrWindow(8,6)
+plotDendroAndColors(geneTree_sign, dynamicColors_sign, "Dynamic Tree Cut", 
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors 'SIGNED'") # signed TOM - now segmented well with minimal noise in major modules 
+
+# unsigned TOM
+# Convert numeric lables into colors
+dynamicColors_unsign = labels2colors(dynamicMods_unsign) # add colors to module labels (previously numbers)
+table(dynamicColors_unsign) # lets look at this table...
+# Plot the dendrogram and colors underneath
+sizeGrWindow(8,6)
+png("Analysis/Output/WGCNA/Day14/Day14_ClusterDendrogram_unsignedTOM.png", 1000, 1000, pointsize=20)
+plotDendroAndColors(geneTree_unsign, dynamicColors_unsign, "Dynamic Tree Cut",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors 'UNSIGNED'") # same as the default dendrogram!
+dev.off() # output the unsigned TOM dendrogram for comparison with the signed TOM (below and after merging - if needed!) 
 #=====================================================================================
 #
 #  Step 6: Calculate Eigengenes - view thier connectivity based on 'MEDiss = 1-cor(MEs)'
-#
+# CCURERNT FORM ASSIGNED EIGNENGES USING THE SIGNED tom AND ADJACENCY MATRIX
 #=====================================================================================
 # Calculate eigengenes
-MEList = moduleEigengenes(dds.d14_vst, colors = dynamicColors)
-MEs = MEList$eigengenes
+# MEList = moduleEigengenes(dds.d14_vst, colors = dynamicColors)
+MEList = moduleEigengenes(dds.d14_vst, colors = dynamicColors_sign) # signed TOM 
+MEs = MEList$eigengenes # signed TOM  ASSINED EQIGENGENE VARIABE HERE
 # Calculate dissimilarity of module eigengenes
-MEDiss = 1-cor(MEs);
+MEDiss = 1-cor(MEs); # signed TOM 
 # Cluster module eigengenes
 METree = hclust(as.dist(MEDiss), method = "average");
 # Plot the result
 sizeGrWindow(7, 6)
-png("Analysis/Output/WGCNA/Day14/Day14_ClusterEigengenes.png", 1000, 1000, pointsize=20)
 plot(METree, main = "Clustering of module eigengenes (dissimilarity calc = MEDiss = 1-cor(MEs))",
      xlab = "", sub = "")
+# change the cut height for the eignengene tree! 
+MEDissThres = 0.72 # call the 
+# Plot the cut line into the dendrogram
+abline(h=MEDissThres, col = "red") # add the line to the tree
+
+# save with the abline added
+png("Analysis/Output/WGCNA/Day14/Day14_ClusterEigengenes_signedTOM.png", 1000, 1000, pointsize=20) # signed TOM 
+plot(METree, main = "Clustering of module eigengenes (dissimilarity calc = MEDiss = 1-cor(MEs))",
+     xlab = "", sub = "") +
+abline(h=MEDissThres, col = "red") # add the line to the tree
 dev.off()
+
 #=====================================================================================
 #
 #  Step 7: Specify the cut line for the dendrogram (module) - Calc MODULE EIGENGENES (mergeMEs)
 #
 #=====================================================================================
-MEDissThres = 0.5
-# Plot the cut line into the dendrogram
-abline(h=MEDissThres, col = "red")
+
 # Call an automatic merging function
-merge = mergeCloseModules(dds.d14_vst, dynamicColors, cutHeight = MEDissThres, verbose = 3)
+merge = mergeCloseModules(dds.d14_vst, dynamicColors_sign, cutHeight = MEDissThres, verbose = 3) # signed TOM 
+merge = mergeCloseModules(dds.d14_vst, dynamicColors_sign, cutHeight = 0.3, verbose = 3) # signed TOM 
+# important! I intentially called cutheaight below the modules (0.3 above) to see the downstream trajetory 
+# of these modules before shrunk down. Look below for the dendrogram including the raw and the merged modules 
+# appears the module merging is unneccessary considering the low number of moduales already 
+
 # The merged module colors
 mergedColors = merge$colors;
 # Eigengenes of the new merged modules:
@@ -398,8 +496,8 @@ mergedMEs = merge$newMEs;
 #
 #=====================================================================================
 sizeGrWindow(12, 9)
-png("Analysis/Output/WGCNA/Day14/Day14_ClusterDendrogram.png", 1000, 1000, pointsize=20)
-plotDendroAndColors(geneTree, cbind(dynamicColors, mergedColors),
+png("Analysis/Output/WGCNA/Day14/Day14_ClusterDendrogram_signedTOM.png", 1000, 1000, pointsize=20) # signed TOM 
+plotDendroAndColors(geneTree_sign, cbind(dynamicColors_sign, mergedColors),
                     c("Dynamic Tree Cut", "Merged dynamic"),
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
@@ -410,15 +508,20 @@ dev.off()
 #
 #=====================================================================================
 # Rename to moduleColors
-moduleColors = mergedColors
+# moduleColors = mergedColors # if you want to call ther merged data (view dendrogram above)
+moduleColors = dynamicColors_sign # if you DO NOT want to merged colors 
 # Construct numerical labels corresponding to the colors
 colorOrder = c("grey", standardColors(50));
 moduleLabels = match(moduleColors, colorOrder)-1;
-MEs = mergedMEs;
+
+# MEs = mergedMEs # CALL THIS IF YOU WANT TO MERGED MODULE EIGENGENS - IF NOW LEAVE COMMMENTED OUT
+
+
+
 # Save module colors and labels for use in subsequent parts
-save(MEs, moduleLabels, moduleColors, geneTree, file = "Analysis/Output/WGCNA/Day14/Day14-networkConstruction-stepByStep.RData")
+# save(MEs, moduleLabels, moduleColors, geneTree, file = "Analysis/Output/WGCNA/Day14/Day14-networkConstruction-stepByStep.RData")
 # write csv - save the module eigengenes
-write.csv(MEs, file = "Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulEigengenes.csv")
+write.csv(MEs, file = "Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulEigengenes.csv") 
 
 #=====================================================================================
 #
@@ -451,76 +554,76 @@ write.csv(MEs, file = "Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulEigengenes.csv
 # treated equally
 
 # Jognson and Kelly "a soft-threshold of 12, a minimum module size of 30, a signed adjacency matrix"
-
-net = blockwiseModules(dds.d14_vst, #maxBlockSize = 2000,
-                       power = 3, 
-                       #  minModuleSize = 30, 
-                       #  deepSplit=4,
-                       mergeCutHeight = 0.75, #reassignThreshold = 0, 
-                       numericLabels = TRUE,
-                       #  pamRespectsDendro = FALSE,
-                       TOMType = "signed",  
-                       saveTOMs = TRUE,
-                       saveTOMFileBase = "Analysis/Output/WGCNA/day14/d14.Geoduck", 
-                       verbose = 3) #... wait for this to finish 
-moduleColors = labels2colors(net$colors) # assign colors to eigengene
-
-
+# 
+# net = blockwiseModules(dds.d14_vst, #maxBlockSize = 2000,
+#                        power = 3, 
+#                        #  minModuleSize = 30, 
+#                        #  deepSplit=4,
+#                        mergeCutHeight = 0.75, #reassignThreshold = 0, 
+#                        numericLabels = TRUE,
+#                        #  pamRespectsDendro = FALSE,
+#                        TOMType = "signed",  
+#                        saveTOMs = TRUE,
+#                        saveTOMFileBase = "Analysis/Output/WGCNA/day14/d14.Geoduck", 
+#                        verbose = 3) #... wait for this to finish 
+# moduleColors = labels2colors(net$colors) # assign colors to eigengene
 
 
-
-# Clustering tree based on eigengene modules - How related are the module eigengenes?
-# represent modules by eigengenes and relating them to one another 
-# dendrogram showing the 
-datME=moduleEigengenes(dds.d14_vst,moduleColors)$eigengenes
-signif(cor(datME, use="p"), 2)
-dissimME=(1-t(cor(datME, method="p")))/2 # define a dissimilarity measure between module eigengenes that keeps track of the sign of the correlation and uses this to cluster 
-hclustdatME=hclust(as.dist(dissimME), method="average" ) # dendrogram based on the module eigenge connecticity 
-# Plot the eigengene dendrogram
-
-# Hub gene of ech module 
-# Both functions output a character vector of genes, where the genes are the hub gene picked for each module, 
-# \and the names correspond to the module in which each gene is a hub.
-chooseTopHubInEachModule(dds.d14_vst, moduleColors, omitColors = "grey", power = 2, type = "signed")
-
-# 'minKMEtoStay' genes whose eigengene connectivity to their module eigengene is lower than minKMEtoStay are removed from the module.
-# 'minGap' minimum cluster gap given as the fraction of the difference between cutHeight and the 5th percentile of joining heights. See cutreeDynamic for more details.
-
-
-# net$colors # the module assignment
-# net$MEs # contains the module eigengenes of the modules.
-table(net$colors)
-# there are 19  modules in order of decending size
-# note 0 is reserved for genes outside of all modules (2602 genes) 
-
-#=====================================================================================
-#
-#  The hierarchical clustering dendrogram (tree) used for the module identification 
-#
-#=====================================================================================
-
-# The hierarchical clustering dendrogram (tree) used for the module identification 
-# open a graphics window
-sizeGrWindow(12, 9)
-# Convert labels to colors for plotting
-moduleColors = labels2colors(net$colors)
-# Plot the dendrogram and the module colors underneath for block 1
-png("Analysis/Output/WGCNA/day14/day14_ClusterDendrogram.png", 1000, 1000, pointsize=20)
-plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
-                    "Module colors",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.98)
-dev.off()
-# Plot the dendrogram and the module colors underneath for block 2
-plotDendroAndColors(net$dendrograms[[2]], moduleColors[net$blockGenes[[2]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 2",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
-# Plot the dendrogram and the module colors underneath for block 2
-plotDendroAndColors(net$dendrograms[[3]], moduleColors[net$blockGenes[[3]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 3",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
+# 
+# 
+# 
+# # Clustering tree based on eigengene modules - How related are the module eigengenes?
+# # represent modules by eigengenes and relating them to one another 
+# # dendrogram showing the 
+# datME=moduleEigengenes(dds.d14_vst,moduleColors)$eigengenes
+# signif(cor(datME, use="p"), 2)
+# dissimME=(1-t(cor(datME, method="p")))/2 # define a dissimilarity measure between module eigengenes that keeps track of the sign of the correlation and uses this to cluster 
+# hclustdatME=hclust(as.dist(dissimME), method="average" ) # dendrogram based on the module eigenge connecticity 
+# # Plot the eigengene dendrogram
+# 
+# # Hub gene of ech module 
+# # Both functions output a character vector of genes, where the genes are the hub gene picked for each module, 
+# # \and the names correspond to the module in which each gene is a hub.
+# chooseTopHubInEachModule(dds.d14_vst, moduleColors, omitColors = "grey", power = 2, type = "signed")
+# 
+# # 'minKMEtoStay' genes whose eigengene connectivity to their module eigengene is lower than minKMEtoStay are removed from the module.
+# # 'minGap' minimum cluster gap given as the fraction of the difference between cutHeight and the 5th percentile of joining heights. See cutreeDynamic for more details.
+# 
+# 
+# # net$colors # the module assignment
+# # net$MEs # contains the module eigengenes of the modules.
+# table(net$colors)
+# # there are 19  modules in order of decending size
+# # note 0 is reserved for genes outside of all modules (2602 genes) 
+# 
+# #=====================================================================================
+# #
+# #  The hierarchical clustering dendrogram (tree) used for the module identification 
+# #
+# #=====================================================================================
+# 
+# # The hierarchical clustering dendrogram (tree) used for the module identification 
+# # open a graphics window
+# sizeGrWindow(12, 9)
+# # Convert labels to colors for plotting
+# moduleColors = labels2colors(net$colors)
+# # Plot the dendrogram and the module colors underneath for block 1
+# png("Analysis/Output/WGCNA/day14/day14_ClusterDendrogram.png", 1000, 1000, pointsize=20)
+# plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
+#                     "Module colors",
+#                     dendroLabels = FALSE, hang = 0.03,
+#                     addGuide = TRUE, guideHang = 0.05, abHeight = 0.98)
+# dev.off()
+# # Plot the dendrogram and the module colors underneath for block 2
+# plotDendroAndColors(net$dendrograms[[2]], moduleColors[net$blockGenes[[2]]],
+#                     "Module colors", main = "Gene dendrogram and module colors in block 2",
+#                     dendroLabels = FALSE, hang = 0.03,
+#                     addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
+# # Plot the dendrogram and the module colors underneath for block 2
+# plotDendroAndColors(net$dendrograms[[3]], moduleColors[net$blockGenes[[3]]],
+#                     "Module colors", main = "Gene dendrogram and module colors in block 3",
+#                     dendroLabels = FALSE, hang = 0.03,
+#                     addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
 
 
 
@@ -564,6 +667,34 @@ moduleTraitPvalue_Secondary = corPvalueStudent(moduleTraitCor_Secondary, nSample
 moduleTraitCor_Group = cor(MEs, d14.Traits.Group, use = "p");
 moduleTraitPvalue_Group = corPvalueStudent(moduleTraitCor_Group, nSamples);
 
+
+
+#=====================================================================================
+#
+# Module eigengene -  MEs boxplots by treatment group
+#
+#=====================================================================================
+library(reshape2)
+MEs_table <- MEs # new table for plotting 
+MEs_table$Sample.Name <- rownames(MEs) # call rows as coolumn to merge with treatment data
+MEsPlotting <- merge(d14.Treatment_Phenotype.data, MEs_table, by = 'Sample.Name') # merge
+#MEsPlotting <- MEsPlotting[,-c(4:7)] # ommit the phys data to just plot the module colors 
+MEsPlotting_melt <- melt(MEsPlotting, id=c('Sample.Name', 'Primary_Treatment', 'Second_Treament'))
+#plot it
+png("Analysis/Output/WGCNA/Day14/Day14_ME_Boxplot.png", 600, 1000, pointsize=20)
+ggplot(MEsPlotting_melt, aes(x=Second_Treament, y=value, fill = factor(Primary_Treatment), shape=Primary_Treatment)) +
+  geom_boxplot(aes(middle = mean(value)), position=position_dodge(0.8), outlier.size = 0, alpha = 0.5) + 
+  stat_summary(fun.y = mean, color = "black", position = position_dodge(0.75),
+               geom = "point", shape = 19, size = 3,
+               show.legend = FALSE) +
+  ylab("ModuleEigengene") +
+  scale_color_manual(values=c("#56B4E9","#D55E00")) +
+  geom_hline(yintercept=0, linetype='dotted', col = 'black', size = 1)+
+  theme_bw() +
+  theme(legend.position = "none") +
+  facet_wrap(~variable)
+dev.off()
+
 #=====================================================================================
 #
 # Heatmaps
@@ -584,7 +715,7 @@ d14.PRIMARYTreatments.matrix <-  paste(signif(moduleTraitCor_Primary, 2), "\n(",
 #dim(textMatrix) == dim(moduleTraitCor_treatonly)
 par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
-png("Analysis/Output/WGCNA/Day14/Day14_Treatments_Primary_heatmap2.png", 500, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Treatments_Primary_heatmap2.png", 1000, 1000, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor_Primary,
                xLabels = names(d14.Traits.Primary),
                yLabels = names(MEs),
@@ -602,8 +733,8 @@ dev.off()
 d14.PRIMARYtreatment.text <-  as.matrix(signif(moduleTraitPvalue_Primary, 3))
 pa = cluster::pam(d14.PRIMARYtreatment.text, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
-png("Analysis/Output/WGCNA/Day14/Day14_Treatments_Primary_heatmap.png", 500, 1000, pointsize=20)
-pdf("Analysis/Output/WGCNA/Day14/Day14_Treatments_Primary_heatmap.pdf", width=5, height=6)
+#png("Analysis/Output/WGCNA/Day14/Day14_Treatments_Primary_heatmap.png", 500, 1000, pointsize=20)
+pdf("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Treatments_Primary_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Primary, 
         name = "gene_cor", 
         rect_gp = gpar(col = "grey", lwd = 1),
@@ -656,15 +787,15 @@ dev.off()
 # this heatmap looks better
 d14.SECONDtreatment_text<-  as.matrix(signif(moduleTraitPvalue_Secondary, 4))
 d14.SECONDtreatment_cor <-  as.matrix(signif(moduleTraitCor_Secondary, 4))
-pa = cluster::pam(d14.SECONDtreatment_cor, k = 2)
+pa = cluster::pam(d14.SECONDtreatment_cor, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
 
-png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Treatments_Second_heatmap.png", 500, 1000, pointsize=20)
+#png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Treatments_Second_heatmap.png", 500, 1000, pointsize=20)
 pdf("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Treatments_Second_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Secondary, 
         name = "gene_cor", 
         rect_gp = gpar(col = "grey", lwd = 1),
-        column_title = "Day 14 WGCNA - Treatment Groups", 
+        column_title = "Day 14 WGCNA - Treatment Second", 
         column_title_gp = gpar(fontsize = 12, fontface = "bold"),
         # row_title = "WGCNA modules",
         #row_km = 4, 
@@ -697,7 +828,7 @@ d14.GROUPTreatments.matrix <-  paste(signif(moduleTraitCor_Group, 2), "\n(",
                                     signif(moduleTraitPvalue_Group, 3), ")", sep = "")
 par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
-png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Group_heatmap2.png", 1000, 500, pointsize=20)
+png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Group_heatmap2.png", 1000, 1000, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor_Group,
                xLabels = names(d14.Traits.Group),
                yLabels = names(MEs),
@@ -714,10 +845,10 @@ dev.off()
 # this heatmap looks better
 d14.GROUPtreatment_text<-  as.matrix(signif(moduleTraitPvalue_Group, 4))
 d14.GROUPtreatment_cor <-  as.matrix(signif(moduleTraitCor_Group, 4))
-pa = cluster::pam(d14.GROUPtreatment_cor, k = 2)
+pa = cluster::pam(d14.GROUPtreatment_cor, k = 4)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
 
-png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Group_heatmap.png", 500, 1000, pointsize=20)
+#png("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Group_heatmap.png", 500, 1000, pointsize=20)
 pdf("Analysis/Output/WGCNA/Day14/heatmaps/Day14_Group_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Group, 
         name = "gene_cor", 
@@ -784,7 +915,7 @@ names(MMPvalue) = paste("p.MM", modNames, sep="");
 
 
 # AA treatment group
-AA = as.data.frame(d14.Traits.Secondary$AA); # Define variable containing the desired column 
+AA = as.data.frame(d14.Traits.Group$AA); # Define variable containing the desired column 
 names(AA) = "AA"
 AA_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, AA, use = "p"));
 AA_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AA_geneTraitSignificance), nSamples));
@@ -792,7 +923,7 @@ names(AA_geneTraitSignificance) = paste("GS.", names(AA), sep=""); # MA_geneTrai
 names(AA_GSPvalue) = paste("p.GS.", names(AA), sep=""); # corPvalueStudent
 
 # AM treatment group
-AM = as.data.frame(d14.Traits.Secondary$AM); # Define variable containing the desired column 
+AM = as.data.frame(d14.Traits.Group$AM); # Define variable containing the desired column 
 names(AM) = "AM"
 AM_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, AM, use = "p"));
 AM_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AM_geneTraitSignificance), nSamples));
@@ -800,7 +931,7 @@ names(AM_geneTraitSignificance) = paste("GS.", names(AM), sep=""); # MA_geneTrai
 names(AM_GSPvalue) = paste("p.GS.", names(AM), sep=""); # corPvalueStudent
 
 # AS treatment group
-AS = as.data.frame(d14.Traits.Secondary$AS); # Define variable containing the desired column 
+AS = as.data.frame(d14.Traits.Group$AS); # Define variable containing the desired column 
 names(AS) = "AS"
 AS_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, AS, use = "p"));
 AS_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AS_geneTraitSignificance), nSamples));
@@ -808,7 +939,7 @@ names(AS_geneTraitSignificance) = paste("GS.", names(AS), sep=""); # MA_geneTrai
 names(AS_GSPvalue) = paste("p.GS.", names(AS), sep=""); # corPvalueStudent
 
 # MA treatment group
-MA = as.data.frame(d14.Traits.Secondary$MA); # Define variable containing the desired column 
+MA = as.data.frame(d14.Traits.Group$MA); # Define variable containing the desired column 
 names(MA) = "MA"
 rownames(dds.d14_vst)
 MA_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, MA, use = "p"));
@@ -817,7 +948,7 @@ names(MA_geneTraitSignificance) = paste("GS.", names(MA), sep=""); # MA_geneTrai
 names(MA_GSPvalue) = paste("p.GS.", names(MA), sep=""); # corPvalueStudent
 
 # MM treatment group
-MM = as.data.frame(d14.Traits.Secondary$MM); # Define variable containing the desired column 
+MM = as.data.frame(d14.Traits.Group$MM); # Define variable containing the desired column 
 names(MM) = "MM"
 MM_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, MM, use = "p"));
 MM_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(MM_geneTraitSignificance), nSamples));
@@ -825,7 +956,7 @@ names(MM_geneTraitSignificance) = paste("GS.", names(MM), sep=""); # MA_geneTrai
 names(MM_GSPvalue) = paste("p.GS.", names(MM), sep=""); # corPvalueStudent
 
 # MS treatment group
-MS = as.data.frame(d14.Traits.Secondary$MS); # Define variable containing the desired column 
+MS = as.data.frame(d14.Traits.Group$MS); # Define variable containing the desired column 
 names(MS) = "MS"
 MS_geneTraitSignificance = as.data.frame(cor(dds.d14_vst, MS, use = "p"));
 MS_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(MS_geneTraitSignificance), nSamples));
@@ -849,7 +980,7 @@ names(MS_GSPvalue) = paste("p.GS.", names(MS), sep=""); # corPvalueStudent
 
 #=====================================================================================
 #
-#   COUNT GENES OF INTEREST IN  MODULES (i.e. violet- refer to heatmap)
+#   COUNT GENES OF INTEREST IN  MODULES 
 #
 #=====================================================================================
 
@@ -916,29 +1047,6 @@ View(geneInfo_GROUPS)
 #=====================================================================================
 
 # view the Treatment groups heatmap to understand rationale for clusters 
-
-# CLUSTERS
-# CLUSTER 1 module  [ c("yellow", "green") ]
-length(colnames(dds.d14_vst)[moduleColors==c("yellow", "green")]) # 1587 total genes in the clust2 module
-clust2_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% c("yellow", "green"))
-nrow(clust2_mod) # 2595 total genes in the clust2 module
-clust2_mod_001 <- clust2_mod %>%  dplyr::filter(p.MM.green < 0.05) 
-clust2_mod_001_MM <-clust2_mod_001[,c(8:13)]
-nrow(clust2_mod_001_MM) # 601 total genes in the clust2 module
-
-clust2_mod_001_MM$Gene.ID <- rownames(clust2_mod_001_MM)
-clust2_mod_001_MM_melt <- melt(clust2_mod_001_MM, id=c("Gene.ID"))
-clust2_mod_001_MM_melt$Primary <- substr(clust2_mod_001_MM_melt$variable, 4,4)
-clust2_mod_001_MM_melt$Second <- substr(clust2_mod_001_MM_melt$variable, 5,5)
-
-ggplot(clust2_mod_001_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
-  theme(panel.grid=element_blank()) +
-  scale_color_manual(values=c("#56B4E9","#D55E00")) +
-  geom_line(size=0.2, alpha=0.1) +
-  theme_bw() +
-  facet_wrap(~Primary)
-
-
 # SEPARATE MODULES 
 # lets look at the VST of tge turquise module 
 
@@ -946,7 +1054,7 @@ ggplot(clust2_mod_001_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Pri
 length(colnames(dds.d14_vst)[moduleColors=="brown"]) # 595 total genes in the brown module
 brown_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'brown')
 nrow(brown_mod) # 595 total genes in the brown module
-brown_mod_05 <- brown_mod %>%  dplyr::filter(p.MM.brown < 0.00001) 
+brown_mod_05 <- brown_mod #%>%  dplyr::filter(p.MM.brown < 0.05) 
 brown_mod_05_MM <-brown_mod_05[,c(8:13)]
 nrow(brown_mod_05_MM) # 99 total genes in the brown module
 
@@ -961,30 +1069,71 @@ ggplot(brown_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Prima
   geom_line(size=0.1, alpha=0.08) +
   theme_bw() +
   ggtitle("Day 14 WGCNA: Brown module") +
-  ylab("Pearson's correlation of vst Expression and Treatment Group (genes with Module Membership < 0.0001)") +
+  ylab("Pearson's correlation of vst Expression and Treatment Group (genes with Module Membership < 0.05)") +
   facet_wrap(~Primary)
 
 
 
-# green module 
-length(colnames(dds.d14_vst)[moduleColors=="green"]) # 595 total genes in the green module
-green_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'green')
-nrow(green_mod) # 595 total genes in the green module
-green_mod_05 <- green_mod %>%  dplyr::filter(p.MM.green < 0.05) 
-green_mod_05_MM <-green_mod_05[,c(8:13)]
-nrow(green_mod_05_MM) # 99 total genes in the green module
+# magenta module 
+length(colnames(dds.d14_vst)[moduleColors=="magenta"]) # 595 total genes in the magenta module
+magenta_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'magenta')
+nrow(magenta_mod) # 595 total genes in the magenta module
+magenta_mod_05 <- magenta_mod # %>%  dplyr::filter(p.MM.magenta < 0.05) 
+magenta_mod_05_MM <-magenta_mod_05[,c(8:13)]
+nrow(magenta_mod_05_MM) # 99 total genes in the magenta module
 
-green_mod_05_MM$Gene.ID <- rownames(green_mod_05_MM)
-green_mod_05_MM_melt <- melt(green_mod_05_MM, id=c("Gene.ID"))
-green_mod_05_MM_melt$Primary <- substr(green_mod_05_MM_melt$variable, 4,4)
-green_mod_05_MM_melt$Second <- substr(green_mod_05_MM_melt$variable, 5,5)
+magenta_mod_05_MM$Gene.ID <- rownames(magenta_mod_05_MM)
+magenta_mod_05_MM_melt <- melt(magenta_mod_05_MM, id=c("Gene.ID"))
+magenta_mod_05_MM_melt$Primary <- substr(magenta_mod_05_MM_melt$variable, 4,4)
+magenta_mod_05_MM_melt$Second <- substr(magenta_mod_05_MM_melt$variable, 5,5)
 
-ggplot(green_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
+ggplot(magenta_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
   theme(panel.grid=element_blank()) +
   scale_color_manual(values=c("#56B4E9","#D55E00")) +
   geom_line(size=0.2, alpha=0.1) +
   theme_bw() +
   facet_wrap(~Primary)
+
+# pink module 
+length(colnames(dds.d14_vst)[moduleColors=="pink"]) # 595 total genes in the pink module
+pink_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'pink')
+nrow(pink_mod) # 595 total genes in the pink module
+pink_mod_05 <- pink_mod # %>%  dplyr::filter(p.MM.pink < 0.05) 
+pink_mod_05_MM <-pink_mod_05[,c(8:13)]
+nrow(pink_mod_05_MM) # 99 total genes in the pink module
+
+pink_mod_05_MM$Gene.ID <- rownames(pink_mod_05_MM)
+pink_mod_05_MM_melt <- melt(pink_mod_05_MM, id=c("Gene.ID"))
+pink_mod_05_MM_melt$Primary <- substr(pink_mod_05_MM_melt$variable, 4,4)
+pink_mod_05_MM_melt$Second <- substr(pink_mod_05_MM_melt$variable, 5,5)
+
+ggplot(pink_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
+  theme(panel.grid=element_blank()) +
+  scale_color_manual(values=c("#56B4E9","#D55E00")) +
+  geom_line(size=0.2, alpha=0.1) +
+  theme_bw() +
+  facet_wrap(~Primary)
+
+# black module 
+length(colnames(dds.d14_vst)[moduleColors=="black"]) # 595 total genes in the black module
+black_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'black')
+nrow(black_mod) # 595 total genes in the black module
+black_mod_05 <- black_mod # %>%  dplyr::filter(p.MM.black < 0.05) 
+black_mod_05_MM <-black_mod_05[,c(8:13)]
+nrow(black_mod_05_MM) # 99 total genes in the black module
+
+black_mod_05_MM$Gene.ID <- rownames(black_mod_05_MM)
+black_mod_05_MM_melt <- melt(black_mod_05_MM, id=c("Gene.ID"))
+black_mod_05_MM_melt$Primary <- substr(black_mod_05_MM_melt$variable, 4,4)
+black_mod_05_MM_melt$Second <- substr(black_mod_05_MM_melt$variable, 5,5)
+
+ggplot(black_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
+  theme(panel.grid=element_blank()) +
+  scale_color_manual(values=c("#56B4E9","#D55E00")) +
+  geom_line(size=0.2, alpha=0.1) +
+  theme_bw() +
+  facet_wrap(~Primary)
+
 
 #=====================================================================================
 #
@@ -1034,7 +1183,7 @@ Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenoty
 # Prep data to merge
 # module membership
 d14_Annot_ModuleMembership <- d14_Annot_ModuleMembership[-c(1:2)] # ommit the redundant gene name columns buut keep 'geneSymbol'
-dim(d14_Annot_ModuleMembership) #  8626   28
+dim(d14_Annot_ModuleMembership) #   8626   36
 
 # module eigengenes
 names(d14_ModEigen)[1] <- "Sample.Name"
@@ -1054,9 +1203,7 @@ d14_GOTermsMaster.Modules<-  merge(d14_Annot_ModuleMembership, d14_vst, by = "ge
 dim(d14_GOTermsMaster.Modules) # 8626   63
 # Eigengenes and traits
 d14_EigenTraitMaster<-  merge(d14_ModEigen, Master.Treatment_Phenotype.data, by = "Sample.Name")
-dim(d14_EigenTraitMaster) # 35 19
-
-
+dim(d14_EigenTraitMaster) # 27 23
 
 
 #=====================================================================================
@@ -1066,8 +1213,8 @@ dim(d14_EigenTraitMaster) # 35 19
 #=====================================================================================
 
 # lets loop this through to get a bunch of plots 
-phys <- d14_EigenTraitMaster[,c(17:19)]
-modules <- d14_EigenTraitMaster[,c(2:6)]
+phys <- d14_EigenTraitMaster[,c(21:23)]
+modules <- d14_EigenTraitMaster[,c(2:10)]
 
 
 for(i in 1:ncol(modules)) {
@@ -1195,7 +1342,7 @@ exp.phys_data <- Master.Treatment_Phenotype.data %>%
 for(i in 1:nrow(modcolor)) {
   
   # vst read count date - narrow the columns - reshape and rename
-  Mod_geneIDs <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% modcolor[2,]) %>%  dplyr::select("geneSymbol")
+  Mod_geneIDs <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% modcolor[i,]) %>%  dplyr::select("geneSymbol")
   d14_vst_Mod <- d14_vst %>% dplyr::filter(geneSymbol %in% Mod_geneIDs[,1])
 
   # d14_vst_Mod_diff <- d14_vst_Mod # start the difference dataset
@@ -1313,7 +1460,7 @@ for(i in 1:nrow(modcolor)) {
 #
 #=====================================================================================
 
-
+head(d14_vst_data_t)
 
 for(i in 1:nrow(modcolor)) {
   module_color <- modcolor[i,] # call the color character 
@@ -1400,7 +1547,6 @@ library(forcats) # for plotting later..
 ### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
 Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
-
 # build annotation file to merge with the mean LFC tables
 annot.condenced <- Geoduck_annotation[,c(1,3:9)]
 annot.condenced$gene.length <- annot.condenced$V4 - annot.condenced$V3
@@ -1435,87 +1581,185 @@ length_vector <- GO_gene.length$length
 ### (4) Call modules of interest (i.e. magenta module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
 # Example: 0 = not in moddulecolor; 1 = in modulecolor
 
+#==============================================================================
+#
+#
+#   FOR LOOP THE REST of goseq - ends with aplot for the MF and BP terms 
+# 
+#
+#==============================================================================
+modcolor <- as.data.frame(unique(d14_Annot_ModuleMembership$moduleColor))
+names(modcolor)[1] <- "color"
 
-# green module  ------------------------------------------- #
+for(i in 1:nrow(modcolor)) {
+  
+  # (4) Call modules of interest (i.e. magenta module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
+  
+  # Example: 0 = not in moddulecolor; 1 = in modulecolor
+  GO_module <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% modcolor[i,]) # %>%  dplyr::select("geneSymbol")
+  GO_module_genes <- GO_module[1]
+  names(GO_module_genes)[1] <- "Gene.ID" # 162 genws in the green module 
+  
+  # convert to integer with all unique genes
+  GO_module_integer <- as.integer(GO_unique.genes.all%in%(GO_module_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
+  names(GO_module_integer)=GO_unique.genes.all
+  
+  
+  # Review what we have for goseq....
+  # (1) Go terms ---------------- #
+  #  head(GO.terms)
+  
+  # (2) ID vector --------------- #
+  # head(GO_unique.genes.all)
+  
+  # (3) Length vector ----------- #
+  # head(length_vector)
+  
+  # (4) Binary DEG vectors ------ # 
+  # head(GO_magenta_integer)  
+  
+  
+  #Calculate Probability Weighting Function (using 'nullp')
+  pwf <-nullp(GO_module_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+  
+  
+  # Run goseq
+  mod.goseq  <-goseq(pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+  
+  
+  # call enriched GO terms and plot 
+  #Find only enriched GO terms that are statistically significant at cutoff 
+  mod_enriched.GO.05.a<-mod.goseq$category[mod.goseq$over_represented_pvalue<.05] # change twice here
+  mod_enriched.GO.05<-data.frame(mod_enriched.GO.05.a)
+  colnames(mod_enriched.GO.05) <- c("category")
+  mod_enriched.GO.05 <- merge(mod_enriched.GO.05, mod.goseq, by="category") # change here
+  mod_enriched.GO.05 <- mod_enriched.GO.05[order(-mod_enriched.GO.05$numDEInCat),]
+  mod_enriched.GO.05$term <- as.factor(mod_enriched.GO.05$term)
+  head(mod_enriched.GO.05)
+  
+  mod_MF <- subset(mod_enriched.GO.05, ontology=="MF")
+  mod_MF <- mod_MF[order(-mod_MF$numDEInCat),]
+  mod_CC <- subset(mod_enriched.GO.05, ontology=="CC")
+  mod_CC <- mod_CC[order(-mod_CC$numDEInCat),]
+  mod_BP <- subset(mod_enriched.GO.05, ontology=="BP")
+  mod_BP <- mod_BP[order(-mod_BP$numDEInCat),]
+  
+  # merge MF CC BP plots - Light cyan
+  num_mod   <- dim(GO_module_genes)[1] # call num upregulated genes
+  
+  # tile plots for MF and BP  
+  MF_tile_plot <- mod_enriched.GO.05 %>% 
+                    drop_na(ontology) %>% 
+                    mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+                    dplyr::filter(ontology %in% ('MF')) %>% 
+                    mutate(term = fct_reorder(term, ontology)) %>%
+                        ggplot(aes(ontology, term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
+                        geom_tile(fill = '#00BFC4') +
+                        scale_alpha_continuous(range = c(1, 0.1)) +
+                        theme_classic2() + 
+                        ggtitle(paste("GO: Day 14 WGCNA ME", modcolor[i,], sep ='')) +
+                        theme(legend.position="none") 
+  BP_tile_plot <- mod_enriched.GO.05 %>% 
+                      drop_na(ontology) %>% 
+                      mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+                      dplyr::filter(ontology %in% ('BP')) %>% 
+                      mutate(term = fct_reorder(term, ontology)) %>%
+                          ggplot(aes(ontology, term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
+                          geom_tile(fill = '#F8766D') +
+                          scale_alpha_continuous(range = c(1, 0.1)) +
+                          theme_classic2() + 
+                          ggtitle('') +
+                          theme(legend.position="none") 
+  # output the tile plots 
+  pdf(paste("Analysis/Output/WGCNA/Day14/goseq_modules/Day14_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=8, height=10)
+  print(ggarrange(MF_tile_plot, BP_tile_plot,         
+                  plotlist = NULL,
+                  ncol = 1,
+                  nrow = 2,
+                  labels = NULL))
+  dev.off()  
+  
+  # plot the output
+  library(tidyr)
+  Plot <- mod_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+    dplyr::filter(ontology %in% c('MF', 'BP')) %>% 
+    mutate(term = fct_reorder(term, ontology)) %>%
+    ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+    geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)), colour = ontology), size = 2, lineend = "butt", alpha = 0.1) + #
+    geom_point(size=2, shape = 15, aes(colour = ontology)) +
+    coord_flip() +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.y = element_blank(),
+      legend.position="bottom"
+    ) +
+    xlab("") +
+    ylab("-log10(pvalue)") +
+    ggtitle(paste("GO: Day 14 WGCNA ME", modcolor[i,], sep = "")) +
+    geom_label(aes(x = 2, y = 4, label = paste(num_mod, "ME", modcolor[i,], "genes"))) +
+    theme_bw() + #Set background color 
+    theme(panel.border = element_blank(), # Set border
+          panel.grid.major = element_blank(), #Set major gridlines
+          panel.grid.minor = element_blank(), #Set minor gridlines
+          axis.line = element_line(colour = "black"), #Set axes color
+          axis.text.x = element_text(size = 12), # set size of x axis text (log10 vals)
+          axis.title.x = element_text(size = 14), # set size of x axis title (log10 vals)
+          axis.text.y = element_text(size = 8), # set size of y axis text (terms)
+          #legend.position = c(30, 30), 
+          plot.background=element_blank()) + #Set the plot background #set title attributes 
+    geom_hline(yintercept = 1.3, linetype="dashed", 
+               color = "grey", size=1)
+  
+  pdf(paste("Analysis/Output/WGCNA/Day14/goseq_modules/Day14_goseq_ME",modcolor[i,],".pdf", sep =''), width=8, height=5)
+  print(Plot)
+  dev.off()
+}
 
-GO_green <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'green') # %>%  dplyr::select("geneSymbol")
-GO_green_genes <- GO_green[1]
-names(GO_green_genes)[1] <- "Gene.ID" # 162 genws in the green module 
 
-
-GO_green_integer <- as.integer(GO_unique.genes.all%in%(GO_green_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_green_integer)=GO_unique.genes.all
-View(GO_green_integer)
-
-# brown module  ------------------------------------------- #
-
-GO_brown <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'brown') # %>%  dplyr::select("geneSymbol")
-GO_brown_genes <- GO_brown[1]
-names(GO_brown_genes)[1] <- "Gene.ID" # 162 genws in the brown module 
-
-
-GO_brown_integer <- as.integer(GO_unique.genes.all%in%(GO_brown_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_brown_integer)=GO_unique.genes.all
-View(GO_brown_integer)
-
-# Review what we have for goseq....
-# (1) Go terms ---------------- #
-#  head(GO.terms)
-
-# (2) ID vector --------------- #
-# head(GO_unique.genes.all)
-
-# (3) Length vector ----------- #
-# head(length_vector)
-
-# (4) Binary DEG vectors ------ # 
-# head(GO_magenta_integer)  
 
 #===================================================================================== 
 # It's goseq time!!!
-# Calculate Probability Weighting Function
+# PLOTTING
+#  CLUTER! BLACK AND PINKK MODULES 
 #===================================================================================== 
+# Example: 0 = not in moddulecolor; 1 = in modulecolor
+BLACK.PINK_module <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% c('black', 'pink')) # %>%  dplyr::select("geneSymbol")
+BLACK.PINK_module_genes <- BLACK.PINK_module[1]
+names(BLACK.PINK_module_genes)[1] <- "Gene.ID" # 162 genws in the green module 
+
+# convert to integer with all unique genes
+BLACK.PINK_module_integer <- as.integer(GO_unique.genes.all%in%(BLACK.PINK_module_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
+names(BLACK.PINK_module_integer)=GO_unique.genes.all
 
 #Calculate Probability Weighting Function (using 'nullp')
-green.pwf<-nullp(GO_green_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-brown.pwf<-nullp(GO_brown_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+pwf_BLACK.PINK <-nullp(BLACK.PINK_module_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
 
-#===================================================================================== 
-# It's goseq time!!!
-#  Run goseq
-#===================================================================================== 
 
-green.goseq<-goseq(green.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-brown.goseq<-goseq(brown.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-
-# somegenes <- magenta.goseq %>%  dplyr::filter(ontology %in% 'CC') # xplore why there were no CC terms in the goseq plot
-# somegenes0.5CC <- somegenes %>% dplyr::filter(over_represented_pvalue < 0.1)
-#===================================================================================== 
-# It's goseq time!!!
-# PLOTTING
-#  GREEN MODULE 
-#===================================================================================== 
+# Run goseq
+BLACK.PINK.goseq  <-goseq(pwf_BLACK.PINK, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 
 #Find only enriched GO terms that are statistically significant at cutoff 
-green_enriched.GO.05.a<-green.goseq$category[green.goseq$over_represented_pvalue<.05] # change twice here
-green_enriched.GO.05<-data.frame(green_enriched.GO.05.a)
-colnames(green_enriched.GO.05) <- c("category")
-green_enriched.GO.05 <- merge(green_enriched.GO.05, green.goseq, by="category") # change here
-green_enriched.GO.05 <- green_enriched.GO.05[order(-green_enriched.GO.05$numDEInCat),]
-green_enriched.GO.05$term <- as.factor(green_enriched.GO.05$term)
-head(green_enriched.GO.05)
+black_enriched.GO.05.a<-BLACK.PINK.goseq$category[BLACK.PINK.goseq$over_represented_pvalue<.05] # change twice here
+black_enriched.GO.05<-data.frame(black_enriched.GO.05.a)
+colnames(black_enriched.GO.05) <- c("category")
+black_enriched.GO.05 <- merge(black_enriched.GO.05, BLACK.PINK.goseq, by="category") # change here
+black_enriched.GO.05 <- black_enriched.GO.05[order(-black_enriched.GO.05$numDEInCat),]
+black_enriched.GO.05$term <- as.factor(black_enriched.GO.05$term)
+head(black_enriched.GO.05)
 
-green_MF <- subset(green_enriched.GO.05, ontology=="MF")
-green_MF <- green_MF[order(-green_MF$numDEInCat),]
-green_CC <- subset(green_enriched.GO.05, ontology=="CC")
-green_CC <- green_CC[order(-green_CC$numDEInCat),]
-green_BP <- subset(green_enriched.GO.05, ontology=="BP")
-green_BP <- green_BP[order(-green_BP$numDEInCat),]
+black_MF <- subset(black_enriched.GO.05, ontology=="MF")
+black_MF <- black_MF[order(-black_MF$numDEInCat),]
+black_CC <- subset(black_enriched.GO.05, ontology=="CC")
+black_CC <- black_CC[order(-black_CC$numDEInCat),]
+black_BP <- subset(black_enriched.GO.05, ontology=="BP")
+black_BP <- black_BP[order(-black_BP$numDEInCat),]
 
 # Molecular Processes
-MFplot_green <- green_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+
+
+MFplot_black <- black_MF %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+  ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)) ), color="grey") +
   geom_point(size=3, color="#69b3a2") +
   coord_flip() +
   theme(
@@ -1524,7 +1768,7 @@ MFplot_green <- green_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
     legend.position="none"
   ) +
   xlab("") +
-  ylab("") +
+  ylab("-log10(pvalue) [over represented]") +
   ggtitle("Molecular Function") + #add a main title
   theme(plot.title = element_text(face = 'bold', 
                                   size = 12, 
@@ -1537,9 +1781,9 @@ MFplot_green <- green_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
         plot.background=element_blank())#Set the plot background
 
 #Cellular Processes
-CCplot_green <- green_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+CCplot_black <- black_CC %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+  ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)) ), color="grey") +
   geom_point(size=3, color="#69b3a2") +
   coord_flip() +
   theme(
@@ -1548,7 +1792,7 @@ CCplot_green <- green_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
     legend.position="none"
   ) +
   xlab("") +
-  ylab("") +
+  ylab("-log10(pvalue) [over represented]") +
   ggtitle("Cellular Component") + #add a main title
   theme(plot.title = element_text(face = 'bold', 
                                   size = 12, 
@@ -1561,9 +1805,9 @@ CCplot_green <- green_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
         plot.background=element_blank())#Set the plot background
 
 # Biological Processes 
-BPplot_green <- green_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
+BPplot_black <- black_BP %>% mutate(term = fct_reorder(term,  (-log10(over_represented_pvalue)) )) %>%
+  ggplot( aes(x=term, y= (-log10(over_represented_pvalue)) ) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend= (-log10(over_represented_pvalue)) ), color="grey") +
   geom_point(size=3, color="#69b3a2") +
   coord_flip() +
   theme(
@@ -1571,7 +1815,7 @@ BPplot_green <- green_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
     panel.grid.major.y = element_blank(),
     legend.position="none") +
   xlab("") +
-  ylab("") +
+  ylab("-log10(pvalue) [over represented]") +
   ggtitle("Biological Process") + #add a main title
   theme(plot.title = element_text(face = 'bold', 
                                   size = 12, 
@@ -1584,15 +1828,16 @@ BPplot_green <- green_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
         plot.background=element_blank())#Set the plot background
 
 # merge MF CC BP plots - Light cyan
-num_green   <- dim(GO_green_genes)[1] # call num upregulated genes
+num_black   <- dim(BLACK.PINK_module_genes)[1] # call num upregulated genes
 
 library(tidyr)
-pdf("Analysis/Output/WGCNA/Day14/goseq_modules/Day14_goseq_MEgreen.pdf", width=8, height=5)
-green_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
+pdf("Analysis/Output/WGCNA/Day14/goseq_modules/Day14_goseq_MEblackpink_cluster.pdf", width=12, height=5)
+black_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+  dplyr::filter(ontology %in% c('MF', 'BP')) %>% 
   mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
+  ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+  geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)), colour = ontology), size = 3, lineend = "butt", alpha = 0.1) + #
+  geom_point(size=3, shape = 15, aes(colour = ontology)) +
   coord_flip() +
   theme(
     panel.grid.minor.y = element_blank(),
@@ -1600,355 +1845,20 @@ green_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, n
     legend.position="bottom"
   ) +
   xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 14 WGCNA MEgreen") +
-  geom_label(aes(x = 2, y = 4, label = paste(num_green, "MEgreen genes"))) +
+  ylab("-log10(pvalue)") +
+  ggtitle("GO: Day 14 WGCNA MEblack_pink Cluster") +
+  geom_label(aes(x = 2, y = 4, label = paste(num_black, "MEblack_pink genes"))) +
   theme_bw() + #Set background color 
   theme(panel.border = element_blank(), # Set border
         panel.grid.major = element_blank(), #Set major gridlines
         panel.grid.minor = element_blank(), #Set minor gridlines
         axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
+        axis.text.x = element_text(size = 12), # set size of x axis text (log10 vals)
+        axis.title.x = element_text(size = 14), # set size of x axis title (log10 vals)
+        axis.text.y = element_text(size = 12), # set size of y axis text (terms)
+        #legend.position = c(30, 30), 
+        plot.background=element_blank()) + #Set the plot background #set title attributes 
+  geom_hline(yintercept = 1.3, linetype="dashed", 
+             color = "grey", size=1)
 dev.off()
-
-#===================================================================================== 
-# It's goseq time!!!
-# PLOTTING
-#  BROWN MODULE 
-#===================================================================================== 
-
-#Find only enriched GO terms that are statistically significant at cutoff 
-brown_enriched.GO.05.a<-brown.goseq$category[brown.goseq$over_represented_pvalue<.05] # change twice here
-brown_enriched.GO.05<-data.frame(brown_enriched.GO.05.a)
-colnames(brown_enriched.GO.05) <- c("category")
-brown_enriched.GO.05 <- merge(brown_enriched.GO.05, brown.goseq, by="category") # change here
-brown_enriched.GO.05 <- brown_enriched.GO.05[order(-brown_enriched.GO.05$numDEInCat),]
-brown_enriched.GO.05$term <- as.factor(brown_enriched.GO.05$term)
-head(brown_enriched.GO.05)
-
-brown_MF <- subset(brown_enriched.GO.05, ontology=="MF")
-brown_MF <- brown_MF[order(-brown_MF$numDEInCat),]
-brown_CC <- subset(brown_enriched.GO.05, ontology=="CC")
-brown_CC <- brown_CC[order(-brown_CC$numDEInCat),]
-brown_BP <- subset(brown_enriched.GO.05, ontology=="BP")
-brown_BP <- brown_BP[order(-brown_BP$numDEInCat),]
-
-# Molecular Processes
-MFplot_brown <- brown_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Molecular Function") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-#Cellular Processes
-CCplot_brown <- brown_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Cellular Component") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# Biological Processes 
-BPplot_brown <- brown_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none") +
-  xlab("") +
-  ylab("") +
-  ggtitle("Biological Process") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# merge MF CC BP plots - Light cyan
-num_brown   <- dim(GO_brown_genes)[1] # call num upregulated genes
-
-library(tidyr)
-pdf("Analysis/Output/WGCNA/Day14/goseq_modules/Day14_goseq_MEbrown.pdf", width=9, height=7)
- brown_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="bottom"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 14 WGCNA MEbrown") +
-  geom_label(aes(x = 2, y = 15, label = paste(num_brown, "MEbrown genes"))) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
-dev.off()
-
-
-#===================================================================================== #
-#
-#   CEMiTools 
-#
-#===================================================================================== # a CEMiTool object with all of the components mentioned above can also be constructed using 
-# just the cemitool function:
-
-##################################
-# TUTORIAL BELOW 
-##################################
-# For the most basic usage of CEMiTool only a data.frame 
-# containing expression data with gene symbols in the rows and sample names in the columns is needed, as following:
-# load expression data
-data(expr0)
-head(expr0[,1:4])
-# In this usage, the cemitool function receives the expression data, performs the co-expression modules analysis and returns a CEMiTool object:
-cem <- cemitool(expr0)
-# to see the summary 
-cem
-# inspect modules
-nmodules(cem)
-head(module_genes(cem))
-# ADDING ORA ANALYSIS  (over representation analysis) 
-# read GMT file
-gmt_fname <- system.file("extdata", "pathways.gmt", package = "CEMiTool")
-gmt_in <- read_gmt(gmt_fname)
-head(gmt_in)
-# perform over representation analysis
-cem <- mod_ora(cem, gmt_in)
-
-# run a more complex cem with gmt and sample_annot
-data(sample_annot)# load your sample annotation data (from CEMiTools), notice the SampleName is the columns in 'expr0'
-head(sample_annot)# sample annotation data (from CEMiTools)
-# run cemitool with sample annotation
-cem <- cemitool(expr0, sample_annot)
-sample_annotation(cem, 
-                  sample_name_column="SampleName", 
-                  class_column="Class") <- sample_annot
-# now run cem with the expression data, sample annotation and DO terms
-cem <- cemitool(expr0, sample_annot, gmt_in, interactions=int_df, 
-                filter=TRUE, plot=TRUE, verbose=TRUE) # runs and plots everything
-
-# read interactions
-int_fname <- system.file("extdata", "interactions.tsv", package = "CEMiTool")
-int_df <- read.delim(int_fname)
-head(int_df)
-
-
-# BELOW ARE COMMANDS TO GENERATE THE REPORTS TO A DIRECTORY...
-# create report as html document
-generate_report(cem, directory="./Report")
-# write analysis results into files
-write_files(cem, directory="./Tables")
-# save all plots
-save_plots(cem.D14, "all", directory="./Plots")
-
-# TOUBLESHOOTING...
-# Sometimes, CEMiTool analyses can fail, usually due to problems in the input data. 
-# We provide a function, diagnostic_report which aims to try to assist in resolving these issues.
-diagnostic_report(cem.D14,force=TRUE)
-
-
-
-
-##################################
-#  dAY 14 MODULE DATA 
-##################################
-
-
-
-
-# EXPRESSION DATA ---------------------------------------------------------------------------- #
-
-
-
-
-# PREP THE MODULE DATA - using the CST tranformed counts from day 14 (filtered for 10CPM in 50% samples)
-expr.D14VST <- d14_vst_data_t[,-1] # call new exp dataset to format without the genesymbal column
-rownames(expr.D14VST) <- d14_vst_data_t[,1] # make the gene symbol column the rownames
-head(expr.D14VST[,1:4]) # view the data - should reseemble the data from the expr0 from the CEMiTools tutoprial
-
-# Narrow for JUST the genes called in the green module in WGCNA
-Green_geneIDs <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'green') %>%  dplyr::select("geneSymbol") # all geneSymbols (IDs) WITHIN the looped module color 
-GreenMod.D14VST <- d14_vst_data_t %>% dplyr::filter(geneSymbol %in% Green_geneIDs$geneSymbol)
-GreenMod.D14VST.matrix <- GreenMod.D14VST[,-1] # call new exp dataset to format without the genesymbal column
-rownames(GreenMod.D14VST.matrix) <- GreenMod.D14VST[,1] # make the gene symbol column the rownames
-head(GreenMod.D14VST.matrix[,1:4]) # view the data - should reseemble the data from the expr0 from the CEMiTools tutoprial
-
-# Narrow for JUST the genes called in the brown module in WGCNA
-Brown_geneIDs <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'brown') %>%  dplyr::select("geneSymbol") # all geneSymbols (IDs) WITHIN the looped module color 
-BrownMod.D14VST <- d14_vst_data_t %>% dplyr::filter(geneSymbol %in% Brown_geneIDs$geneSymbol)
-BrownMod.D14VST.matrix <- BrownMod.D14VST[,-1] # call new exp dataset to format without the genesymbal column
-rownames(BrownMod.D14VST.matrix) <- BrownMod.D14VST[,1] # make the gene symbol column the rownames
-head(BrownMod.D14VST.matrix[,1:4]) # view the data - should reseemble the data from the expr0 from the CEMiTools tutoprial
-
-
-
-# ANNOTATION DATA (TREATMENTS FOR SAMPLE_IDS)------------------------------------------------- #
-
-
-
-
-day14_annot <- Master.Treatment_Phenotype.data %>% 
-  dplyr::filter(Date %in% 20190807)  %>%  # filter out Day 14 data only 
-  dplyr::select(c('Sample.Name', 'All_Treatment', 'Primary_Treatment', 'Second_Treament')) # select target columns of interest
-head(day14_annot[,1:4]) # View the first fow rows 
-
-sample_annot_PRIMARY <- day14_annot %>% dplyr::select(c('Sample.Name', 'Primary_Treatment')) 
-colnames(sample_annot_PRIMARY) <- c('SampleName', 'Class') # needs to be this title to run CEMiTools
-sample_annot_SECOND <- day14_annot %>% dplyr::select(c('Sample.Name', 'Second_Treament')) 
-colnames(sample_annot_SECOND) <- c('SampleName', 'Class') # needs to be this title to run CEMiTools
-sample_annot_GROUP <- day14_annot %>% dplyr::select(c('Sample.Name', 'All_Treatment')) 
-colnames(sample_annot_GROUP) <- c('SampleName', 'Class') # needs to be this title to run CEMiTools
-
-
-
-
-
-# GO TERM DATA (GENE ID AND TERM)------------------------------------------------------------- #
-
-### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
-annot.condenced <- Geoduck_annotation[,c(1,3:9)]
-annot.condenced$gene.length <- annot.condenced$V4 - annot.condenced$V3
-annot.condenced <- annot.condenced[,-c(2,3)]
-names(annot.condenced) <- c('Gene.ID', 'Uniprot', 'HGNC', 'fxn', 'Go.terms', 'Go.fxns','gene.length')
-Geoduck_GOterms <- as.data.frame(Geoduck_annotation) %>% dplyr::select(c('V1','V8'))
-colnames(Geoduck_GOterms)[1:2] <- c('transcript.ID', 'GO.terms') # call gene name and the GO terms - (Uniprot ID 'V5')
-splitted <- strsplit(as.character(Geoduck_GOterms$GO.terms), ";") #slit into multiple GO ids
-GO.terms <- data.frame(v1 = rep.int(Geoduck_GOterms$transcript.ID, sapply(splitted, length)), v2 = unlist(splitted)) #list all genes with each of their GO terms in a single row
-
-
-# prep the ORA analysis 
-GO.terms_rename <- GO.terms
-colnames(GO.terms_rename) <- c('gene', 'GO') # new dataset of GO.terms (earlier in script) rename columns for merging later
-head(GO.terms_rename)
-
-# GREEN MODULE GO terms only (WGCNA from above in script)
-GO.terms_Green <- GO.terms_rename  %>%  dplyr::filter(gene %in% Green_geneIDs$geneSymbol)
-GreenMod_GO <- data.frame(GO = green.goseq$category,
-                          term = green.goseq$term) # call columns of interest - GO terms only in the green module genes via WGCNa (above)
-GreenMOD_gene_term <- merge(GreenMod_GO,GO.terms_Green, by = 'GO')  # merge
-GreenMOD_gene_term <-GreenMOD_gene_term[,-1] # ommit the go term
-head(GreenMOD_gene_term) # just contains the genes and their corresponding terms 
-View(GreenMOD_gene_term)
-
-
-# BROWN MODULE GO terms only (WGCNA from above in script)
-GO.terms_Brown <- GO.terms_rename  %>%  dplyr::filter(gene %in% Brown_geneIDs$geneSymbol)
-BrownMod_GO <- data.frame(GO = brown.goseq$category,
-                          term = brown.goseq$term) # call columns of interest - GO terms only in the BROWN module genes via WGCNa (above)
-BrownMOD_gene_term <- merge(BrownMod_GO,GO.terms_Brown, by = 'GO')  # merge
-BrownMOD_gene_term <-BrownMOD_gene_term[,-1] # ommit the go term
-head(BrownMOD_gene_term) # just contains the genes and their corresponding terms 
-View(BrownMOD_gene_term)
-
-
-
-
-# RUN CEMTOOLS ------------------------------------------------------------------------------ #
-# now run cem with the expression data, sample annotation and DO terms
-
-
-# Expression data    == expr.D14VST      
-# Terms              == GreenMOD_gene_term  OR  BrownMOD_gene_term
-# Annotation         == sample_annot_PRIMARY OR sample_annot_SECOND OR sample_annot_GROUP
-
-cem <- cemitool(expr.D14VST, filter=FALSE, plot=FALSE, verbose=TRUE) # runs and plots everything
-
-# PRIMARY TREATMENT CEM #### #
-
-# GREEN MODULE terms only (WGCNA)
-Green_Primary_cem.D14 <- cemitool(expr.D14VST, sample_annot_PRIMARY, GreenMOD_gene_term,
-                                  filter=TRUE, plot=TRUE, verbose=TRUE) # runs and plots everything
-nmodules(Green_Primary_cem.D14)
-head(module_genes(Green_Primary_cem.D14))
-Green_Primary_cem.D14
-
-Green_Primary_D14_cemORA <- mod_ora(Green_Primary_cem.D14, GreenMOD_gene_term)
-plots_green <- show_plot(Green_Primary_D14_cemORA, "ora")
-plots_green[1]
-plots_green[2]
-plots_green[3]
-plots_green[4]
-
-
-# BROWN MODULE terms only (WGCNA)
-Brown_Primary_cem.D14 <- cemitool(expr.D14VST, sample_annot_PRIMARY, BrownMOD_gene_term,
-                                  filter=FALSE, plot=FALSE, verbose=TRUE) # runs and plots everything
-nmodules(Brown_Primary_cem.D14)
-head(module_genes(Brown_Primary_cem.D14))
-
-Brown_Primary_cem.D14 <- mod_ora(Brown_Primary_cem.D14, BrownMOD_gene_term)
-Brown_Primary_D14_cemORA <- plot_ora(Brown_Primary_cem.D14)
-plots_brown <- show_plot(Brown_Primary_cem.D14, "ora")
-plots_brown[1]
-plots_brown[2]
-plots_brown[3]
-plots_brown[4]
-View(BrownMOD_gene_term)
-# SECONDARY TREATMENT CEM #### #
-
-# GREEN MODULE terms only (WGCNA)
-Green_Second_cem.D14 <- cemitool(expr.D14VST, sample_annot_SECOND, GreenMOD_gene_term,
-                                  filter=TRUE, plot=TRUE, verbose=TRUE) # runs and plots everything
-
-cem <- mod_ora(Green_Second_cem.D14, GreenMOD_gene_term)
-
-
-nmodules(Green_Second_cem.D14)
-head(module_genes(Green_Second_cem.D14))
-
-Green_Second_D14_cemORA <- plot_ora(Green_Second_cem.D14)
-plots <- show_plot(Green_Second_D14_cemORA, "ora")
-plots[1]
-plots[2]
-plots[3]
-plots[4]
 

@@ -283,28 +283,61 @@ write.csv(dds.d7_vst, "Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.
 #
 #  Satrt the step-wise module construction:  
 # Step 1 = create adjacency matrix 
-#
+# https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
+# https://www.rdocumentation.org/packages/WGCNA/versions/1.69/topics/adjacency
+# https://ramellose.github.io/networktutorials/wgcna.html
+# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/TechnicalReports/signedTOM.pdf
 #=====================================================================================
 softPower = 3 # set your soft threshold based on the plots above 
-adjacency = adjacency(dds.d7_vst, power = softPower) # this takes a long time.. just wait...
+# signed 
+adjacency_unsign = adjacency(dds.d7_vst, power = softPower, type="unsigned") # this takes a long time.. just wait...
+
+# unsigned 
+adjacency_sign = adjacency(dds.d7_vst, power = softPower, type="signed") # this takes a long time.. just wait...
+
+#what is the default?
+adjacency = adjacency(dds.d7_vst, power = softPower)
+
 #=====================================================================================
 #
 #  Step 2: Turn adjacency into topological overlap
-#
+# Calculation of the topological overlap matrix, (TOM)
+# and the corresponding dissimilarity, from a given adjacency matrix.
 #=====================================================================================
+# signed 
+TOM_sign = TOMsimilarity(adjacency_sign, TOMType="signed")  # this takes a long time.. just wait...
+# unsigned 
+TOM_unsign = TOMsimilarity(adjacency_unsign, TOMType="unsigned")  # this takes a long time.. just wait...
+# what is the default?
 TOM = TOMsimilarity(adjacency)  # this takes a long time.. just wait...
-dissTOM = 1-TOM
+
+dissTOM        = 1-TOM
+dissTOM_sign   = 1-TOM_sign
+dissTOM_unsign = 1-TOM_unsign
+
 #=====================================================================================
 #
 #  Step 3:Call the hierarchical clustering function - plot the tree
 #
 #=====================================================================================
 # Call the hierarchical clustering function
-geneTree = hclust(as.dist(dissTOM), method = "average");
+geneTree        = hclust(as.dist(dissTOM), method = "average");
+geneTree_sign   = hclust(as.dist(dissTOM_sign), method = "average");
+geneTree_unsign = hclust(as.dist(dissTOM_unsign), method = "average");
+
 # Plot the resulting clustering tree (dendrogram)
 sizeGrWindow(12,9)
+
 plot(geneTree, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
      labels = FALSE, hang = 0.04);
+
+plot(geneTree_sign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+     labels = FALSE, hang = 0.04);
+
+plot(geneTree_unsign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+     labels = FALSE, hang = 0.04);
+
+
 #=====================================================================================
 #
 #  Step 4: Set module size and 'cutreeDynamic' to create clusters 
@@ -317,6 +350,18 @@ dynamicMods = cutreeDynamic(dendro = geneTree, distM = dissTOM,
                             deepSplit = 1, pamRespectsDendro = FALSE,
                             minClusterSize = minModuleSize);
 table(dynamicMods) # number of genes per module 
+
+# sign
+dynamicMods_sign = cutreeDynamic(dendro = geneTree_sign, distM = dissTOM_sign,
+                            deepSplit = 1, pamRespectsDendro = FALSE,
+                            minClusterSize = minModuleSize);
+table(dynamicMods_sign) # number of genes per module 
+
+# unsign
+dynamicMods_unsign = cutreeDynamic(dendro = geneTree_unsign, distM = dissTOM_unsign,
+                            deepSplit = 1, pamRespectsDendro = FALSE,
+                            minClusterSize = minModuleSize);
+table(dynamicMods_unsign) # number of genes per module 
 #=====================================================================================
 #
 #  Step 5: convert numeric network to colors and plot the dendrogram
@@ -331,13 +376,37 @@ plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05,
                     main = "Gene dendrogram and module colors")
+
+# signed
+# Convert numeric lables into colors
+dynamicColors_sign = labels2colors(dynamicMods_sign) # add colors to module labels (previously numbers)
+table(dynamicColors_sign) # lets look at this table...
+# Plot the dendrogram and colors underneath
+sizeGrWindow(8,6)
+plotDendroAndColors(geneTree_sign, dynamicColors_sign, "Dynamic Tree Cut",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors 'SIGNED'")
+
+# unsigned
+# Convert numeric lables into colors
+dynamicColors_unsign = labels2colors(dynamicMods_unsign) # add colors to module labels (previously numbers)
+table(dynamicColors_unsign) # lets look at this table...
+# Plot the dendrogram and colors underneath
+sizeGrWindow(8,6)
+plotDendroAndColors(geneTree_unsign, dynamicColors_unsign, "Dynamic Tree Cut",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors 'UNSIGNED'")
+
 #=====================================================================================
 #
 #  Step 6: Calculate Eigengenes - view thier connectivity based on 'MEDiss = 1-cor(MEs)'
 #
 #=====================================================================================
 # Calculate eigengenes
-MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors)
+# MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors)
+MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors_sign)
 MEs = MEList$eigengenes
 # Calculate dissimilarity of module eigengenes
 MEDiss = 1-cor(MEs);
@@ -354,11 +423,12 @@ dev.off()
 #  Step 7: Specify the cut line for the dendrogram (module) - Calc MODULE EIGENGENES (mergeMEs)
 #
 #=====================================================================================
-MEDissThres = 0.35
+MEDissThres = 0.35 # outide of the height threshold - will not affect any modules at this point
 # Plot the cut line into the dendrogram
 abline(h=MEDissThres, col = "red")
 # Call an automatic merging function
-merge = mergeCloseModules(dds.d7_vst, dynamicColors, cutHeight = MEDissThres, verbose = 3)
+# merge = mergeCloseModules(dds.d7_vst, dynamicColors, cutHeight = MEDissThres, verbose = 3)
+merge = mergeCloseModules(dds.d7_vst, dynamicColors_sign, cutHeight = MEDissThres, verbose = 3)
 # The merged module colors
 mergedColors = merge$colors;
 # Eigengenes of the new merged modules:
@@ -371,6 +441,12 @@ mergedMEs = merge$newMEs;
 sizeGrWindow(12, 9)
 png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram.png", 1000, 1000, pointsize=20)
 plotDendroAndColors(geneTree, cbind(dynamicColors, mergedColors),
+                    c("Dynamic Tree Cut", "Merged dynamic"),
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05)
+dev.off()
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram_signed.png", 1000, 1000, pointsize=20)
+plotDendroAndColors(geneTree_sign, cbind(dynamicColors_sign, mergedColors),
                     c("Dynamic Tree Cut", "Merged dynamic"),
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
@@ -394,7 +470,7 @@ table(mergedColors)
 
 #=====================================================================================
 #
-#  Constructing the gene network and identifying modules
+#  Constructing the gene network and identifying modules - NOT USED ANYMORE BUT HAS GOOD INFO 
 #
 #=====================================================================================
 
@@ -424,18 +500,18 @@ table(mergedColors)
 
 # Jognson and Kelly "a soft-threshold of 12, a minimum module size of 30, a signed adjacency matrix"
 
-net = blockwiseModules(dds.d7_vst, #maxBlockSize = 2000,
-                       power = 3, 
-                    #  minModuleSize = 30, 
-                    #  deepSplit=4,
-                       mergeCutHeight = 0.75, #reassignThreshold = 0, 
-                       numericLabels = TRUE,
-                     #  pamRespectsDendro = FALSE,
-                       TOMType = "signed",  
-                       saveTOMs = TRUE,
-                       saveTOMFileBase = "Analysis/Output/WGCNA/Day7/d7.Geoduck", 
-                       verbose = 3) #... wait for this to finish 
-moduleColors = labels2colors(net$colors) # assign colors to eigengene
+# net = blockwiseModules(dds.d7_vst, #maxBlockSize = 2000,
+#                        power = 3, 
+#                     #  minModuleSize = 30, 
+#                     #  deepSplit=4,
+#                        mergeCutHeight = 0.75, #reassignThreshold = 0, 
+#                        numericLabels = TRUE,
+#                      #  pamRespectsDendro = FALSE,
+#                        TOMType = "signed",  
+#                        saveTOMs = TRUE,
+#                        saveTOMFileBase = "Analysis/Output/WGCNA/Day7/d7.Geoduck", 
+#                        verbose = 3) #... wait for this to finish 
+# moduleColors = labels2colors(net$colors) # assign colors to eigengene
 
 
 
@@ -444,16 +520,16 @@ moduleColors = labels2colors(net$colors) # assign colors to eigengene
 # Clustering tree based on eigengene modules - How related are the module eigengenes?
 # represent modules by eigengenes and relating them to one another 
 # dendrogram showing the 
-datME=moduleEigengenes(dds.d7_vst,moduleColors)$eigengenes
-signif(cor(datME, use="p"), 2)
-dissimME=(1-t(cor(datME, method="p")))/2 # define a dissimilarity measure between module eigengenes that keeps track of the sign of the correlation and uses this to cluster 
-hclustdatME=hclust(as.dist(dissimME), method="average" ) # dendrogram based on the module eigenge connecticity 
+# datME=moduleEigengenes(dds.d7_vst,moduleColors)$eigengenes
+# signif(cor(datME, use="p"), 2)
+# dissimME=(1-t(cor(datME, method="p")))/2 # define a dissimilarity measure between module eigengenes that keeps track of the sign of the correlation and uses this to cluster 
+# hclustdatME=hclust(as.dist(dissimME), method="average" ) # dendrogram based on the module eigenge connecticity 
 # Plot the eigengene dendrogram
 
 # Hub gene of ech module 
 # Both functions output a character vector of genes, where the genes are the hub gene picked for each module, 
 # \and the names correspond to the module in which each gene is a hub.
-chooseTopHubInEachModule(dds.d7_vst, moduleColors, omitColors = "grey", power = 2, type = "signed")
+# chooseTopHubInEachModule(dds.d7_vst, moduleColors, omitColors = "grey", power = 2, type = "signed")
 
 # 'minKMEtoStay' genes whose eigengene connectivity to their module eigengene is lower than minKMEtoStay are removed from the module.
 # 'minGap' minimum cluster gap given as the fraction of the difference between cutHeight and the 5th percentile of joining heights. See cutreeDynamic for more details.
@@ -461,40 +537,9 @@ chooseTopHubInEachModule(dds.d7_vst, moduleColors, omitColors = "grey", power = 
 
 # net$colors # the module assignment
 # net$MEs # contains the module eigengenes of the modules.
-table(net$colors)
+# table(net$colors)
 # there are 19  modules in order of decending size
 # note 0 is reserved for genes outside of all modules (2602 genes) 
-
-#=====================================================================================
-#
-#  The hierarchical clustering dendrogram (tree) used for the module identification 
-#
-#=====================================================================================
-
-# The hierarchical clustering dendrogram (tree) used for the module identification 
-# open a graphics window
-sizeGrWindow(12, 9)
-# Convert labels to colors for plotting
-moduleColors = labels2colors(net$colors)
-# Plot the dendrogram and the module colors underneath for block 1
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram.png", 1000, 1000, pointsize=20)
-plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
-                    "Module colors",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.98)
-dev.off()
-# Plot the dendrogram and the module colors underneath for block 2
-plotDendroAndColors(net$dendrograms[[2]], moduleColors[net$blockGenes[[2]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 2",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
-# Plot the dendrogram and the module colors underneath for block 2
-plotDendroAndColors(net$dendrograms[[3]], moduleColors[net$blockGenes[[3]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 3",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05, abHeight = 0.99)
-
-
 
 #=====================================================================================
 #
@@ -508,32 +553,32 @@ plotDendroAndColors(net$dendrograms[[3]], moduleColors[net$blockGenes[[3]]],
 # we simply correlate eigengenes with external traits and look for the most signicant associations:
 
 # Define numbers of genes and samples
-nGenes = ncol(dds.d7_vst); # 8548
-nSamples = nrow(dds.d7_vst); # 35
-# Recalculate MEs with color labels
-MEs0 = moduleEigengenes(dds.d7_vst, moduleColors)$eigengenes 
-MEs = orderMEs(MEs0) # reorders the columns (colors/modules)
-
-# write csv - save the module eigengenes
-write.csv(MEs, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
-
-# change chanracter treatments to integers
-# ALL TRAIT DATA
-d7.Traits$Primary_Treatment <- as.factor(d7.Traits$Primary_Treatment)
-d7.Traits$Primary_Treatment <- as.numeric(d7.Traits$Primary_Treatment)
-
-d7.Traits$Second_Treament <- as.factor(d7.Traits$Second_Treament)
-d7.Traits$Second_Treament <- as.numeric(d7.Traits$Second_Treament)
-
-# TREATMENT ONLY - break this up into more groups!! 
-d7.Traits.treat$Primary_Treatment <- as.factor(d7.Traits.treat$Primary_Treatment)
-d7.Traits.treat$Primary_Treatment <- as.numeric(d7.Traits.treat$Primary_Treatment)
-
-d7.Traits.treat$Second_Treament <- as.factor(d7.Traits.treat$Second_Treament)
-d7.Traits.treat$Second_Treament <- as.numeric(d7.Traits.treat$Second_Treament)
-
-d7.Traits.treat$All <- as.factor(d7.Traits.treat$All)
-d7.Traits.treat$All <- as.numeric(d7.Traits.treat$All)
+# nGenes = ncol(dds.d7_vst); # 8548
+# nSamples = nrow(dds.d7_vst); # 35
+# # Recalculate MEs with color labels
+# MEs0 = moduleEigengenes(dds.d7_vst, moduleColors)$eigengenes 
+# MEs = orderMEs(MEs0) # reorders the columns (colors/modules)
+# 
+# # write csv - save the module eigengenes
+# write.csv(MEs, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
+# 
+# # change chanracter treatments to integers
+# # ALL TRAIT DATA
+# d7.Traits$Primary_Treatment <- as.factor(d7.Traits$Primary_Treatment)
+# d7.Traits$Primary_Treatment <- as.numeric(d7.Traits$Primary_Treatment)
+# 
+# d7.Traits$Second_Treament <- as.factor(d7.Traits$Second_Treament)
+# d7.Traits$Second_Treament <- as.numeric(d7.Traits$Second_Treament)
+# 
+# # TREATMENT ONLY - break this up into more groups!! 
+# d7.Traits.treat$Primary_Treatment <- as.factor(d7.Traits.treat$Primary_Treatment)
+# d7.Traits.treat$Primary_Treatment <- as.numeric(d7.Traits.treat$Primary_Treatment)
+# 
+# d7.Traits.treat$Second_Treament <- as.factor(d7.Traits.treat$Second_Treament)
+# d7.Traits.treat$Second_Treament <- as.numeric(d7.Traits.treat$Second_Treament)
+# 
+# d7.Traits.treat$All <- as.factor(d7.Traits.treat$All)
+# d7.Traits.treat$All <- as.numeric(d7.Traits.treat$All)
 
 #=====================================================================================
 #
@@ -718,7 +763,7 @@ dev.off()
 # this heatmap looks better
 d7.GROUPtreatment_text<-  as.matrix(signif(moduleTraitPvalue_Group, 4))
 d7.GROUPtreatment_cor <-  as.matrix(signif(moduleTraitCor_Group, 4))
-pa = cluster::pam(d7.GROUPtreatment_cor, k = 2)
+pa = cluster::pam(d7.GROUPtreatment_cor, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
 
 png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Group_heatmap.png", 500, 1000, pointsize=20)
@@ -790,7 +835,7 @@ names(MMPvalue) = paste("p.MM", modNames, sep="");
 
 
 # AA treatment group
-AA = as.data.frame(d7.Traits.Secondary$AA); # Define variable containing the desired column 
+AA = as.data.frame(d7.Traits.Group$AA); # Define variable containing the desired column 
 names(AA) = "AA"
 AA_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, AA, use = "p"));
 AA_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AA_geneTraitSignificance), nSamples));
@@ -798,7 +843,7 @@ names(AA_geneTraitSignificance) = paste("GS.", names(AA), sep=""); # MA_geneTrai
 names(AA_GSPvalue) = paste("p.GS.", names(AA), sep=""); # corPvalueStudent
 
 # AM treatment group
-AM = as.data.frame(d7.Traits.Secondary$AM); # Define variable containing the desired column 
+AM = as.data.frame(d7.Traits.Group$AM); # Define variable containing the desired column 
 names(AM) = "AM"
 AM_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, AM, use = "p"));
 AM_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AM_geneTraitSignificance), nSamples));
@@ -806,7 +851,7 @@ names(AM_geneTraitSignificance) = paste("GS.", names(AM), sep=""); # MA_geneTrai
 names(AM_GSPvalue) = paste("p.GS.", names(AM), sep=""); # corPvalueStudent
 
 # AS treatment group
-AS = as.data.frame(d7.Traits.Secondary$AS); # Define variable containing the desired column 
+AS = as.data.frame(d7.Traits.Group$AS); # Define variable containing the desired column 
 names(AS) = "AS"
 AS_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, AS, use = "p"));
 AS_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(AS_geneTraitSignificance), nSamples));
@@ -814,7 +859,7 @@ names(AS_geneTraitSignificance) = paste("GS.", names(AS), sep=""); # MA_geneTrai
 names(AS_GSPvalue) = paste("p.GS.", names(AS), sep=""); # corPvalueStudent
 
 # MA treatment group
-MA = as.data.frame(d7.Traits.Secondary$MA); # Define variable containing the desired column 
+MA = as.data.frame(d7.Traits.Group$MA); # Define variable containing the desired column 
 names(MA) = "MA"
 rownames(dds.d7_vst)
 MA_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, MA, use = "p"));
@@ -823,7 +868,7 @@ names(MA_geneTraitSignificance) = paste("GS.", names(MA), sep=""); # MA_geneTrai
 names(MA_GSPvalue) = paste("p.GS.", names(MA), sep=""); # corPvalueStudent
 
 # MM treatment group
-MM = as.data.frame(d7.Traits.Secondary$MM); # Define variable containing the desired column 
+MM = as.data.frame(d7.Traits.Group$MM); # Define variable containing the desired column 
 names(MM) = "MM"
 MM_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, MM, use = "p"));
 MM_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(MM_geneTraitSignificance), nSamples));
@@ -831,7 +876,7 @@ names(MM_geneTraitSignificance) = paste("GS.", names(MM), sep=""); # MA_geneTrai
 names(MM_GSPvalue) = paste("p.GS.", names(MM), sep=""); # corPvalueStudent
 
 # MS treatment group
-MS = as.data.frame(d7.Traits.Secondary$MS); # Define variable containing the desired column 
+MS = as.data.frame(d7.Traits.Group$MS); # Define variable containing the desired column 
 names(MS) = "MS"
 MS_geneTraitSignificance = as.data.frame(cor(dds.d7_vst, MS, use = "p"));
 MS_GSPvalue = as.data.frame(corPvalueStudent(as.matrix(MS_geneTraitSignificance), nSamples));
@@ -927,8 +972,8 @@ View(geneInfo_GROUPS)
 # SEPARATE MODULES 
 
 # red module - higher in AS than MM and AM 
-length(colnames(dds.d7_vst)[moduleColors=="red"]) # 188 total genes in the brown module
-red_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'red')
+length(colnames(dds.d7_vst)[moduleColors=="yellow"]) # 188 total genes in the brown module
+yellow_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'yellow')
 # red <- red_mod[,c(3,4:7)]
 # red$Gene.ID  <- rownames(red)
 # ExpDataD7 <- as.data.frame(dds.d7_vst)
@@ -966,21 +1011,21 @@ red_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'red')
 #   ylab("Pearson's correlation of vst Expression and Treatment Group (genes with Module Membership < 0.0001)") +
 #   facet_wrap(~Primary_Treatment)
 
-red_mod_05 <- red_mod %>%  dplyr::filter(p.MM.red < 0.001) 
-red_mod_05_MM <-red_mod_05[,c(8:13)]
-nrow(red_mod_05_MM) # 78 total genes in the red module at 0.0001 module membership 
+yellow_mod_05 <- yellow_mod %>%  dplyr::filter(p.MM.yellow < 0.05) 
+yellow_mod_05_MM <-yellow_mod_05[,c(8:13)]
+nrow(yellow_mod_05_MM) # 78 total genes in the yellow module at 0.0001 module membership 
 
-red_mod_05_MM$Gene.ID <- rownames(red_mod_05_MM)
-red_mod_05_MM_melt <- melt(red_mod_05_MM, id=c("Gene.ID"))
-red_mod_05_MM_melt$Primary <- substr(red_mod_05_MM_melt$variable, 4,4)
-red_mod_05_MM_melt$Second <- substr(red_mod_05_MM_melt$variable, 5,5)
+yellow_mod_05_MM$Gene.ID <- rownames(yellow_mod_05_MM)
+yellow_mod_05_MM_melt <- melt(yellow_mod_05_MM, id=c("Gene.ID"))
+yellow_mod_05_MM_melt$Primary <- substr(yellow_mod_05_MM_melt$variable, 4,4)
+yellow_mod_05_MM_melt$Second <- substr(yellow_mod_05_MM_melt$variable, 5,5)
 
-ggplot(red_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
+ggplot(yellow_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary)) +
   theme(panel.grid=element_blank()) +
   scale_color_manual(values=c("#56B4E9","#D55E00")) +
   geom_line(size=0.1, alpha=0.2) +
   theme_bw() +
-  ggtitle("Day 7 WGCNA: red module") +
+  ggtitle("Day 7 WGCNA: yellow module") +
   ylab("Pearson's correlation of vst Expression and Treatment Group (genes with Module Membership < 0.001)") +
   facet_wrap(~Primary)
 
@@ -989,7 +1034,7 @@ ggplot(red_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Primary
 length(colnames(dds.d7_vst)[moduleColors=="green"]) # 595 total genes in the green module
 green_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'green')
 nrow(green_mod) # 595 total genes in the green module
-green_mod_05 <- green_mod %>%  dplyr::filter(p.MM.green < 0.001) 
+green_mod_05 <- green_mod# %>%  dplyr::filter(p.MM.green < 0.001) 
 green_mod_05_MM <-green_mod_05[,c(8:13)]
 nrow(green_mod_05_MM) # 342 total genes in the green module at 0.0001 module membership 
 
@@ -1012,7 +1057,7 @@ ggplot(green_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Prima
 length(colnames(dds.d7_vst)[moduleColors=="brown"]) # 595 total genes in the brown module
 brown_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'brown')
 nrow(brown_mod) # 595 total genes in the brown module
-brown_mod_05 <- brown_mod %>%  dplyr::filter(p.MM.brown < 0.001) 
+brown_mod_05 <- brown_mod #%>%  dplyr::filter(p.MM.brown < 0.001) 
 brown_mod_05_MM <-brown_mod_05[,c(8:13)]
 nrow(brown_mod_05_MM) # 426 total genes in the brown module at 0.0001 module membership 
 
@@ -1031,10 +1076,10 @@ ggplot(brown_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Prima
   facet_wrap(~Primary)
 
 # black module - lower in AS than other modules 
-length(colnames(dds.d7_vst)[moduleColors=="black"]) # 595 total genes in the black module
-black_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'black')
+length(colnames(dds.d7_vst)[moduleColors=="blue"]) # 595 total genes in the black module
+black_mod <- geneInfo_GROUPS %>%  dplyr::filter(moduleColor %in% 'blue')
 nrow(black_mod) # 595 total genes in the black module
-black_mod_05 <- black_mod %>%  dplyr::filter(p.MM.black < 0.001) 
+black_mod_05 <- black_mod #%>%  dplyr::filter(p.MM.black < 0.05) 
 black_mod_05_MM <-black_mod_05[,c(8:13)]
 nrow(black_mod_05_MM) # 164 total genes in the black module at 0.0001 module membership 
 
@@ -1084,6 +1129,9 @@ library(ggpubr)
 library(tibble)
 library(hrbrthemes)
 library(gridExtra)
+library(ggplot2)
+library(tidyr)
+library(forcats) # for plotting later..
 # Load data 
 d7_ModEigen <- read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
 d7_Annot_ModuleMembership <-  read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")
@@ -1117,7 +1165,7 @@ d7_GOTermsMaster.Modules<-  merge(d7_Annot_ModuleMembership, d7_vst_data_t, by =
 dim(d7_GOTermsMaster.Modules) # 8548   65
 # Eigengenes and traits
 d7_EigenTraitMaster<-  merge(d7_ModEigen, Master.Treatment_Phenotype.data, by = "Sample.Name")
-dim(d7_EigenTraitMaster) # 35 20
+dim(d7_EigenTraitMaster) # 35 19
 
 
 
@@ -1442,7 +1490,7 @@ for(i in 1:nrow(modcolor)) {
 # goseq - load the annotation and prepare the four steps for goseq!
 #
 #===================================================================================== 
-library(forcats) # for plotting later..
+
 ### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
 Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
@@ -1473,569 +1521,269 @@ names(GO_gene.length)[1] <- "Gene.ID"
 #GO_gene.length_merge <- merge(GO_gene.length, GO_magenta_genes, by = "Gene.ID")
 length_vector <- GO_gene.length$length
 
-### (4) Call modules of interest (i.e. magenta module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
-# Example: 0 = not in moddulecolor; 1 = in modulecolor
-
-# target modules with significant correlation in the group treatments - modules green, black, brown, and red 
-# green module  ------------------------------------------- #
-
-GO_green <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'green') # %>%  dplyr::select("geneSymbol")
-GO_green_genes <- GO_green[1]
-names(GO_green_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-
-
-GO_green_integer <- as.integer(GO_unique.genes.all%in%(GO_green_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_green_integer)=GO_unique.genes.all
-View(GO_green_integer)
-
-# black module  ------------------------------------------- #
-
-GO_black <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'black') # %>%  dplyr::select("geneSymbol")
-GO_black_genes <- GO_black[1]
-names(GO_black_genes)[1] <- "Gene.ID" # 162 genws in the black module 
+#==============================================================================
+#
+#
+#   FOR LOOP THE REST of goseq - ends with aplot for the MF and BP terms 
+# 
+#
+#==============================================================================
+modcolor <- as.data.frame(unique(d7_Annot_ModuleMembership$moduleColor))
+names(modcolor)[1] <- "color"
 
 
-GO_black_integer <- as.integer(GO_unique.genes.all%in%(GO_black_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_black_integer)=GO_unique.genes.all
-View(GO_black_integer)
+for(i in 1:nrow(modcolor)) {
+  
+  # (4) Call modules of interest (i.e. magenta module) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 
+  
+  # Example: 0 = not in moddulecolor; 1 = in modulecolor
+  GO_module <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% modcolor[i,]) # %>%  dplyr::select("geneSymbol")
+  GO_module_genes <- GO_module[1]
+  names(GO_module_genes)[1] <- "Gene.ID" # 162 genws in the green module 
+  
+  # convert to integer with all unique genes
+  GO_module_integer <- as.integer(GO_unique.genes.all%in%(GO_module_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
+  names(GO_module_integer)=GO_unique.genes.all
+  
+  
+  # Review what we have for goseq....
+  # (1) Go terms ---------------- #
+  #  head(GO.terms)
+  
+  # (2) ID vector --------------- #
+  # head(GO_unique.genes.all)
+  
+  # (3) Length vector ----------- #
+  # head(length_vector)
+  
+  # (4) Binary DEG vectors ------ # 
+  # head(GO_magenta_integer)  
+  
+  
+  #Calculate Probability Weighting Function (using 'nullp')
+  pwf <-nullp(GO_module_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+  
+  
+  # Run goseq
+  mod.goseq  <-goseq(pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+  
+  
+  # call enriched GO terms and plot 
+  #Find only enriched GO terms that are statistically significant at cutoff 
+  mod_enriched.GO.05.a<-mod.goseq$category[mod.goseq$over_represented_pvalue<.05] # change twice here
+  mod_enriched.GO.05<-data.frame(mod_enriched.GO.05.a)
+  colnames(mod_enriched.GO.05) <- c("category")
+  mod_enriched.GO.05 <- merge(mod_enriched.GO.05, mod.goseq, by="category") # change here
+  mod_enriched.GO.05 <- mod_enriched.GO.05[order(-mod_enriched.GO.05$numDEInCat),]
+  mod_enriched.GO.05$term <- as.factor(mod_enriched.GO.05$term)
+  head(mod_enriched.GO.05)
+  
+  mod_MF <- subset(mod_enriched.GO.05, ontology=="MF")
+  mod_MF <- mod_MF[order(-mod_MF$numDEInCat),]
+  mod_CC <- subset(mod_enriched.GO.05, ontology=="CC")
+  mod_CC <- mod_CC[order(-mod_CC$numDEInCat),]
+  mod_BP <- subset(mod_enriched.GO.05, ontology=="BP")
+  mod_BP <- mod_BP[order(-mod_BP$numDEInCat),]
+  
+  # merge MF CC BP plots - Light cyan
+  num_mod   <- dim(GO_module_genes)[1] # call num upregulated genes
+  
 
-# brown module  ------------------------------------------- #
+  # tile plots for MF and BP  
+  MF_tile_plot <- mod_enriched.GO.05 %>% 
+                    drop_na(ontology) %>% 
+                    mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+                    dplyr::filter(ontology %in% ('MF')) %>% 
+                    mutate(term = fct_reorder(term, ontology)) %>%
+                        ggplot(aes(ontology, term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
+                        geom_tile(fill = '#00BFC4') +
+                        scale_alpha_continuous(range = c(1, 0.1)) +
+                        theme_classic2() + 
+                        ggtitle(paste("GO: Day 7 WGCNA ME", modcolor[i,], sep ='')) +
+                        theme(legend.position="none") 
+  BP_tile_plot <- mod_enriched.GO.05 %>% 
+                  drop_na(ontology) %>% 
+                  mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+                  dplyr::filter(ontology %in% ('BP')) %>% 
+                  mutate(term = fct_reorder(term, ontology)) %>%
+                      ggplot(aes(ontology, term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
+                      geom_tile(fill = '#F8766D') +
+                      scale_alpha_continuous(range = c(1, 0.1)) +
+                      theme_classic2() + 
+                      ggtitle('') +
+                      theme(legend.position="none") 
+  # output the tile plots 
+  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=8, height=10)
+  print(ggarrange(MF_tile_plot, BP_tile_plot,         
+                  plotlist = NULL,
+                  ncol = 1,
+                  nrow = 2,
+                  labels = NULL))
+  dev.off()  
+  
+  
+  # plot the output as geom_segment plots 
+  library(tidyr)
+  Plot <- mod_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+    dplyr::filter(ontology %in% c('MF', 'BP')) %>% 
+    mutate(term = fct_reorder(term, ontology)) %>%
+    ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+    geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)), colour = ontology), size = 2, lineend = "butt", alpha = 0.1) + #
+    geom_point(size=2, shape = 15, aes(colour = ontology)) +
+    coord_flip() +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.y = element_blank(),
+      legend.position="bottom"
+    ) +
+    xlab("") +
+    ylab("-log10(pvalue)") +
+    ggtitle(paste("GO: Day 7 WGCNA ME", modcolor[i,], sep = "")) +
+    geom_label(aes(x = 2, y = 4, label = paste(num_mod, "ME", modcolor[i,], "genes"))) +
+    theme_bw() + #Set background color 
+    theme(panel.border = element_blank(), # Set border
+          panel.grid.major = element_blank(), #Set major gridlines
+          panel.grid.minor = element_blank(), #Set minor gridlines
+          axis.line = element_line(colour = "black"), #Set axes color
+          axis.text.x = element_text(size = 12), # set size of x axis text (log10 vals)
+          axis.title.x = element_text(size = 14), # set size of x axis title (log10 vals)
+          axis.text.y = element_text(size = 8), # set size of y axis text (terms)
+          #legend.position = c(30, 30), 
+          plot.background=element_blank()) + #Set the plot background #set title attributes 
+    geom_hline(yintercept = 1.3, linetype="dashed", 
+               color = "grey", size=1)
+  
+  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_ME",modcolor[i,],".pdf", sep =''), width=8, height=5)
+  print(Plot)
+  dev.off()
+}
 
-GO_brown <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'brown') # %>%  dplyr::select("geneSymbol")
-GO_brown_genes <- GO_brown[1]
-names(GO_brown_genes)[1] <- "Gene.ID" # 162 genws in the brown module 
-
-
-GO_brown_integer <- as.integer(GO_unique.genes.all%in%(GO_brown_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_brown_integer)=GO_unique.genes.all
-View(GO_brown_integer)
-
-# red module  ------------------------------------------- #
-
-GO_red <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'red') # %>%  dplyr::select("geneSymbol")
-GO_red_genes <- GO_red[1]
-names(GO_red_genes)[1] <- "Gene.ID" # 162 genws in the red module 
-
-
-GO_red_integer <- as.integer(GO_unique.genes.all%in%(GO_red_genes$Gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(GO_red_integer)=GO_unique.genes.all
-View(GO_red_integer)
-
-# Review what we have for goseq....
-# (1) Go terms ---------------- #
-#  head(GO.terms)
-
-# (2) ID vector --------------- #
-# head(GO_unique.genes.all)
-
-# (3) Length vector ----------- #
-# head(length_vector)
-
-# (4) Binary DEG vectors ------ # 
-# head(GO_magenta_integer)  
-
-#===================================================================================== .
-# It's goseq time!!!
-# Calculate Probability Weighting Function
-#===================================================================================== 
-
-#Calculate Probability Weighting Function (using 'nullp')
-green.pwf<-nullp(GO_green_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-black.pwf<-nullp(GO_black_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-brown.pwf<-nullp(GO_brown_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-red.pwf  <-nullp(GO_red_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-
-#===================================================================================== 
-# It's goseq time!!!
-#  Run goseq
-#===================================================================================== 
-
-green.goseq<-goseq(green.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-black.goseq<-goseq(black.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-brown.goseq<-goseq(brown.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-red.goseq  <-goseq(red.pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-
-# somegenes <- magenta.goseq %>%  dplyr::filter(ontology %in% 'CC') # xplore why there were no CC terms in the goseq plot
-# somegenes0.5CC <- somegenes %>% dplyr::filter(over_represented_pvalue < 0.1)
-#===================================================================================== 
-# It's goseq time!!!
-# PLOTTING
-#  GREEN MODULE 
-#===================================================================================== 
-
-#Find only enriched GO terms that are statistically significant at cutoff 
-green_enriched.GO.05.a<-green.goseq$category[green.goseq$over_represented_pvalue<.05] # change twice here
-green_enriched.GO.05<-data.frame(green_enriched.GO.05.a)
-colnames(green_enriched.GO.05) <- c("category")
-green_enriched.GO.05 <- merge(green_enriched.GO.05, green.goseq, by="category") # change here
-green_enriched.GO.05 <- green_enriched.GO.05[order(-green_enriched.GO.05$numDEInCat),]
-green_enriched.GO.05$term <- as.factor(green_enriched.GO.05$term)
-head(green_enriched.GO.05)
-
-green_MF <- subset(green_enriched.GO.05, ontology=="MF")
-green_MF <- green_MF[order(-green_MF$numDEInCat),]
-green_CC <- subset(green_enriched.GO.05, ontology=="CC")
-green_CC <- green_CC[order(-green_CC$numDEInCat),]
-green_BP <- subset(green_enriched.GO.05, ontology=="BP")
-green_BP <- green_BP[order(-green_BP$numDEInCat),]
-
-# Molecular Processes
-MFplot_green <- green_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Molecular Function") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-#Cellular Processes
-CCplot_green <- green_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Cellular Component") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# Biological Processes 
-BPplot_green <- green_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none") +
-  xlab("") +
-  ylab("") +
-  ggtitle("Biological Process") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# merge MF CC BP plots - Light cyan
-num_green   <- dim(GO_green_genes)[1] # call num upregulated genes
-
-library(tidyr)
-pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEgreen.pdf", width=8, height=5)
-green_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="bottom"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 7 WGCNA MEgreen") +
-  geom_label(aes(x = 2, y = 4, label = paste(num_green, "MEgreen genes"))) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
-dev.off()
-
-#===================================================================================== 
-# It's goseq time!!!
-# PLOTTING
-#  black MODULE 
-#===================================================================================== 
-
-#Find only enriched GO terms that are statistically significant at cutoff 
-black_enriched.GO.05.a<-black.goseq$category[black.goseq$over_represented_pvalue<.05] # change twice here
-black_enriched.GO.05<-data.frame(black_enriched.GO.05.a)
-colnames(black_enriched.GO.05) <- c("category")
-black_enriched.GO.05 <- merge(black_enriched.GO.05, black.goseq, by="category") # change here
-black_enriched.GO.05 <- black_enriched.GO.05[order(-black_enriched.GO.05$numDEInCat),]
-black_enriched.GO.05$term <- as.factor(black_enriched.GO.05$term)
-head(black_enriched.GO.05)
-
-black_MF <- subset(black_enriched.GO.05, ontology=="MF")
-black_MF <- black_MF[order(-black_MF$numDEInCat),]
-black_CC <- subset(black_enriched.GO.05, ontology=="CC")
-black_CC <- black_CC[order(-black_CC$numDEInCat),]
-black_BP <- subset(black_enriched.GO.05, ontology=="BP")
-black_BP <- black_BP[order(-black_BP$numDEInCat),]
-
-# Molecular Processes
-MFplot_black <- black_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Molecular Function") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-#Cellular Processes
-CCplot_black <- black_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Cellular Component") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# Biological Processes 
-BPplot_black <- black_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none") +
-  xlab("") +
-  ylab("") +
-  ggtitle("Biological Process") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# merge MF CC BP plots - Light cyan
-num_black   <- dim(GO_black_genes)[1] # call num upregulated genes
-
-library(tidyr)
-pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEblack.pdf", width=9, height=7)
-black_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="bottom"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 7 WGCNA MEblack") +
-  geom_label(aes(x = 2, y = 15, label = paste(num_black, "MEblack genes"))) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
-dev.off()
-
-#===================================================================================== 
-# It's goseq time!!!
-# PLOTTING
-#  BROWN MODULE 
-#===================================================================================== 
-
-#Find only enriched GO terms that are statistically significant at cutoff 
-brown_enriched.GO.05.a<-brown.goseq$category[brown.goseq$over_represented_pvalue<.05] # change twice here
-brown_enriched.GO.05<-data.frame(brown_enriched.GO.05.a)
-colnames(brown_enriched.GO.05) <- c("category")
-brown_enriched.GO.05 <- merge(brown_enriched.GO.05, brown.goseq, by="category") # change here
-brown_enriched.GO.05 <- brown_enriched.GO.05[order(-brown_enriched.GO.05$numDEInCat),]
-brown_enriched.GO.05$term <- as.factor(brown_enriched.GO.05$term)
-head(brown_enriched.GO.05)
-
-brown_MF <- subset(brown_enriched.GO.05, ontology=="MF")
-brown_MF <- brown_MF[order(-brown_MF$numDEInCat),]
-brown_CC <- subset(brown_enriched.GO.05, ontology=="CC")
-brown_CC <- brown_CC[order(-brown_CC$numDEInCat),]
-brown_BP <- subset(brown_enriched.GO.05, ontology=="BP")
-brown_BP <- brown_BP[order(-brown_BP$numDEInCat),]
-
-# Molecular Processes
-MFplot_brown <- brown_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Molecular Function") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-#Cellular Processes
-CCplot_brown <- brown_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Cellular Component") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# Biological Processes 
-BPplot_brown <- brown_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none") +
-  xlab("") +
-  ylab("") +
-  ggtitle("Biological Process") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# merge MF CC BP plots - Light cyan
-num_brown   <- dim(GO_brown_genes)[1] # call num upregulated genes
-
-library(tidyr)
-pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEbrown.pdf", width=9, height=7)
-brown_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="bottom"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 7 WGCNA MEbrown") +
-  geom_label(aes(x = 2, y = 15, label = paste(num_brown, "MEbrown genes"))) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
-dev.off()
 #===================================================================================== 
 # It's goseq time!!!
 # PLOTTING
 #  red MODULE 
 #===================================================================================== 
-
-#Find only enriched GO terms that are statistically significant at cutoff 
-red_enriched.GO.05.a<-red.goseq$category[red.goseq$over_represented_pvalue<.05] # change twice here
-red_enriched.GO.05<-data.frame(red_enriched.GO.05.a)
-colnames(red_enriched.GO.05) <- c("category")
-red_enriched.GO.05 <- merge(red_enriched.GO.05, red.goseq, by="category") # change here
-red_enriched.GO.05 <- red_enriched.GO.05[order(-red_enriched.GO.05$numDEInCat),]
-red_enriched.GO.05$term <- as.factor(red_enriched.GO.05$term)
-head(red_enriched.GO.05)
-
-red_MF <- subset(red_enriched.GO.05, ontology=="MF")
-red_MF <- red_MF[order(-red_MF$numDEInCat),]
-red_CC <- subset(red_enriched.GO.05, ontology=="CC")
-red_CC <- red_CC[order(-red_CC$numDEInCat),]
-red_BP <- subset(red_enriched.GO.05, ontology=="BP")
-red_BP <- red_BP[order(-red_BP$numDEInCat),]
-
-# Molecular Processes
-MFplot_red <- red_MF %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Molecular Function") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "red"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-#Cellular Processes
-CCplot_red <- red_CC %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("Cellular Component") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "red"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# Biological Processes 
-BPplot_red <- red_BP %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none") +
-  xlab("") +
-  ylab("") +
-  ggtitle("Biological Process") + #add a main title
-  theme(plot.title = element_text(face = 'bold', 
-                                  size = 12, 
-                                  hjust = 0)) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "red"), #Set axes color
-        plot.background=element_blank())#Set the plot background
-
-# merge MF CC BP plots - Light cyan
-num_red   <- dim(GO_red_genes)[1] # call num upregulated genes
-
-library(tidyr)
-pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEred.pdf", width=9, height=7)
-red_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, numDEInCat)) %>%
-  mutate(term = fct_reorder(term, ontology)) %>%
-  ggplot( aes(x=term, y=numDEInCat) ) +
-  geom_segment( aes(x=term ,xend=term, y=0, yend=numDEInCat), color="grey") +
-  geom_point(size=3, aes(colour = ontology)) +
-  coord_flip() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="bottom"
-  ) +
-  xlab("") +
-  ylab("") +
-  ggtitle("GO: Day 7 WGCNA MEred") +
-  geom_label(aes(x = 2, y = 15, label = paste(num_red, "MEred genes"))) +
-  theme_bw() + #Set background color 
-  theme(panel.border = element_blank(), # Set border
-        panel.grid.major = element_blank(), #Set major gridlines
-        panel.grid.minor = element_blank(), #Set minor gridlines
-        axis.line = element_line(colour = "black"), #Set axes color
-        plot.background=element_blank()) #Set the plot background #set title attributes
-dev.off()
+# 
+# #Find only enriched GO terms that are statistically significant at cutoff 
+# red_enriched.GO.05.a<-red.goseq$category[red.goseq$over_represented_pvalue<.05] # change twice here
+# red_enriched.GO.05<-data.frame(red_enriched.GO.05.a)
+# colnames(red_enriched.GO.05) <- c("category")
+# red_enriched.GO.05 <- merge(red_enriched.GO.05, red.goseq, by="category") # change here
+# red_enriched.GO.05 <- red_enriched.GO.05[order(-red_enriched.GO.05$numDEInCat),]
+# red_enriched.GO.05$term <- as.factor(red_enriched.GO.05$term)
+# head(red_enriched.GO.05)
+# 
+# red_MF <- subset(red_enriched.GO.05, ontology=="MF")
+# red_MF <- red_MF[order(-red_MF$numDEInCat),]
+# red_CC <- subset(red_enriched.GO.05, ontology=="CC")
+# red_CC <- red_CC[order(-red_CC$numDEInCat),]
+# red_BP <- subset(red_enriched.GO.05, ontology=="BP")
+# red_BP <- red_BP[order(-red_BP$numDEInCat),]
+# 
+# # Molecular Processes
+# 
+# 
+# MFplot_red <- red_MF %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+#   ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+#   geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)) ), color="grey") +
+#   geom_point(size=3, color="#69b3a2") +
+#   coord_flip() +
+#   theme(
+#     panel.grid.minor.y = element_blank(),
+#     panel.grid.major.y = element_blank(),
+#     legend.position="none"
+#   ) +
+#   xlab("") +
+#   ylab("-log10(pvalue) [over represented]") +
+#   ggtitle("Molecular Function") + #add a main title
+#   theme(plot.title = element_text(face = 'bold', 
+#                                   size = 12, 
+#                                   hjust = 0)) +
+#   theme_bw() + #Set background color 
+#   theme(panel.border = element_blank(), # Set border
+#         panel.grid.major = element_blank(), #Set major gridlines
+#         panel.grid.minor = element_blank(), #Set minor gridlines
+#         axis.line = element_line(colour = "red"), #Set axes color
+#         plot.background=element_blank())#Set the plot background
+# 
+# #Cellular Processes
+# CCplot_red <- red_CC %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+#   ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+#   geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)) ), color="grey") +
+#   geom_point(size=3, color="#69b3a2") +
+#   coord_flip() +
+#   theme(
+#     panel.grid.minor.y = element_blank(),
+#     panel.grid.major.y = element_blank(),
+#     legend.position="none"
+#   ) +
+#   xlab("") +
+#   ylab("-log10(pvalue) [over represented]") +
+#   ggtitle("Cellular Component") + #add a main title
+#   theme(plot.title = element_text(face = 'bold', 
+#                                   size = 12, 
+#                                   hjust = 0)) +
+#   theme_bw() + #Set background color 
+#   theme(panel.border = element_blank(), # Set border
+#         panel.grid.major = element_blank(), #Set major gridlines
+#         panel.grid.minor = element_blank(), #Set minor gridlines
+#         axis.line = element_line(colour = "red"), #Set axes color
+#         plot.background=element_blank())#Set the plot background
+# 
+# # Biological Processes 
+# BPplot_red <- red_BP %>% mutate(term = fct_reorder(term,  (-log10(over_represented_pvalue)) )) %>%
+#   ggplot( aes(x=term, y= (-log10(over_represented_pvalue)) ) ) +
+#   geom_segment( aes(x=term ,xend=term, y=0, yend= (-log10(over_represented_pvalue)) ), color="grey") +
+#   geom_point(size=3, color="#69b3a2") +
+#   coord_flip() +
+#   theme(
+#     panel.grid.minor.y = element_blank(),
+#     panel.grid.major.y = element_blank(),
+#     legend.position="none") +
+#   xlab("") +
+#   ylab("-log10(pvalue) [over represented]") +
+#   ggtitle("Biological Process") + #add a main title
+#   theme(plot.title = element_text(face = 'bold', 
+#                                   size = 12, 
+#                                   hjust = 0)) +
+#   theme_bw() + #Set background color 
+#   theme(panel.border = element_blank(), # Set border
+#         panel.grid.major = element_blank(), #Set major gridlines
+#         panel.grid.minor = element_blank(), #Set minor gridlines
+#         axis.line = element_line(colour = "red"), #Set axes color
+#         plot.background=element_blank())#Set the plot background
+# 
+# # merge MF CC BP plots - Light cyan
+# num_red   <- dim(GO_red_genes)[1] # call num upregulated genes
+# 
+# library(tidyr)
+# pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEred.pdf", width=8, height=5)
+# red_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
+#   dplyr::filter(ontology %in% c('MF', 'BP')) %>% 
+#   mutate(term = fct_reorder(term, ontology)) %>%
+#   ggplot( aes(x=term, y=(-log10(over_represented_pvalue)) ) ) +
+#   geom_segment( aes(x=term ,xend=term, y=0, yend=(-log10(over_represented_pvalue)), colour = ontology), size = 3, lineend = "butt", alpha = 0.1) + #
+#   geom_point(size=3, shape = 15, aes(colour = ontology)) +
+#   coord_flip() +
+#   theme(
+#     panel.grid.minor.y = element_blank(),
+#     panel.grid.major.y = element_blank(),
+#     legend.position="bottom"
+#   ) +
+#   xlab("") +
+#   ylab("-log10(pvalue)") +
+#   ggtitle("GO: Day 7 WGCNA MEred") +
+#   geom_label(aes(x = 2, y = 4, label = paste(num_red, "MEred genes"))) +
+#   theme_bw() + #Set background color 
+#   theme(panel.border = element_blank(), # Set border
+#         panel.grid.major = element_blank(), #Set major gridlines
+#         panel.grid.minor = element_blank(), #Set minor gridlines
+#         axis.line = element_line(colour = "black"), #Set axes color
+#         axis.text.x = element_text(size = 12), # set size of x axis text (log10 vals)
+#         axis.title.x = element_text(size = 14), # set size of x axis title (log10 vals)
+#         axis.text.y = element_text(size = 12), # set size of y axis text (terms)
+#         #legend.position = c(30, 30), 
+#         plot.background=element_blank()) + #Set the plot background #set title attributes 
+#   geom_hline(yintercept = 1.3, linetype="dashed", 
+#              color = "grey", size=1)
+# dev.off()
