@@ -1,0 +1,7 @@
+"","slim_term","slim_cat","category","Gene.Count","GO.Count","module_day"
+"1","DNA binding","GO:0003677","GO:0003690",4,4,"Day14_magenta"
+"2","RNA binding","GO:0003723","GO:0003725",10,5,"Day14_magenta"
+"3","peptidase activity","GO:0008233","GO:0004197",6,3,"Day14_magenta"
+"4","kinase activity","GO:0016301","GO:0004706",3,3,"Day14_magenta"
+"5","ion binding","GO:0043167","GO:0005525",39,3,"Day14_magenta"
+"6","transferase activity, transferring ...","GO:0016746","GO:0043995",2,4,"Day14_magenta"

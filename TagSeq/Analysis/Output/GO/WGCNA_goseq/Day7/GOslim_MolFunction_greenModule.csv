@@ -1,0 +1,8 @@
+"","slim_term","slim_cat","category","Gene.Count","GO.Count","module_day"
+"1","oxidoreductase activity","GO:0016491","GO:0000104",14,15,"Day7_green"
+"2","lyase activity","GO:0016829","GO:0003839",4,6,"Day7_green"
+"3","transferase activity, transferring ...","GO:0016746","GO:0003846",3,8,"Day7_green"
+"4","transferase activity, transferring ...","GO:0016757","GO:0003846",2,5,"Day7_green"
+"5","kinase activity","GO:0016301","GO:0004054",4,5,"Day7_green"
+"6","ion binding","GO:0043167","GO:0005507",25,4,"Day7_green"
+"7","cytoskeletal protein binding","GO:0008092","GO:0017024",6,4,"Day7_green"

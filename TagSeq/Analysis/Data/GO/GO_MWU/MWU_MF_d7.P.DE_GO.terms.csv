@@ -1,5 +1,0 @@
-"delta.rank" "pval" "level" "nseqs" "term" "name" "p.adj"
--2 0.611584107327141 1 5 "GO:0003676" "nucleic acid binding" 0.672471620227038
--7 0.0193498452012384 1 5 "GO:0005215" "transporter activity" 0.0386996904024768
-7 0.0145768833849329 1 5 "GO:0005509;GO:0046872" "calcium ion binding" 0.0386996904024768
-1 0.672471620227038 4 5 "GO:0017111;GO:0016462;GO:0016818;GO:0016817" "nucleoside-triphosphatase activity" 0.672471620227038

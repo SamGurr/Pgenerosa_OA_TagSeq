@@ -279,6 +279,52 @@ save(dds.d7_vst, d7.Traits.treat, file = "Analysis/Output/WGCNA/Day7/d.7-dataInp
 # write the vst transformed data 
 write.csv(dds.d7_vst, "Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.csv") # write
 
+
+
+# ===================================================================================
+#
+# soft threshold
+# ===================================================================================
+
+dim(dds.d7_vst) #  35 8548
+# Choose a set of soft-thresholding powers
+powers = c(c(1:10), seq(from = 12, to=20, by=2))
+# Call the network topology analysis function
+sft = pickSoftThreshold(dds.d7_vst, powerVector = powers, verbose = 5) #...wait for this to finish
+# pickSoftThreshold 
+#  performs the analysis of network topology and aids the
+# user in choosing a proper soft-thresholding power.
+# The user chooses a set of candidate powers (the function provides suitable default values)
+# function returns a set of network indices that should be inspected
+sizeGrWindow(9, 5) # set window size 
+# png to output 
+png("Analysis/Output/WGCNA/Day7/Day7_ScaleTopology_SoftThresh.png", 1000, 1000, pointsize=20)
+par(mfrow = c(1,2));
+cex1 = 0.9;
+# Scale-free topology fit index as a function of the soft-thresholding power
+plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",
+     main = paste("Scale independence"));
+text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     labels=powers,cex=cex1,col="red");
+# this line corresponds to using an R^2 cut-off of h
+abline(h=0.90,col="red") # look at at cut off at power of 6
+# Mean connectivity as a function of the soft-thresholding power
+plot(sft$fitIndices[,1], sft$fitIndices[,5],
+     xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
+     main = paste("Mean connectivity"))
+text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
+dev.off() # output 
+
+
+# The left panel... shows the scale-free fit index (y-axis) 
+# as a function of the soft-thresholding power (x-axis). 
+# We choose the power 9, which is the lowest power for which the scale-free 
+# topology index curve attens out upon reaching a high value (in this case, roughly 0.90).
+# The right panel.... displays the mean connectivity
+# (degree, y-axis) as a function of the soft-thresholding power (x-axis).
+
+
 #=====================================================================================
 #
 #  Satrt the step-wise module construction:  
@@ -289,10 +335,10 @@ write.csv(dds.d7_vst, "Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.
 # https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/TechnicalReports/signedTOM.pdf
 #=====================================================================================
 softPower = 3 # set your soft threshold based on the plots above 
-# signed 
+# unsigned 
 adjacency_unsign = adjacency(dds.d7_vst, power = softPower, type="unsigned") # this takes a long time.. just wait...
 
-# unsigned 
+# signed 
 adjacency_sign = adjacency(dds.d7_vst, power = softPower, type="signed") # this takes a long time.. just wait...
 
 #what is the default?
@@ -331,10 +377,10 @@ sizeGrWindow(12,9)
 plot(geneTree, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
      labels = FALSE, hang = 0.04);
 
-plot(geneTree_sign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+plot(geneTree_sign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity - SIGNED",
      labels = FALSE, hang = 0.04);
 
-plot(geneTree_unsign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
+plot(geneTree_unsign, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity - UNSIGNED",
      labels = FALSE, hang = 0.04);
 
 
@@ -383,7 +429,7 @@ dynamicColors_sign = labels2colors(dynamicMods_sign) # add colors to module labe
 table(dynamicColors_sign) # lets look at this table...
 # Plot the dendrogram and colors underneath
 sizeGrWindow(8,6)
-plotDendroAndColors(geneTree_sign, dynamicColors_sign, "Dynamic Tree Cut",
+plotDendroAndColors(geneTree_sign, dynamicColors_sign, "Dynamic Tree Cut - SIGNED",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05,
                     main = "Gene dendrogram and module colors 'SIGNED'")
@@ -394,7 +440,7 @@ dynamicColors_unsign = labels2colors(dynamicMods_unsign) # add colors to module 
 table(dynamicColors_unsign) # lets look at this table...
 # Plot the dendrogram and colors underneath
 sizeGrWindow(8,6)
-plotDendroAndColors(geneTree_unsign, dynamicColors_unsign, "Dynamic Tree Cut",
+plotDendroAndColors(geneTree_unsign, dynamicColors_unsign, "Dynamic Tree Cut - UNSIGNED",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05,
                     main = "Gene dendrogram and module colors 'UNSIGNED'")
@@ -407,6 +453,7 @@ plotDendroAndColors(geneTree_unsign, dynamicColors_unsign, "Dynamic Tree Cut",
 # Calculate eigengenes
 # MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors)
 MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors_sign)
+#MEList = moduleEigengenes(dds.d7_vst, colors = dynamicColors_unsign)
 MEs = MEList$eigengenes
 # Calculate dissimilarity of module eigengenes
 MEDiss = 1-cor(MEs);
@@ -415,7 +462,7 @@ METree = hclust(as.dist(MEDiss), method = "average");
 # Plot the result
 sizeGrWindow(7, 6)
 png("Analysis/Output/WGCNA/Day7/Day7_ClusterEigengenes.png", 1000, 1000, pointsize=20)
-plot(METree, main = "Clustering of module eigengenes (dissimilarity calc = MEDiss = 1-cor(MEs))",
+plot(METree, main = "Clustering of module eigengenes - SIGNED (dissimilarity calc = MEDiss = 1-cor(MEs))",
      xlab = "", sub = "")
 dev.off()
 #=====================================================================================
@@ -423,12 +470,14 @@ dev.off()
 #  Step 7: Specify the cut line for the dendrogram (module) - Calc MODULE EIGENGENES (mergeMEs)
 #
 #=====================================================================================
-MEDissThres = 0.35 # outide of the height threshold - will not affect any modules at this point
+MEDissThres = 0.1 # outide of the height threshold - will not affect any modules at this point
 # Plot the cut line into the dendrogram
 abline(h=MEDissThres, col = "red")
 # Call an automatic merging function
 # merge = mergeCloseModules(dds.d7_vst, dynamicColors, cutHeight = MEDissThres, verbose = 3)
 merge = mergeCloseModules(dds.d7_vst, dynamicColors_sign, cutHeight = MEDissThres, verbose = 3)
+merge = mergeCloseModules(dds.d7_vst, dynamicColors_unsign, cutHeight = MEDissThres, verbose = 3)
+
 # The merged module colors
 mergedColors = merge$colors;
 # Eigengenes of the new merged modules:
@@ -439,8 +488,8 @@ mergedMEs = merge$newMEs;
 #
 #=====================================================================================
 sizeGrWindow(12, 9)
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram.png", 1000, 1000, pointsize=20)
-plotDendroAndColors(geneTree, cbind(dynamicColors, mergedColors),
+png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram_unsigned.png", 1000, 1000, pointsize=20)
+plotDendroAndColors(geneTree_unsign, cbind(dynamicColors_unsign, mergedColors),
                     c("Dynamic Tree Cut", "Merged dynamic"),
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
@@ -807,6 +856,7 @@ ggplot(MEsPlotting_melt, aes(x=Second_Treament, y=value, fill = factor(Primary_T
                geom = "point", shape = 19, size = 3,
                show.legend = FALSE) +
   ylab("ModuleEigengene") +
+  ylim(-0.5,0.5) +
   scale_color_manual(values=c("#56B4E9","#D55E00")) +
   geom_hline(yintercept=0, linetype='dotted', col = 'black', size = 1)+
   theme_bw() +
@@ -1507,7 +1557,7 @@ names(annot.condenced) <- c('Gene.ID', 'Uniprot', 'HGNC', 'fxn', 'Go.terms', 'Go
 # GO terms data (ALL)
 Geoduck_GOterms <- as.data.frame(Geoduck_annotation) %>% dplyr::select(c('V1','V8'))
 colnames(Geoduck_GOterms)[1:2] <- c('transcript.ID', 'GO.terms') # call gene name and the GO terms - (Uniprot ID 'V5')
-splitted <- strsplit(as.character(Geoduck_GOterms$GO.terms), ";") #slit into multiple GO ids
+splitted <- strsplit(as.character(Geoduck_GOterms$GO.terms), "; ") #slit into multiple GO ids
 GO.terms <- data.frame(v1 = rep.int(Geoduck_GOterms$transcript.ID, sapply(splitted, length)), v2 = unlist(splitted)) #list all genes with each of their GO terms in a single row
 
 ### (2) Unique Genes - vector based on all unique mapped reads 
@@ -1613,11 +1663,11 @@ for(i in 1:nrow(modcolor)) {
                       ggtitle('') +
                       theme(legend.position="none") 
   # output the tile plots 
-  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=8, height=10)
+  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=25, height=50)
   print(ggarrange(MF_tile_plot, BP_tile_plot,         
                   plotlist = NULL,
-                  ncol = 1,
-                  nrow = 2,
+                  ncol = 2,
+                  nrow = 1,
                   labels = NULL))
   dev.off()  
   

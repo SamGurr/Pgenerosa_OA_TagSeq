@@ -17,81 +17,28 @@ setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq
 
 # LOAD DATA
 # count data
-day7.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day7.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
-day14.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day14.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
-day21.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day21.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
+day7.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/5cpm_50perc/day7.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
+day14.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/5cpm_50perc/day14.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
+day21.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/5cpm_50perc/day21.counts.filtered_5cpm50perc.csv", sep=',', header=TRUE)
 # trait data
-Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
+Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
+# WGCNA results 
+D7_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
+D14_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
+D21_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
+D7_WGCNA$Day  <- "Day7"
+D14_WGCNA$Day <- "Day14"
+D21_WGCNA$Day <- "Day21"
+# DESEq2 results 
+D7_DEGs_PrimEffect  <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE)  %>% dplyr::select(c('Row.names', 'log2FoldChange', 'pvalue', 'up', 'down'))
+D14_DEGs_PrimEffect <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) %>% dplyr::select(c('Row.names', 'log2FoldChange', 'pvalue', 'up', 'down'))
+D21_DEGs_PrimEffect <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day21/DE_Day21_Primary.csv", sep=',', header=TRUE) %>% dplyr::select(c('Row.names', 'log2FoldChange', 'pvalue', 'up', 'down'))
+D7_DEGs_PrimEffect$Day  <- "Day7"
+D14_DEGs_PrimEffect$Day <- "Day14"
+D21_DEGs_PrimEffect$Day <- "Day21"
+DEGs_PrimEffect_10cpm <- rbind(D7_DEGs_PrimEffect, D14_DEGs_PrimEffect, D21_DEGs_PrimEffect) # bind dataframes 
+names(DEGs_PrimEffect_10cpm)[1] <- "gene.ID" # change name of column 1
 
-# ===================================================================================
-#
-# DATA PREP
-#
-# ===================================================================================
-# treatment data
-d7.Treatment_data <- Master.Treatment_Phenotype.data %>%   dplyr::filter(Date %in% 20190731) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament') # split for day 7 data 
-d14.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190807) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament')# split for day 7 data 
-d21.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190814) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment')# split for day 7 data 
-
-# ================================================================================== #
-# count data - day  7
-d7.data = as.data.frame(t(day7.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
-names(d7.data) = day7.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
-rownames(d7.data) = names(day7.counts.matrix)[-(1)]; # assigns the row names as the sample ID
-d7.data_matrix <- data.frame(day7.counts.matrix[,-1], row.names=day7.counts.matrix[,1]) 
-d7.data_matrix_t <- t(d7.data_matrix)
-dds.d7 <- DESeqDataSetFromMatrix(countData = d7.data_matrix,  colData = d7.Treatment_data, design = ~ 1)
-dds.d7_vst <- vst(dds.d7) # transform it vst
-dds.d7_vst <- assay(dds.d7_vst) # call only the transformed coutns in the dds object
-d7_vst <- t(dds.d7_vst) # transpose columns to rows and vice versa
-fix(d7_vst)
-
-# =================================================================================== #
-# count data - day  14
-d14.data = as.data.frame(t(day14.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
-names(d14.data) = day14.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
-rownames(d14.data) = names(day14.counts.matrix)[-(1)]; # assigns the row names as the sample ID
-d14.data_matrix <- data.frame(day14.counts.matrix[,-1], row.names=day14.counts.matrix[,1]) 
-d14.data_matrix_t <- t(d14.data_matrix)
-
-# match number of samples in treatment data - SG92 was not sequenced  - ommit from the treatment data for the dds object 
-d14.Treatment_data_OM <- d14.Treatment_data %>% dplyr::filter(!Sample.Name %in% 'SG92')
-
-dds.d14 <- DESeqDataSetFromMatrix(countData = d14.data_matrix,  colData = d14.Treatment_data_OM, design = ~ 1)
-dds.d14_vst <- vst(dds.d14) # transform it vst
-dds.d14_vst <- assay(dds.d14_vst) # call only the transformed coutns in the dds object
-d14_vst <- t(dds.d14_vst) # transpose columns to rows and vice versa
-fix(d14_vst)
-
-# =================================================================================== #
-# count data - day  21
-d21.data = as.data.frame(t(day21.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
-names(d21.data) = day21.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
-rownames(d21.data) = names(day21.counts.matrix)[-(1)]; # assigns the row names as the sample ID
-d21.data_matrix <- data.frame(day21.counts.matrix[,-1], row.names=day21.counts.matrix[,1]) 
-d21.data_matrix_t <- t(d21.data_matrix)
-dds.d21 <- DESeqDataSetFromMatrix(countData = d21.data_matrix,  colData = d21.Treatment_data, design = ~ 1)
-dds.d21_vst <- vst(dds.d21) # transform it vst
-dds.d21_vst <- assay(dds.d21_vst) # call only the transformed coutns in the dds object
-d21_vst <- t(dds.d21_vst) # transpose columns to rows and vice versa
-fix(d21_vst)
-
-# =================================================================================== #
-# merge treatment with VST count data 
-
-# create common column to merge treatment by Sample.Name 
-d7_vst_counts <- cbind(rownames(d7_vst), data.frame(d7_vst, row.names=NULL))
-colnames(d7_vst_counts)[1] <- "Sample.Name"
-Day7.ExpVST <- merge(d7_vst_counts, d7.Treatment_data, by = 'Sample.Name') # merge 
-
-d14_vst_counts <- cbind(rownames(d14_vst), data.frame(d14_vst, row.names=NULL))
-colnames(d14_vst_counts)[1] <- "Sample.Name"
-Day14.ExpVST <- merge(d14_vst_counts, d14.Treatment_data_OM, by = 'Sample.Name') # merge 
-
-d21_vst_counts <- cbind(rownames(d21_vst), data.frame(d21_vst, row.names=NULL))
-colnames(d21_vst_counts)[1] <- "Sample.Name"
-Day21.ExpVST <- merge(d21_vst_counts, d21.Treatment_data, by = 'Sample.Name') # merge 
-fix(Day21.ExpVST)
 
 # ===================================================================================
 #
@@ -149,8 +96,8 @@ genes <- c('AOX','NADH_dehydrogenase','Cytochrome_c_reductase','Uncoupling_prote
 
 GeneID <- c('PGEN_.00g108770', 'PGEN_.00g299160', 'PGEN_00g275780','PGEN_.00g063670', 'PGEN_.00g193030', 'PGEN_.00g230260', # MITCHONDRIAL PLAYERS 
             'PGEN_.00g041430'  , 'PGEN_.00g283000','PGEN_.00g029420','PGEN_.00g067800','PGEN_.00g053100','PGEN_.00g053120','PGEN_.00g064910', 'PGEN_.00g064920','PGEN_.00g066460', 'PGEN_.00g283340',  'PGEN_.00g311570', 'PGEN_.00g320700', 'PGEN_.00g338440','PGEN_.00g272910', # TRANASCRIPTIONAL REGULATION - proteins involved in methylation and histone modification(s)
-                 'PGEN_.00g048200', 'PGEN_.00g012340', 'PGEN_.00g149480', 'PGEN_.00g153700', 'PGEN_.00g144540', 'PGEN_.00g033970',# SIRTUINS 
-                'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', 'PGEN_.00g015070', 'PGEN_.00g062450', 'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360')# OXIDATIVE STRESS
+            'PGEN_.00g048200', 'PGEN_.00g012340', 'PGEN_.00g149480', 'PGEN_.00g153700', 'PGEN_.00g144540', 'PGEN_.00g033970',# SIRTUINS 
+            'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', 'PGEN_.00g015070', 'PGEN_.00g062450', 'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360')# OXIDATIVE STRESS
 target_GOIs <- data.frame(genes, GeneID)
 
 
@@ -167,10 +114,82 @@ Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.Exp
 
 
 # ===================================================================================
-#
-# PLOTTING
+# 
+#  Loop to make table - look in DESeq2 results and WGCNa results! 
 #
 # ===================================================================================
+
+
+
+# ===================================================================================
+#
+# PLOTTING - DATA PREP FOR PLOTS
+#
+# ===================================================================================
+# treatment data
+d7.Treatment_data <- Master.Treatment_Phenotype.data %>%   dplyr::filter(Date %in% 20190731) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament') # split for day 7 data 
+d14.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190807) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament')# split for day 7 data 
+d21.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190814) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment')# split for day 7 data 
+
+# ================================================================================== #
+# count data - day  7
+d7.data = as.data.frame(t(day7.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d7.data) = day7.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d7.data) = names(day7.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d7.data_matrix <- data.frame(day7.counts.matrix[,-1], row.names=day7.counts.matrix[,1]) 
+d7.data_matrix_t <- t(d7.data_matrix)
+dds.d7 <- DESeqDataSetFromMatrix(countData = d7.data_matrix,  colData = d7.Treatment_data, design = ~ 1)
+dds.d7_vst <- vst(dds.d7) # transform it vst
+dds.d7_vst <- assay(dds.d7_vst) # call only the transformed coutns in the dds object
+d7_vst <- t(dds.d7_vst) # transpose columns to rows and vice versa
+# fix(d7_vst)
+
+# =================================================================================== #
+# count data - day  14
+d14.data = as.data.frame(t(day14.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d14.data) = day14.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d14.data) = names(day14.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d14.data_matrix <- data.frame(day14.counts.matrix[,-1], row.names=day14.counts.matrix[,1]) 
+d14.data_matrix_t <- t(d14.data_matrix)
+
+# match number of samples in treatment data - SG92 was not sequenced  - ommit from the treatment data for the dds object 
+d14.Treatment_data_OM <- d14.Treatment_data %>% dplyr::filter(!Sample.Name %in% 'SG92')
+
+dds.d14 <- DESeqDataSetFromMatrix(countData = d14.data_matrix,  colData = d14.Treatment_data_OM, design = ~ 1)
+dds.d14_vst <- vst(dds.d14) # transform it vst
+dds.d14_vst <- assay(dds.d14_vst) # call only the transformed coutns in the dds object
+d14_vst <- t(dds.d14_vst) # transpose columns to rows and vice versa
+# fix(d14_vst)
+
+# =================================================================================== #
+# count data - day  21
+d21.data = as.data.frame(t(day21.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d21.data) = day21.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d21.data) = names(day21.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d21.data_matrix <- data.frame(day21.counts.matrix[,-1], row.names=day21.counts.matrix[,1]) 
+d21.data_matrix_t <- t(d21.data_matrix)
+dds.d21 <- DESeqDataSetFromMatrix(countData = d21.data_matrix,  colData = d21.Treatment_data, design = ~ 1)
+dds.d21_vst <- vst(dds.d21) # transform it vst
+dds.d21_vst <- assay(dds.d21_vst) # call only the transformed coutns in the dds object
+d21_vst <- t(dds.d21_vst) # transpose columns to rows and vice versa
+# fix(d21_vst)
+
+# =================================================================================== #
+# merge treatment with VST count data 
+
+# create common column to merge treatment by Sample.Name 
+d7_vst_counts <- cbind(rownames(d7_vst), data.frame(d7_vst, row.names=NULL))
+colnames(d7_vst_counts)[1] <- "Sample.Name"
+Day7.ExpVST <- merge(d7_vst_counts, d7.Treatment_data, by = 'Sample.Name') # merge 
+
+d14_vst_counts <- cbind(rownames(d14_vst), data.frame(d14_vst, row.names=NULL))
+colnames(d14_vst_counts)[1] <- "Sample.Name"
+Day14.ExpVST <- merge(d14_vst_counts, d14.Treatment_data_OM, by = 'Sample.Name') # merge 
+
+d21_vst_counts <- cbind(rownames(d21_vst), data.frame(d21_vst, row.names=NULL))
+colnames(d21_vst_counts)[1] <- "Sample.Name"
+Day21.ExpVST <- merge(d21_vst_counts, d21.Treatment_data, by = 'Sample.Name') # merge 
+# fix(Day21.ExpVST)
 
 # ===================================================================================
 # Day 7 data prep for figures
@@ -183,7 +202,7 @@ Day7_ExpVst_Master <- merge(target_GOIs, Day7.ExpVST_GOIs_MELT, by = 'GeneID')
 
 # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
 Day7_meanExpr <- Day7_ExpVst_Master %>% 
-  select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
+  dplyr::select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
   group_by(GeneID, group, genes) %>%
   dplyr::summarize(mean.vstExp = mean(vst_Expression), 
                    sd.vsdtExp = sd(vst_Expression),
@@ -205,7 +224,7 @@ Day14_ExpVst_Master <- merge(target_GOIs, Day14.ExpVST_GOIs_MELT, by = 'GeneID')
 
 # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
 Day14_meanExpr <- Day14_ExpVst_Master %>% 
-  select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
+  dplyr::select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
   group_by(GeneID, group, genes) %>%
   dplyr::summarize(mean.vstExp = mean(vst_Expression), 
                    sd.vsdtExp = sd(vst_Expression),
@@ -227,7 +246,7 @@ Day21_ExpVst_Master <- merge(target_GOIs, Day21.ExpVST_GOIs_MELT, by = 'GeneID')
 
 # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
 Day21_meanExpr <- Day21_ExpVst_Master %>% 
-  select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
+  dplyr::select(c('Sample.Name','group', 'vst_Expression', 'GeneID', 'genes')) %>% 
   group_by(GeneID, group, genes) %>%
   dplyr::summarize(mean.vstExp = mean(vst_Expression), 
                    sd.vsdtExp = sd(vst_Expression),
