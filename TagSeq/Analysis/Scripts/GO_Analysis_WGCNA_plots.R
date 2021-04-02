@@ -22,7 +22,7 @@ library(GO.db)
 library(GSEABase)
 library(data.table) 
 # =================================================================================================
-# Load data - WGCNA Module membership +  Module colors + goslim_generic.obo 
+# LOAD DATA -  WGCNA Module membership +  Module colors + goslim_generic.obo 
 #
 # =================================================================================================
 # Build a master list of all genes and GO terms 'Pgen_GOterms2'
@@ -60,10 +60,10 @@ WGCNA_ColorList       <-  rbind(d7ModCols, d14ModCols, d21ModCols) # master WGCN
 
 slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/goslim_generic.obo") #get GO database - # call goslim_generic.obo terms as 'slim'
 
-# =================================================================================================
-# Load Raw Count Data - FILTERED COUNT MATRICES USED IN WGCNA- 10CPM in 50% of samples
+#===================================================================================== # 
+# LOAD DATA - Raw Count Data - FILTERED COUNT MATRICES USED IN WGCNA- 10CPM in 50% of samples
 #
-# =================================================================================================
+#===================================================================================== # 
 # day7 filtered 10cpm in 50% samples ----------------------------- # 
 Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day7_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
@@ -77,10 +77,10 @@ Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgeneros
 colnames(Day21_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 
-#===================================================================================== 
-# lOAD DATE - goseq; load the annotation and prepare the fouressentail steps for goseq
+#===================================================================================== # 
+# LOAD DATA - goseq; load the annotation and prepare the fouressentail steps for goseq
 #
-#===================================================================================== 
+#===================================================================================== #
 #Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
 Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
@@ -244,7 +244,7 @@ d21_GO.05blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05b
 d21_GO.05magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05magentaModule.csv")
 d21_GO.05pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05pinkModule.csv")
 d21_GO.05redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05redModule.csv")
-d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05yellowModule.csv")
+d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05yellowModule.csv")
 
 Master_goseq_results <- rbind(d7_GO.05brownModule, d7_GO.05greenModule, d7_GO.05yellowModule,
                               d14_GO.05blackModule, d14_GO.05brownModule, d14_GO.05magentaModule, d14_GO.05pinkModule,
@@ -366,7 +366,7 @@ d21_slimBP_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOsl
 d21_slimBP_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
 d21_slimBP_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
 d21_slimBP_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
 # MOLECULAR FUNCTION GO  SLIMS
 d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
 d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
@@ -382,7 +382,7 @@ d21_slimMF_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOsl
 d21_slimMF_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
 d21_slimMF_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
 d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
 
 
 # BIND DATA TO FACET THE PLOTS    ---------------------------------------------------------- #
@@ -412,7 +412,7 @@ MF_D21 <- rbind(d21_slimMF_blackModule, d21_slimMF_blueModule, d21_slimMF_magent
 
 
 BP_D7$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_D7$Ontolgy <- factor(BP_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
+BP_D7$module_day <- factor(BP_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
 BP_D7_filtered <- BP_D7 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 BP_D7_filtered$slim_term <- factor(BP_D7_filtered$slim_term ,levels=rev(unique(BP_D7_filtered$slim_term))) # make slim term alphabetical for plotting
 
@@ -422,30 +422,30 @@ BP_D7_Plot <-ggplot(data = BP_D7_filtered, aes(x = Ont, y = slim_term)) +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                 strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                 strip.text.x = element_text(size = 12, face = "bold"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
                                  axis.title.x = element_blank(),
-                                 axis.title.y = element_text(size=15),
-                                 axis.text = element_text(size = 12), legend.position = "right",
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
               ggtitle('GOslim Biological Process: WGCNA Day 7')
 
 MF_D7$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_D7$Ontolgy <- factor(MF_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
+MF_D7$module_day <- factor(MF_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
 MF_D7_filtered <- MF_D7 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 MF_D7_filtered$slim_term <- factor(MF_D7_filtered$slim_term ,levels=rev(unique(MF_D7_filtered$slim_term))) # make slim term alphabetical for plotting
 
 MF_D7_Plot <-ggplot(data = MF_D7_filtered, aes(x = Ont, y = slim_term)) + 
               geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "thistle1", high = "tomato4") +
+              scale_fill_gradient(low = "azure2", high = "springgreen4") +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                 strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                 strip.text.x = element_text(size = 12, face = "bold"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
                                  axis.title.x = element_blank(),
-                                 axis.title.y = element_text(size=15),
-                                 axis.text = element_text(size = 12), legend.position = "right",
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
              ggtitle('GOslim Molecular Function: WGCNA Day 7')
 
@@ -458,7 +458,7 @@ MF_D7_Plot <-ggplot(data = MF_D7_filtered, aes(x = Ont, y = slim_term)) +
 
 
 BP_D14$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_D14$Ontolgy <- factor(BP_D14$module_day, levels = c("Day14_black", "Day14_brown", "Day14_magenta", "Day14_pink"))# reorder the facotr level for the facet wrap plot 
+BP_D14$module_day <- factor(BP_D14$module_day, levels = c("Day14_brown", "Day14_black", "Day14_pink", "Day14_magenta"))# reorder the facotr level for the facet wrap plot 
 BP_D14_filtered <- BP_D14 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 BP_D14_filtered$slim_term <- factor(BP_D14_filtered$slim_term ,levels=rev(unique(BP_D14_filtered$slim_term))) # make slim term alphabetical for plotting
 
@@ -468,30 +468,30 @@ BP_D14_Plot <-ggplot(data = BP_D14_filtered, aes(x = Ont, y = slim_term)) +
                 facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
                 theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                   strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                   strip.text.x = element_text(size = 12, face = "bold"),
+                                   strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                   strip.text.x = element_text(size = 8, face = "bold"),
                                    axis.title.x = element_blank(),
-                                   axis.title.y = element_text(size=15),
-                                   axis.text = element_text(size = 12), legend.position = "right",
+                                   axis.title.y = element_text(size=8),
+                                   axis.text = element_text(size = 8), legend.position = "right",
                                    plot.margin = unit(c(0,1,0,0.25), "cm"))+
                 ggtitle('GOslim Biological Process: WGCNA Day 14')
 
 MF_D14$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_D14$Ontolgy <- factor(MF_D14$module_day, levels = c("Day14_black", "Day14_brown", "Day14_magenta", "Day14_pink"))# reorder the facotr level for the facet wrap plot 
+MF_D14$module_day <- factor(MF_D14$module_day, levels = c("Day14_brown", "Day14_black", "Day14_pink", "Day14_magenta"))# reorder the facotr level for the facet wrap plot 
 MF_D14_filtered <- MF_D14 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 MF_D14_filtered$slim_term <- factor(MF_D14_filtered$slim_term ,levels=rev(unique(MF_D14_filtered$slim_term))) # make slim term alphabetical for plotting
 
 MF_D14_Plot <-ggplot(data = MF_D14_filtered, aes(x = Ont, y = slim_term)) + 
               geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "thistle1", high = "tomato4") +
+              scale_fill_gradient(low = "azure2", high = "springgreen4") +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                 strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                 strip.text.x = element_text(size = 12, face = "bold"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
                                  axis.title.x = element_blank(),
-                                 axis.title.y = element_text(size=15),
-                                 axis.text = element_text(size = 12), legend.position = "right",
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
               ggtitle('GOslim Molecular Function: WGCNA Day 14')
 
@@ -504,7 +504,7 @@ MF_D14_Plot <-ggplot(data = MF_D14_filtered, aes(x = Ont, y = slim_term)) +
 
 
 BP_D21$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_D21$Ontolgy <- factor(BP_D21$module_day, levels = c("Day21_black", "Day21_blue", "Day21_magenta", "Day21_pink", "Day21_red", "Day21_yellow"))# reorder the facotr level for the facet wrap plot 
+BP_D21$module_day <- factor(BP_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink"))# reorder the facotr level for the facet wrap plot 
 BP_D21_filtered <- BP_D21 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 BP_D21_filtered$slim_term <- factor(BP_D21_filtered$slim_term ,levels=rev(unique(BP_D21_filtered$slim_term))) # make slim term alphabetical for plotting
 
@@ -514,52 +514,58 @@ BP_D21_Plot <-ggplot(data = BP_D21_filtered, aes(x = Ont, y = slim_term)) +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                 strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                 strip.text.x = element_text(size = 12, face = "bold"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
                                  axis.title.x = element_blank(),
-                                 axis.title.y = element_text(size=15),
-                                 axis.text = element_text(size = 12), legend.position = "right",
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
               ggtitle('GOslim Biological Process: WGCNA Day 21')
 
 MF_D21$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_D21$Ontolgy <- factor(MF_D21$module_day, levels = c("Day21_black", "Day21_blue", "Day21_magenta", "Day21_pink", "Day21_red", "Day21_yellow"))# reorder the facotr level for the facet wrap plot 
+MF_D21$module_day <- factor(MF_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink"))# reorder the facotr level for the facet wrap plot 
 MF_D21_filtered <- MF_D21 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
 MF_D21_filtered$slim_term <- factor(MF_D21_filtered$slim_term ,levels=rev(unique(MF_D21_filtered$slim_term))) # make slim term alphabetical for plotting
 
 MF_D21_Plot <-ggplot(data = MF_D21_filtered, aes(x = Ont, y = slim_term)) + 
               geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "thistle1", high = "tomato4") +
+              scale_fill_gradient(low = "azure2", high = "springgreen4") +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                 strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                 strip.text.x = element_text(size = 12, face = "bold"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
                                  axis.title.x = element_blank(),
-                                 axis.title.y = element_text(size=15),
-                                 axis.text = element_text(size = 12), legend.position = "right",
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
               ggtitle('GOslim Molecular Function: WGCNA Day 21')
 
 # SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
-# pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Ambient_BP.pdf", sep =''), width=10, height=5)
-# print(ggarrange(BP_Plot_PrimEffect_AMB,         
-#                 plotlist = NULL,
-#                 ncol = 1,
-#                 nrow = 1,
-#                 labels = NULL))
-# dev.off()     
-# 
-# pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Ambient_MF.pdf", sep =''), width=10, height=5)
-# print(ggarrange(MF_Plot_PrimEffect_AMB,         
-#                 plotlist = NULL,
-#                 ncol = 1,
-#                 nrow = 1,
-#                 labels = NULL))
-# dev.off()     
-
-
-
+# WGCNA Day 7 - all significant modules (correlated with treatment(s))
+pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day7/GOslim_day7.pdf", sep =''), width=18, height=8)
+print(ggarrange(BP_D7_Plot, MF_D7_Plot,         
+                 plotlist = NULL,
+                 ncol = 2,
+                 nrow = 1,
+                 labels = NULL))
+dev.off()     
+# WGCNA Day 14 - all significant modules (correlated with treatment(s))
+pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day14/GOslim_day14.pdf", sep =''), width=18, height=8)
+print(ggarrange(BP_D14_Plot, MF_D14_Plot,         
+                plotlist = NULL,
+                ncol = 2,
+                nrow = 1,
+                labels = NULL))
+dev.off()     
+# WGCNA Day 21 - all significant modules (correlated with treatment(s))
+pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day21/GOslim_day21.pdf", sep =''), width=20, height=8)
+print(ggarrange(BP_D21_Plot, MF_D21_Plot,         
+                plotlist = NULL,
+                ncol = 2,
+                nrow = 1,
+                labels = NULL))
+dev.off() 
 
 
 

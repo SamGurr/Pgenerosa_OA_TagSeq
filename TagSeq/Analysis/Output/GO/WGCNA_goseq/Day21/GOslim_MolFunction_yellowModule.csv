@@ -1,0 +1,7 @@
+"","slim_term","slim_cat","category","Gene.Count","GO.Count","module_day"
+"1","cytoskeletal protein binding","GO:0008092","GO:0003779",32,4,"Day21_yellow"
+"2","kinase activity","GO:0016301","GO:0004715",8,6,"Day21_yellow"
+"3","enzyme regulator activity","GO:0030234","GO:0004864",22,6,"Day21_yellow"
+"4","enzyme binding","GO:0019899","GO:0008157",37,7,"Day21_yellow"
+"5","DNA binding","GO:0003677","GO:0032142",19,4,"Day21_yellow"
+"6","ion binding","GO:0043167","GO:0035438",97,4,"Day21_yellow"

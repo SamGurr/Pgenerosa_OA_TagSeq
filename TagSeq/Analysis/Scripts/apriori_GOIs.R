@@ -91,26 +91,16 @@ names(DEGs_PrimEffect_10cpm)[1] <- "gene.ID" # change name of column 1
 genes <- c('AOX','NADH_dehydrogenase','Cytochrome_c_reductase','Uncoupling_protein_1','Uncoupling_protein_2','Uncoupling_protein_3',
            ' S-adenosylmethionine_synthase_isoform_type-2','DNMT_1','DNMT3A','DNMT_3b','HMT_1','HMT_2','positiv_hist_methyl','positiv_hist_methyl_2','methyltransferase','HAT_1','HAT_2','HAT_3','HAT_4','HAT_5',
            'SIR1','SIR2','SIR4','SIR5','SIR6','SIR7',
-           'SOD_1','SOD_2','SOD_3','SOD_Cu_chaperone','SOD_Mn_act','glutathione_peroxidase_1','glutathione_peroxidase_2','glutathione_peroxidase_3','glutathione_peroxidase_4', 'glutathione_peroxidase_5','glutathione_peroxidase_6')
+           'SOD_1','SOD_2','SOD_3','SOD_Cu_chaperone','SOD_Mn_act','glutathione_peroxidase_1','glutathione_peroxidase_2','glutathione_peroxidase_3','glutathione_peroxidase_4', 'glutathione_peroxidase_5','glutathione_peroxidase_6',
+           'titin', 'calpain')
 
 
 GeneID <- c('PGEN_.00g108770', 'PGEN_.00g299160', 'PGEN_00g275780','PGEN_.00g063670', 'PGEN_.00g193030', 'PGEN_.00g230260', # MITCHONDRIAL PLAYERS 
             'PGEN_.00g041430'  , 'PGEN_.00g283000','PGEN_.00g029420','PGEN_.00g067800','PGEN_.00g053100','PGEN_.00g053120','PGEN_.00g064910', 'PGEN_.00g064920','PGEN_.00g066460', 'PGEN_.00g283340',  'PGEN_.00g311570', 'PGEN_.00g320700', 'PGEN_.00g338440','PGEN_.00g272910', # TRANASCRIPTIONAL REGULATION - proteins involved in methylation and histone modification(s)
             'PGEN_.00g048200', 'PGEN_.00g012340', 'PGEN_.00g149480', 'PGEN_.00g153700', 'PGEN_.00g144540', 'PGEN_.00g033970',# SIRTUINS 
-            'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', 'PGEN_.00g015070', 'PGEN_.00g062450', 'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360')# OXIDATIVE STRESS
+            'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', 'PGEN_.00g015070', 'PGEN_.00g062450', 'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360',# OXIDATIVE STRESS
+            'PGEN_.00g066340',  'PGEN_.00g014370')
 target_GOIs <- data.frame(genes, GeneID)
-
-
-# use 'any_of' in tidyselect package to get any of the target GOIs present - may have been cut in the filtering process
-Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(target_GOIs$GeneID))
-Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
-
-Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(target_GOIs$GeneID))
-Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
-
-Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(target_GOIs$GeneID))
-Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
-
 
 
 # ===================================================================================
@@ -191,6 +181,22 @@ colnames(d21_vst_counts)[1] <- "Sample.Name"
 Day21.ExpVST <- merge(d21_vst_counts, d21.Treatment_data, by = 'Sample.Name') # merge 
 # fix(Day21.ExpVST)
 
+
+# use 'any_of' in tidyselect package to get any of the target GOIs present - may have been cut in the filtering process
+Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(target_GOIs$GeneID))
+Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
+
+Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(target_GOIs$GeneID))
+Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
+
+Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(target_GOIs$GeneID))
+Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
+
+
+
+
+
+
 # ===================================================================================
 # Day 7 data prep for figures
 #
@@ -252,7 +258,7 @@ Day21_meanExpr <- Day21_ExpVst_Master %>%
                    sd.vsdtExp = sd(vst_Expression),
                    n = n(), 
                    se.vsdtExp = sd.vsdtExp/sqrt(n))
-fix(Day21_meanExpr)
+# fix(Day21_meanExpr)
 # create treatment groups 
 Day21_meanExpr$PrimaryTreatment <- substr(Day21_meanExpr$group, 1,1) # primary
 Day21_meanExpr$SecondTreatment <- substr(Day21_meanExpr$group, 2,2) # second
