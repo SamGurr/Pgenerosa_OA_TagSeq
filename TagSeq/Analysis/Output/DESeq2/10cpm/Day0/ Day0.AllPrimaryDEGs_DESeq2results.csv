@@ -1,0 +1,15 @@
+"","Gene","log2FoldChange","padj","Day_treatment","Treatment","Pairwise","Uniprot","Gene_terms_EC"
+"1","PGEN_.00g006280",-1.20092663073944,0.0311124463060656,"Day0","Primary","AvM","Q9BYK8","Helicase with zinc finger domain 2 (ATP-dependent helicase PRIC285) (Helicase with zinc finger 2, transcriptional coactivator) (PPAR-alpha-interacting complex protein 285) (PPAR-gamma DNA-binding domain-interacting protein 1) (PDIP1) (PPAR-gamma DBD-interacting protein 1) (Peroxisomal proliferator-activated receptor A-interacting complex 285 kDa protein) (EC 3.6.4.-)"
+"2","PGEN_.00g025020",-1.64387543606812,0.0204461301951529,"Day0","Primary","AvM",NA,NA
+"3","PGEN_.00g064780",-2.04393780496619,0.0386302897322027,"Day0","Primary","AvM","A0A0R4IBK5","E3 ubiquitin-protein ligase rnf213-alpha (EC 2.3.2.27) (EC 3.6.4.-) (Mysterin-A) (Mysterin-alpha) (RING finger protein 213-A) (RING finger protein 213-alpha) (RING-type E3 ubiquitin transferase rnf213-alpha)"
+"4","PGEN_.00g130650",-2.82735932660709,0.0486164988032376,"Day0","Primary","AvM",NA,NA
+"5","PGEN_.00g132550",-1.59128156482482,0.0196811122826817,"Day0","Primary","AvM",NA,NA
+"6","PGEN_.00g213760",-2.73739939025897,7.44304623768691e-07,"Day0","Primary","AvM",NA,NA
+"7","PGEN_.00g250510",-2.50763389107008,2.62037673426431e-05,"Day0","Primary","AvM",NA,NA
+"8","PGEN_.00g258390",-2.67654705678828,7.44304623768691e-07,"Day0","Primary","AvM","Q9WYX8","Uncharacterized protein TM_0508"
+"9","PGEN_.00g261200",-2.36847304372582,0.00282611405183484,"Day0","Primary","AvM","P0C6B8","Sushi, von Willebrand factor type A, EGF and pentraxin domain-containing protein 1"
+"10","PGEN_.00g286210",-1.24580293017547,9.19386351939928e-05,"Day0","Primary","AvM",NA,NA
+"11","PGEN_.00g286430",2.40846414215268,0.0196811122826817,"Day0","Primary","AvM",NA,NA
+"12","PGEN_.00g286450",-1.93640991269526,0.0027341105530612,"Day0","Primary","AvM",NA,NA
+"13","PGEN_.00g314840",1.91756382026012,0.00242519928050155,"Day0","Primary","AvM","Q8N2E2","von Willebrand factor D and EGF domain-containing protein"
+"14","PGEN_.00g315040",2.064236161356,0.0147814565505556,"Day0","Primary","AvM","Q8N2E2","von Willebrand factor D and EGF domain-containing protein"

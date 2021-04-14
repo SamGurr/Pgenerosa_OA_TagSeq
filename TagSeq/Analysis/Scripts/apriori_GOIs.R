@@ -23,12 +23,12 @@ day21.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/5cpm_50perc/
 # trait data
 Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 # WGCNA results 
-D7_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
-D14_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
-D21_WGCNA<- read.csv(file="Analysis/Output/WGCNA/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE)
-D7_WGCNA$Day  <- "Day7"
-D14_WGCNA$Day <- "Day14"
-D21_WGCNA$Day <- "Day21"
+colnames(D7_WGCNA)
+D7_WGCNA     <- read.csv(file="Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)    %>% dplyr::mutate(Day = "Day7") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+D14_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day14") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+D21_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day21") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+WGCNA_Master <- rbind(D7_WGCNA, D14_WGCNA, D21_WGCNA)
+
 # DESEq2 results 
 D7_DEGs_PrimEffect  <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE)  %>% dplyr::select(c('Row.names', 'log2FoldChange', 'pvalue', 'up', 'down'))
 D14_DEGs_PrimEffect <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) %>% dplyr::select(c('Row.names', 'log2FoldChange', 'pvalue', 'up', 'down'))
@@ -38,6 +38,13 @@ D14_DEGs_PrimEffect$Day <- "Day14"
 D21_DEGs_PrimEffect$Day <- "Day21"
 DEGs_PrimEffect_10cpm <- rbind(D7_DEGs_PrimEffect, D14_DEGs_PrimEffect, D21_DEGs_PrimEffect) # bind dataframes 
 names(DEGs_PrimEffect_10cpm)[1] <- "gene.ID" # change name of column 1
+# DESEq2 summary table - run the a priori against this table of main effects to look for overable here 
+D0_Main.DEGs.Master      <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day0/ Day0.AllPrimaryDEGs_DESeq2results.csv", sep=',', header=TRUE)  
+D7_Main.DEGs.Master      <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day7/ Day7.AllMainEffectsDEGs_DESeq2results.csv", sep=',', header=TRUE)  
+D14_Main.DEGs.Master     <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day14/ Day14.AllMainEffectsDEGs_DESeq2results.csv", sep=',', header=TRUE)  
+D21_Main.DEGs.Master     <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day21/ Day21.AllMainEffectsDEGs_DESeq2results.csv", sep=',', header=TRUE)  
+DESeq2_MainEffectsMaster <- rbind(D0_Main.DEGs.Master,D7_Main.DEGs.Master,D14_Main.DEGs.Master,D21_Main.DEGs.Master)
+names(DESeq2_MainEffectsMaster)[2] <- 'geneSymbol' # match the WGCNA master file
 
 
 # ===================================================================================
@@ -66,10 +73,11 @@ names(DEGs_PrimEffect_10cpm)[1] <- "gene.ID" # change name of column 1
 # Uncoupling protein     == PGEN_.00g063670, PGEN_.00g193030, PGEN_.00g230260 
 
 # TRANASCRIPTIONAL REGULATION - proteins involved in methylation and histone modification(s)
+# PGEN_.00g074890, PGEN_.00g041430 = 'Uncharacterized_methyltransferase-like_C25B8.10', 'S-adenosylmethionine_synthase_isoform_type-2'
 # PGEN_.00g283000 - DNMT_1
 # PGEN_.00g029420 - DNMT3A
 # PGEN_.00g067800 - DNMT 3b
-# PGEN_.00g053100 + PGEN_.00g053120 - histone methyl transferase
+# PGEN_.00g327700, PGEN_.00g053100, PGEN_.00g053120,  - Histone-lysine_N-methyltransferase_SETD2, histone methyl transferase
 # PGEN_.00g064910, PGEN_.00g064920 - positive correlation with histone methylation
 # PGEN_.00g066460 - methyltransferase like protein
 # PGEN_.00g283340, PGEN_.00g311570, PGEN_.00g320700, PGEN_.00g338440, PGEN_.00g272910 - histone acetyltransferase  [GO:0004402]
@@ -86,21 +94,34 @@ names(DEGs_PrimEffect_10cpm)[1] <- "gene.ID" # change name of column 1
 # PGEN_.00g010160, PGEN_.00g065700,PGEN_.00g257600- superoxide dismutase
 # PGEN_.00g015070 - superoxide dismutase copper chaperone
 # PGEN_.00g062450 - superoxide disutase activity Mn
-# PGEN_.00g192250,PGEN_.00g180320, PGEN_.00g287800, PGEN_.00g293960- glutathione peroxidase
+# PGEN_.00g192250,PGEN_.00g180320, PGEN_.00g287800, PGEN_.00g293960 - glutathione peroxidase
 
-genes <- c('AOX','NADH_dehydrogenase','Cytochrome_c_reductase','Uncoupling_protein_1','Uncoupling_protein_2','Uncoupling_protein_3',
-           ' S-adenosylmethionine_synthase_isoform_type-2','DNMT_1','DNMT3A','DNMT_3b','HMT_1','HMT_2','positiv_hist_methyl','positiv_hist_methyl_2','methyltransferase','HAT_1','HAT_2','HAT_3','HAT_4','HAT_5',
+genes <- c('AOX',
+           'NADH_dehydrogenase', 'NADH_dehydrogenase_probable', 'NADH-ubiquinone_oxidoreductase_75kDasubunit', 'NADH_dehydrogenase_alpha_subcomplex_subunit10', 'NADH_dehydrogenase_iron-sulfur_protein8',
+           'Cytochrome_c_reductase','Uncoupling_protein_1','Uncoupling_protein_2','Uncoupling_protein_3',
+           'Uncharacterized_methyltransferase-like_C25B8.10', 'S-adenosylmethionine_synthase_isoform_type-2','DNMT_1','DNMT3A','DNMT_3b', 'Histone-lysine_N-methyltransferase_SETD2', 'HMT_1','HMT_2','positiv_hist_methyl','positiv_hist_methyl_2','methyltransferase','HAT_1','HAT_2','HAT_3','HAT_4','HAT_5',
            'SIR1','SIR2','SIR4','SIR5','SIR6','SIR7',
-           'SOD_1','SOD_2','SOD_3','SOD_Cu_chaperone','SOD_Mn_act','glutathione_peroxidase_1','glutathione_peroxidase_2','glutathione_peroxidase_3','glutathione_peroxidase_4', 'glutathione_peroxidase_5','glutathione_peroxidase_6',
-           'titin', 'calpain')
+           'SOD_1','SOD_2','SOD_3',
+           'SOD_Cu_chaperone',
+           'SOD_Mn_act',
+           'glutathione_peroxidase_1','glutathione_peroxidase_2','glutathione_peroxidase_3','glutathione_peroxidase_4', 'glutathione_peroxidase_5','glutathione_peroxidase_6',
+           'titin', 'calpain', 'Ecto-NOX_disulfide-thiol_exchanger2')
 
 
-GeneID <- c('PGEN_.00g108770', 'PGEN_.00g299160', 'PGEN_00g275780','PGEN_.00g063670', 'PGEN_.00g193030', 'PGEN_.00g230260', # MITCHONDRIAL PLAYERS 
-            'PGEN_.00g041430'  , 'PGEN_.00g283000','PGEN_.00g029420','PGEN_.00g067800','PGEN_.00g053100','PGEN_.00g053120','PGEN_.00g064910', 'PGEN_.00g064920','PGEN_.00g066460', 'PGEN_.00g283340',  'PGEN_.00g311570', 'PGEN_.00g320700', 'PGEN_.00g338440','PGEN_.00g272910', # TRANASCRIPTIONAL REGULATION - proteins involved in methylation and histone modification(s)
-            'PGEN_.00g048200', 'PGEN_.00g012340', 'PGEN_.00g149480', 'PGEN_.00g153700', 'PGEN_.00g144540', 'PGEN_.00g033970',# SIRTUINS 
-            'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', 'PGEN_.00g015070', 'PGEN_.00g062450', 'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360',# OXIDATIVE STRESS
-            'PGEN_.00g066340',  'PGEN_.00g014370')
-target_GOIs <- data.frame(genes, GeneID)
+geneSymbol <- c('PGEN_.00g108770', 
+                'PGEN_.00g299160', 'PGEN_.00g220490', 'PGEN_.00g266170', 'PGEN_.00g262440', 'PGEN_.00g133830',
+                'PGEN_00g275780','PGEN_.00g063670', 'PGEN_.00g193030', 'PGEN_.00g230260', # MITCHONDRIAL PLAYERS 
+                'PGEN_.00g074890', 'PGEN_.00g041430'  , 'PGEN_.00g283000','PGEN_.00g029420','PGEN_.00g067800', 'PGEN_.00g327700', 'PGEN_.00g053100','PGEN_.00g053120','PGEN_.00g064910', 'PGEN_.00g064920','PGEN_.00g066460', 'PGEN_.00g283340',  'PGEN_.00g311570', 'PGEN_.00g320700', 'PGEN_.00g338440','PGEN_.00g272910', # TRANASCRIPTIONAL REGULATION - proteins involved in methylation and histone modification(s)
+                'PGEN_.00g048200', 'PGEN_.00g012340', 'PGEN_.00g149480', 'PGEN_.00g153700', 'PGEN_.00g144540', 'PGEN_.00g033970',# SIRTUINS 
+                'PGEN_.00g010160', 'PGEN_.00g065700', 'PGEN_.00g257600', # OXIDATIVE STRESS
+                'PGEN_.00g015070', # OXIDATIVE STRESS
+                'PGEN_.00g062450', # OXIDATIVE STRESS
+                'PGEN_.00g293960', 'PGEN_.00g287800', 'PGEN_.00g192250','PGEN_.00g180320', 'PGEN_.00g116940','PGEN_.00g049360',# OXIDATIVE STRESS
+                'PGEN_.00g066340',  'PGEN_.00g014370', 'PGEN_.00g230250') # Growth genes (Hollie asked about these)
+target_GOIs <- data.frame(geneSymbol, genes)
+
+
+
 
 
 # ===================================================================================
@@ -108,6 +129,26 @@ target_GOIs <- data.frame(genes, GeneID)
 #  Loop to make table - look in DESeq2 results and WGCNa results! 
 #
 # ===================================================================================
+head(WGCNA_Master)
+head(DESeq2_MainEffectsMaster)
+head(target_GOIs)
+
+# WGCNA all target GOIs and the correspoonding WGCNA modules (only significant modules with treatment) in which they are found! 
+Sig_WGCNA.modules <- WGCNA_Master %>%  
+                    dplyr::mutate(Day_color = paste(Day, moduleColor, sep = '_')) %>% 
+                    dplyr::filter(Day_color %in% c('Day7_yellow', 'Day7_green', 'Day7_brown',
+                                                   'Day14_brown', 'Day14_black', 'Day14_pink', 'Day14_magenta',
+                                                   'Day21_red', 'Day21_blue', 'Day21_turquoise', 'Day21_black', 'Day21_pink', 'Day21_magenta')) 
+a_priori_WGCNA <- merge(Sig_WGCNA.modules,target_GOIs, by= "geneSymbol") # %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(target_GOIs$GeneID))
+
+# DESeq 2 main effects 
+a_priori_DESeq2 <- merge(DESeq2_MainEffectsMaster, target_GOIs, by = "geneSymbol")
+a_priori_DESeq2 <- a_priori_DESeq2[-2] # ommit the row number column
+
+path_out.apriori = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/a_priori_hypothesis/' # call path
+write.csv(a_priori_DESeq2, paste(path_out.apriori,"apriori_DESeq2_AllMainEffects.csv")) # write
+write.csv(a_priori_WGCNA, paste(path_out.apriori,"apriori_WGCNA_AllSigModules.csv")) # write
+
 
 
 
@@ -330,7 +371,7 @@ if ( (nrow(Day21_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 
 } else { d21_plots <- plot.new() }
 
 getwd()
-pdf(paste("Analysis/Output/a_priori_hypothesis/",target_GOIs[i,1],".pdf"), width=10, height=6)
+pdf(paste("Analysis/Output/a_priori_hypothesis/",target_GOIs[i,1],".pdf"), width=15, height=6)
 print(ggarrange(d7_plots, d14_plots, d21_plots,        
                 plotlist = NULL,
                 ncol = 3,

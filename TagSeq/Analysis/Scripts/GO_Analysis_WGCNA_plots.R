@@ -1,9 +1,16 @@
+---
+  # title: "GO_Analysis_WGCNA_plots"
+  # author: "Samuel Gurr"
+  # date: "April 12, 2021"
+---
+  
 
 # SET WORKING DIRECTORY AND LOAD DATA
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # Load libraries 
 library(dplyr)
+library(tidyr)
 library(goseq)
 library(reshape2)
 library(ggplot2)
@@ -21,6 +28,8 @@ library(circlize)
 library(GO.db)
 library(GSEABase)
 library(data.table) 
+library(stringr)
+
 # =================================================================================================
 # LOAD DATA -  WGCNA Module membership +  Module colors + goslim_generic.obo 
 #
@@ -52,7 +61,7 @@ d21_Annot_ModuleMembership     <-  read.csv("Analysis/Output/WGCNA/Day21/d21.WGC
 d21_Annot_ModuleMembership     <- d21_Annot_ModuleMembership[,c(3:4,7:8)] # call gene ID, module color, and GO annotation
 d21_Annot_ModuleMembership$Day <- "Day21" # common column to divide master dataset
 d21ModCols                     <- data.frame(moduleColor = unique(d21_Annot_ModuleMembership$moduleColor)) # call all unique module colors 
-d21ModCols                     <- d21ModCols %>% filter(moduleColor %in% c('magenta', 'blue', 'yellow', 'red', 'black', 'pink')) # MODULES WITH SIG CORR WITH TREATMENT
+d21ModCols                     <- d21ModCols %>% filter(moduleColor %in% c('magenta', 'blue', 'yellow', 'red', 'black', 'pink', 'turquoise')) # MODULES WITH SIG CORR WITH TREATMENT
 d21ModCols$Day                 <- "Day21" # common column for the for loop
  
 WGCNA_MasterModData   <-  rbind(d7_Annot_ModuleMembership, d14_Annot_ModuleMembership, d21_Annot_ModuleMembership) # master WGCNA data table 
@@ -147,7 +156,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
         names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
         # Mod_integer <- as.integer(IDvector.d7 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
         # names(Mod_integer)=IDvector.d7 # rename
-        Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+        Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
         names(Mod_integer)=GO_unique.genes.all # rename
         
         #pwf       <- nullp(Mod_integer,    id=IDvector.d7, bias.data=length_vector.d7) # make figure margins large enough for this to run...
@@ -164,7 +173,12 @@ for (i in 1:nrow(WGCNA_ColorList)) {
         GO.05$moduleColor <- WGCNA_ColorList[i,1]
         GO.05$Day       <- "Day7"
         
-        write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+        # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+        GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+        
+        write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+        
+        print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
         
         
          } else if (WGCNA_ColorList[i,2] == "Day14") {
@@ -173,7 +187,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
             names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
             # Mod_integer <- as.integer(IDvector.d14 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
             # names(Mod_integer)=IDvector.d14 # rename 
-            Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+            Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
             names(Mod_integer)=GO_unique.genes.all # rename
             
             #pwf       <- nullp(Mod_integer,    id=IDvector.d14, bias.data=length_vector.d14) # make figure margins large enough for this to run...
@@ -190,7 +204,13 @@ for (i in 1:nrow(WGCNA_ColorList)) {
             GO.05$moduleColor <- WGCNA_ColorList[i,1]
             GO.05$Day       <- "Day14"
             
-            write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+            # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+            GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+            
+            write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+            
+            print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
+            
             
             } else {
               Mod <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
@@ -198,7 +218,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
               names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
               # Mod_integer <- as.integer(IDvector.d21 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
               # names(Mod_integer)=IDvector.d21 # rename
-              Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+              Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
               names(Mod_integer)=GO_unique.genes.all # rename
               
               #pwf       <- nullp(Mod_integer,    id=IDvector.d21, bias.data=length_vector.d21) # make figure margins large enough for this to run...
@@ -215,7 +235,12 @@ for (i in 1:nrow(WGCNA_ColorList)) {
               GO.05$moduleColor <- WGCNA_ColorList[i,1]
               GO.05$Day       <- "Day21"
               
-              write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file              
+              # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+              GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+
+              write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file              
+              
+              print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
               
             } #of if statement
     
@@ -245,12 +270,18 @@ d21_GO.05magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05m
 d21_GO.05pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05pinkModule.csv")
 d21_GO.05redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05redModule.csv")
 d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05yellowModule.csv")
+d21_GO.05turquoiseModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05turquoiseModule.csv")
+# View(d21_GO.05yellowModule)
 
-Master_goseq_results <- rbind(d7_GO.05brownModule, d7_GO.05greenModule, d7_GO.05yellowModule,
+# Master ALL WGCNA significant modules with treatment
+Master_goseq_results      <- rbind(d7_GO.05brownModule, d7_GO.05greenModule, d7_GO.05yellowModule,
                               d14_GO.05blackModule, d14_GO.05brownModule, d14_GO.05magentaModule, d14_GO.05pinkModule,
-                              d21_GO.05blackModule, d21_GO.05blueModule, d21_GO.05magentaModule, d21_GO.05pinkModule, d21_GO.05redModule, d21_GO.05yellowModule)
+                              d21_GO.05blackModule, d21_GO.05blueModule, d21_GO.05magentaModule, d21_GO.05pinkModule, d21_GO.05redModule, d21_GO.05yellowModule, d21_GO.05turquoiseModule)
+# View(Master_goseq_results)
 
-GOslimLoop_vars <- unique(Master_goseq_results[c(9,10)])
+
+# call all the module colors and days to loop GOslim analysis 
+GOslimLoop_vars <- unique(Master_goseq_results[c(9,10)]) 
 
 
 
@@ -290,7 +321,7 @@ for (i in 1:nrow(GOslimLoop_vars)) {
   
   
   # BIOLOGICAL PROCESS
-  BPslim             <- filter(BPslim_Mapped, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
+  BPslim             <- filter(BPslim_Mapped, Term!="biological_process") #filter out empty slims and term "biological process" and slims with < 2 GO terms (omitted the Count>=2)
   BPsplitted         <- strsplit(as.character(BPslim$go_terms), ";") #split into multiple GO ids
   BPslim$BPsplitted  <- BPsplitted
   for (n in 1:nrow(BPslim)) {
@@ -309,11 +340,14 @@ for (i in 1:nrow(GOslimLoop_vars)) {
   BPslim_A <- data.frame(Term = rep.int(BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
   BPslim_B <- merge(BPslim_A, BPslim, by="Term") #Add back counts, term, and category info
   BPslim_C <- unique(setDT(BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-  BPslim_final <- data.frame(slim_term=BPslim_C$Term, slim_cat=BPslim_C$category, category=BPslim_C$go_term, Gene.Count=BPslim_C$Gene.Count, GO.Count=BPslim_C$Count) #rename columns) #rename columns
+  BPslim_final <- BPslim_C[,c(1,5,3,2,6,8:9)]
+  colnames(BPslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
+  BPslim_final[["Gene_IDs"]] <- vapply(unname(BPslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
+  #BPslim_final <- data.frame(slim_term=BPslim_C$Term, slim_cat=BPslim_C$category, category=BPslim_C$go_term, Gene.Count=BPslim_C$Gene.Count, GO.Count=BPslim_C$Count, Gene.IDs=BPslim_C$Gene.IDs) #rename columns) #rename columns
   BPslim_final$module_day <- paste(GOslimLoop_vars[i,2], GOslimLoop_vars[i,1], sep = '_')
   
   # MOLECULAR FUNCTION
-  MFslim             <- filter(MFslim_Mapped, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
+  MFslim             <- filter(MFslim_Mapped, Term!="molecular_function") #filter out empty slims and term "biological process" (omitted the Count>=2)
   MFsplitted         <- strsplit(as.character(MFslim$go_terms), ";") #split into multiple GO ids
   MFslim$MFsplitted  <- MFsplitted
   for (m in 1:nrow(MFslim)) {
@@ -332,13 +366,17 @@ for (i in 1:nrow(GOslimLoop_vars)) {
     MFslim_A <- data.frame(Term = rep.int(MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
     MFslim_B <- merge(MFslim_A, MFslim, by="Term") #Add back counts, term, and category info
     MFslim_C <- unique(setDT(MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-    MFslim_final <- data.frame(slim_term=MFslim_C$Term, slim_cat=MFslim_C$category, category=MFslim_C$go_term, Gene.Count=MFslim_C$Gene.Count, GO.Count=MFslim_C$Count) #rename columns) #rename columns
+    MFslim_final <- MFslim_C[,c(1,5,3,2,6,8:9)]
+    colnames(MFslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
+    MFslim_final[["Gene_IDs"]] <- vapply(unname(MFslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
+    # MFslim_final <- data.frame(slim_term=MFslim_C$Term, slim_cat=MFslim_C$category, category=MFslim_C$go_term, Gene.Count=MFslim_C$Gene.Count, GO.Count=MFslim_C$Count) #rename columns) #rename columns
     MFslim_final$module_day <- paste(GOslimLoop_vars[i,2], GOslimLoop_vars[i,1], sep = '_')
     
     # save GOslim final datasets for BP and MF of each  module in their respective folder(s) by Day
     write.csv(MFslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOslim_MolFunction_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file              
     write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOslim_BiolProc_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file       
 
+    print(paste(GOslimLoop_vars[i,2], GOslimLoop_vars[i,1], "done", sep = ' '))
 } # end of GOslim for loop! (i in 1:nrow)
 
 
@@ -361,12 +399,14 @@ d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOsli
 d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_magentaModule.csv")
 d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_pinkModule.csv")
 
-d21_slimBP_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
-d21_slimBP_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
-d21_slimBP_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
-d21_slimBP_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
-d21_slimBP_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
+d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
+d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_turquoiseModule.csv")
+
 # MOLECULAR FUNCTION GO  SLIMS
 d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
 d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
@@ -377,29 +417,35 @@ d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOsli
 d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_magentaModule.csv")
 d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_pinkModule.csv")
 
-d21_slimMF_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
-d21_slimMF_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
-d21_slimMF_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
-d21_slimMF_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
-d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
-
+d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_turquoiseModule.csv")
 
 # BIND DATA TO FACET THE PLOTS    ---------------------------------------------------------- #
 # (1) By sampling date 0 Day 7 14 and 21 separately
 BP_D7  <- rbind(d7_slimBP_brownModule, d7_slimBP_greenModule, d7_slimBP_yellowModule)
 BP_D14 <- rbind(d14_slimBP_blackModule, d14_slimBP_brownModule, d14_slimBP_magentaModule, d14_slimBP_pinkModule)
-BP_D21 <- rbind(d21_slimBP_blackModule, d21_slimBP_blueModule, d21_slimBP_magentaModule, d21_slimBP_pinkModule, d21_slimBP_redModule, d21_slimBP_yellowModule)
+BP_D21 <- rbind(d21_slimBP_blackModule, d21_slimBP_blueModule, d21_slimBP_magentaModule, d21_slimBP_pinkModule, d21_slimBP_redModule, d21_slimBP_yellowModule,d21_slimBP_turquoiseModule)
 
 MF_D7  <- rbind(d7_slimMF_brownModule, d7_slimMF_greenModule, d7_slimMF_yellowModule)
 MF_D14 <- rbind(d14_slimMF_blackModule, d14_slimMF_brownModule, d14_slimMF_magentaModule, d14_slimMF_pinkModule)
-MF_D21 <- rbind(d21_slimMF_blackModule, d21_slimMF_blueModule, d21_slimMF_magentaModule, d21_slimMF_pinkModule, d21_slimMF_redModule, d21_slimMF_yellowModule)
-
-
+MF_D21 <- rbind(d21_slimMF_blackModule, d21_slimMF_blueModule, d21_slimMF_magentaModule, d21_slimMF_pinkModule, d21_slimMF_redModule, d21_slimMF_yellowModule, d21_slimMF_turquoiseModule)
 
 # (2) By trend in vst expression pattern ACROSS all days 
 # (2.A) Priming Effect AMBIENT > MODERATE 
+BP_Amb <- rbind(d7_slimBP_brownModule, d14_slimBP_brownModule, d21_slimBP_magentaModule, d21_slimBP_blueModule) # merge the data by binding rows 
+MF_Amb <- rbind(d7_slimMF_brownModule, d14_slimMF_brownModule, d21_slimMF_magentaModule, d21_slimMF_blueModule) # merge the data by binding rows 
+
 # (2.B) Priming Effect MODERATE > AMBIENT 
+BP_Mod <- rbind(d7_slimBP_yellowModule, d14_slimBP_blackModule, d21_slimBP_yellowModule) # merge the data by binding rows 
+MF_Mod <- rbind(d7_slimMF_yellowModule, d14_slimMF_blackModule, d21_slimMF_yellowModule) # merge the data by binding rows 
+
+
+
 
 
 # PLOTTING --------------------------------------------------------------------------------------------------- #
@@ -407,18 +453,20 @@ MF_D21 <- rbind(d21_slimMF_blackModule, d21_slimMF_blueModule, d21_slimMF_magent
 
 
 
+
 #  DAY 7 
 
 
 
-BP_D7$Ont <- "BP" # create a new common clumn to call in the plot 
+BP_D7$Ont        <- "BP" # create a new common clumn to call in the plot 
 BP_D7$module_day <- factor(BP_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
-BP_D7_filtered <- BP_D7 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-BP_D7_filtered$slim_term <- factor(BP_D7_filtered$slim_term ,levels=rev(unique(BP_D7_filtered$slim_term))) # make slim term alphabetical for plotting
+# BP_D7_filtered <- BP_D7 %>%  dplyr::filter(Gene_count >= 10) # ommit all terms gene counts 51
+# BP_D7_filtered$slim_term <- factor(BP_D7_filtered$slim_term) # make slim term alphabetical for plotting
+BP_D7$slim_term  <- factor(BP_D7$slim_term) # make slim term alphabetical for plotting
 
-BP_D7_Plot <-ggplot(data = BP_D7_filtered, aes(x = Ont, y = slim_term)) + 
-              geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "thistle1", high = "steelblue4") +
+BP_D7_Plot <-ggplot(data = BP_D7, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 100), breaks=seq(0,100,by=25))  +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -432,12 +480,13 @@ BP_D7_Plot <-ggplot(data = BP_D7_filtered, aes(x = Ont, y = slim_term)) +
 
 MF_D7$Ont <- "MF" # create a new common clumn to call in the plot 
 MF_D7$module_day <- factor(MF_D7$module_day, levels = c("Day7_brown", "Day7_yellow", "Day7_green"))# reorder the facotr level for the facet wrap plot 
-MF_D7_filtered <- MF_D7 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-MF_D7_filtered$slim_term <- factor(MF_D7_filtered$slim_term ,levels=rev(unique(MF_D7_filtered$slim_term))) # make slim term alphabetical for plotting
+# MF_D7_filtered <- MF_D7 %>%  dplyr::filter(Gene_count >= 3) # ommit all with gene counts <1
+# MF_D7_filtered$slim_term <- factor(MF_D7_filtered$slim_term) # make slim term alphabetical for plotting
+MF_D7$slim_term <- factor(MF_D7$slim_term) # make slim term alphabetical for plotting
 
-MF_D7_Plot <-ggplot(data = MF_D7_filtered, aes(x = Ont, y = slim_term)) + 
-              geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "azure2", high = "springgreen4") +
+MF_D7_Plot <-ggplot(data = MF_D7, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 100), breaks=seq(0,100,by=25))  +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -459,12 +508,13 @@ MF_D7_Plot <-ggplot(data = MF_D7_filtered, aes(x = Ont, y = slim_term)) +
 
 BP_D14$Ont <- "BP" # create a new common clumn to call in the plot 
 BP_D14$module_day <- factor(BP_D14$module_day, levels = c("Day14_brown", "Day14_black", "Day14_pink", "Day14_magenta"))# reorder the facotr level for the facet wrap plot 
-BP_D14_filtered <- BP_D14 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-BP_D14_filtered$slim_term <- factor(BP_D14_filtered$slim_term ,levels=rev(unique(BP_D14_filtered$slim_term))) # make slim term alphabetical for plotting
+# BP_D14_filtered <- BP_D14 %>%  dplyr::filter(Gene_count >= 10) # ommit all with gene counts <1
+# BP_D14_filtered$slim_term <- factor(BP_D14_filtered$slim_term) # make slim term alphabetical for plotting
+BP_D14$slim_term <- factor(BP_D14$slim_term) # make slim term alphabetical for plotting
 
-BP_D14_Plot <-ggplot(data = BP_D14_filtered, aes(x = Ont, y = slim_term)) + 
-                geom_tile(aes(fill=Gene.Count, width = 1)) + 
-                scale_fill_gradient(low = "thistle1", high = "steelblue4") +
+BP_D14_Plot <-ggplot(data = BP_D14, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+                geom_tile(aes(fill=Gene_count, width = 1)) + 
+                scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 100), breaks=seq(0,100,by=25)) +
                 facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
                 theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -478,12 +528,13 @@ BP_D14_Plot <-ggplot(data = BP_D14_filtered, aes(x = Ont, y = slim_term)) +
 
 MF_D14$Ont <- "MF" # create a new common clumn to call in the plot 
 MF_D14$module_day <- factor(MF_D14$module_day, levels = c("Day14_brown", "Day14_black", "Day14_pink", "Day14_magenta"))# reorder the facotr level for the facet wrap plot 
-MF_D14_filtered <- MF_D14 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-MF_D14_filtered$slim_term <- factor(MF_D14_filtered$slim_term ,levels=rev(unique(MF_D14_filtered$slim_term))) # make slim term alphabetical for plotting
+# MF_D14_filtered <- MF_D14 %>%  dplyr::filter(Gene_count >= 3) # ommit all with gene counts <1
+# MF_D14_filtered$slim_term <- factor(MF_D14_filtered$slim_term) # make slim term alphabetical for plotting
+MF_D14$slim_term <- factor(MF_D14$slim_term) # make slim term alphabetical for plotting
 
-MF_D14_Plot <-ggplot(data = MF_D14_filtered, aes(x = Ont, y = slim_term)) + 
-              geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "azure2", high = "springgreen4") +
+MF_D14_Plot <-ggplot(data = MF_D14, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 100), breaks=seq(0,100,by=25)) +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -504,13 +555,14 @@ MF_D14_Plot <-ggplot(data = MF_D14_filtered, aes(x = Ont, y = slim_term)) +
 
 
 BP_D21$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_D21$module_day <- factor(BP_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink"))# reorder the facotr level for the facet wrap plot 
-BP_D21_filtered <- BP_D21 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-BP_D21_filtered$slim_term <- factor(BP_D21_filtered$slim_term ,levels=rev(unique(BP_D21_filtered$slim_term))) # make slim term alphabetical for plotting
+BP_D21$module_day <- factor(BP_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink", "Day21_turquoise"))# reorder the facotr level for the facet wrap plot 
+# BP_D21_filtered <- BP_D21 %>%  dplyr::filter(Gene_count >= 10) # ommit all with gene counts <1
+# BP_D21_filtered$slim_term <- factor(BP_D21_filtered$slim_term) # make slim term alphabetical for plotting
+BP_D21$slim_term <- factor(BP_D21$slim_term) # make slim term alphabetical for plotting
 
-BP_D21_Plot <-ggplot(data = BP_D21_filtered, aes(x = Ont, y = slim_term)) + 
-              geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "thistle1", high = "steelblue4") +
+BP_D21_Plot <-ggplot(data = BP_D21, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 250), breaks=seq(0,250,by=50)) +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -523,13 +575,14 @@ BP_D21_Plot <-ggplot(data = BP_D21_filtered, aes(x = Ont, y = slim_term)) +
               ggtitle('GOslim Biological Process: WGCNA Day 21')
 
 MF_D21$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_D21$module_day <- factor(MF_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink"))# reorder the facotr level for the facet wrap plot 
-MF_D21_filtered <- MF_D21 %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-MF_D21_filtered$slim_term <- factor(MF_D21_filtered$slim_term ,levels=rev(unique(MF_D21_filtered$slim_term))) # make slim term alphabetical for plotting
+MF_D21$module_day <- factor(MF_D21$module_day, levels = c("Day21_magenta",  "Day21_blue", "Day21_yellow",  "Day21_red", "Day21_black", "Day21_pink", "Day21_turquoise"))# reorder the facotr level for the facet wrap plot 
+# MF_D21_filtered <- MF_D21 %>%  dplyr::filter(Gene_count >= 3) # ommit all with gene counts <1
+# MF_D21_filtered$slim_term <- factor(MF_D21_filtered$slim_term)  # make slim term alphabetical for plotting
+MF_D21$slim_term <- factor(MF_D21$slim_term)  # make slim term alphabetical for plotting
 
-MF_D21_Plot <-ggplot(data = MF_D21_filtered, aes(x = Ont, y = slim_term)) + 
-              geom_tile(aes(fill=Gene.Count, width = 1)) + 
-              scale_fill_gradient(low = "azure2", high = "springgreen4") +
+MF_D21_Plot <-ggplot(data = MF_D21, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 250), breaks=seq(0,250,by=50)) +
               facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
               theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -539,11 +592,14 @@ MF_D21_Plot <-ggplot(data = MF_D21_filtered, aes(x = Ont, y = slim_term)) +
                                  axis.title.y = element_text(size=8),
                                  axis.text = element_text(size = 8), legend.position = "right",
                                  plot.margin = unit(c(0,1,0,0.25), "cm"))+
+              #scale_y_discrete("slim_term", trans = 'reverse') +
               ggtitle('GOslim Molecular Function: WGCNA Day 21')
+
+
 
 # SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
 # WGCNA Day 7 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day7/GOslim_day7.pdf", sep =''), width=18, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_day7.pdf", sep =''), width=18, height=8)
 print(ggarrange(BP_D7_Plot, MF_D7_Plot,         
                  plotlist = NULL,
                  ncol = 2,
@@ -551,7 +607,7 @@ print(ggarrange(BP_D7_Plot, MF_D7_Plot,
                  labels = NULL))
 dev.off()     
 # WGCNA Day 14 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day14/GOslim_day14.pdf", sep =''), width=18, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_day14.pdf", sep =''), width=18, height=8)
 print(ggarrange(BP_D14_Plot, MF_D14_Plot,         
                 plotlist = NULL,
                 ncol = 2,
@@ -559,7 +615,7 @@ print(ggarrange(BP_D14_Plot, MF_D14_Plot,
                 labels = NULL))
 dev.off()     
 # WGCNA Day 21 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/Day21/GOslim_day21.pdf", sep =''), width=20, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_day21.pdf", sep =''), width=20, height=8)
 print(ggarrange(BP_D21_Plot, MF_D21_Plot,         
                 plotlist = NULL,
                 ncol = 2,
@@ -574,402 +630,55 @@ dev.off()
 
 
 
+# (2.A) Priming Effect AMBIENT > MODERATE 
+
+
+# BP  - call the sig moduels with A > M main effects 
+BP_Amb$Ont <- "BP" # create a new common clumn to call in the plot 
+BP_Amb$module_day <- factor(BP_Amb$module_day, levels = c("Day7_brown", "Day14_brown", "Day21_blue", "Day21_magenta"))# reorder the facotr level for the facet wrap plot 
+BP_Amb_filtered <- BP_Amb %>%  dplyr::filter(Gene_count > 1) # ommit all with gene counts <1
+# MF   - call the sig moduels with A > M main effects 
+MF_Amb$Ont <- "MF" # create a new common clumn to call in the plot 
+MF_Amb$module_day <- factor(MF_Amb$module_day, levels = c("Day7_brown", "Day14_brown", "Day21_blue", "Day21_magenta")) # reorder the facotr level for the facet wrap plot 
+MF_Amb_filtered <- MF_Amb %>%  dplyr::filter(Gene_count > 1) # ommit all with gene counts <1
 
 
 
+# plots
+BP_Amb_Plot <-ggplot(data = BP_Amb_filtered, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 200), breaks=seq(0,200,by=50)) +
+              facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+              theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
+                                 axis.title.x = element_blank(),
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
+                                 plot.margin = unit(c(0,1,0,0.25), "cm"))+
+              ggtitle('GOslim Biological Process: WGCNA all modules Ambient > Moderate')
 
-# Day 7 sig WGCNA modules: brown, yellow, green
-d7_Mod.Brown <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'brown') # %>%  dplyr::select("geneSymbol")
-
-
-d7_Mod.Brown_genes <- d7_Mod.Brown[1]
-
-d7_Mod.Yellow <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'yellow') # %>%  dplyr::select("geneSymbol")
-d7_Mod.Yellow_genes <- d7_Mod.Yellow[1]
-
-d7_Mod.Green <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'green') # %>%  dplyr::select("geneSymbol")
-d7_Mod.Green_genes <- d7_Mod.Green[1]
-
-# Day 14 sig WGCNA modules: brown, black, pink, magenta
-d14_Mod.Brown   <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'brown') # %>%  dplyr::select("geneSymbol")
-d14_Mod.Brown_genes   <- d14_Mod.Brown[1]
-
-d14_Mod.Black   <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'black') # %>%  dplyr::select("geneSymbol")
-d14_Mod.Black_genes   <- d14_Mod.Black[1]
-
-d14_Mod.Pink    <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'pink') # %>%  dplyr::select("geneSymbol")
-d14_Mod.Pink_genes    <- d14_Mod.Pink[1]
-
-d14_Mod.Magenta <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'magenta') # %>%  dplyr::select("geneSymbol")
-d14_Mod.Magenta_genes <- d14_Mod.Magenta[1]
-
-# Day 21 sig WGCNA modules: magenta, blue, yellow, red, black, pink
-d21_Mod.Magenta   <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'magenta') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Magenta_genes   <- d21_Mod.Magenta[1]
-
-d21_Mod.Blue      <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'blue') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Blue_genes      <- d21_Mod.Blue[1]
-
-d21_Mod.Yellow    <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'yellow') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Yellow_genes    <- d21_Mod.Yellow[1]
-
-d21_Mod.Red       <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'red') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Red_genes       <- d21_Mod.Red[1]
-
-d21_Mod.Black     <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'black') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Black_genes     <- d21_Mod.Black[1]
-
-d21_Mod.Pink      <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'pink') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Pink_genes     <- d21_Mod.Pink[1]
-
-# filtered raw count matrices used in WGCNA - 10CPM in 50% of samples
-# day7 filtered 10cpm in 50% samples ----------------------------- # 
-Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
-colnames(Day7_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
-
-# day14 filtered 10cpm in 50% samples ----------------------------- # 
-Day14_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
-colnames(Day14_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
-
-# day21 filtered 10cpm in 50% samples ----------------------------- # 
-Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
-colnames(Day21_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
+# plot MF
+MF_Amb_Plot <-ggplot(data = MF_Amb_filtered, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+              geom_tile(aes(fill=Gene_count, width = 1)) + 
+              scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 200), breaks=seq(0,200,by=50)) +
+              facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+              theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                 strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                 strip.text.x = element_text(size = 8, face = "bold"),
+                                 axis.title.x = element_blank(),
+                                 axis.title.y = element_text(size=8),
+                                 axis.text = element_text(size = 8), legend.position = "right",
+                                 plot.margin = unit(c(0,1,0,0.25), "cm"))+
+              ggtitle('GOslim Molecular Function: WGCNA all modules Ambient > Moderate')
 
 
 
-
-#==============================================================================
-#
-#  PLOTTING GO TERMS  FOR.... PRIMARY TREATMENT EFFECT AMBIENT > MODERATE 
-# 
-# day 7  : module BROWN
-# day 14 : module BROWN
-# day 21 : module MAGENTA
-# day 21 : module BLUE 
-#==============================================================================
-#======================================================================= #
-# MODULES WITH PRIMARY EFFECT == AMBIENT > MODERATE (vst expression and positive correlation - view heatmap)
-# Day 7 brown module 
-names(d7_Mod.Brown_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d7_Mod.Brown_integer <- as.integer(IDvector.d7%in%(d7_Mod.Brown_genes$Gene.ID)) # convert to integer with all unique genes
-names(d7_Mod.Brown_integer)=IDvector.d7 # rename
-
-# Day 14 brown module 
-names(d14_Mod.Brown_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d14_Mod.Brown_integer <- as.integer(IDvector.d14%in%(d14_Mod.Brown_genes$Gene.ID)) # convert to integer with all unique genes
-names(d14_Mod.Brown_integer)=IDvector.d14 # rename
-
-# Day 21 Magenta module 
-d21_Mod.Magenta <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'magenta') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Magenta_genes <- d21_Mod.Magenta[1]
-names(d21_Mod.Magenta_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d21_Mod.Magenta_integer <- as.integer(IDvector.d21%in%(d21_Mod.Magenta_genes$Gene.ID)) # convert to integer with all unique genes
-names(d21_Mod.Magenta_integer)=IDvector.d21 # rename
-
-# Day 21 blue module 
-d21_Mod.blue <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'blue') # %>%  dplyr::select("geneSymbol")
-d21_Mod.blue_genes <- d21_Mod.blue[1]
-names(d21_Mod.blue_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d21_Mod.blue_integer <- as.integer(IDvector.d21%in%(d21_Mod.blue_genes$Gene.ID)) # convert to integer with all unique genes
-names(d21_Mod.blue_integer)=IDvector.d21 # rename
-
-#======================================================================= #
-#Calculate Probability Weighting Function (using 'nullp')
-d7_Mod.Brown_pwf    <-nullp(d7_Mod.Brown_integer,    id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene - Day 7 module 
-d14_Mod.Brown_pwf   <-nullp(d14_Mod.Brown_integer,   id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene - Day 14 module 
-d21_Mod.Magenta_pwf <-nullp(d21_Mod.Magenta_integer, id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene - Day 21 module 
-d21_Mod.Blue_pwf    <-nullp(d21_Mod.blue_integer,    id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene - Day 21 module 
-
-#======================================================================= #
-# Run goseq
-d7_Mod.Brown.goseq     <-goseq(d7_Mod.Brown_pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-d14_Mod.Brown.goseq    <-goseq(d14_Mod.Brown_pwf,gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-d21_Mod.Magenta.goseq  <-goseq(d21_Mod.Magenta_pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-d21_Mod.Blue.goseq     <-goseq(d21_Mod.Blue_pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-
-#======================================================================= #
-# call enriched GO terms and plot 
-# day 7 Module Brown
-d7_Mod.Brown.GO.05.a<-d7_Mod.Brown.goseq$category[d7_Mod.Brown.goseq$over_represented_pvalue<.05] # change twice here
-d7_Mod.Brown.GO.05<-data.frame(d7_Mod.Brown.GO.05.a)
-colnames(d7_Mod.Brown.GO.05) <- c("category")
-d7_Mod.Brown.GO.05 <- merge(d7_Mod.Brown.GO.05, d7_Mod.Brown.goseq, by="category") # change here
-d7_Mod.Brown.GO.05 <- d7_Mod.Brown.GO.05[order(d7_Mod.Brown.GO.05$ontology, d7_Mod.Brown.GO.05$over_represented_pvalue,-d7_Mod.Brown.GO.05$numDEInCat),]
-d7_Mod.Brown.GO.05$term <- as.factor(d7_Mod.Brown.GO.05$term)
-head(d7_Mod.Brown.GO.05)
-
-# divide into MF and BP datasets
-d7_Mod.Brown_MF <- d7_Mod.Brown.GO.05 %>% 
-                        drop_na(ontology) %>% 
-                        mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                               ontology = paste(ontology, 'd7_brown', sep = "_")) %>%
-                        dplyr::filter(ontology %in% ('MF_d7_brown'))
-d7_Mod.Brown_BP <- d7_Mod.Brown.GO.05 %>% 
-                        drop_na(ontology) %>% 
-                        mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                               ontology = paste(ontology, 'd7_brown', sep = "_")) %>%
-                        dplyr::filter(ontology %in% ('BP_d7_brown'))
-
-
-# day 14 Module Brown
-d14_Mod.Brown.GO.05.a<-d14_Mod.Brown.goseq$category[d14_Mod.Brown.goseq$over_represented_pvalue<.05] # change twice here
-d14_Mod.Brown.GO.05<-data.frame(d14_Mod.Brown.GO.05.a)
-colnames(d14_Mod.Brown.GO.05) <- c("category")
-d14_Mod.Brown.GO.05 <- merge(d14_Mod.Brown.GO.05, d14_Mod.Brown.goseq, by="category") # change here
-d14_Mod.Brown.GO.05 <- d14_Mod.Brown.GO.05[order(-d14_Mod.Brown.GO.05$numDEInCat),]
-d14_Mod.Brown.GO.05$term <- as.factor(d14_Mod.Brown.GO.05$term)
-head(d14_Mod.Brown.GO.05)
-
-d14_Mod.Brown_MF <- d14_Mod.Brown.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd14_brown', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('MF_d14_brown'))
-d14_Mod.Brown_BP <- d14_Mod.Brown.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd14_brown', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('BP_d14_brown'))
-
-# day 21 module magenta
-d21_Mod.Magenta.GO.05.a<-d21_Mod.Magenta.goseq$category[d21_Mod.Magenta.goseq$over_represented_pvalue<.05] # change twice here
-d21_Mod.Magenta.GO.05<-data.frame(d21_Mod.Magenta.GO.05.a)
-colnames(d21_Mod.Magenta.GO.05) <- c("category")
-d21_Mod.Magenta.GO.05 <- merge(d21_Mod.Magenta.GO.05, d21_Mod.Magenta.goseq, by="category") # change here
-d21_Mod.Magenta.GO.05 <- d21_Mod.Magenta.GO.05[order(-d21_Mod.Magenta.GO.05$numDEInCat),]
-d21_Mod.Magenta.GO.05$term <- as.factor(d21_Mod.Magenta.GO.05$term)
-head(d21_Mod.Magenta.GO.05)
-
-d21_Mod.Magenta_MF <- d21_Mod.Magenta.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd21_blue.magenta', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('MF_d21_blue.magenta'))
-d21_Mod.Magenta_BP <- d21_Mod.Magenta.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                # ontology = paste(ontology, 'd21_magenta', sep = "_")) %>%
-                          # dplyr::filter(ontology %in% ('BP_d21_magenta'))
-                                ontology = paste(ontology, 'd21_blue.magenta', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('BP_d21_blue.magenta'))
-
-# day 21 module Blue
-d21_Mod.Blue.GO.05.a<-d21_Mod.Blue.goseq$category[d21_Mod.Blue.goseq$over_represented_pvalue<.05] # change twice here
-d21_Mod.Blue.GO.05<-data.frame(d21_Mod.Blue.GO.05.a)
-colnames(d21_Mod.Blue.GO.05) <- c("category")
-d21_Mod.Blue.GO.05 <- merge(d21_Mod.Blue.GO.05, d21_Mod.Blue.goseq, by="category") # change here
-d21_Mod.Blue.GO.05 <- d21_Mod.Blue.GO.05[order(-d21_Mod.Blue.GO.05$numDEInCat),]
-d21_Mod.Blue.GO.05$term <- as.factor(d21_Mod.Blue.GO.05$term)
-head(d21_Mod.Blue.GO.05)
-
-d21_Mod.Blue_MF <- d21_Mod.Blue.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd21_blue.magenta', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('MF_d21_blue.magenta'))
-d21_Mod.Blue_BP <- d21_Mod.Blue.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd21_blue.magenta', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('BP_d21_blue.magenta'))
-#=======================================================================
-# Save all the significant go terms in these modules - AMBIENT > MODERATE 
-#=======================================================================
-write.csv(d7_Mod.Brown.GO.05, file     = "Analysis/Output/GO/WGCNA_goseq/Day7/GO.05.BrownMod.csv", row.names = FALSE)# save significant terms
-write.csv(d14_Mod.Brown.GO.05, file    = "Analysis/Output/GO/WGCNA_goseq/Day14/GO.05.BrownMod.csv", row.names = FALSE)# save significant terms
-write.csv(d21_Mod.Magenta.GO.05, file  = "Analysis/Output/GO/WGCNA_goseq/Day21/GO.05.MagentaMod.csv", row.names = FALSE)# save significant terms
-write.csv(d21_Mod.Blue.GO.05, file     = "Analysis/Output/GO/WGCNA_goseq/Day21/GO.05.BlueMod.csv", row.names = FALSE)# save significant terms
-
-#======================================================================= #
-# bind the rows of MF and BP in the clustered modules (those twith primary treatment effect in same pattern/directionality)
-# Primary effect: WGCNA significant module showing Ambient > Moderate - bind together day 7 brown, day 14 brown 
-# MF
-MF_Amb_effect <- rbind(d7_Mod.Brown_MF, d14_Mod.Brown_MF, d21_Mod.Magenta_MF, d21_Mod.Blue_MF) # d21_Mod.Magenta_MF,
-# BP
-BP_Amb_effect <- rbind(d7_Mod.Brown_BP, d14_Mod.Brown_BP, d21_Mod.Magenta_BP, d21_Mod.Blue_BP)
-
-#=======================================================================
-# PLOT and save plots - AMBIENT > MODERATE 
-# (heatmap of GO significance by Goterm & sampling day)
-#=======================================================================
-MF_tile_Amb_effect  <- MF_Amb_effect %>% 
-                          mutate(term = fct_reorder(term, ontology)) %>%
-                          ggplot(aes(factor(ontology,level = c('MF_d7_brown', 'MF_d14_brown', 'MF_d21_blue.magenta')), term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
-                          geom_tile(fill = '#00BFC4') +
-                          scale_alpha_continuous(range = c(1, 0.3)) +
-                          theme_classic2() + 
-                          ggtitle("GO Mol Fxn: Priming effect (> Exp in Amb history)") +
-                          xlab("GO.ontology_Sampling.Day") +
-                          ylab('') +
-                          theme(legend.position="none") 
-BP_tile_Amb_effect <- BP_Amb_effect %>% 
-                          mutate(term = fct_reorder(term, ontology)) %>%
-                          ggplot(aes(factor(ontology,level = c('BP_d7_brown', 'BP_d14_brown', 'BP_d21_blue.magenta')), term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
-                          geom_tile(fill = '#F8766D') +
-                          scale_alpha_continuous(range = c(1, 0.3)) +
-                          theme_classic2() + 
-                          ggtitle("GO Biol Proc: Priming effect (> Exp in Amb history)") +
-                          xlab("GO.ontology_Sampling.Day") +
-                          ylab('') +
-                          theme(legend.position="none") 
-# SAVE PLOT
-pdf(paste("Analysis/Output/WGCNA/GO_SigEnrich_PrimaryAmbient.pdf", sep =''), width=30, height=60)
-print(ggarrange(MF_tile_Amb_effect, BP_tile_Amb_effect,         
-                plotlist = NULL,
-                ncol = 2,
-                nrow = 1,
-                labels = NULL))
-dev.off()  
-
-#==============================================================================
-#
-#  PLOTTING GO TERMS  FOR.... PRIMARY TREATMENT EFFECT MODERATE > AMBIENT 
-# day 7  : module YELLOW
-# day 14 : module BLACK
-# day 21 : module YELLOW
-#==============================================================================
-
-#======================================================================= #
-# MODULES WITH PRIMARY EFFECT == AMBIENT > MODERATE (vst expression and positive correlation - view heatmap)
-# Day 7 Yellow module 
-d7_Mod.Yellow <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'yellow') # %>%  dplyr::select("geneSymbol")
-d7_Mod.Yellow_genes <- d7_Mod.Yellow[1]
-names(d7_Mod.Yellow_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d7_Mod.Yellow_integer <- as.integer(GO_unique.genes.all%in%(d7_Mod.Yellow_genes$Gene.ID)) # convert to integer with all unique genes
-names(d7_Mod.Yellow_integer)=GO_unique.genes.all # rename
-
-# Day 14 Black module 
-d14_Mod.Black <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'black') # %>%  dplyr::select("geneSymbol")
-d14_Mod.Black_genes <- d14_Mod.Black[1]
-names(d14_Mod.Black_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d14_Mod.Black_integer <- as.integer(GO_unique.genes.all%in%(d14_Mod.Black_genes$Gene.ID)) # convert to integer with all unique genes
-names(d14_Mod.Black_integer)=GO_unique.genes.all # rename
-
-# Day 21 Yellow module 
-d21_Mod.Yellow <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% 'yellow') # %>%  dplyr::select("geneSymbol")
-d21_Mod.Yellow_genes <- d21_Mod.Yellow[1]
-names(d21_Mod.Yellow_genes)[1] <- "Gene.ID" # 162 genws in the green module 
-d21_Mod.Yellow_integer <- as.integer(GO_unique.genes.all%in%(d21_Mod.Yellow_genes$Gene.ID)) # convert to integer with all unique genes
-names(d21_Mod.Yellow_integer)=GO_unique.genes.all # rename
-
-#======================================================================= #
-#Calculate Probability Weighting Function (using 'nullp')
-d7_Mod.Yellow_pwf  <-nullp(d7_Mod.Yellow_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-d14_Mod.Black_pwf  <-nullp(d14_Mod.Black_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-d21_Mod.Yellow_pwf <-nullp(d21_Mod.Yellow_integer, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-
-#======================================================================= #
-# Run goseq
-d7_Mod.Yellow.goseq   <-goseq(d7_Mod.Yellow_pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-d14_Mod.Black.goseq   <-goseq(d14_Mod.Black_pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-d21_Mod.Yellow.goseq  <-goseq(d21_Mod.Yellow_pwf, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-
-#======================================================================= #
-# call enriched GO terms and plot 
-# day 7 Module Yellow
-d7_Mod.Yellow.GO.05.a<-d7_Mod.Yellow.goseq$category[d7_Mod.Yellow.goseq$over_represented_pvalue<.05] # change twice here
-d7_Mod.Yellow.GO.05<-data.frame(d7_Mod.Yellow.GO.05.a)
-colnames(d7_Mod.Yellow.GO.05) <- c("category")
-d7_Mod.Yellow.GO.05 <- merge(d7_Mod.Yellow.GO.05, d7_Mod.Yellow.goseq, by="category") # change here
-d7_Mod.Yellow.GO.05 <- d7_Mod.Yellow.GO.05[order(-d7_Mod.Yellow.GO.05$numDEInCat),]
-d7_Mod.Yellow.GO.05$term <- as.factor(d7_Mod.Yellow.GO.05$term)
-head(d7_Mod.Yellow.GO.05)
-
-d7_Mod.Yellow_MF <- d7_Mod.Yellow.GO.05 %>% 
-                        drop_na(ontology) %>% 
-                        mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                               ontology = paste(ontology, 'd7_Yellow', sep = "_")) %>%
-                        dplyr::filter(ontology %in% ('MF_d7_Yellow'))
-d7_Mod.Yellow_BP <- d7_Mod.Yellow.GO.05 %>% 
-                        drop_na(ontology) %>% 
-                        mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                               ontology = paste(ontology, 'd7_Yellow', sep = "_")) %>%
-                        dplyr::filter(ontology %in% ('BP_d7_Yellow'))
-
-
-# day 14 Module Black
-d14_Mod.Black.GO.05.a<-d14_Mod.Black.goseq$category[d14_Mod.Black.goseq$over_represented_pvalue<.05] # change twice here
-d14_Mod.Black.GO.05<-data.frame(d14_Mod.Black.GO.05.a)
-colnames(d14_Mod.Black.GO.05) <- c("category")
-d14_Mod.Black.GO.05 <- merge(d14_Mod.Black.GO.05, d14_Mod.Black.goseq, by="category") # change here
-d14_Mod.Black.GO.05 <- d14_Mod.Black.GO.05[order(-d14_Mod.Black.GO.05$numDEInCat),]
-d14_Mod.Black.GO.05$term <- as.factor(d14_Mod.Black.GO.05$term)
-head(d14_Mod.Black.GO.05)
-
-d14_Mod.Black_MF <- d14_Mod.Black.GO.05 %>% 
-  drop_na(ontology) %>% 
-  mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-         ontology = paste(ontology, 'd14_Black', sep = "_")) %>%
-  dplyr::filter(ontology %in% ('MF_d14_Black'))
-d14_Mod.Black_BP <- d14_Mod.Black.GO.05 %>% 
-  drop_na(ontology) %>% 
-  mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-         ontology = paste(ontology, 'd14_Black', sep = "_")) %>%
-  dplyr::filter(ontology %in% ('BP_d14_Black'))
-
-# day 21 module Yellow
-d21_Mod.Yellow.GO.05.a<-d21_Mod.Yellow.goseq$category[d21_Mod.Yellow.goseq$over_represented_pvalue<.05] # change twice here
-d21_Mod.Yellow.GO.05<-data.frame(d21_Mod.Yellow.GO.05.a)
-colnames(d21_Mod.Yellow.GO.05) <- c("category")
-d21_Mod.Yellow.GO.05 <- merge(d21_Mod.Yellow.GO.05, d21_Mod.Yellow.goseq, by="category") # change here
-d21_Mod.Yellow.GO.05 <- d21_Mod.Yellow.GO.05[order(-d21_Mod.Yellow.GO.05$numDEInCat),]
-d21_Mod.Yellow.GO.05$term <- as.factor(d21_Mod.Yellow.GO.05$term)
-head(d21_Mod.Yellow.GO.05)
-
-d21_Mod.Yellow_MF <- d21_Mod.Yellow.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd21_Yellow', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('MF_d21_Yellow'))
-d21_Mod.Yellow_BP <- d21_Mod.Yellow.GO.05 %>% 
-                          drop_na(ontology) %>% 
-                          mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) ),
-                                 ontology = paste(ontology, 'd21_Yellow', sep = "_")) %>%
-                          dplyr::filter(ontology %in% ('BP_d21_Yellow'))
-
-#=======================================================================
-# Save all the significant go terms in these modules -  MODERATE > AMBIENT 
-#=======================================================================
-write.csv(d7_Mod.Yellow.GO.05, file    = "Analysis/Output/GO/goseq/Day7/GO.05.YellowMod.csv", row.names = FALSE)# save significant terms
-write.csv(d14_Mod.Black.GO.05, file    = "Analysis/Output/GO/goseq/Day14/GO.05.BlackMod.csv", row.names = FALSE)# save significant terms
-write.csv(d21_Mod.Yellow.GO.05, file   = "Analysis/Output/GO/goseq/Day21/GO.05.YellowMod.csv", row.names = FALSE)# save significant terms
-
-#======================================================================= #
-# bind the rows of MF and BP in the clustered modules (those twith primary treatment effect in same pattern/directionality)
-# Primary effect: WGCNA significant module showing Ambient > Moderate - bind together day 7 brown, day 14 brown 
-# MF
-MF_Mod_effect <- rbind(d7_Mod.Yellow_MF, d14_Mod.Black_MF, d21_Mod.Yellow_MF) # d21_Mod.Magenta_MF,
-# BP
-BP_Mod_effect <- rbind(d7_Mod.Yellow_BP, d14_Mod.Black_BP, d21_Mod.Yellow_BP)
-
-
-#=======================================================================
-# PLOT and save plots - MODERATE > AMBIENT 
-# (heatmap of GO significance by Goterm & sampling day)
-#=======================================================================
-MF_tile_Mod_effect  <- MF_Mod_effect %>% 
-                          mutate(term = fct_reorder(term, ontology)) %>%
-                          ggplot(aes(factor(ontology,level = c('MF_d7_Yellow', 'MF_d14_Black', 'MF_d21_Yellow')), term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
-                          geom_tile(fill = '#00BFC4') +
-                          scale_alpha_continuous(range = c(1, 0.3)) +
-                          theme_classic2() + 
-                              ggtitle("GO Mol Fxn: Priming effect (> Exp in Moderate history)") +
-                              xlab("GO.ontology_Sampling.Day") +
-                              ylab('') +
-                              theme(legend.position="none") 
-BP_tile_Mod_effect <- BP_Mod_effect %>% 
-                          mutate(term = fct_reorder(term, ontology)) %>%
-                          ggplot(aes(factor(ontology,level = c('BP_d7_Yellow', 'BP_d14_Black', 'BP_d21_Yellow')), term, fill= factor(ontology), alpha = over_represented_pvalue)) + 
-                          geom_tile(fill = '#F8766D') +
-                          scale_alpha_continuous(range = c(1, 0.3)) +
-                          theme_classic2() + 
-                              ggtitle("GO Biol Proc: Priming effect (> Exp in Moderate history)") +
-                              xlab("GO.ontology_Sampling.Day") +
-                              ylab('') +
-                              theme(legend.position="none") 
-# SAVE PLOT
-pdf(paste("Analysis/Output/WGCNA/GO_SigEnrich_PrimaryModerate.pdf", sep =''), width=30, height=60)
-print(ggarrange(MF_tile_Mod_effect, BP_tile_Mod_effect,         
+# SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/GOslim_Modules_Ambient.pdf", sep =''), width=20, height=8)
+print(ggarrange(BP_Amb_Plot, MF_Amb_Plot,         
                 plotlist = NULL,
                 ncol = 2,
                 nrow = 1,
@@ -977,622 +686,1210 @@ print(ggarrange(MF_tile_Mod_effect, BP_tile_Mod_effect,
 dev.off() 
 
 
-#=======================================================================
-#
-#
-# GOslim analysis 
-# - data reduction from the many GO terms to more broad functions/processes
-#
-#=======================================================================
-# Read in sig GO terms from modules above; review 'Save all the significant go terms in these modules'
-# Modules suggesing Exp   Ambient  > Modearte  (Review GO heatmaps in the ouput folder)
-D7BrownAmb       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05.BrownMod.csv")
-D14BrownAmb      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05.BrownMod.csv")
-D21MagentaAmb    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05.MagentaMod.csv")
-D21BlueAmb       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05.BlueMod.csv")
 
-# Modules suggesing Exp   Moderate  > Ambient  (Review GO heatmaps in the ouput folder)
-D7YellowMod    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05.YellowMod.csv")
-D14BlackMod    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05.BlackMod.csv")
-D21YellowMod   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05.YellowMod.csv")
 
-# Load GSEABase to call remote GOslim and conduct GO slim analysis 
-library(GSEABase)
-# call goslim_generic.obo terms as 'slim'
-slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/goslim_generic.obo") #get GO database
 
 
-# ====================================================================================
-# Prep module GO terms for analysis - Separate MF from BP 
-#
-# ====================================================================================
-# ALL MODULES AMBIENT > MODERATE
 
-# D7BrownAmb
-D7BrownAmb_BP <- D7BrownAmb %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D7BrownAmb_BP_GO_collection <- GOCollection(D7BrownAmb_BP$category) #Make library of query terms
-D7BrownAmb_GOslims_BP <- data.frame(goSlim(D7BrownAmb_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D7BrownAmb_GOslims_BP$category <- row.names(D7BrownAmb_GOslims_BP) #save rownames as category
 
-D7BrownAmb_MF <- D7BrownAmb %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D7BrownAmb_MF_GO_collection <- GOCollection(D7BrownAmb_MF$category) #Make library of query terms
-D7BrownAmb_GOslims_MF <- data.frame(goSlim(D7BrownAmb_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D7BrownAmb_GOslims_MF$category <- row.names(D7BrownAmb_GOslims_MF) #save rownames as category
 
-# D14BrownAmb
-D14BrownAmb_BP <- D14BrownAmb %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D14BrownAmb_BP_GO_collection <- GOCollection(D14BrownAmb_BP$category) #Make library of query terms
-D14BrownAmb_GOslims_BP <- data.frame(goSlim(D14BrownAmb_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D14BrownAmb_GOslims_BP$category <- row.names(D14BrownAmb_GOslims_BP) #save rownames as category
+# (2.B) Priming Effect MODERATE > AMBIENT 
 
-D14BrownAmb_MF <- D14BrownAmb %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D14BrownAmb_MF_GO_collection <- GOCollection(D14BrownAmb_MF$category) #Make library of query terms
-D14BrownAmb_GOslims_MF <- data.frame(goSlim(D14BrownAmb_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D14BrownAmb_GOslims_MF$category <- row.names(D14BrownAmb_GOslims_MF) #save rownames as category
 
 
-# D21MagentaAmb
-D21MagentaAmb_BP <- D21MagentaAmb %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D21MagentaAmb_BP_GO_collection <- GOCollection(D21MagentaAmb_BP$category) #Make library of query terms
-D21MagentaAmb_GOslims_BP <- data.frame(goSlim(D21MagentaAmb_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D21MagentaAmb_GOslims_BP$category <- row.names(D21MagentaAmb_GOslims_BP) #save rownames as category
 
-D21MagentaAmb_MF <- D21MagentaAmb %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D21MagentaAmb_MF_GO_collection <- GOCollection(D21MagentaAmb_MF$category) #Make library of query terms
-D21MagentaAmb_GOslims_MF <- data.frame(goSlim(D21MagentaAmb_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D21MagentaAmb_GOslims_MF$category <- row.names(D21MagentaAmb_GOslims_MF) #save rownames as category
 
 
-# D21BlueAmb
-D21BlueAmb_BP <- D21BlueAmb %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D21BlueAmb_BP_GO_collection <- GOCollection(D21BlueAmb_BP$category) #Make library of query terms
-D21BlueAmb_GOslims_BP <- data.frame(goSlim(D21BlueAmb_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D21BlueAmb_GOslims_BP$category <- row.names(D21BlueAmb_GOslims_BP) #save rownames as category
 
-D21BlueAmb_MF <- D21BlueAmb %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D21BlueAmb_MF_GO_collection <- GOCollection(D21BlueAmb_MF$category) #Make library of query terms
-D21BlueAmb_GOslims_MF <- data.frame(goSlim(D21BlueAmb_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D21BlueAmb_GOslims_MF$category <- row.names(D21BlueAmb_GOslims_MF) #save rownames as category
 
-
-# ALL MODULES MODERATE > AMBEINT
-
-
-# D7YellowMod
-D7YellowMod_BP <- D7YellowMod %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D7YellowMod_BP_GO_collection <- GOCollection(D7YellowMod_BP$category) #Make library of query terms
-D7YellowMod_GOslims_BP <- data.frame(goSlim(D7YellowMod_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D7YellowMod_GOslims_BP$category <- row.names(D7YellowMod_GOslims_BP) #save rownames as category
-
-D7YellowMod_MF <- D7YellowMod %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D7YellowMod_MF_GO_collection <- GOCollection(D7YellowMod_MF$category) #Make library of query terms
-D7YellowMod_GOslims_MF <- data.frame(goSlim(D7YellowMod_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D7YellowMod_GOslims_MF$category <- row.names(D7YellowMod_GOslims_MF) #save rownames as category
-
-
-# D14BlackMod
-D14BlackMod_BP <- D14BlackMod %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D14BlackMod_BP_GO_collection <- GOCollection(D14BlackMod_BP$category) #Make library of query terms
-D14BlackMod_GOslims_BP <- data.frame(goSlim(D14BlackMod_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D14BlackMod_GOslims_BP$category <- row.names(D14BlackMod_GOslims_BP) #save rownames as category
-
-D14BlackMod_MF <- D14BlackMod %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D14BlackMod_MF_GO_collection <- GOCollection(D14BlackMod_MF$category) #Make library of query terms
-D14BlackMod_GOslims_MF <- data.frame(goSlim(D14BlackMod_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D14BlackMod_GOslims_MF$category <- row.names(D14BlackMod_GOslims_MF) #save rownames as category
-
-
-# D21YellowMod
-D21YellowMod_BP <- D21YellowMod %>% # BP - all GO terms upregulated
-  filter(ontology=="BP")
-D21YellowMod_BP_GO_collection <- GOCollection(D21YellowMod_BP$category) #Make library of query terms
-D21YellowMod_GOslims_BP <- data.frame(goSlim(D21YellowMod_BP_GO_collection, slim, "BP")) #Find common parent terms to slim down our list
-D21YellowMod_GOslims_BP$category <- row.names(D21YellowMod_GOslims_BP) #save rownames as category
-
-D21YellowMod_MF <- D21YellowMod %>% # MF - all GO terms upregulated
-  filter(ontology=="MF")
-D21YellowMod_MF_GO_collection <- GOCollection(D21YellowMod_MF$category) #Make library of query terms
-D21YellowMod_GOslims_MF <- data.frame(goSlim(D21YellowMod_MF_GO_collection, slim, "MF")) #Find common parent terms to slim down our list
-D21YellowMod_GOslims_MF$category <- row.names(D21YellowMod_GOslims_MF) #save rownames as category
-
-# ====================================================================================
-# Get mapped terms - add to the GOslims datatable 
-# from Sam White's Biostars [post](https://support.bioconductor.org/p/128407/#128409).
-# ====================================================================================
-# Write function mappedIds to get the query terms that mapped to the slim categories 
-# ...in other words, add a column to your slim dataframe with all the GO terms from goseq
-mappedIds <-  function(df, collection, OFFSPRING) {  #the command to run requires a dataframe of slim terms, like slims_MF above, your list of query terms, and the offspring from the GOCollection by goSlim
-    map <- as.list(OFFSPRING[rownames(df)]) # Subset GOcollection offspring by the rownames of your dataframe
-    mapped <- lapply(map, intersect, ids(collection)) #Find the terms that intersect between the subset made above of your query terms and the GOids from the GO collection
-    df[["go_terms"]] <- vapply(unname(mapped), paste, collapse = ";", character(1L)) #Add column "go_terms" with matching terms 
-    df #show resulting dataframe
-  }
-#Run function for MF and BP terms
-# D7BrownAmb
-D7BrownAmb_BPslim <- mappedIds(D7BrownAmb_GOslims_BP, D7BrownAmb_BP_GO_collection, GOBPOFFSPRING)
-D7BrownAmb_MFslim <- mappedIds(D7BrownAmb_GOslims_MF, D7BrownAmb_MF_GO_collection, GOMFOFFSPRING)
-# D14BrownAmb
-D14BrownAmb_BPslim <- mappedIds(D14BrownAmb_GOslims_BP, D14BrownAmb_BP_GO_collection, GOBPOFFSPRING)
-D14BrownAmb_MFslim <- mappedIds(D14BrownAmb_GOslims_MF, D14BrownAmb_MF_GO_collection, GOMFOFFSPRING)
-# D21MagentaAmb
-D21MagentaAmb_BPslim <- mappedIds(D21MagentaAmb_GOslims_BP, D21MagentaAmb_BP_GO_collection, GOBPOFFSPRING)
-D21MagentaAmb_MFslim <- mappedIds(D21MagentaAmb_GOslims_MF, D21MagentaAmb_MF_GO_collection, GOMFOFFSPRING)
-# D21BlueAmb
-D21BlueAmb_BPslim <- mappedIds(D21BlueAmb_GOslims_BP, D21BlueAmb_BP_GO_collection, GOBPOFFSPRING)
-D21BlueAmb_MFslim <- mappedIds(D21BlueAmb_GOslims_MF, D21BlueAmb_MF_GO_collection, GOMFOFFSPRING)
-
-
-# D7YellowMod
-D7YellowMod_BPslim <- mappedIds(D7YellowMod_GOslims_BP, D7YellowMod_BP_GO_collection, GOBPOFFSPRING)
-D7YellowMod_MFslim <- mappedIds(D7YellowMod_GOslims_MF, D7YellowMod_MF_GO_collection, GOMFOFFSPRING)
-# D14BlackMod
-D14BlackMod_BPslim <- mappedIds(D14BlackMod_GOslims_BP, D14BlackMod_BP_GO_collection, GOBPOFFSPRING)
-D14BlackMod_MFslim <- mappedIds(D14BlackMod_GOslims_MF, D14BlackMod_MF_GO_collection, GOMFOFFSPRING)
-# D21YellowMod
-D21YellowMod_BPslim <- mappedIds(D21YellowMod_GOslims_BP, D21YellowMod_BP_GO_collection, GOBPOFFSPRING)
-D21YellowMod_MFslim <- mappedIds(D21YellowMod_GOslims_MF, D21YellowMod_MF_GO_collection, GOMFOFFSPRING)
-
-# ====================================================================================
-# Build final GO slim data set for plotting
-# - call the annotation file - build a master sheet of unique rows for genes and GO terms (multiple gene IDs for each GO term annotated)
-# - use this datasetto filter by upreg or down reg DE genes (DESEq2 directionality) - then for loop into the slim data to call unique genes in each GOslim bin
-# - output column 'Gene.Count' to the final GOslim data table (i.e. All.UP_BPslim_final == all DESeq2 primary effect genes table, upregualted DEGs only, Biological Process GOslim/GOterms only)
-# ====================================================================================
-library(data.table) # for the setDT fxn in this cluster... 
-
-# Build a master list of all genes and GO terms
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
-Pgen_GOterms <- Geoduck_annotation %>% dplyr::select(c('V1','V8')) # select only two columns - those with the gene IDs and those with the GO terms
-Pgen_GOterms2 <- strsplit(Pgen_GOterms$V8, split = "; ") # create a string splitting by delimiter '; ' - view the data to see that this separates each GO term entry in the string
-Pgen_GOterms2 <- data.frame(gene.ID = rep(Pgen_GOterms$V1, sapply(Pgen_GOterms2, length)), Go.terms = unlist(Pgen_GOterms2)) # create new dataframe 'Pgen_GOterms2' listing genes for each GO term (MUCH longer!)
-Pgen_GOterms2 <- na.omit(Pgen_GOterms2) # ommit the NAs  - genes without GO annotation
-
-
-# ====================================================================================
-# Ambient > Moderate Modules - prep GO slim final table (number of genes in each GO slim bin)
-#
-# ...to do this I call all unique genes in the module that contain the go term before merging by GOslim
-# ====================================================================================
-
-# D7BrownAmb  ================================================================= #
-head(d7_Mod.Brown) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D7BrownAmb_BPslim <- filter(D7BrownAmb_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D7BrownAmb_BPslim$go_terms), ";") #split into multiple GO ids
-D7BrownAmb_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D7BrownAmb_BPslim)) {
-  table <- data.frame(GOlist = unlist(D7BrownAmb_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d7_Mod.Brown$X) # d7_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D7BrownAmb_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D7BrownAmb_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D7BrownAmb_BPslim_A <- data.frame(Term = rep.int(D7BrownAmb_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D7BrownAmb_BPslim_B <- merge(D7BrownAmb_BPslim_A, D7BrownAmb_BPslim, by="Term") #Add back counts, term, and category info
-D7BrownAmb_BPslim_C <- unique(setDT(D7BrownAmb_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D7BrownAmb_BPslim_final <- data.frame(slim_term=D7BrownAmb_BPslim_C$Term, slim_cat=D7BrownAmb_BPslim_C$category, category=D7BrownAmb_BPslim_C$go_term, Gene.Count=D7BrownAmb_BPslim_C$Gene.Count, GO.Count=D7BrownAmb_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D7BrownAmb_MFslim <- filter(D7BrownAmb_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D7BrownAmb_MFslim$go_terms), ";") #split into multiple GO ids
-D7BrownAmb_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D7BrownAmb_MFslim)) {
-  table <- data.frame(GOlist = unlist(D7BrownAmb_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d7_Mod.Brown$X) # d7_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D7BrownAmb_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D7BrownAmb_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D7BrownAmb_MFslim_A <- data.frame(Term = rep.int(D7BrownAmb_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D7BrownAmb_MFslim_B <- merge(D7BrownAmb_MFslim_A, D7BrownAmb_MFslim, by="Term") #Add back counts, term, and category info
-D7BrownAmb_MFslim_C <- unique(setDT(D7BrownAmb_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D7BrownAmb_MFslim_final <- data.frame(slim_term=D7BrownAmb_MFslim_C$Term, slim_cat=D7BrownAmb_MFslim_C$category, category=D7BrownAmb_MFslim_C$go_term, Gene.Count=D7BrownAmb_MFslim_C$Gene.Count, GO.Count=D7BrownAmb_MFslim_C$Count) #rename columns) #rename columns
-
-
-# D14BrownAmb  ================================================================= #
-head(d14_Mod.Brown) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D14BrownAmb_BPslim <- filter(D14BrownAmb_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D14BrownAmb_BPslim$go_terms), ";") #split into multiple GO ids
-D14BrownAmb_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D14BrownAmb_BPslim)) {
-  table <- data.frame(GOlist = unlist(D14BrownAmb_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d14_Mod.Brown$X) # d14_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D14BrownAmb_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D14BrownAmb_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D14BrownAmb_BPslim_A <- data.frame(Term = rep.int(D14BrownAmb_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D14BrownAmb_BPslim_B <- merge(D14BrownAmb_BPslim_A, D14BrownAmb_BPslim, by="Term") #Add back counts, term, and category info
-D14BrownAmb_BPslim_C <- unique(setDT(D14BrownAmb_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D14BrownAmb_BPslim_final <- data.frame(slim_term=D14BrownAmb_BPslim_C$Term, slim_cat=D14BrownAmb_BPslim_C$category, category=D14BrownAmb_BPslim_C$go_term, Gene.Count=D14BrownAmb_BPslim_C$Gene.Count, GO.Count=D14BrownAmb_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D14BrownAmb_MFslim <- filter(D14BrownAmb_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D14BrownAmb_MFslim$go_terms), ";") #split into multiple GO ids
-D14BrownAmb_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D14BrownAmb_MFslim)) {
-  table <- data.frame(GOlist = unlist(D14BrownAmb_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d14_Mod.Brown$X) # d14_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D14BrownAmb_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D14BrownAmb_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D14BrownAmb_MFslim_A <- data.frame(Term = rep.int(D14BrownAmb_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D14BrownAmb_MFslim_B <- merge(D14BrownAmb_MFslim_A, D14BrownAmb_MFslim, by="Term") #Add back counts, term, and category info
-D14BrownAmb_MFslim_C <- unique(setDT(D14BrownAmb_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D14BrownAmb_MFslim_final <- data.frame(slim_term=D14BrownAmb_MFslim_C$Term, slim_cat=D14BrownAmb_MFslim_C$category, category=D14BrownAmb_MFslim_C$go_term, Gene.Count=D14BrownAmb_MFslim_C$Gene.Count, GO.Count=D14BrownAmb_MFslim_C$Count) #rename columns) #rename columns
-
-
-# D21MagentaAmb  ================================================================= #
-head(d21_Mod.Magenta) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D21MagentaAmb_BPslim <- filter(D21MagentaAmb_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D21MagentaAmb_BPslim$go_terms), ";") #split into multiple GO ids
-D21MagentaAmb_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D21MagentaAmb_BPslim)) {
-  table <- data.frame(GOlist = unlist(D21MagentaAmb_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.Magenta$X) # d21_Mod.Magenta$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21MagentaAmb_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21MagentaAmb_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21MagentaAmb_BPslim_A <- data.frame(Term = rep.int(D21MagentaAmb_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D21MagentaAmb_BPslim_B <- merge(D21MagentaAmb_BPslim_A, D21MagentaAmb_BPslim, by="Term") #Add back counts, term, and category info
-D21MagentaAmb_BPslim_C <- unique(setDT(D21MagentaAmb_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21MagentaAmb_BPslim_final <- data.frame(slim_term=D21MagentaAmb_BPslim_C$Term, slim_cat=D21MagentaAmb_BPslim_C$category, category=D21MagentaAmb_BPslim_C$go_term, Gene.Count=D21MagentaAmb_BPslim_C$Gene.Count, GO.Count=D21MagentaAmb_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D21MagentaAmb_MFslim <- filter(D21MagentaAmb_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D21MagentaAmb_MFslim$go_terms), ";") #split into multiple GO ids
-D21MagentaAmb_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D21MagentaAmb_MFslim)) {
-  table <- data.frame(GOlist = unlist(D21MagentaAmb_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.Magenta$X) # d21_Mod.Magenta$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21MagentaAmb_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21MagentaAmb_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21MagentaAmb_MFslim_A <- data.frame(Term = rep.int(D21MagentaAmb_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D21MagentaAmb_MFslim_B <- merge(D21MagentaAmb_MFslim_A, D21MagentaAmb_MFslim, by="Term") #Add back counts, term, and category info
-D21MagentaAmb_MFslim_C <- unique(setDT(D21MagentaAmb_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21MagentaAmb_MFslim_final <- data.frame(slim_term=D21MagentaAmb_MFslim_C$Term, slim_cat=D21MagentaAmb_MFslim_C$category, category=D21MagentaAmb_MFslim_C$go_term, Gene.Count=D21MagentaAmb_MFslim_C$Gene.Count, GO.Count=D21MagentaAmb_MFslim_C$Count) #rename columns) #rename columns
-
-
-
-# D21BlueAmb  ================================================================= #
-head(d21_Mod.blue) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D21BlueAmb_BPslim <- filter(D21BlueAmb_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D21BlueAmb_BPslim$go_terms), ";") #split into multiple GO ids
-D21BlueAmb_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D21BlueAmb_BPslim)) {
-  table <- data.frame(GOlist = unlist(D21BlueAmb_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.blue$X) # d21_Mod.Blue$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21BlueAmb_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21BlueAmb_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21BlueAmb_BPslim_A <- data.frame(Term = rep.int(D21BlueAmb_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D21BlueAmb_BPslim_B <- merge(D21BlueAmb_BPslim_A, D21BlueAmb_BPslim, by="Term") #Add back counts, term, and category info
-D21BlueAmb_BPslim_C <- unique(setDT(D21BlueAmb_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21BlueAmb_BPslim_final <- data.frame(slim_term=D21BlueAmb_BPslim_C$Term, slim_cat=D21BlueAmb_BPslim_C$category, category=D21BlueAmb_BPslim_C$go_term, Gene.Count=D21BlueAmb_BPslim_C$Gene.Count, GO.Count=D21BlueAmb_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D21BlueAmb_MFslim <- filter(D21BlueAmb_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D21BlueAmb_MFslim$go_terms), ";") #split into multiple GO ids
-D21BlueAmb_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D21BlueAmb_MFslim)) {
-  table <- data.frame(GOlist = unlist(D21BlueAmb_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.blue$X) # d21_Mod.Blue$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21BlueAmb_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21BlueAmb_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21BlueAmb_MFslim_A <- data.frame(Term = rep.int(D21BlueAmb_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D21BlueAmb_MFslim_B <- merge(D21BlueAmb_MFslim_A, D21BlueAmb_MFslim, by="Term") #Add back counts, term, and category info
-D21BlueAmb_MFslim_C <- unique(setDT(D21BlueAmb_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21BlueAmb_MFslim_final <- data.frame(slim_term=D21BlueAmb_MFslim_C$Term, slim_cat=D21BlueAmb_MFslim_C$category, category=D21BlueAmb_MFslim_C$go_term, Gene.Count=D21BlueAmb_MFslim_C$Gene.Count, GO.Count=D21BlueAmb_MFslim_C$Count) #rename columns) #rename columns
-
-
-# ====================================================================================
-# Ambient > Moderate Modules - STACKED BAR PLOT 
-#
-# 
-# ====================================================================================
-# create color palette  --------------------------------------------------------------------------------------- #
-library(RColorBrewer)
-# cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
-#           "#F0E442", "#0072B2", "#D55E00", "#CC79A7") # color blind pallette
-OrangeRed <- brewer.pal(3, "OrRd") 
-GreenBlue <- brewer.pal(3, "GnBu") 
-
-# add ontology column  ---------------------------------------------------------------------------------------- #
-D7BrownAmb_MFslim_final$Ontolgy     <- "D7Brown_MF"
-D14BrownAmb_MFslim_final$Ontolgy    <- "D14Brown_MF"
-D21MagentaAmb_MFslim_final$Ontolgy  <- "D21Magenta_MF"
-D21BlueAmb_MFslim_final$Ontolgy     <- "D21Blue_MF"
-
-D7BrownAmb_BPslim_final$Ontolgy     <- "D7Brown_BP"
-D14BrownAmb_BPslim_final$Ontolgy    <- "D14Brown_BP"
-D21MagentaAmb_BPslim_final$Ontolgy  <- "D21Magenta_BP"
-D21BlueAmb_BPslim_final$Ontolgy     <- "D21Blue_BP"
-
-
-# BIND DATA TO FACET THE PLOTS BY UP AND DOWN REG   ---------------------------------------------------------- #
-# bp
-BP_Amb <- rbind(D7BrownAmb_BPslim_final, D14BrownAmb_BPslim_final, D21MagentaAmb_BPslim_final, D21BlueAmb_BPslim_final) # merge the data by binding rows 
-BP_Amb$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_Amb$Ontolgy <- factor(BP_Amb$Ontolgy, levels = c("D7Brown_BP", "D14Brown_BP", "D21Magenta_BP", "D21Blue_BP"))# reorder the facotr level for the facet wrap plot 
-BP_Amb_filtered <- BP_Amb %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-# mf
-MF_Amb <- rbind(D7BrownAmb_MFslim_final, D14BrownAmb_MFslim_final, D21MagentaAmb_MFslim_final, D21BlueAmb_MFslim_final) # merge the data by binding rows 
-MF_Amb$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_Amb$Ontolgy <- factor(MF_Amb$Ontolgy, levels = c("D7Brown_MF", "D14Brown_MF", "D21Magenta_MF", "D21Blue_MF")) # reorder the facotr level for the facet wrap plot 
-MF_Amb_filtered <- MF_Amb %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-
-# PLOTTING --------------------------------------------------------------------------------------------------- #
-BP_Amb_filtered$slim_term <- factor(BP_Amb_filtered$slim_term ,levels=rev(unique(BP_Amb_filtered$slim_term))) # make slim term alphabetical for plotting
-BP_Plot_PrimEffect_AMB <-ggplot(data = BP_Amb_filtered, aes(x = Ont, y = slim_term)) + 
-                          geom_tile(aes(fill=Gene.Count, width = 1)) + 
-                          scale_fill_gradient(low = "thistle1", high = "steelblue4") +
-                          facet_grid(~Ontolgy, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-                          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                             strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                             strip.text.x = element_text(size = 12, face = "bold"),
-                                             axis.title.x = element_blank(),
-                                             axis.title.y = element_text(size=15),
-                                             axis.text = element_text(size = 12), legend.position = "right",
-                                             plot.margin = unit(c(0,1,0,0.25), "cm"))+
-                          ggtitle('GOslim Biological Process: WGCNA Ambient > Moderate Primary Effect')
-
-MF_Amb_filtered$slim_term <- factor(MF_Amb_filtered$slim_term ,levels=rev(unique(MF_Amb_filtered$slim_term))) # make slim term alphabetical for plotting
-MF_Plot_PrimEffect_AMB <- ggplot(data = MF_Amb_filtered, aes(x = Ont, y = slim_term)) + 
-                          geom_tile(aes(fill=Gene.Count, width = 1)) + 
-                          scale_fill_gradient(low = "thistle1", high = "tomato4") +
-                          facet_grid(~Ontolgy, scales = "free_y", labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-                          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                             strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-                                             strip.text.x = element_text(size = 12, face = "bold"),
-                                             axis.title.x = element_blank(),
-                                             axis.title.y = element_text(size=15),
-                                             axis.text = element_text(size = 12), legend.position = "right",
-                                             plot.margin = unit(c(0,1,0,0.25), "cm"))+
-                          ggtitle('GOslim Molecular Function: WGCNA Ambient > Moderate Primary Effect')
-
-# SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Ambient_BP.pdf", sep =''), width=10, height=5)
-print(ggarrange(BP_Plot_PrimEffect_AMB,         
-                plotlist = NULL,
-                ncol = 1,
-                nrow = 1,
-                labels = NULL))
-dev.off()     
-
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Ambient_MF.pdf", sep =''), width=10, height=5)
-print(ggarrange(MF_Plot_PrimEffect_AMB,         
-                plotlist = NULL,
-                ncol = 1,
-                nrow = 1,
-                labels = NULL))
-dev.off()     
-
-
-
-
-
-
-# ====================================================================================
-# Moderate > Ambient Modules - prep GO slim final table (number of genes in each GO slim bin)
-#
-# ...to do this I call all unique genes in the module that contain the go term before merging by GOslim
-# ====================================================================================
-
-# D7YellowAmb  ================================================================= #
-head(d7_Mod.Yellow) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D7YellowMod_BPslim <- filter(D7YellowMod_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D7YellowMod_BPslim$go_terms), ";") #split into multiple GO ids
-D7YellowMod_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D7YellowMod_BPslim)) {
-  table <- data.frame(GOlist = unlist(D7YellowMod_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d7_Mod.Yellow$X) # d7_Mod.Yellow$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D7YellowMod_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D7YellowMod_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D7YellowMod_BPslim_A <- data.frame(Term = rep.int(D7YellowMod_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D7YellowMod_BPslim_B <- merge(D7YellowMod_BPslim_A, D7YellowMod_BPslim, by="Term") #Add back counts, term, and category info
-D7YellowMod_BPslim_C <- unique(setDT(D7YellowMod_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D7YellowMod_BPslim_final <- data.frame(slim_term=D7YellowMod_BPslim_C$Term, slim_cat=D7YellowMod_BPslim_C$category, category=D7YellowMod_BPslim_C$go_term, Gene.Count=D7YellowMod_BPslim_C$Gene.Count, GO.Count=D7YellowMod_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D7YellowMod_MFslim <- filter(D7YellowMod_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D7YellowMod_MFslim$go_terms), ";") #split into multiple GO ids
-D7YellowMod_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D7YellowMod_MFslim)) {
-  table <- data.frame(GOlist = unlist(D7YellowMod_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d7_Mod.Yellow$X) # d7_Mod.Yellow$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D7YellowMod_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D7YellowMod_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D7YellowMod_MFslim_A <- data.frame(Term = rep.int(D7YellowMod_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D7YellowMod_MFslim_B <- merge(D7YellowMod_MFslim_A, D7YellowMod_MFslim, by="Term") #Add back counts, term, and category info
-D7YellowMod_MFslim_C <- unique(setDT(D7YellowMod_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D7YellowMod_MFslim_final <- data.frame(slim_term=D7YellowMod_MFslim_C$Term, slim_cat=D7YellowMod_MFslim_C$category, category=D7YellowMod_MFslim_C$go_term, Gene.Count=D7YellowMod_MFslim_C$Gene.Count, GO.Count=D7YellowMod_MFslim_C$Count) #rename columns) #rename columns
-
-
-# D14BlackAmb  ================================================================= #
-head(d14_Mod.Black) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D14BlackMod_BPslim <- filter(D14BlackMod_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D14BlackMod_BPslim$go_terms), ";") #split into multiple GO ids
-D14BlackMod_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D14BlackMod_BPslim)) {
-  table <- data.frame(GOlist = unlist(D14BlackMod_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d14_Mod.Black$X) # d14_Mod.Black$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D14BlackMod_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D14BlackMod_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D14BlackMod_BPslim_A <- data.frame(Term = rep.int(D14BlackMod_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D14BlackMod_BPslim_B <- merge(D14BlackMod_BPslim_A, D14BlackMod_BPslim, by="Term") #Add back counts, term, and category info
-D14BlackMod_BPslim_C <- unique(setDT(D14BlackMod_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D14BlackMod_BPslim_final <- data.frame(slim_term=D14BlackMod_BPslim_C$Term, slim_cat=D14BlackMod_BPslim_C$category, category=D14BlackMod_BPslim_C$go_term, Gene.Count=D14BlackMod_BPslim_C$Gene.Count, GO.Count=D14BlackMod_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D14BlackMod_MFslim <- filter(D14BlackMod_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D14BlackMod_MFslim$go_terms), ";") #split into multiple GO ids
-D14BlackMod_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D14BlackMod_MFslim)) {
-  table <- data.frame(GOlist = unlist(D14BlackMod_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d14_Mod.Black$X) # d14_Mod.Black$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D14BlackMod_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D14BlackMod_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D14BlackMod_MFslim_A <- data.frame(Term = rep.int(D14BlackMod_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D14BlackMod_MFslim_B <- merge(D14BlackMod_MFslim_A, D14BlackMod_MFslim, by="Term") #Add back counts, term, and category info
-D14BlackMod_MFslim_C <- unique(setDT(D14BlackMod_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D14BlackMod_MFslim_final <- data.frame(slim_term=D14BlackMod_MFslim_C$Term, slim_cat=D14BlackMod_MFslim_C$category, category=D14BlackMod_MFslim_C$go_term, Gene.Count=D14BlackMod_MFslim_C$Gene.Count, GO.Count=D14BlackMod_MFslim_C$Count) #rename columns) #rename columns
-
-
-# D21YellowAmb  ================================================================= #
-head(d21_Mod.Yellow) # ESSENTIAL THAT YOU HAVE THIS LOADED! - used to filter 'Pgen_GOterms2' in the for loop
-#BP
-D21YellowMod_BPslim <- filter(D21YellowMod_BPslim, Count>5 & Term!="biological_process") #filter out empty slims and term "biological process"
-BPsplitted <- strsplit(as.character(D21YellowMod_BPslim$go_terms), ";") #split into multiple GO ids
-D21YellowMod_BPslim$BPsplitted <- BPsplitted
-for (i in 1:nrow(D21YellowMod_BPslim)) {
-  table <- data.frame(GOlist = unlist(D21YellowMod_BPslim[i,6])) # call the BPsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.Yellow$X) # d21_Mod.Yellow$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21YellowMod_BPslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21YellowMod_BPslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21YellowMod_BPslim_A <- data.frame(Term = rep.int(D21YellowMod_BPslim$Term, sapply(BPsplitted, length)), go_term = unlist(BPsplitted)) #list all
-D21YellowMod_BPslim_B <- merge(D21YellowMod_BPslim_A, D21YellowMod_BPslim, by="Term") #Add back counts, term, and category info
-D21YellowMod_BPslim_C <- unique(setDT(D21YellowMod_BPslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21YellowMod_BPslim_final <- data.frame(slim_term=D21YellowMod_BPslim_C$Term, slim_cat=D21YellowMod_BPslim_C$category, category=D21YellowMod_BPslim_C$go_term, Gene.Count=D21YellowMod_BPslim_C$Gene.Count, GO.Count=D21YellowMod_BPslim_C$Count) #rename columns) #rename columns
-#MF
-D21YellowMod_MFslim <- filter(D21YellowMod_MFslim, Count>2 & Term!="molecular_function") #filter out empty slims and term "biological process"
-MFsplitted <- strsplit(as.character(D21YellowMod_MFslim$go_terms), ";") #split into multiple GO ids
-D21YellowMod_MFslim$MFsplitted <- MFsplitted
-for (i in 1:nrow(D21YellowMod_MFslim)) {
-  table <- data.frame(GOlist = unlist(D21YellowMod_MFslim[i,6])) # call the MFsplitted column of characters and create a small table to filter
-  table <- unique(table)
-  Pgen_module <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% d21_Mod.Yellow$X) # d21_Mod.Yellow$X calls the gene names in the origin Module membership dataframe at the start of this script
-  Pgen_loop <- Pgen_module %>% dplyr::filter(Go.terms %in% table$GOlist) # filter Gene IDs with the GO term
-  Pgen_geneIDs <- Pgen_loop[-2] # ommit the GO.terms to call unique gene calls 
-  Pgen_geneIDs <- unique(Pgen_geneIDs) # call unique Gene calls (unique genes that had the GO term within each of the GOslim bins)
-  D21YellowMod_MFslim$Gene.Count[i] <- nrow(Pgen_geneIDs)  # count of unique GeneIDs in each GOslim bin
-  D21YellowMod_MFslim$Gene.IDs[[i]] <- vapply((Pgen_geneIDs$gene.ID), paste, collapse = ";", character(1L))} # name of each unique gene.id in each GOslim bin
-D21YellowMod_MFslim_A <- data.frame(Term = rep.int(D21YellowMod_MFslim$Term, sapply(MFsplitted, length)), go_term = unlist(MFsplitted)) #list all
-D21YellowMod_MFslim_B <- merge(D21YellowMod_MFslim_A, D21YellowMod_MFslim, by="Term") #Add back counts, term, and category info
-D21YellowMod_MFslim_C <- unique(setDT(D21YellowMod_MFslim_B)[order(go_term, -Gene.Count)], by = "category") #remove duplicate offspring terms, keeping only those in the larger umbrella term (Count number)
-D21YellowMod_MFslim_final <- data.frame(slim_term=D21YellowMod_MFslim_C$Term, slim_cat=D21YellowMod_MFslim_C$category, category=D21YellowMod_MFslim_C$go_term, Gene.Count=D21YellowMod_MFslim_C$Gene.Count, GO.Count=D21YellowMod_MFslim_C$Count) #rename columns) #rename columns
-
-# ====================================================================================
-# Moderate > Ambient Modules - STACKED BAR PLOT 
-#
-# 
-# ====================================================================================
-# create color palette  --------------------------------------------------------------------------------------- #
-library(RColorBrewer)
-# cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
-#           "#F0E442", "#0072B2", "#D55E00", "#CC79A7") # color blind pallette
-OrangeRed <- brewer.pal(3, "OrRd") 
-GreenBlue <- brewer.pal(3, "GnBu") 
-
-# add ontology column  ---------------------------------------------------------------------------------------- #
-D7YellowMod_MFslim_final$Ontolgy     <- "D7Yellow_MF"
-D14BlackMod_MFslim_final$Ontolgy     <- "D14Black_MF"
-D21YellowMod_MFslim_final$Ontolgy    <- "D21Yellow_MF"
-
-D7YellowMod_BPslim_final$Ontolgy     <- "D7Yellow_BP"
-D14BlackMod_BPslim_final$Ontolgy     <- "D14Black_BP"
-D21YellowMod_BPslim_final$Ontolgy    <- "D21Yellow_BP"
-
-
-# BIND DATA TO FACET THE PLOTS BY UP AND DOWN REG   ---------------------------------------------------------- #
-# bp
-BP_Mod <- rbind(D7YellowMod_BPslim_final, D14BlackMod_BPslim_final, D21YellowMod_BPslim_final) # merge the data by binding rows 
+# BP  - call the sig moduels with A > M main effects 
 BP_Mod$Ont <- "BP" # create a new common clumn to call in the plot 
-BP_Mod$Ontolgy <- factor(BP_Mod$Ontolgy, levels = c("D7Yellow_BP", "D14Black_BP", "D21Yellow_BP"))# reorder the facotr level for the facet wrap plot 
-BP_Mod_filtered <- BP_Mod %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
-# mf
-MF_Mod <- rbind(D7YellowMod_MFslim_final,D14BlackMod_MFslim_final, D21YellowMod_MFslim_final) # merge the data by binding rows 
+BP_Mod$module_day <- factor(BP_Mod$module_day, levels = c("Day7_yellow", "Day14_black", "Day21_yellow"))# reorder the facotr level for the facet wrap plot 
+BP_Mod_filtered <- BP_Mod %>%  dplyr::filter(Gene_count > 1) # ommit all with gene counts <1
+# MF   - call the sig moduels with A > M main effects 
 MF_Mod$Ont <- "MF" # create a new common clumn to call in the plot 
-MF_Mod$Ontolgy <- factor(MF_Mod$Ontolgy, levels = c("D7Yellow_MF", "D14Black_MF", "D21Yellow_MF")) # reorder the facotr level for the facet wrap plot 
-MF_Mod_filtered <- MF_Mod %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts <1
+MF_Mod$module_day <- factor(MF_Mod$module_day, levels = c("Day7_yellow", "Day14_black", "Day21_yellow")) # reorder the facotr level for the facet wrap plot 
+MF_Mod_filtered <- MF_Mod %>%  dplyr::filter(Gene_count > 1) # ommit all with gene counts <1
 
-# PLOTTING --------------------------------------------------------------------------------------------------- #
-BP_Plot_PrimEffect_MOD <- ggplot(data = BP_Mod_filtered, aes(x = Ont, y = Gene.Count, fill=forcats::fct_reorder(slim_term,Gene.Count,.desc = TRUE))) + # BP plot
-  geom_bar(color = "white",size=1.5,stat="identity") + # call bar and create lines between each slim term
-  scale_fill_manual(values =  rev( colorRampPalette(OrangeRed)( (nrow(BP_Mod_filtered)) ) ) )+ # fill with pallette accomodating the max nmber of slim terms
-  geom_text(aes(label = forcats::fct_reorder(slim_term,Gene.Count,.desc = TRUE)), colour = "black", position="stack", size = 5, vjust = 1.25) + # add labels
-  theme_classic() + # classic theme
-  ylim(0, 1000) + 
-  theme(legend.position = "none",text = element_text(size=25)) +
-  facet_wrap(~Ontolgy) # facet by the upregulated and downregulated datasets
 
-MF_Plot_PrimEffect_MOD <- ggplot(data = MF_Mod_filtered, aes(x = Ont, y = Gene.Count, fill=forcats::fct_reorder(slim_term,Gene.Count,.desc = TRUE))) + # MF plot
-  geom_bar(color = "white",size=1.5,stat="identity") + # call bar and create lines between each slim term
-  scale_fill_manual(values =  rev( colorRampPalette(GreenBlue)( (nrow(MF_Mod_filtered)) ) ) )+ # fill with pallette accomodating the max nmber of slim terms
-  geom_text(aes(label = forcats::fct_reorder(slim_term,Gene.Count,.desc = TRUE)), colour = "black", position="stack", size = 5, vjust = 1.25) + # add labels
-  theme_classic() + # classic theme
-  ylim(0, 300) +
-  theme(legend.position = "none",text = element_text(size=25)) +
-  facet_wrap(~Ontolgy) # facet by the upregulated and downregulated datasets
+
+# plots
+BP_Mod_Plot <-ggplot(data = BP_Mod, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+                geom_tile(aes(fill=Gene_count, width = 1)) + 
+                scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 150), breaks=seq(0,150,by=25)) +
+                facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+                theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                   panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                   strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                   strip.text.x = element_text(size = 8, face = "bold"),
+                                   axis.title.x = element_blank(),
+                                   axis.title.y = element_text(size=8),
+                                   axis.text = element_text(size = 8), legend.position = "right",
+                                   plot.margin = unit(c(0,1,0,0.25), "cm"))+
+                ggtitle('GOslim Biological Process: WGCNA all modules Modient > Ambient')
+
+# plot MF
+MF_Mod_Plot <-ggplot(data = MF_Mod, aes(x = Ont, y = forcats::fct_rev(slim_term))) + 
+                geom_tile(aes(fill=Gene_count, width = 1)) + 
+                #scale_fill_continuous(limits=c(0, 200), breaks=seq(0,200,by=25)) +
+                scale_fill_gradient(low = "grey95", high = "grey10",limits=c(0, 150), breaks=seq(0,150,by=25)) +
+                facet_grid(~module_day, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+                theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                   panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                   strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                   strip.text.x = element_text(size = 8, face = "bold"),
+                                   axis.title.x = element_blank(),
+                                   axis.title.y = element_text(size=8),
+                                   axis.text = element_text(size = 8), legend.position = "right",
+                                   plot.margin = unit(c(0,1,0,0.25), "cm"))+
+                ggtitle('GOslim Molecular Function: WGCNA all modules Modient > Ambient')
+
+
 
 # SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Moderate_BP.pdf", sep =''), width=15, height=20)
-print(ggarrange(BP_Plot_PrimEffect_MOD,         
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/GOslim_Modules_Moderate.pdf", sep =''), width=20, height=8)
+print(ggarrange(BP_Mod_Plot, MF_Mod_Plot,         
                 plotlist = NULL,
-                ncol = 1,
+                ncol = 2,
                 nrow = 1,
                 labels = NULL))
-dev.off()     
+dev.off() 
 
-pdf(paste("Analysis//Output/GO/WGCNA_goseq/GOslim_PrimEff_Moderate_MF.pdf", sep =''), width=15, height=20)
-print(ggarrange(MF_Plot_PrimEffect_MOD,         
-                plotlist = NULL,
-                ncol = 1,
-                nrow = 1,
-                labels = NULL))
-dev.off()     
+
+
+
+
+
+#===================================================================================================
+#
+#
+#  After lookinf over the visuals - I have dtermined several lines of interest to explore further...
+# 
+#   MORE PLOTTING 
+#
+#===================================================================================================
+library(dplyr)
+library(VennDiagram)
+library(ggVennDiagram)
+library(ggvenn)
+library(gridExtra)
+library(ggpubr)
+library(reshape2)
+library(DESeq2)
+
+# Ambient and Moderate effect modules 
+# Ambient 
+BP_Amb <- rbind(d7_slimBP_brownModule, d14_slimBP_brownModule, d21_slimBP_magentaModule, d21_slimBP_blueModule) # merge the data by binding rows 
+MF_Amb <- rbind(d7_slimMF_brownModule, d14_slimMF_brownModule, d21_slimMF_magentaModule, d21_slimMF_blueModule) # merge the data by binding rows 
+# Moderate
+BP_Mod <- rbind(d7_slimBP_yellowModule, d14_slimBP_blackModule, d21_slimBP_yellowModule) # merge the data by binding rows 
+MF_Mod <- rbind(d7_slimMF_yellowModule, d14_slimMF_blackModule, d21_slimMF_yellowModule) # merge the data by binding rows 
+
+# ===================================================================================
+#
+#  LOAD DATA AND  DATA PREP FOR PLOTS
+#
+# ===================================================================================
+# LOAD DATA
+# Load the annotation file 
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+annot.condenced         <- Geoduck_annotation[,c(1,5,7)] # build annotation file to merge with master: gene ID, uniprot ID, gene terms with EC (for KEGG)
+names(annot.condenced)  <- c('Gene_IDs', 'Uniprot', 'Gene_term_EC') # RENAME THE COLUMNS 
+annot.condenced$gene    <- str_extract(annot.condenced$Gene_term_EC, "[^(]+")
+
+# count data
+day7.counts.matrix  <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day14.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day21.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+
+# trait data
+Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
+
+# treatment data
+d7.Treatment_data <- Master.Treatment_Phenotype.data %>%   dplyr::filter(Date %in% 20190731) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament') # split for day 7 data 
+d14.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190807) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament')# split for day 7 data 
+d21.Treatment_data <- Master.Treatment_Phenotype.data  %>%  dplyr::filter(Date %in% 20190814) %>%  dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment')# split for day 7 data 
+
+# PREPARE THE DATA FOR THE 3-PANEL TREATMENT PLOTS 
+# ================================================================================== #
+# count data - day  7
+d7.data = as.data.frame(t(day7.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d7.data) = day7.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d7.data) = names(day7.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d7.data_matrix <- data.frame(day7.counts.matrix[,-1], row.names=day7.counts.matrix[,1]) 
+d7.data_matrix_t <- t(d7.data_matrix)
+dds.d7 <- DESeqDataSetFromMatrix(countData = d7.data_matrix,  colData = d7.Treatment_data, design = ~ 1)
+dds.d7_vst <- vst(dds.d7) # transform it vst
+dds.d7_vst <- assay(dds.d7_vst) # call only the transformed coutns in the dds object
+d7_vst <- t(dds.d7_vst) # transpose columns to rows and vice versa
+# =================================================================================== #
+# count data - day  14
+d14.data = as.data.frame(t(day14.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d14.data) = day14.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d14.data) = names(day14.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d14.data_matrix <- data.frame(day14.counts.matrix[,-1], row.names=day14.counts.matrix[,1]) 
+d14.data_matrix_t <- t(d14.data_matrix)
+# match number of samples in treatment data - SG92 was not sequenced  - ommit from the treatment data for the dds object 
+d14.Treatment_data_OM <- d14.Treatment_data %>% dplyr::filter(!Sample.Name %in% 'SG92')
+dds.d14 <- DESeqDataSetFromMatrix(countData = d14.data_matrix,  colData = d14.Treatment_data_OM, design = ~ 1)
+dds.d14_vst <- vst(dds.d14) # transform it vst
+dds.d14_vst <- assay(dds.d14_vst) # call only the transformed coutns in the dds object
+d14_vst <- t(dds.d14_vst) # transpose columns to rows and vice versa
+# ================================================================================== #
+# count data - day  21
+d21.data = as.data.frame(t(day21.counts.matrix[, -(1)])) # ommit all columns but samples and transpose
+names(d21.data) = day21.counts.matrix$X # assigns column names (previous jsut numbered) as the gene ID 
+rownames(d21.data) = names(day21.counts.matrix)[-(1)]; # assigns the row names as the sample ID
+d21.data_matrix <- data.frame(day21.counts.matrix[,-1], row.names=day21.counts.matrix[,1]) 
+d21.data_matrix_t <- t(d21.data_matrix)
+dds.d21 <- DESeqDataSetFromMatrix(countData = d21.data_matrix,  colData = d21.Treatment_data, design = ~ 1)
+dds.d21_vst <- vst(dds.d21) # transform it vst
+dds.d21_vst <- assay(dds.d21_vst) # call only the transformed coutns in the dds object
+d21_vst <- t(dds.d21_vst) # transpose columns to rows and vice versa
+# =================================================================================== #
+# merge treatment with VST count data 
+# create common column to merge treatment by Sample.Name 
+d7_vst_counts <- cbind(rownames(d7_vst), data.frame(d7_vst, row.names=NULL))
+colnames(d7_vst_counts)[1] <- "Sample.Name"
+Day7.ExpVST <- merge(d7_vst_counts, d7.Treatment_data, by = 'Sample.Name') # merge 
+
+d14_vst_counts <- cbind(rownames(d14_vst), data.frame(d14_vst, row.names=NULL))
+colnames(d14_vst_counts)[1] <- "Sample.Name"
+Day14.ExpVST <- merge(d14_vst_counts, d14.Treatment_data_OM, by = 'Sample.Name') # merge 
+
+d21_vst_counts <- cbind(rownames(d21_vst), data.frame(d21_vst, row.names=NULL))
+colnames(d21_vst_counts)[1] <- "Sample.Name"
+Day21.ExpVST <- merge(d21_vst_counts, d21.Treatment_data, by = 'Sample.Name') # merge 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# BIOLOGICAL PROCESS:  HIGHER expression under AMBIENT CONDITIONING ========================================================== #
+BP_Amb_GOslim <- BP_Amb %>% 
+                  group_by(slim_term) %>% 
+                  tally() %>% 
+                  dplyr::filter(n == 3) # create the dataset to loop Venn diagrams 
+
+for (i in 1:nrow(BP_Amb_GOslim)) {
+  
+  # PREP THE LOOP DATA CALLS
+  slim <- BP_Amb_GOslim[i,1] # call the term for the loop - creates Venn and Figures 
+  # prep data
+  slim_BP <- BP_Amb %>% dplyr::filter(slim_term %in% slim)
+  slim_BP$slimSplitted  <- strsplit(as.character(slim_BP$Gene_IDs), ";") # split the Gene IDs for Venn 
+  slim_d7  <- data.frame(Day = 'Day7', Gene.ID = unlist(slim_BP[1,10]))  # name the first row
+  slim_d14 <- data.frame(Day = 'Day14', Gene.ID = unlist(slim_BP[2,10])) # name the second row
+  slim_d21 <- data.frame(Day = 'Day21', Gene.ID = unlist(slim_BP[3,10])) # name the third row
+  slim_df  <- list(
+    Day7_BrownMod           = slim_d7$Gene.ID, 
+    Day14_BrownMod          = slim_d14$Gene.ID, 
+    Day21_BlueMod           = slim_d21$Gene.ID) # create a list to call in using ggvenn 
+  
+  # Venn diagram
+  VennDiag <- ggvenn(slim_df,  # Venn diagram
+                    fill_color = c("white", "white", "white"),
+                    stroke_size = 0.5, set_name_size = 4) +
+                    ggtitle(paste("WGCNA: ",  slim, sep = ''))
+  pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_BP_",slim,".pdf", sep =''))
+  print(VennDiag)
+  # grid.arrange(Day7.volcano.primary, Day14.volcano.primary,ncol=1, nrow=2, clip="off")
+  dev.off()
+  
+  # write a csv for the corresponding Venn
+  bind_data <- rbind(slim_d7, slim_d14, slim_d21)
+  colnames(bind_data)[2] <- 'Gene_IDs'
+  merged_with_annot <- merge(bind_data, annot.condenced[c(1,2,4)], by = 'Gene_IDs') %>% 
+                        group_by(Gene_IDs, gene) %>% 
+                        mutate(count = n()) %>% 
+                        arrange(desc(count))
+  # write csv
+  write.csv(merged_with_annot, paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_BP_",slim,".csv", sep =''))
+
+  
+  panelfig_data <- merged_with_annot %>% dplyr::filter(count ==3)
+  
+  
+  if (nrow(panelfig_data) > 0) {
+    Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(panelfig_data$Gene_IDs))
+    Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
+    
+    
+    # ===================================================================================
+    # Day 7 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day7.ExpVST_GOIs_MELT <- reshape2::melt(Day7.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day7.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day7_ExpVst_Master <- merge(panelfig_data, Day7.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day7_meanExpr <- Day7_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by( group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day7_meanExpr$PrimaryTreatment <- substr(Day7_meanExpr$group, 1,1) # primary
+    Day7_meanExpr$SecondTreatment <- substr(Day7_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 14 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day14.ExpVST_GOIs_MELT <- reshape2::melt(Day14.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day14.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day14_ExpVst_Master <- merge(panelfig_data, Day14.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day14_meanExpr <- Day14_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day14_meanExpr$PrimaryTreatment <- substr(Day14_meanExpr$group, 1,1) # primary
+    Day14_meanExpr$SecondTreatment <- substr(Day14_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 21 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day21.ExpVST_GOIs_MELT <- reshape2::melt(Day21.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment','group'))) # melt using reshape2
+    names(Day21.ExpVST_GOIs_MELT)[(6:7)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day21_ExpVst_Master <- merge(panelfig_data, Day21.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day21_meanExpr <- Day21_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    # fix(Day21_meanExpr)
+    # create treatment groups 
+    Day21_meanExpr$PrimaryTreatment <- substr(Day21_meanExpr$group, 1,1) # primary
+    Day21_meanExpr$SecondTreatment <- substr(Day21_meanExpr$group, 2,2) # second
+    Day21_meanExpr$ThirdTreatment <- substr(Day21_meanExpr$group, 3,3) # third
+    
+    # ===================================================================================
+    # Now for the for looped plots!
+    #
+    # ===================================================================================
+    pd <- position_dodge(0.3)
+    # for(i in 1:nrow(target_GOIs)) {
+    #   
+    #         if ( (nrow(Day7_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d7_plots <- Day7_meanExpr %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 7:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d7_plots <- plot.new() }
+    # 
+    #   
+    #       if ( (nrow(Day14_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d14_plots <- Day14_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab("Gene Expression (mean±SE VST transformed)") +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 14:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d14_plots <- plot.new() }
+    # 
+    # 
+    #       
+    #       if ( (nrow(Day21_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d21_plots <- Day21_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=ThirdTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Third pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 21:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none") +
+      facet_wrap(~SecondTreatment)
+    # } else { d21_plots <- plot.new() }
+    
+    pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_BP_",substr(slim,1,13),"_vstExpression.pdf", sep =''), width=15, height=6)
+    print(ggarrange(d7_plots, d14_plots, d21_plots,        
+                    plotlist = NULL,
+                    ncol = 3,
+                    nrow = 1,
+                    labels = NULL))
+    dev.off()
+  } # plotting for loop
+  
+  else {}
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# MOLECULAR FUNCTION:  HIGHER expression under AMBIENT CONDITIONING ========================================================== #
+MF_Amb_GOslim <- MF_Amb %>% 
+  filter(!module_day %in% "Day21_magenta", Gene_count >0) %>% 
+  group_by(slim_term) %>% 
+  tally() %>% 
+  dplyr::filter(n >= 3) # create the dataset to loop Venn diagrams 
+
+for (i in 1:nrow(MF_Amb_GOslim)) {
+  slim <- MF_Amb_GOslim[i,1] # call the term for the loop - creates Venn and Figures 
+  
+  # prep data
+  slim_MF <- MF_Amb  %>% dplyr::filter(slim_term %in% slim, Gene_count >0)
+  slim_MF$slimSplitted  <- strsplit(as.character(slim_MF$Gene_IDs), ";") # split the Gene IDs for Venn 
+  slim_d7  <- data.frame(Day = 'Day7',  Gene.ID = unlist(slim_MF[1,10]))  # name the first row
+  slim_d14 <- data.frame(Day = 'Day14', Gene.ID = unlist(slim_MF[2,10])) # name the second row
+  slim_d21 <- data.frame(Day = 'Day21', Gene.ID = unlist(slim_MF[3,10])) # name the third row
+  slim_df  <- list(
+    Day7_BrownMod           = slim_d7$Gene.ID, 
+    Day14_BrownMod          = slim_d14$Gene.ID, 
+    Day21_BlueMod           = slim_d21$Gene.ID) # create a list to call in using ggvenn 
+  
+  # Venn diagram
+  VennDiag <- ggvenn(slim_df,  # Venn diagram
+                     fill_color = c("white", "white", "white"),
+                     stroke_size = 0.5, set_name_size = 4) +
+    ggtitle(paste("WGCNA: ",  slim, sep = ''))
+  pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_MF_",substr(slim,1,13),".pdf", sep =''))
+  print(VennDiag)
+  # grid.arrange(Day7.volcano.primary, Day14.volcano.primary,ncol=1, nrow=2, clip="off")
+  dev.off()
+  
+  # write a csv for the corresponding Venn
+  bind_data <- rbind(slim_d7, slim_d14, slim_d21)
+  colnames(bind_data)[2] <- 'Gene_IDs'
+  merged_with_annot <- merge(bind_data, annot.condenced[c(1,2,4)], by = 'Gene_IDs') %>% 
+    group_by(Gene_IDs, gene) %>% 
+    mutate(count = n()) %>% 
+    arrange(desc(count))
+  # write csv
+  write.csv(merged_with_annot, paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_MF_",substr(slim,1,13),".csv", sep =''))
+  
+  panelfig_data <- merged_with_annot %>% dplyr::filter(count ==3)
+  
+  
+  if (nrow(panelfig_data) > 0) {
+    Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(panelfig_data$Gene_IDs))
+    Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
+    
+    
+    # ===================================================================================
+    # Day 7 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day7.ExpVST_GOIs_MELT <- reshape2::melt(Day7.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day7.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day7_ExpVst_Master <- merge(panelfig_data, Day7.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day7_meanExpr <- Day7_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by( group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day7_meanExpr$PrimaryTreatment <- substr(Day7_meanExpr$group, 1,1) # primary
+    Day7_meanExpr$SecondTreatment <- substr(Day7_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 14 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day14.ExpVST_GOIs_MELT <- reshape2::melt(Day14.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day14.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day14_ExpVst_Master <- merge(panelfig_data, Day14.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day14_meanExpr <- Day14_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day14_meanExpr$PrimaryTreatment <- substr(Day14_meanExpr$group, 1,1) # primary
+    Day14_meanExpr$SecondTreatment <- substr(Day14_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 21 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day21.ExpVST_GOIs_MELT <- reshape2::melt(Day21.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment','group'))) # melt using reshape2
+    names(Day21.ExpVST_GOIs_MELT)[(6:7)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day21_ExpVst_Master <- merge(panelfig_data, Day21.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day21_meanExpr <- Day21_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    # fix(Day21_meanExpr)
+    # create treatment groups 
+    Day21_meanExpr$PrimaryTreatment <- substr(Day21_meanExpr$group, 1,1) # primary
+    Day21_meanExpr$SecondTreatment <- substr(Day21_meanExpr$group, 2,2) # second
+    Day21_meanExpr$ThirdTreatment <- substr(Day21_meanExpr$group, 3,3) # third
+    
+    # ===================================================================================
+    # Now for the for looped plots!
+    #
+    # ===================================================================================
+    pd <- position_dodge(0.3)
+    # for(i in 1:nrow(target_GOIs)) {
+    #   
+    #         if ( (nrow(Day7_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d7_plots <- Day7_meanExpr %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 7:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d7_plots <- plot.new() }
+    # 
+    #   
+    #       if ( (nrow(Day14_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d14_plots <- Day14_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab("Gene Expression (mean±SE VST transformed)") +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 14:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d14_plots <- plot.new() }
+    # 
+    # 
+    #       
+    #       if ( (nrow(Day21_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d21_plots <- Day21_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=ThirdTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Third pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 21:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none") +
+      facet_wrap(~SecondTreatment)
+    # } else { d21_plots <- plot.new() }
+    
+    pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Ambient/Ambient_MF_",substr(slim,1,13),"_vstExpression.pdf", sep =''), width=15, height=6)
+    print(ggarrange(d7_plots, d14_plots, d21_plots,        
+                    plotlist = NULL,
+                    ncol = 3,
+                    nrow = 1,
+                    labels = NULL))
+    dev.off()
+  } # plotting for loop
+  
+  else {}
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Biological Process:  HIGHER expression under Moderate CONDITIONING ========================================================== #
+BP_Mod_GOslim <- BP_Mod %>% 
+  group_by(slim_term) %>% 
+  tally() %>% 
+  dplyr::filter(n == 3) # create the dataset to loop Venn diagrams 
+
+for (i in 1:nrow(BP_Mod_GOslim)) {
+  slim <- BP_Mod_GOslim[i,1] # call the term for the loop - creates Venn and Figures 
+  
+  # prep data
+  slim_BP <- BP_Mod %>% dplyr::filter(slim_term %in% slim)
+  slim_BP$slimSplitted  <- strsplit(as.character(slim_BP$Gene_IDs), ";") # split the Gene IDs for Venn 
+  slim_d7  <- data.frame(Day = 'Day7', Gene.ID = unlist(slim_BP[1,10]))  # name the first row
+  slim_d14 <- data.frame(Day = 'Day14', Gene.ID = unlist(slim_BP[2,10])) # name the second row
+  slim_d21 <- data.frame(Day = 'Day21', Gene.ID = unlist(slim_BP[3,10])) # name the third row
+  slim_df  <- list(
+    Day7_YellowMod          = slim_d7$Gene.ID, 
+    Day14_BlackMod          = slim_d14$Gene.ID, 
+    Day21_YellowMod        = slim_d21$Gene.ID) # create a list to call in using ggvenn 
+  
+  # Venn diagram
+  VennDiag <- ggvenn(slim_df,  # Venn diagram
+                     fill_color = c("white", "white", "white"),
+                     stroke_size = 0.5, set_name_size = 4) +
+    ggtitle(paste("WGCNA: ",  slim, sep = ''))
+  pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_BP_",substr(slim,1,13),".pdf", sep =''))
+  print(VennDiag)
+  # grid.arrange(Day7.volcano.primary, Day14.volcano.primary,ncol=1, nrow=2, clip="off")
+  dev.off()
+  
+  # write a csv for the corresponding Venn
+  bind_data <- rbind(slim_d7, slim_d14, slim_d21)
+  colnames(bind_data)[2] <- 'Gene_IDs'
+  merged_with_annot <- merge(bind_data, annot.condenced[c(1,2,4)], by = 'Gene_IDs') %>% 
+    group_by(Gene_IDs, gene) %>% 
+    mutate(count = n()) %>% 
+    arrange(desc(count))
+  merged_with_annot <- as.data.frame(merged_with_annot)
+  # write csv
+  write.csv(merged_with_annot, paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_BP_",substr(slim,1,13),".csv", sep =''))
+  
+  panelfig_data <- merged_with_annot %>% dplyr::filter(count >=2)
+  
+  
+  if (nrow(panelfig_data) > 0) {
+    Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(panelfig_data$Gene_IDs))
+    Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
+    
+    
+    # ===================================================================================
+    # Day 7 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day7.ExpVST_GOIs_MELT <- reshape2::melt(Day7.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day7.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day7_ExpVst_Master <- merge(panelfig_data, Day7.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day7_meanExpr <- Day7_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by( group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day7_meanExpr$PrimaryTreatment <- substr(Day7_meanExpr$group, 1,1) # primary
+    Day7_meanExpr$SecondTreatment <- substr(Day7_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 14 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day14.ExpVST_GOIs_MELT <- reshape2::melt(Day14.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day14.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day14_ExpVst_Master <- merge(panelfig_data, Day14.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day14_meanExpr <- Day14_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day14_meanExpr$PrimaryTreatment <- substr(Day14_meanExpr$group, 1,1) # primary
+    Day14_meanExpr$SecondTreatment <- substr(Day14_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 21 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day21.ExpVST_GOIs_MELT <- reshape2::melt(Day21.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment','group'))) # melt using reshape2
+    names(Day21.ExpVST_GOIs_MELT)[(6:7)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day21_ExpVst_Master <- merge(panelfig_data, Day21.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day21_meanExpr <- Day21_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    # fix(Day21_meanExpr)
+    # create treatment groups 
+    Day21_meanExpr$PrimaryTreatment <- substr(Day21_meanExpr$group, 1,1) # primary
+    Day21_meanExpr$SecondTreatment <- substr(Day21_meanExpr$group, 2,2) # second
+    Day21_meanExpr$ThirdTreatment <- substr(Day21_meanExpr$group, 3,3) # third
+    
+    # ===================================================================================
+    # Now for the for looped plots!
+    #
+    # ===================================================================================
+    pd <- position_dodge(0.3)
+    # for(i in 1:nrow(target_GOIs)) {
+    #   
+    #         if ( (nrow(Day7_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d7_plots <- Day7_meanExpr %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 7:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d7_plots <- plot.new() }
+    # 
+    #   
+    #       if ( (nrow(Day14_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d14_plots <- Day14_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab("Gene Expression (mean±SE VST transformed)") +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 14:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d14_plots <- plot.new() }
+    # 
+    # 
+    #       
+    #       if ( (nrow(Day21_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d21_plots <- Day21_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=ThirdTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Third pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 21:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none") +
+      facet_wrap(~SecondTreatment)
+    # } else { d21_plots <- plot.new() }
+    
+    pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_BP_",substr(slim,1,13),"_vstExpression.pdf", sep =''), width=15, height=6)
+    print(ggarrange(d7_plots, d14_plots, d21_plots,        
+                    plotlist = NULL,
+                    ncol = 3,
+                    nrow = 1,
+                    labels = NULL))
+    dev.off()
+  } # plotting for loop
+  
+  else {}
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# MOLECULAR FUNCTION:  HIGHER expression under Moderate CONDITIONING ========================================================== #
+MF_Mod_GOslim <- MF_Mod %>% 
+  group_by(slim_term) %>% 
+  tally() %>% 
+  dplyr::filter(n == 3) # create the dataset to loop Venn diagrams 
+
+for (i in 1:nrow(MF_Mod_GOslim)) {
+  slim <- MF_Mod_GOslim[i,1] # call the term for the loop - creates Venn and Figures 
+  
+  # prep data
+  slim_MF <- MF_Mod %>% dplyr::filter(slim_term %in% slim)
+  slim_MF$slimSplitted  <- strsplit(as.character(slim_MF$Gene_IDs), ";") # split the Gene IDs for Venn 
+  slim_d7  <- data.frame(Day = 'Day7', Gene.ID = unlist(slim_MF[1,10]))  # name the first row
+  slim_d14 <- data.frame(Day = 'Day14', Gene.ID = unlist(slim_MF[2,10])) # name the second row
+  slim_d21 <- data.frame(Day = 'Day21', Gene.ID = unlist(slim_MF[3,10])) # name the third row
+  slim_df  <- list(
+    Day7_YellowMod          = slim_d7$Gene.ID, 
+    Day14_BlackMod          = slim_d14$Gene.ID, 
+    Day21_YellowMod        = slim_d21$Gene.ID) # create a list to call in using ggvenn 
+  
+  # Venn diagram
+  VennDiag <- ggvenn(slim_df,  # Venn diagram
+                     fill_color = c("white", "white", "white"),
+                     stroke_size = 0.5, set_name_size = 4) +
+    ggtitle(paste("WGCNA: ",  slim, sep = ''))
+  pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_MF_",substr(slim,1,13),".pdf", sep =''))
+  print(VennDiag)
+  # grid.arrange(Day7.volcano.primary, Day14.volcano.primary,ncol=1, nrow=2, clip="off")
+  dev.off()
+  
+  # write a csv for the corresponding Venn
+  bind_data <- rbind(slim_d7, slim_d14, slim_d21)
+  colnames(bind_data)[2] <- 'Gene_IDs'
+  merged_with_annot <- merge(bind_data, annot.condenced[c(1,2,4)], by = 'Gene_IDs') %>% 
+    group_by(Gene_IDs, gene) %>% 
+    mutate(count = n()) %>% 
+    arrange(desc(count))
+  merged_with_annot <- as.data.frame(merged_with_annot)
+  # write csv
+  write.csv(merged_with_annot, paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_MF_",substr(slim,1,13),".csv", sep =''))
+  
+  panelfig_data <- merged_with_annot %>% dplyr::filter(count >=2)
+  
+  
+  if (nrow(panelfig_data) > 0) {
+    Day7.ExpVST_GOIs <- Day7.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day7.ExpVST_GOIs$group <- paste(Day7.ExpVST_GOIs$Primary_Treatment , Day7.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day14.ExpVST_GOIs <- Day14.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', any_of(panelfig_data$Gene_IDs))
+    Day14.ExpVST_GOIs$group <- paste(Day14.ExpVST_GOIs$Primary_Treatment , Day14.ExpVST_GOIs$Second_Treament , sep='')
+    
+    Day21.ExpVST_GOIs <- Day21.ExpVST %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(panelfig_data$Gene_IDs))
+    Day21.ExpVST_GOIs$group <- paste(Day21.ExpVST_GOIs$Primary_Treatment , Day21.ExpVST_GOIs$Second_Treament , Day21.ExpVST_GOIs$Third_Treatment,  sep='')
+    
+    
+    # ===================================================================================
+    # Day 7 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day7.ExpVST_GOIs_MELT <- reshape2::melt(Day7.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day7.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day7_ExpVst_Master <- merge(panelfig_data, Day7.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day7_meanExpr <- Day7_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by( group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day7_meanExpr$PrimaryTreatment <- substr(Day7_meanExpr$group, 1,1) # primary
+    Day7_meanExpr$SecondTreatment <- substr(Day7_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 14 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day14.ExpVST_GOIs_MELT <- reshape2::melt(Day14.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'group'))) # melt using reshape2
+    names(Day14.ExpVST_GOIs_MELT)[(5:6)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day14_ExpVst_Master <- merge(panelfig_data, Day14.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day14_meanExpr <- Day14_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    
+    # create treatment groups 
+    Day14_meanExpr$PrimaryTreatment <- substr(Day14_meanExpr$group, 1,1) # primary
+    Day14_meanExpr$SecondTreatment <- substr(Day14_meanExpr$group, 2,2) # second
+    
+    # ===================================================================================
+    # Day 21 data prep for figures
+    #
+    # ===================================================================================
+    # reshape the data frame and merge geneIDs with tragetGOIs to add back the gene titles - use this to name figures downstream
+    Day21.ExpVST_GOIs_MELT <- reshape2::melt(Day21.ExpVST_GOIs, id=(c('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment','group'))) # melt using reshape2
+    names(Day21.ExpVST_GOIs_MELT)[(6:7)] <- c('Gene_IDs', 'vst_Expression') # change column names
+    Day21_ExpVst_Master <- merge(panelfig_data, Day21.ExpVST_GOIs_MELT, by = 'Gene_IDs')
+    
+    # calc the m an expressio by gene ID (add gene title in group but this is the same unique level as GeneID - review target_GOIs)
+    Day21_meanExpr <- Day21_ExpVst_Master %>% 
+      dplyr::select(c('Sample.Name','group', 'vst_Expression', 'Gene_IDs', 'gene')) %>% 
+      group_by(group) %>%
+      dplyr::summarize(mean.vstExp = mean(vst_Expression), 
+                       sd.vsdtExp = sd(vst_Expression),
+                       n = n(), 
+                       se.vsdtExp = sd.vsdtExp/sqrt(n))
+    # fix(Day21_meanExpr)
+    # create treatment groups 
+    Day21_meanExpr$PrimaryTreatment <- substr(Day21_meanExpr$group, 1,1) # primary
+    Day21_meanExpr$SecondTreatment <- substr(Day21_meanExpr$group, 2,2) # second
+    Day21_meanExpr$ThirdTreatment <- substr(Day21_meanExpr$group, 3,3) # third
+    
+    # ===================================================================================
+    # Now for the for looped plots!
+    #
+    # ===================================================================================
+    pd <- position_dodge(0.3)
+    # for(i in 1:nrow(target_GOIs)) {
+    #   
+    #         if ( (nrow(Day7_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d7_plots <- Day7_meanExpr %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 7:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d7_plots <- plot.new() }
+    # 
+    #   
+    #       if ( (nrow(Day14_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d14_plots <- Day14_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=SecondTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Second pCO2 treatment") +
+      ylab("Gene Expression (mean±SE VST transformed)") +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 14:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none")
+    # } else { d14_plots <- plot.new() }
+    # 
+    # 
+    #       
+    #       if ( (nrow(Day21_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
+    d21_plots <- Day21_meanExpr %>% 
+      # dplyr::filter(genes %in% target_GOIs[i,1]) %>% 
+      ggplot(aes(x=ThirdTreatment, y=mean.vstExp, fill=PrimaryTreatment)) +  # , colour=supp, group=supp))
+      theme_classic() +
+      geom_errorbar(aes(ymin=mean.vstExp-se.vsdtExp, ymax=mean.vstExp+se.vsdtExp), colour="black", width=.1, position=pd) +
+      geom_point(position=pd, size = 4, shape=21) +            
+      xlab("Third pCO2 treatment") +
+      ylab('') +                 # note the mean was first by sample ID THEN by treatment
+      scale_fill_manual(values=c("#56B4E9","#E69F00")) +
+      # scale_color_manual(values=c("#56B4E9","#E69F00")) +
+      ggtitle(paste("Day 21:",substr(slim,1,13), " (N = ", nrow(unique(panelfig_data[,c(1,4)])), ")", sep='')) +
+      # expand_limits(y=0) +                                                    # Expand y range
+      #scale_y_continuous(limits=c((min_p1), (max_p1))) +
+      theme(text = element_text(size=15)) +
+      theme(legend.position = "none") +
+      facet_wrap(~SecondTreatment)
+    # } else { d21_plots <- plot.new() }
+    
+    pdf(paste("Analysis/Output/GO/WGCNA_goseq/PrimaryEffect_Figures/GOslim_venn_tables/Modules_Moderate/Moderate_MF_",substr(slim,1,13),"_vstExpression.pdf", sep =''), width=15, height=6)
+    print(ggarrange(d7_plots, d14_plots, d21_plots,        
+                    plotlist = NULL,
+                    ncol = 3,
+                    nrow = 1,
+                    labels = NULL))
+    dev.off()
+  } # plotting for loop
+  
+  else {}
+  
+}
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#===================================================================================================
+#
+#   Unnest the genes in each GOslim to explore Functiona envrichment of interest! 
+#  load the GOslim csvs, unnest (tidyr) the gene ID list and merge with Gene annnotation
+# 
+#   
+#
+#===================================================================================================
+library(stringr)
+library(DESeq2)
+# BIOLOGICAL PROCESS  GO  SLIMS
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_brownModule.csv")
+d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_greenModule.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_yellowModule.csv")
+
+d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_blackModule.csv")
+d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_brownModule.csv")
+d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_magentaModule.csv")
+d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_pinkModule.csv")
+
+d21_slimBP_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
+d21_slimBP_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
+d21_slimBP_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
+
+# MOLECULAR FUNCTION GO  SLIMS
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
+d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_yellowModule.csv")
+
+d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_blackModule.csv")
+d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_brownModule.csv")
+d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_magentaModule.csv")
+d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_pinkModule.csv")
+
+d21_slimMF_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
+
+# Load the annotation file 
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+annot.condenced         <- Geoduck_annotation[,c(1,5,7)] # build annotation file to merge with master: gene ID, uniprot ID, gene terms with EC (for KEGG)
+names(annot.condenced)  <- c('Gene_IDs', 'Uniprot', 'Gene_term_EC') # RENAME THE COLUMNS 
+annot.condenced$gene    <- str_extract(annot.condenced$Gene_term_EC, "[^(]+") # condence the gene ID to all characters before the first occurance of a open parenthese '('
+# View(annot.condenced) # view the data 
+
+
+# MASTER FILES WITH AND WITHOUT THE GENE ANNOTATION FOR EACH GENE AND SLIM TERM
+# Biological Process ====================================== #
+MasterBP_GOslim <- rbind(d7_slimBP_brownModule, d7_slimBP_greenModule, d7_slimBP_yellowModule, # rbind all sig modules - biological process
+                              d14_slimBP_blackModule, d14_slimBP_brownModule, d14_slimBP_magentaModule, d14_slimBP_pinkModule,
+                              d21_slimBP_blackModule, d21_slimBP_blueModule, d21_slimBP_magentaModule, d21_slimBP_pinkModule, d21_slimBP_redModule, d21_slimBP_yellowModule)
+MasterBP_GOslim_OM.GOterms          <- MasterBP_GOslim[-c(1,4:6)] # ommit undesired columsn: rows, GO count, GO term, GO ID list
+MasterBP_GOslim_OM.GOterms$Gene_IDs <- strsplit(MasterBP_GOslim_OM.GOterms$Gene_IDs, ";") # convert the ';' delimited rows of gene IDs into a list
+MasterBP_unnest                     <- tidyr::unnest(MasterBP_GOslim_OM.GOterms, Gene_IDs) # here we go! unnest the list of genes - this will duplicate the other columns for each gene ID in common cell
+MasterBP_unnest$Day                 <- str_extract(MasterBP_unnest$module_day, "[^_]+") # use stringr to extract dat from module_day
+MasterBP_unnest$moduleColor         <- word(MasterBP_unnest$module_day, 2, sep = "_")
+# highly recommend using View() for the unnested v. the previous master files to make sure this worked correctly...
+# View(MasterBP_GOslim_OM.GOterms)
+# View(MasterBP_unnest)
+MasterBP_FINAL <- merge(MasterBP_unnest, annot.condenced, by = 'Gene_IDs') # save this!! 
+View(MasterBP_FINAL)
+# Molecular Function  ====================================== #
+MasterMF_GOslim <- rbind(d7_slimMF_brownModule, d7_slimMF_greenModule, d7_slimMF_yellowModule, # rbind all sig modules - biological process
+                         d14_slimMF_blackModule, d14_slimMF_brownModule, d14_slimMF_magentaModule, d14_slimMF_pinkModule,
+                         d21_slimMF_blackModule, d21_slimMF_blueModule, d21_slimMF_magentaModule, d21_slimMF_pinkModule, d21_slimMF_redModule, d21_slimMF_yellowModule)
+MasterMF_GOslim_OM.GOterms          <- MasterMF_GOslim[-c(1,4:6)] # ommit undesired columsn: rows, GO count, GO term, GO ID list
+MasterMF_GOslim_OM.GOterms$Gene_IDs <- strsplit(MasterMF_GOslim_OM.GOterms$Gene_IDs, ";") # convert the ';' delimited rows of gene IDs into a list
+MasterMF_unnest                     <- tidyr::unnest(MasterMF_GOslim_OM.GOterms, Gene_IDs) # here we go! unnest the list of genes - this will duplicate the other columns for each gene ID in common cell
+MasterMF_unnest$Day                 <- str_extract(MasterMF_unnest$module_day, "[^_]+") # use stringr to extract dat from module_day
+MasterMF_unnest$moduleColor         <- word(MasterMF_unnest$module_day, 2, sep = "_")
+# highly recommend using View() for the unnested v. the previous master files to make sure this worked correctly...
+# View(MasterMF_GOslim_OM.GOterms)
+# View(MasterMF_unnest)
+MasterMF_FINAL <- merge(MasterMF_unnest, annot.condenced, by = 'Gene_IDs')
+# save the master files 
+write.csv(MasterBP_FINAL, file = paste("Analysis/Output/GO/WGCNA_goseq/BiologicalProcess_GOslim_Master.csv", sep ='')) # save csv file       
+write.csv(MasterMF_FINAL, file = paste("Analysis/Output/GO/WGCNA_goseq/MolecularFunction_GOslim_Master.csv", sep ='')) # save csv file              
+
+
+
+
+
+
+
+

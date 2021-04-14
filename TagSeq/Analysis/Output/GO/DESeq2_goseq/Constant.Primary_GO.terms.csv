@@ -1,0 +1,149 @@
+"","category","numDEInCat","numInCat","term","ontology","DE_dir","perc.occurance"
+"1","GO:0042493",4,152,"response to drug","BP","upregulated",2.63157894736842
+"2","GO:0043434",3,36,"response to peptide hormone","BP","upregulated",8.33333333333333
+"3","GO:0051385",2,3,"response to mineralocorticoid","BP","upregulated",66.6666666666667
+"4","GO:0005615",6,796,"extracellular space","CC","upregulated",0.753768844221105
+"5","GO:1902307",2,4,"positive regulation of sodium ion transmembrane transport","BP","upregulated",50
+"6","GO:0017080",2,8,"sodium channel regulator activity","MF","upregulated",25
+"7","GO:0046658",2,9,"anchored component of plasma membrane","CC","upregulated",22.2222222222222
+"8","GO:0004252",3,108,"serine-type endopeptidase activity","MF","upregulated",2.77777777777778
+"9","GO:0070633",2,13,"transepithelial transport","BP","upregulated",15.3846153846154
+"10","GO:0010765",2,21,"positive regulation of sodium ion transport","BP","upregulated",9.52380952380952
+"11","GO:0019897",2,21,"extrinsic component of plasma membrane","CC","upregulated",9.52380952380952
+"12","GO:0071638",2,27,"negative regulation of monocyte chemotactic protein-1 production","BP","upregulated",7.40740740740741
+"13","GO:0048678",2,40,"response to axon injury","BP","upregulated",5
+"14","GO:0010157",1,1,"response to chlorate","BP","upregulated",100
+"15","GO:0004341",1,3,"gluconolactonase activity","MF","upregulated",33.3333333333333
+"16","GO:0010944",1,3,"negative regulation of transcription by competitive promoter binding","BP","upregulated",33.3333333333333
+"17","GO:0090240",1,3,"positive regulation of histone H4 acetylation","BP","upregulated",33.3333333333333
+"18","GO:0050848",1,4,"regulation of calcium-mediated signaling","BP","upregulated",25
+"19","GO:0043618",1,4,"regulation of transcription from RNA polymerase II promoter in response to stress","BP","upregulated",25
+"20","GO:0033629",1,5,"negative regulation of cell adhesion mediated by integrin","BP","upregulated",20
+"21","GO:0036003",1,5,"positive regulation of transcription from RNA polymerase II promoter in response to stress","BP","upregulated",20
+"22","GO:0043278",1,6,"response to morphine","BP","upregulated",16.6666666666667
+"23","GO:0060588",1,7,"negative regulation of lipoprotein lipid oxidation","BP","upregulated",14.2857142857143
+"24","GO:2000098",1,7,"negative regulation of smooth muscle cell-matrix adhesion","BP","upregulated",14.2857142857143
+"25","GO:0045121",2,182,"membrane raft","CC","upregulated",1.0989010989011
+"26","GO:0043559",1,6,"insulin binding","MF","upregulated",16.6666666666667
+"27","GO:0006978",1,7,"DNA damage response, signal transduction by p53 class mediator resulting in transcription of p21 class mediator","BP","upregulated",14.2857142857143
+"28","GO:2000405",1,8,"negative regulation of T cell migration","BP","upregulated",12.5
+"29","GO:1902166",1,7,"negative regulation of intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator","BP","upregulated",14.2857142857143
+"30","GO:0010035",1,7,"response to inorganic substance","BP","upregulated",14.2857142857143
+"31","GO:0014012",1,9,"peripheral nervous system axon regeneration","BP","upregulated",11.1111111111111
+"32","GO:0008843",1,9,"endochitinase activity","MF","upregulated",11.1111111111111
+"33","GO:0043043",1,9,"peptide biosynthetic process","BP","upregulated",11.1111111111111
+"34","GO:0022626",1,11,"cytosolic ribosome","CC","upregulated",9.09090909090909
+"35","GO:0032781",1,10,"positive regulation of ATPase activity","BP","upregulated",10
+"36","GO:0070555",1,9,"response to interleukin-1","BP","upregulated",11.1111111111111
+"37","GO:0010642",1,11,"negative regulation of platelet-derived growth factor receptor signaling pathway","BP","upregulated",9.09090909090909
+"38","GO:0000302",1,12,"response to reactive oxygen species","BP","upregulated",8.33333333333333
+"39","GO:0044245",1,10,"polysaccharide digestion","BP","upregulated",10
+"40","GO:0021983",1,11,"pituitary gland development","BP","upregulated",9.09090909090909
+"41","GO:0030234",1,12,"enzyme regulator activity","MF","upregulated",8.33333333333333
+"42","GO:1904724",1,14,"tertiary granule lumen","CC","upregulated",7.14285714285714
+"43","GO:1900016",1,15,"negative regulation of cytokine production involved in inflammatory response","BP","upregulated",6.66666666666667
+"44","GO:0070165",1,19,"positive regulation of adiponectin secretion","BP","upregulated",5.26315789473684
+"45","GO:0042308",1,16,"negative regulation of protein import into nucleus","BP","upregulated",6.25
+"46","GO:0070206",1,20,"protein trimerization","BP","upregulated",5
+"47","GO:0035580",1,16,"specific granule lumen","CC","upregulated",6.25
+"48","GO:0006977",1,18,"DNA damage response, signal transduction by p53 class mediator resulting in cell cycle arrest","BP","upregulated",5.55555555555556
+"49","GO:1900165",1,23,"negative regulation of interleukin-6 secretion","BP","upregulated",4.34782608695652
+"50","GO:0004568",1,18,"chitinase activity","MF","upregulated",5.55555555555556
+"51","GO:0035356",1,24,"cellular triglyceride homeostasis","BP","upregulated",4.16666666666667
+"52","GO:0004553",1,20,"hydrolase activity, hydrolyzing O-glycosyl compounds","MF","upregulated",5
+"53","GO:0002223",1,20,"stimulatory C-type lectin receptor signaling pathway","BP","upregulated",5
+"54","GO:0070542",1,21,"response to fatty acid","BP","upregulated",4.76190476190476
+"55","GO:0051895",1,21,"negative regulation of focal adhesion assembly","BP","upregulated",4.76190476190476
+"56","GO:0050715",1,27,"positive regulation of cytokine secretion","BP","upregulated",3.7037037037037
+"57","GO:0016486",1,23,"peptide hormone processing","BP","upregulated",4.34782608695652
+"58","GO:0016540",1,22,"protein autoprocessing","BP","upregulated",4.54545454545455
+"59","GO:0048662",1,25,"negative regulation of smooth muscle cell proliferation","BP","upregulated",4
+"60","GO:0043025",2,345,"neuronal cell body","CC","upregulated",0.579710144927536
+"61","GO:0042246",1,27,"tissue regeneration","BP","upregulated",3.7037037037037
+"62","GO:0000272",1,24,"polysaccharide catabolic process","BP","upregulated",4.16666666666667
+"63","GO:0034774",1,24,"secretory granule lumen","CC","upregulated",4.16666666666667
+"64","GO:0051384",1,25,"response to glucocorticoid","BP","upregulated",4
+"65","GO:0016266",1,28,"O-glycan processing","BP","upregulated",3.57142857142857
+"66","GO:0006032",1,25,"chitin catabolic process","BP","upregulated",4
+"67","GO:0031016",1,27,"pancreas development","BP","upregulated",3.7037037037037
+"68","GO:0043679",1,26,"axon terminus","CC","upregulated",3.84615384615385
+"69","GO:0030425",2,368,"dendrite","CC","upregulated",0.543478260869565
+"70","GO:0031667",1,27,"response to nutrient levels","BP","upregulated",3.7037037037037
+"71","GO:0045721",1,34,"negative regulation of gluconeogenesis","BP","upregulated",2.94117647058824
+"72","GO:0030141",1,31,"secretory granule","CC","upregulated",3.2258064516129
+"73","GO:1901223",1,35,"negative regulation of NIK/NF-kappaB signaling","BP","upregulated",2.85714285714286
+"74","GO:0005791",1,35,"rough endoplasmic reticulum","CC","upregulated",2.85714285714286
+"75","GO:0009749",1,35,"response to glucose","BP","upregulated",2.85714285714286
+"76","GO:0030133",1,36,"transport vesicle","CC","upregulated",2.77777777777778
+"77","GO:0019221",1,37,"cytokine-mediated signaling pathway","BP","upregulated",2.7027027027027
+"78","GO:0015485",1,36,"cholesterol binding","MF","upregulated",2.77777777777778
+"79","GO:0048471",2,429,"perinuclear region of cytoplasm","CC","upregulated",0.466200466200466
+"80","GO:0008061",1,42,"chitin binding","MF","upregulated",2.38095238095238
+"81","GO:0050714",1,38,"positive regulation of protein secretion","BP","upregulated",2.63157894736842
+"82","GO:0045444",1,43,"fat cell differentiation","BP","upregulated",2.32558139534884
+"83","GO:0002039",1,48,"p53 binding","MF","upregulated",2.08333333333333
+"84","GO:0051592",1,46,"response to calcium ion","BP","upregulated",2.17391304347826
+"85","GO:0016485",1,52,"protein processing","BP","upregulated",1.92307692307692
+"86","GO:0003712",1,52,"transcription coregulator activity","MF","upregulated",1.92307692307692
+"87","GO:0014070",1,55,"response to organic cyclic compound","BP","upregulated",1.81818181818182
+"88","GO:0005796",1,57,"Golgi lumen","CC","upregulated",1.75438596491228
+"89","GO:0022008",1,57,"neurogenesis","BP","upregulated",1.75438596491228
+"90","GO:0031982",1,57,"vesicle","CC","upregulated",1.75438596491228
+"91","GO:0070062",2,545,"extracellular exosome","CC","upregulated",0.36697247706422
+"92","GO:0006869",1,57,"lipid transport","BP","upregulated",1.75438596491228
+"93","GO:0006874",1,62,"cellular calcium ion homeostasis","BP","upregulated",1.61290322580645
+"94","GO:0006629",1,62,"lipid metabolic process","BP","upregulated",1.61290322580645
+"95","GO:0051087",1,65,"chaperone binding","MF","upregulated",1.53846153846154
+"96","GO:0004175",1,66,"endopeptidase activity","MF","upregulated",1.51515151515152
+"97","GO:0032496",1,73,"response to lipopolysaccharide","BP","upregulated",1.36986301369863
+"98","GO:0050728",1,76,"negative regulation of inflammatory response","BP","upregulated",1.31578947368421
+"99","GO:0004867",1,72,"serine-type endopeptidase inhibitor activity","MF","upregulated",1.38888888888889
+"100","GO:0006955",1,82,"immune response","BP","upregulated",1.21951219512195
+"101","GO:0006006",1,83,"glucose metabolic process","BP","upregulated",1.20481927710843
+"102","GO:0043312",1,78,"neutrophil degranulation","BP","upregulated",1.28205128205128
+"103","GO:0005623",2,696,"cell","CC","upregulated",0.28735632183908
+"104","GO:0007568",1,98,"aging","BP","upregulated",1.02040816326531
+"105","GO:0043204",1,118,"perikaryon","CC","upregulated",0.847457627118644
+"106","GO:0005581",1,142,"collagen trimer","CC","upregulated",0.704225352112676
+"107","GO:0005802",1,131,"trans-Golgi network","CC","upregulated",0.763358778625954
+"108","GO:0009617",1,142,"response to bacterium","BP","upregulated",0.704225352112676
+"109","GO:0007420",1,152,"brain development","BP","upregulated",0.657894736842105
+"110","GO:0000790",1,161,"nuclear chromatin","CC","upregulated",0.62111801242236
+"111","GO:0006508",1,173,"proteolysis","BP","upregulated",0.578034682080925
+"112","GO:0010629",1,178,"negative regulation of gene expression","BP","upregulated",0.561797752808989
+"113","GO:0016020",2,1074,"membrane","CC","upregulated",0.186219739292365
+"114","GO:0000978",1,221,"RNA polymerase II cis-regulatory region sequence-specific DNA binding","MF","upregulated",0.452488687782805
+"115","GO:0044877",1,237,"protein-containing complex binding","MF","upregulated",0.421940928270042
+"116","GO:0005764",1,274,"lysosome","CC","upregulated",0.364963503649635
+"117","GO:0005886",3,2639,"plasma membrane","CC","upregulated",0.113679424024252
+"118","GO:0016324",1,310,"apical plasma membrane","CC","upregulated",0.32258064516129
+"119","GO:0043005",1,348,"neuron projection","CC","upregulated",0.28735632183908
+"120","GO:0016021",3,3010,"integral component of membrane","CC","upregulated",0.0996677740863787
+"121","GO:0005783",1,615,"endoplasmic reticulum","CC","upregulated",0.16260162601626
+"122","GO:0008270",1,731,"zinc ion binding","MF","upregulated",0.136798905608755
+"123","GO:0042802",1,762,"identical protein binding","MF","upregulated",0.131233595800525
+"124","GO:0005509",1,868,"calcium ion binding","MF","upregulated",0.115207373271889
+"125","GO:0005887",1,1090,"integral component of plasma membrane","CC","upregulated",0.0917431192660551
+"126","GO:0005576",1,1105,"extracellular region","CC","upregulated",0.0904977375565611
+"127","GO:0005737",2,3388,"cytoplasm","CC","upregulated",0.0590318772136954
+"128","GO:0005634",1,3216,"nucleus","CC","upregulated",0.0310945273631841
+"129","GO:0006824",1,5,"cobalt ion transport","BP","downregulated",20
+"130","GO:0015889",1,13,"cobalamin transport","BP","downregulated",7.69230769230769
+"131","GO:0031419",1,20,"cobalamin binding","MF","downregulated",5
+"132","GO:0031092",1,25,"platelet alpha granule membrane","CC","downregulated",4
+"133","GO:0072675",1,27,"osteoclast fusion","BP","downregulated",3.7037037037037
+"134","GO:0061045",1,30,"negative regulation of wound healing","BP","downregulated",3.33333333333333
+"135","GO:0045616",1,31,"regulation of keratinocyte differentiation","BP","downregulated",3.2258064516129
+"136","GO:0050431",1,39,"transforming growth factor beta binding","MF","downregulated",2.56410256410256
+"137","GO:0001942",1,47,"hair follicle development","BP","downregulated",2.12765957446809
+"138","GO:0002576",1,47,"platelet degranulation","BP","downregulated",2.12765957446809
+"139","GO:0010839",1,49,"negative regulation of keratinocyte proliferation","BP","downregulated",2.04081632653061
+"140","GO:0030512",1,65,"negative regulation of transforming growth factor beta receptor signaling pathway","BP","downregulated",1.53846153846154
+"141","GO:0004867",1,72,"serine-type endopeptidase inhibitor activity","MF","downregulated",1.38888888888889
+"142","GO:0001933",1,73,"negative regulation of protein phosphorylation","BP","downregulated",1.36986301369863
+"143","GO:0005576",2,1105,"extracellular region","CC","downregulated",0.180995475113122
+"144","GO:0031225",1,120,"anchored component of membrane","CC","downregulated",0.833333333333333
+"145","GO:0009986",1,484,"cell surface","CC","downregulated",0.206611570247934
+"146","GO:0005615",1,796,"extracellular space","CC","downregulated",0.125628140703518
+"147","GO:0005829",1,2336,"cytosol","CC","downregulated",0.0428082191780822
+"148","GO:0005886",1,2639,"plasma membrane","CC","downregulated",0.0378931413414172

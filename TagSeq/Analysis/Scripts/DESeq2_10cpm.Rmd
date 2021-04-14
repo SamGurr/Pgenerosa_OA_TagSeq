@@ -88,7 +88,7 @@ of the primary treatment effect days 7 14 and 21
 ```{r load constant DEGs}
 
 # NOTE: this data 
-Const.DEGs <- read.csv(file="../Output/DESeq2/10cpm/Summary_Primary_DEGs_occurances_10CPM_GeneIDs.csv", sep=',', header=TRUE) 
+Const.DEGs <- read.csv(file="../Output/DESeq2/10cpm/PrimaryEffect_PersistantDEGs_occurances_10CPM.csv", sep=',', header=TRUE) 
 Const.DEGs <- Const.DEGs[,c(2:5)]
 names(Const.DEGs)[1] <- "Gene.ID"
 
@@ -97,8 +97,12 @@ annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.t
 annot <- annot[,c(1,7:8)]
 names(annot) <- c('Gene.ID', 'description', 'GO.terms')
 
-merge.constDEGs.annot <- merge(Const.DEGs, annot, by='Gene.ID')
-head(merge.constDEGs.annot)
+# output the constant DEGs merged with the annotation
+merge.constDEGs.annot <- merge(Const.DEGs, annot, by='Gene.ID') # merge with annotation
+path_out= 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/' # call path
+write.csv(merge.constDEGs.annot, paste(path_out,"PrimaryEffect_PersistantDEGs_occurances_10CPM.csv")) # write
+
+
 
 # ommit rows containing NA for GO and gene annotation term
 Const.DEGs.annotated <- merge.constDEGs.annot[!is.na(merge.constDEGs.annot$GO.terms),]
@@ -106,7 +110,7 @@ Const.DEGs.list <- list(Const.DEGs.annotated$Gene.ID) # 12 degs contant upreg or
 ```
 
 
-### Sample metadata - Experimental treatments/groups
+Sample metadata - Experimental treatments/groups
 ```{r experiment_data, include = TRUE}
 ### experiment metadata [from Count_Matrix_Stats.Filter.R]  - convert characaters to factors for DESeq2
 all.exp_data  <- read.csv(file="../Data/Experiment_Metadata/all.exp.data.csv", sep=',', header=TRUE) %>%   mutate_if(is.character, as.factor)
@@ -388,19 +392,36 @@ d0.num.DownReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] >
 d0.num.UpReg <- sum((resd0.primary.ordered$log2FoldChange[1:d0.numDEGs_padj] < 0) == TRUE) # LFC >= 1
 d0.total <- sum(d0.num.DownReg,d0.num.UpReg) # sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 # histogram of FDR
-png("../Output/DESeq2/Day0/Day0.FDR_hist.png", 1000, 1000, pointsize=20)
+png("../Output/DESeq2/10cpm/Day0/Day0.FDR_hist.png", 1000, 1000, pointsize=20)
 hist(resd0.primary$pvalue, breaks=20, col="grey") # view histogram
 abline(h=c( (nrow(resd0.primary)*0.05), 
             ((table(resd0.primary$padj < 0.1)[2]) + (nrow(resd0.primary)*0.1)),
             ((table(resd0.primary$padj < 0.05)[2]) + (nrow(resd0.primary)*0.05)) ),
                   col=c("blue", "red", "red"), lty=c(1,2,1), lwd=c(1, 3, 1)) # add line at 
 dev.off()
+
+
 # Write results - covert to as.data.frame for the ordered results
 resdata.d0.primary  <- merge(as.data.frame(resd0.primary.ordered), as.data.frame(counts(dds.d0, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d0.primary)[1] <- "Gene"
 resdata.d0.primary <- resdata.d0.primary[order(resdata.d0.primary$padj), ] # Order by adjusted p-value
 path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/' # call path
 write.csv(resdata.d0.primary, paste(path_out.d0,"Day0.Primary_DESeq2results.csv")) # write
+
+
+#MASTER MAIN EFFECTS TABLE FOR OUTPUT  ======================================================================================================== #
+# rbind all significant DESeq results in main effect models 
+Day0_MainEffectMaster <- (as.data.frame(resdata.d0.primary)[c(1,3,7)]   %>% dplyr::mutate(Day_treatment = "Day0", Treatment = "Primary", Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) )
+# load annotation to merge by GeneID 
+Pgen_annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.txt", header=F) 
+Pgen_annot <- Pgen_annot[,c(1,5,7)]
+names(Pgen_annot) <- c('Gene', 'Uniprot', 'Gene_terms_EC')
+# merge the master with the Pgen_annot and save the csv file 
+Day0_MainEffectMaster_2 <- merge(Day0_MainEffectMaster, Pgen_annot, by ="Gene")
+path_out.d0 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/' # call path to save
+write.csv(Day0_MainEffectMaster_2, paste(path_out.d0,"Day0.AllPrimaryDEGs_DESeq2results.csv")) # write
+
+
 
 # volcano plot 
 png("../Output/DESeq2/10cpm/Day0/Day0.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
@@ -595,7 +616,17 @@ table(res.d7.Second_MS_grouptest$padj<0.05) #  0 DEGs (same as above?)
 
 
 
+
+
+
+
+
 # TABLES  &  Volcano Plots
+
+
+
+
+
 
 
 
@@ -608,8 +639,6 @@ d7.num.UpReg                  <- sum((res.d7_primary.ordered$log2FoldChange[1:d7
 d7.num.DownReg                <- sum((res.d7_primary.ordered$log2FoldChange[1:d7.numDEGs_padj] < 0) == TRUE) # LFC >= 1
 d7.total                      <- sum(d7.num.DownReg,d7.num.UpReg) # 108 sum of DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
-
-
 # Histogram(s) 
 png("../Output/DESeq2/10cpm/Day7/Day7.Primary.FDR_hist.png", 1000, 1000, pointsize=20)
 hist(res.d7.primary$pvalue, breaks=20, col="grey") # view histogram,  
@@ -619,16 +648,13 @@ abline(h=c( (nrow(res.d7.primary)*0.05),
                   col=c("blue", "red", "red"), lty=c(1,2), lwd=c(1, 3)) # add line at 
 dev.off()
 
-
-
-
 # Write results csv ( here I output the four tests of the primary treatment to run a Venn diagram on shared genes - sanity check to test what these models are doing differently)
 # group results 
 resdata.d7.primary  <- merge(as.data.frame(res.d7_primary.ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d7.primary)[1] <- "Gene"
 resdata.d7.primary <- resdata.d7.primary[order(resdata.d7.primary$padj), ] # Order by adjusted p-value
 path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path
-write.csv(resdata.d7.primary, paste(path_out.d7,"Day7.Primary_DESeq2results.csv")) # write
+write.csv(resdata.d7.primary, paste(path_out.d7,"Day7.PrimaryDEGs_AvM__DESeq2results.csv")) # write
 
 # main effect model
 resdata.d7.primary_main  <- merge(as.data.frame(res.d7.primary_main), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
@@ -650,8 +676,6 @@ names(resdata.d7.primary_grouptest)[1] <- "Gene"
 resdata.d7.primary_grouptest <- resdata.d7.primary_grouptest[order(resdata.d7.primary_grouptest$padj), ] # Order by adjusted p-value
 path_out.d7.tests = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/D7_res_model_tests/' # call path
 write.csv(resdata.d7.primary_grouptest, paste(path_out.d7.tests,"Day7.Primary_res_grouptest.mod.csv")) # write
-
-
 
 # volcano plot 
 # Set max.overlapos to infinite globally to allow muliple labels that overlap in the volcano plots 
@@ -692,6 +716,10 @@ dev.off()
 
 
 
+
+
+
+
 # Secondary treatment A v M ========================================================================================================= #
 
 # DEGs total for the primary treatment effect
@@ -700,9 +728,6 @@ res.d7.Second_AM_ordered           <- res.d7.Second_AM[order(res.d7.Second_AM$pa
 d7.num.UpReg_S.AM                  <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] > 0) == TRUE) #  LFC >= 1
 d7.num.DownReg_S.AM                <- sum((res.d7.Second_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AM] < 0) == TRUE) # LFC >= 1
 d7.total_Sec.AM                    <- sum(d7.num.UpReg_S.AM,d7.num.DownReg_S.AM) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
-
-
-
 
 # Histogram(s)
 png("../Output/DESeq2/10cpm/Day7/Day7.Second_AM.FDR_hist.png", 1000, 1000, pointsize=20)
@@ -713,16 +738,13 @@ abline(h=c( (nrow(res.d7.Second_AM)*0.05),
                   col=c("blue", "red", "red"), lty=c(1,2), lwd=c(1, 3)) # add line at 
 dev.off()
 
-
-
-
 # Write results csv
 # group results 
 resdata.d7.second.AM  <- merge(as.data.frame(res.d7.Second_AM_ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
 names(resdata.d7.second.AM)[1] <- "Gene"
 resdata.d7.second.AM <- resdata.d7.second.AM[order(resdata.d7.second.AM$padj), ] # Order by adjusted p-value
 path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path
-write.csv(resdata.d7.second.AM, paste(path_out.d7,"Day7.Second.AM_DESeq2results.csv")) # write
+write.csv(resdata.d7.second.AM, paste(path_out.d7,"Day7.SecondDEGs_AvM_DESeq2results.csv")) # write
 
 # volcano plot 
 png("../Output/DESeq2/10cpm/Day7/Day7.Second.AM-VolcanoPlot.png", 1000, 1000, pointsize=20)
@@ -746,27 +768,79 @@ dev.off()
 
 
 
+
+
+
+
+
+
 # Secondary treatment A v S ========================================================================================================= 
 
 # DEGs total for the primary treatment effect
 d7.numDEGs_padj_S.AS               <- data.frame(table(res.d7.Second_AS$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d7.Second_AS_ordered           <- res.d7.Second_AS[order(res.d7.Second_AS$padj), ] # Order by adjusted p-value - 110 DEGs
-d7.num.UpReg_AS                  <- sum((res.d7.Second_AS_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AS] > 0) == TRUE) #  LFC >= 1
-d7.num.DownReg_AS                <- sum((res.d7.Second_AS_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AS] < 0) == TRUE) # LFC >= 1
+d7.num.UpReg_AS                    <- sum((res.d7.Second_AS_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AS] > 0) == TRUE) #  LFC >= 1
+d7.num.DownReg_AS                  <- sum((res.d7.Second_AS_ordered$log2FoldChange[1:d7.numDEGs_padj_S.AS] < 0) == TRUE) # LFC >= 1
 d7.total_Sec.AS                    <- sum(d7.num.UpReg_AS,d7.num.DownReg_AS) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+resdata.d7.second.AS <- merge(as.data.frame(res.d7.Second_AS_ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.second.AS)[1] <- "Gene"
+resdata.d7.second.AS <- resdata.d7.second.AS[order(resdata.d7.second.AS$padj), ] # Order by adjusted p-value
+path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path
+write.csv(resdata.d7.second.AS, paste(path_out.d7,"Day7.SecondDEGs_AvS_DESeq2results.csv")) # write
+
+
+
+
+
+
 
 
 # Secondary treatment M v S ========================================================================================================= 
 
 # DEGs total for the primary treatment effect
 d7.numDEGs_padj_MS               <- data.frame(table(res.d7.Second_MS$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
-res.d7.Second_MS_ordered           <- res.d7.Second_MS[order(res.d7.Second_MS$padj), ] # Order by adjusted p-value - 110 DEGs
+res.d7.Second_MS_ordered         <- res.d7.Second_MS[order(res.d7.Second_MS$padj), ] # Order by adjusted p-value - 110 DEGs
 d7.num.UpReg_MS                  <- sum((res.d7.Second_MS_ordered$log2FoldChange[1:d7.numDEGs_padj_MS] > 0) == TRUE) #  LFC >= 1
 d7.num.DownReg_MS                <- sum((res.d7.Second_MS_ordered$log2FoldChange[1:d7.numDEGs_padj_MS] < 0) == TRUE) # LFC >= 1
-d7.total_Sec.MS                    <- sum(d7.num.UpReg_MS,d7.num.DownReg_MS) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+d7.total_Sec.MS                  <- sum(d7.num.UpReg_MS,d7.num.DownReg_MS) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
 
-#  Data transformations for heatmap and PCA visuals
+resdata.d7.second.MS <- merge(as.data.frame(res.d7.Second_MS_ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.second.MS)[1] <- "Gene"
+resdata.d7.second.MS <- resdata.d7.second.MS[order(resdata.d7.second.MS$padj), ] # Order by adjusted p-value
+path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path
+write.csv(resdata.d7.second.MS, paste(path_out.d7,"Day7.SecondDEGs_MvS_DESeq2results.csv")) # write
 
+
+
+
+
+
+#MASTER MAIN EFFECTS TABLE FOR OUTPUT  ========================================================================================================
+# rbind all significant DESeq results in main effect models 
+Day7_MainEffectMaster <- rbind( 
+  (as.data.frame(resdata.d7.primary)[c(1,3,7)]   %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Primary", Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ),
+  (as.data.frame(resdata.d7.second.AM)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ),
+  (as.data.frame(resdata.d7.second.AS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "AvS") %>%  dplyr::filter(padj < 0.05) ),
+  (as.data.frame(resdata.d7.second.MS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "MvS") %>%  dplyr::filter(padj < 0.05) ) )
+colnames(Day7_MainEffectMaster)
+# load annotation to merge by GeneID 
+Pgen_annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.txt", header=F) 
+Pgen_annot <- Pgen_annot[,c(1,5,7)]
+names(Pgen_annot) <- c('Gene', 'Uniprot', 'Gene_terms_EC')
+# merge the master with the Pgen_annot and save the csv file 
+Day7_MainEffectMaster_2 <- merge(Day7_MainEffectMaster, Pgen_annot, by ="Gene")
+path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path to save
+write.csv(Day7_MainEffectMaster_2, paste(path_out.d7,"Day7.AllMainEffectsDEGs_DESeq2results.csv")) # write
+
+
+
+
+
+
+
+
+#  Data transformations for heatmap and PCA visuals  =======================================================================================
 
 
 # Plot dispersions 
@@ -889,7 +963,7 @@ save_pheatmap(d7.rlog.heatmap.SEC, filename = "../Output/DESeq2/10cpm/Day7/Day7.
 ```
 
 #Day 14
-```{r Day14_main_effects}
+```{r Day14_Main_effects}
 # TEST! (read below)
 # 'Interaction' term tests - run this to see that the 'Primary Treatment' main effect in NOT represented in the full effect model
 test1 <- results(dds.d14, contrast = c("Primary_Treatment", "M", "A"),  alpha= 0.05) # D/N addresses Primary M vs A in reference level Secondary!!! 
@@ -931,7 +1005,7 @@ table(res.d14.Second_AM$padj<0.05) # 0 DEGs
 
 # main effect model (mo interaction term)
 res.d14.Second_AM_main <- results(dds.d14.main, contrast = c("Second_Treament", "A", "M"),  alpha= 0.05)
-table(res.d14.Second_AM_main$padj<0.05) #  94 DEGs 
+table(res.d14.Second_AM_main$padj<0.05) #  0 DEGs 
 
 # full model 
 res.d14.Second_AM_fullmod <- results(dds.d14, contrast = c("Second_Treament", "A", "M"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AA and AM
@@ -952,7 +1026,7 @@ table(res.d14.Second_AS$padj<0.05) #  0 DEGs
 
 # main effect model (mo interaction term)
 res.d14.Second_AS_main <- results(dds.d14.main, contrast = c("Second_Treament", "A", "S"),  alpha= 0.05)
-table(res.d14.Second_AS_main$padj<0.05) #  2 DEGs 
+table(res.d14.Second_AS_main$padj<0.05) #  0 DEGs 
 
 # full model 
 res.d14.Second_AS_fullmod <- results(dds.d14, contrast = c("Second_Treament", "A", "S"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AA and AS
@@ -973,7 +1047,7 @@ table(res.d14.Second_MS$padj<0.05) #  0 DEGs
 
 # main effect model (mo interaction term)
 res.d14.Second_MS_main <- results(dds.d14.main, contrast = c("Second_Treament", "M", "S"),  alpha= 0.05)
-table(res.d14.Second_MS_main$padj<0.05) #  14 DEGs 
+table(res.d14.Second_MS_main$padj<0.05) #  0 DEGs 
 
 # full model 
 res.d14.Second_MS_fullmod <- results(dds.d14, contrast = c("Second_Treament", "M", "S"),  alpha= 0.05) # appears this is actually the pairwise comparisons between AM and AS
@@ -1036,9 +1110,6 @@ resdata.d14.primary_grouptest <- resdata.d14.primary_grouptest[order(resdata.d14
 path_out.d14.tests = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/' # call path
 write.csv(resdata.d14.primary_grouptest, paste(path_out.d14.tests,"Day14.Primary_res_grouptest.mod.csv")) # write
 
-
-
-
 # volcano plot 
 png("../Output/DESeq2/10cpm/Day14/Day14.Primary-VolcanoPlot.png", 1000, 1000, pointsize=20)
 # Day14.volcano.primary <- 
@@ -1071,6 +1142,35 @@ EnhancedVolcano(res.d14_primary,
                               widthConnectors = 0.2,
                               colConnectors = 'black')
 dev.off()
+
+
+
+
+
+#MASTER MAIN EFFECTS TABLE FOR OUTPUT  ========================================================================================================
+# rbind all significant DESeq results in main effect models NOTE: only DEGs from the primary effect model 
+Day14_MainEffectMaster <-  #rbind( 
+  (as.data.frame(resdata.d14.primary)[c(1,3,7)]   %>% dplyr::mutate(Day_treatment = "Day14", Treatment = "Primary", Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ) #,
+  #(as.data.frame(resdata.d7.second.AM)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ),
+  #(as.data.frame(resdata.d7.second.AS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "AvS") %>%  dplyr::filter(padj < 0.05) ),
+  #(as.data.frame(resdata.d7.second.MS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "MvS") %>%  dplyr::filter(padj < 0.05) ) )
+# load annotation to merge by GeneID 
+Pgen_annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.txt", header=F) 
+Pgen_annot <- Pgen_annot[,c(1,5,7)]
+names(Pgen_annot) <- c('Gene', 'Uniprot', 'Gene_terms_EC')
+# merge the master with the Pgen_annot and save the csv file 
+Day14_MainEffectMaster_2 <- merge(Day14_MainEffectMaster, Pgen_annot, by ="Gene")
+path_out.d14 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/' # call path to save
+write.csv(Day14_MainEffectMaster_2, paste(path_out.d14,"Day14.AllMainEffectsDEGs_DESeq2results.csv")) # write
+
+
+
+
+
+
+
+
+
 
 
 #  Data transformations for heatmap and PCA visuals
@@ -1176,8 +1276,6 @@ table(test2$padj<0.05) #  68 DEGs (same as above)
 
 # Primary Treatmetn M v A ========================================================================================================== #
 
-
-
 res.d21_primary <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAAM", "All_TreatmentAMA", "All_TreatmentAMM", "All_TreatmentASA","All_TreatmentASM"), c("All_TreatmentMAA", "All_TreatmentMAM", "All_TreatmentMMA", "All_TreatmentMMM", "All_TreatmentMSA", "All_TreatmentMSM")),  alpha= 0.1)
 table(res.d21_primary$padj<0.05) # 155 DEGs
 
@@ -1196,13 +1294,13 @@ table(res.d21.primary_grouptest$padj<0.05) #  68 DEGs (same as above)
 
 
 
+
+
+
 # Secondary treatment A v M ========================================================================================================= #
-
-
 
 res.d21.Second_AM <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAAM", "All_TreatmentMAA", "All_TreatmentMAM"), c("All_TreatmentAMA", "All_TreatmentAMM", "All_TreatmentMMA", "All_TreatmentMMM")),  alpha= 0.1)
 table(res.d21.Second_AM$padj<0.05) # 1 DEGs
-
 
 d21.numDEGs_padj_AM            <- data.frame(table(res.d21.Second_AM$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d21_AM.ordered             <- res.d21.Second_AM[order(res.d21.Second_AM$padj), ] # Order by adjusted p-value
@@ -1210,10 +1308,8 @@ d21.num.UpReg_AM               <- sum((res.d21.Second_AM$log2FoldChange > 0)[1] 
 d21.num.DownReg_AM             <- sum((res.d21.Second_AM$log2FoldChange < 0)[1] == TRUE) # LFC >= 1
 
 
-
 # main effect model (mo interaction term)
 res.d21.Second_AM_main <- results(dds.d21.main, contrast = c("Second_Treament", "A", "M"),  alpha= 0.05)
-
 table(res.d21.Second_AM_main$padj<0.05) #  1 DEGs 
 
 # full model 
@@ -1228,20 +1324,18 @@ table(res.d21.Second_AM_grouptest$padj<0.05) #  0 DEGs
 
 
 
+
+
+
 # Secondary treatment A v S ========================================================================================================= #
-
-
 
 res.d21.Second_AS <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAAM", "All_TreatmentMAA", "All_TreatmentMAM"), c("All_TreatmentASA", "All_TreatmentASM", "All_TreatmentMSA", "All_TreatmentMSM")),  alpha= 0.1)
 table(res.d21.Second_AS$padj<0.05) # 1 DEGs
-
 
 d21.numDEGs_padj_AS            <- data.frame(table(res.d21.Second_AS$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
 res.d21_AS.ordered             <- res.d21.Second_AS[order(res.d21.Second_AS$padj), ] # Order by adjusted p-value
 d21.num.UpReg_AS               <- sum((res.d21.Second_AS$log2FoldChange > 0)[1] == TRUE) #  LFC >= 1
 d21.num.DownReg_AS             <- sum((res.d21.Second_AS$log2FoldChange < 0)[1] == TRUE) # LFC >= 1
-
-
 
 # main effect model (mo interaction term)
 res.d21.Second_AS_main <- results(dds.d21.main, contrast = c("Second_Treament", "A", "S"),  alpha= 0.05)
@@ -1258,9 +1352,10 @@ table(res.d21.Second_AS_grouptest$padj<0.05) #  1 DEGs (same as above)
 
 
 
+
+
+
 # Secondary treatment M v S ========================================================================================================= #
-
-
 
 res.d21.Second_MS <- results(dds.d21.group, contrast = list(c("All_TreatmentAMA", "All_TreatmentAMM", "All_TreatmentMMA", "All_TreatmentMMM"), c("All_TreatmentASA", "All_TreatmentASM", "All_TreatmentMSA", "All_TreatmentMSM")),  alpha= 0.1)
 table(res.d21.Second_MS$padj<0.05) # 0 DEGs
@@ -1280,9 +1375,9 @@ table(res.d21.Second_MS_grouptest$padj<0.05) #  2 DEGs
 
 
 
+
+
 # Third treatment A v M ========================================================================================================= #
-
-
 
 res.d21.Third <- results(dds.d21.group, contrast = list(c("All_TreatmentAAA", "All_TreatmentAMA", "All_TreatmentASA", "All_TreatmentMAA", "All_TreatmentMMA", "All_TreatmentMSA"), c("All_TreatmentAAM", "All_TreatmentAMM", "All_TreatmentASM", "All_TreatmentMAM", "All_TreatmentMMM", "All_TreatmentMSM")),  alpha= 0.1)
 table(res.d21.Third$padj<0.05) # 0 DEGs
@@ -1301,7 +1396,12 @@ table(res.d21.Third_grouptest$padj<0.05) #  0 DEGs
 
 
 
-# TABLES  &  Volcano Plots
+
+
+
+# TABLES  &  Volcano Plots - only DEGs found for primary AvM and Second AvS (1 DEG) and second AvM (1 DEG) 
+
+
 
 
 
@@ -1326,8 +1426,6 @@ names(resdata.d21.primary)[1] <- "Gene"
 resdata.d21.primary <- resdata.d21.primary[order(resdata.d21.primary$padj), ] # Order by adjusted p-value
 path_out.d21 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/' # call path
 write.csv(resdata.d21.primary, paste(path_out.d21,"Day21.Primary_DESeq2results.csv")) # write
-
-
 
 # volcano plot 
 png("../Output/DESeq2/10cpm/Day21/Day21.PrimaryTreatment-VolcanoPlot.png", 1000, 1000, pointsize=20)
@@ -1366,8 +1464,51 @@ dev.off()
 
 
 
-#  Data transformations for heatmap and PCA visuals
 
+# Second Treatmetn A v M  ========================================================================================================= #
+resdata.d21.second_AM  <- merge(as.data.frame(res.d21_AM.ordered), as.data.frame(counts(dds.d21.group, normalized=TRUE)), by="row.names", sort=FALSE) #Merge with normalized count data
+names(resdata.d21.second_AM)[1] <- "Gene"
+resdata.d21.second_AM <- resdata.d21.second_AM[order(res.d21_AM.ordered$padj), ]
+
+
+
+
+
+
+# Second Treatmetn A v S  ========================================================================================================= #
+resdata.d21.second_AS  <- merge(as.data.frame(res.d21_AS.ordered), as.data.frame(counts(dds.d21.group, normalized=TRUE)), by="row.names", sort=FALSE) #Merge with normalized count data
+names(resdata.d21.second_AS)[1] <- "Gene"
+resdata.d21.second_AS <- resdata.d21.second_AS[order(resdata.d21.second_AS$padj), ]
+
+
+
+
+#MASTER MAIN EFFECTS TABLE FOR OUTPUT  ========================================================================================================
+# rbind all significant DESeq results in main effect models NOTE: only DEGs from the primary effect model 
+Day21_MainEffectMaster <-  rbind( 
+  (as.data.frame(resdata.d21.primary)[c(1,3,7)]   %>% dplyr::mutate(Day_treatment = "Day21", Treatment = "Primary", Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ),
+  (as.data.frame(resdata.d21.second_AM)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day21", Treatment = "Second",  Pairwise = "AvM") %>%  dplyr::filter(padj < 0.05) ),
+  (as.data.frame(resdata.d21.second_AS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day21", Treatment = "Second",  Pairwise = "AvS") %>%  dplyr::filter(padj < 0.05) ) )#,
+  #(as.data.frame(resdata.d7.second.MS)[c(1,3,7)] %>% dplyr::mutate(Day_treatment = "Day7", Treatment = "Second",  Pairwise = "MvS") %>%  dplyr::filter(padj < 0.05) ) )
+# load annotation to merge by GeneID 
+Pgen_annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.txt", header=F) 
+Pgen_annot <- Pgen_annot[,c(1,5,7)]
+names(Pgen_annot) <- c('Gene', 'Uniprot', 'Gene_terms_EC')
+# merge the master with the Pgen_annot and save the csv file 
+Day21_MainEffectMaster_2 <- merge(Day21_MainEffectMaster, Pgen_annot, by ="Gene")
+path_out.d21 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/' # call path to save
+write.csv(Day21_MainEffectMaster_2, paste(path_out.d21,"Day21.AllMainEffectsDEGs_DESeq2results.csv")) # write
+
+
+
+
+
+
+
+
+
+
+#  Data transformations for heatmap and PCA visuals
 
 
 
@@ -1660,9 +1801,3 @@ Summary_group_interactions <- rbind(d7.full.interaction.DEGs, d14.full.interacti
 write.csv(Summary_group_interactions, "../Output/DESeq2/10cpm/Summary_group_interactions.csv")
 ```
 
-# Summary Table 
-compile the Main Effects & Interaction terms for a summary table of all pariwise results 
-```{r FinalTable}
-Primary.DEGs.table # primary results only 
-Summary_group_interactions # all the group interactions 
-```

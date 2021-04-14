@@ -1,0 +1,11 @@
+"","Gene_IDs","Day","Uniprot","gene","count"
+"1","PGEN_.00g202790","Day7","Q99MY8","Histone-lysine N-methyltransferase ASH1L ",2
+"2","PGEN_.00g202790","Day21","Q99MY8","Histone-lysine N-methyltransferase ASH1L ",2
+"3","PGEN_.00g219410","Day21","Q9C0A6","Histone-lysine N-methyltransferase SETD5 ",2
+"4","PGEN_.00g219410","Day7","Q9C0A6","Histone-lysine N-methyltransferase SETD5 ",2
+"5","PGEN_.00g182120","Day14","Q5ZLV4","RNA cytosine-C",1
+"6","PGEN_.00g183800","Day14","Q28E61","RNA cytosine-C",1
+"7","PGEN_.00g214150","Day21","Q5D013","EEF1A lysine methyltransferase 2 ",1
+"8","PGEN_.00g259100","Day7","O96028","Histone-lysine N-methyltransferase NSD2 ",1
+"9","PGEN_.00g270560","Day21","Q8C436","Protein-lysine methyltransferase METTL21D ",1
+"10","PGEN_.00g283290","Day21","Q9H9B1","Histone-lysine N-methyltransferase EHMT1 ",1

@@ -1,0 +1,230 @@
+"","Gene","log2FoldChange","padj","Day_treatment","Treatment","Pairwise","Uniprot","Gene_terms_EC"
+"1","PGEN_.00g001350",-2.28226006112892,0.00710282235715907,"Day7","Second","AvM","Q9U943","Apolipophorins [Cleaved into: Apolipophorin-2 (Apolipophorin II) (apoLp-2); Apolipophorin-1 (Apolipophorin I) (apoLp-1)]"
+"2","PGEN_.00g001420",1.39618711921369,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"3","PGEN_.00g003940",3.44394396217445,0.0490958723220459,"Day7","Primary","AvM","Q2PFX5","Regucalcin (RC) (Gluconolactonase) (GNL) (EC 3.1.1.17) (Senescence marker protein 30) (SMP-30)"
+"4","PGEN_.00g004620",-1.48409566425864,0.0101069019660299,"Day7","Second","AvS",NA,NA
+"5","PGEN_.00g006380",-1.33969244425109,0.00560884192496884,"Day7","Second","AvM","Q54TR1","Counting factor associated protein D"
+"6","PGEN_.00g007180",-3.63966208423631,0.00744374557832448,"Day7","Second","AvM",NA,NA
+"7","PGEN_.00g009920",-3.08958156829973,0.0146493204646373,"Day7","Second","AvM",NA,NA
+"8","PGEN_.00g009930",-3.09155551567683,0.0297251784687873,"Day7","Second","AvM","Q5G266","Neurotrypsin (EC 3.4.21.-) (Serine protease 12)"
+"9","PGEN_.00g010140",-4.2063952486167,0.0318865208639574,"Day7","Second","AvM",NA,NA
+"10","PGEN_.00g012750",4.77163426006903,0.00904093402198322,"Day7","Primary","AvM",NA,NA
+"11","PGEN_.00g021440",-0.929473899757252,0.0498269946636164,"Day7","Second","AvM","Q9BX95","Sphingosine-1-phosphate phosphatase 1 (SPPase1) (Spp1) (hSPP1) (hSPPase1) (EC 3.1.3.-) (Sphingosine-1-phosphatase 1) (Sphingosine-1-phosphate phosphohydrolase 1) (SPP-1)"
+"12","PGEN_.00g022820",-0.965581994725351,0.0260696952550342,"Day7","Second","AvM","P36975","Synaptosomal-associated protein 25 (SNAP-25) (Synaptosomal-associated 25 kDa protein)"
+"13","PGEN_.00g025680",0.876685623438288,0.0146493204646373,"Day7","Second","AvM","Q568K5","N-alpha-acetyltransferase 40 (EC 2.3.1.257) (N-acetyltransferase 11) (N-alpha-acetyltransferase D) (NatD)"
+"14","PGEN_.00g026190",-1.18986173532966,0.0347455941076182,"Day7","Second","AvM","Q15643","Thyroid receptor-interacting protein 11 (TR-interacting protein 11) (TRIP-11) (Clonal evolution-related gene on chromosome 14 protein) (Golgi-associated microtubule-binding protein 210) (GMAP-210) (Trip230)"
+"15","PGEN_.00g027970",3.3373308258747,0.00291149229425871,"Day7","Primary","AvM",NA,NA
+"16","PGEN_.00g028100",1.41235132050486,0.0183769629302082,"Day7","Primary","AvM","Q96JK4","HHIP-like protein 1"
+"17","PGEN_.00g029620",3.65710976199962,0.018286075737154,"Day7","Primary","AvM",NA,NA
+"18","PGEN_.00g030460",-1.04573214579291,0.0108459710862714,"Day7","Primary","AvM","A6NEE1","Pleckstrin homology domain-containing family D member 1 (PH domain-containing family D member 1)"
+"19","PGEN_.00g033640",-2.7188860855933,0.0236427993287893,"Day7","Second","AvM","P03952","Plasma kallikrein (EC 3.4.21.34) (Fletcher factor) (Kininogenin) (Plasma prekallikrein) (PKK) [Cleaved into: Plasma kallikrein heavy chain; Plasma kallikrein light chain]"
+"20","PGEN_.00g033950",-1.32040712954424,0.0358913978184176,"Day7","Primary","AvM",NA,NA
+"21","PGEN_.00g035190",-2.94523514293338,0.0372876733320999,"Day7","Second","AvM",NA,NA
+"22","PGEN_.00g035820",3.09291007253283,0.029387561983967,"Day7","Primary","AvM","P26779","Prosaposin (Proactivator polypeptide) [Cleaved into: Saposin-A (Protein A); Saposin-B (Cerebroside sulfate activator) (CSAct) (Dispersin) (Sphingolipid activator protein 1) (SAP-1) (Sulfatide/GM1 activator); Saposin-C (A1 activator) (Co-beta-glucosidase) (Glucosylceramidase activator) (Sphingolipid activator protein 2) (SAP-2); Saposin-D (Component C) (Protein C)]"
+"23","PGEN_.00g035820",-2.58664736327725,0.0236427993287893,"Day7","Second","AvM","P26779","Prosaposin (Proactivator polypeptide) [Cleaved into: Saposin-A (Protein A); Saposin-B (Cerebroside sulfate activator) (CSAct) (Dispersin) (Sphingolipid activator protein 1) (SAP-1) (Sulfatide/GM1 activator); Saposin-C (A1 activator) (Co-beta-glucosidase) (Glucosylceramidase activator) (Sphingolipid activator protein 2) (SAP-2); Saposin-D (Component C) (Protein C)]"
+"24","PGEN_.00g037050",-1.70656880675426,0.0114450489351332,"Day7","Second","AvM","Q5EAD0","Brain-specific angiogenesis inhibitor 1-associated protein 2 (BAI-associated protein 2) (BAI1-associated protein 2)"
+"25","PGEN_.00g039120",4.44130860847589,0.00385456529479733,"Day7","Primary","AvM","P83425","Heavy metal-binding protein HIP"
+"26","PGEN_.00g039480",4.04693438738841,0.000562720715050912,"Day7","Primary","AvM",NA,NA
+"27","PGEN_.00g039930",-1.77669291494581,0.0196068877226823,"Day7","Primary","AvM","P82808","Glutamine--fructose-6-phosphate aminotransferase [isomerizing] 1 (EC 2.6.1.16) (D-fructose-6-phosphate amidotransferase 1) (Glutamine:fructose-6-phosphate amidotransferase 1) (GFAT 1) (GFAT1) (Hexosephosphate aminotransferase 1)"
+"28","PGEN_.00g042190",2.51888215029768,0.0169179148058178,"Day7","Second","MvS","Q6V0I7","Protocadherin Fat 4 (hFat4) (Cadherin family member 14) (FAT tumor suppressor homolog 4) (Fat-like cadherin protein FAT-J)"
+"29","PGEN_.00g044180",-1.87270714405838,0.0260696952550342,"Day7","Second","AvM","Q68FD7","Folliculin-interacting protein 1"
+"30","PGEN_.00g046020",-3.97966286911644,0.00907552195236623,"Day7","Second","AvM","P86729","Ependymin-related protein 2"
+"31","PGEN_.00g046580",-1.0097296807247,0.00710282235715907,"Day7","Second","AvM","Q9HBG4","V-type proton ATPase 116 kDa subunit a isoform 4 (V-ATPase 116 kDa isoform a4) (Vacuolar proton translocating ATPase 116 kDa subunit a isoform 4) (Vacuolar proton translocating ATPase 116 kDa subunit a kidney isoform)"
+"32","PGEN_.00g046720",3.53277441846146,0.00952114090075641,"Day7","Primary","AvM",NA,NA
+"33","PGEN_.00g048660",1.75242200017486,0.0453188901203807,"Day7","Second","AvM","Q24117","Dynein light chain 1, cytoplasmic (8 kDa dynein light chain) (Cut up protein)"
+"34","PGEN_.00g048700",-2.32467148702725,0.0268374654664017,"Day7","Second","MvS","Q24117","Dynein light chain 1, cytoplasmic (8 kDa dynein light chain) (Cut up protein)"
+"35","PGEN_.00g049160",-0.854051931958809,0.00868747313860514,"Day7","Primary","AvM",NA,NA
+"36","PGEN_.00g050060",-1.81606360045569,0.0320718293166305,"Day7","Primary","AvM",NA,NA
+"37","PGEN_.00g050070",-1.75581896966133,0.0178351687821148,"Day7","Primary","AvM",NA,NA
+"38","PGEN_.00g052550",3.11993432023639,0.0470150882217187,"Day7","Primary","AvM","Q4ZJM9","Complement C1q-like protein 4 (C1q and tumor necrosis factor-related protein 11) (C1q/TNF-related protein 11) (C1qTNF11) (CTRP11)"
+"39","PGEN_.00g052650",3.21059074369392,0.0399806880990927,"Day7","Second","MvS","Q4ZJM9","Complement C1q-like protein 4 (C1q and tumor necrosis factor-related protein 11) (C1q/TNF-related protein 11) (C1qTNF11) (CTRP11)"
+"40","PGEN_.00g052650",-3.24538019127415,0.0128921123234056,"Day7","Second","AvM","Q4ZJM9","Complement C1q-like protein 4 (C1q and tumor necrosis factor-related protein 11) (C1q/TNF-related protein 11) (C1qTNF11) (CTRP11)"
+"41","PGEN_.00g055380",-1.38232250208244,0.013605257614714,"Day7","Primary","AvM","Q6TFL4","Kelch-like protein 24 (Kainate receptor-interacting protein for GluR6) (KRIP6) (Protein DRE1)"
+"42","PGEN_.00g057170",-2.71970934001003,0.0265046579407501,"Day7","Second","AvM","P14272","Plasma kallikrein (EC 3.4.21.34) (Fletcher factor) (Kininogenin) (Plasma prekallikrein) [Cleaved into: Plasma kallikrein heavy chain; Plasma kallikrein light chain]"
+"43","PGEN_.00g057310",4.81259233338269,0.000291797794101072,"Day7","Primary","AvM","P82968","Four-domain proteases inhibitor (McaPI)"
+"44","PGEN_.00g057590",-2.84614963922479,0.0425696267653393,"Day7","Primary","AvM",NA,NA
+"45","PGEN_.00g061000",1.10301667987959,0.038284049440095,"Day7","Second","AvM","A3KMI0","ATP-dependent RNA helicase dhx29 (EC 3.6.4.13) (DEAH box protein 29)"
+"46","PGEN_.00g062570",3.1174193026263,0.0490958723220459,"Day7","Primary","AvM","Q8K385","Ferric-chelate reductase 1 (EC 1.-.-.-) (Stromal cell-derived receptor 2) (SDR-2)"
+"47","PGEN_.00g066160",-2.56290219266743,0.0490958723220459,"Day7","Primary","AvM",NA,NA
+"48","PGEN_.00g066340",3.95842124394553,0.00554143326183249,"Day7","Primary","AvM","A2ASS6","Titin (EC 2.7.11.1) (Connectin)"
+"49","PGEN_.00g067170",-1.37913187070307,0.0242618352187552,"Day7","Second","AvM",NA,NA
+"50","PGEN_.00g069990",-2.89993709024142,0.0364141090187615,"Day7","Second","AvM","Q9V5N8","Protocadherin-like wing polarity protein stan (Protein flamingo) (Protein starry night)"
+"51","PGEN_.00g074890",-2.47442240454451,0.0158286616489808,"Day7","Second","AvM","Q9UTA8","Uncharacterized methyltransferase-like C25B8.10 (EC 2.1.1.-)"
+"52","PGEN_.00g077410",3.65035469602118,0.0265046579407501,"Day7","Second","AvM",NA,NA
+"53","PGEN_.00g078540",-3.90609596777747,0.00553050346534647,"Day7","Second","AvM","A6H584","Collagen alpha-5(VI) chain (Collagen alpha-1(XXIX) chain)"
+"54","PGEN_.00g078550",-3.47680370831553,0.00424127204141121,"Day7","Second","AvM","A6NMZ7","Collagen alpha-6(VI) chain"
+"55","PGEN_.00g079270",-2.52328201412698,0.0418060077269786,"Day7","Second","AvM",NA,NA
+"56","PGEN_.00g082950",-2.17112549120315,0.0339727696465097,"Day7","Primary","AvM","Q9VF87","Cytoplasmic FMR1-interacting protein (Specifically Rac1-associated protein 1) (DSra-1)"
+"57","PGEN_.00g083520",1.61404199756978,0.0498269946636164,"Day7","Second","AvM","Q9UPN9","E3 ubiquitin-protein ligase TRIM33 (EC 2.3.2.27) (Ectodermin homolog) (RET-fused gene 7 protein) (Protein Rfg7) (RING-type E3 ubiquitin transferase TRIM33) (Transcription intermediary factor 1-gamma) (TIF1-gamma) (Tripartite motif-containing protein 33)"
+"58","PGEN_.00g085780",-2.9558636491644,0.0129724696104205,"Day7","Second","AvM","Q15582","Transforming growth factor-beta-induced protein ig-h3 (Beta ig-h3) (Kerato-epithelin) (RGD-containing collagen-associated protein) (RGD-CAP)"
+"59","PGEN_.00g085790",3.77701572873363,0.00871956194644044,"Day7","Primary","AvM","P55906","Transforming growth factor-beta-induced protein ig-h3 (Beta ig-h3) (MP70) (MP78)"
+"60","PGEN_.00g086610",-2.77208485235898,0.00466505662733638,"Day7","Second","AvM","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"61","PGEN_.00g086610",3.10038250379811,0.00871956194644044,"Day7","Primary","AvM","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"62","PGEN_.00g086610",2.70190000273935,0.0130909352722317,"Day7","Second","MvS","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"63","PGEN_.00g086660",-3.69317541669308,0.00765159757631641,"Day7","Second","AvM","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"64","PGEN_.00g087370",2.29386946411779,0.0488171125318629,"Day7","Second","AvM","Q53G44","Interferon-induced protein 44-like"
+"65","PGEN_.00g092260",-11.6204638480369,1.05588841289878e-05,"Day7","Primary","AvM","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"66","PGEN_.00g092270",-6.08224543681215,2.43216158134955e-05,"Day7","Primary","AvM","Q6YHK3","CD109 antigen (150 kDa TGF-beta-1-binding protein) (C3 and PZP-like alpha-2-macroglobulin domain-containing protein 7) (Platelet-specific Gov antigen) (p180) (r150) (CD antigen CD109)"
+"67","PGEN_.00g093430",-4.68629987595024,0.0380893468958248,"Day7","Primary","AvM","Q91502","Creatine transporter"
+"68","PGEN_.00g093570",-0.499897789434221,0.0483477141364126,"Day7","Second","AvM",NA,NA
+"69","PGEN_.00g094980",2.59192207308762,0.0380893468958248,"Day7","Primary","AvM","Q8BLF1","Neutral cholesterol ester hydrolase 1 (NCEH) (EC 3.1.1.-) (Arylacetamide deacetylase-like 1) (Chlorpyrifos oxon-binding protein) (CPO-BP)"
+"70","PGEN_.00g095380",-2.95860286404204,0.0424295248609202,"Day7","Second","AvM","Q15582","Transforming growth factor-beta-induced protein ig-h3 (Beta ig-h3) (Kerato-epithelin) (RGD-containing collagen-associated protein) (RGD-CAP)"
+"71","PGEN_.00g098060",-3.56281713282299,0.0165913994626802,"Day7","Primary","AvM",NA,NA
+"72","PGEN_.00g103630",3.73773274197487,0.0380893468958248,"Day7","Primary","AvM","P53792","Sodium/glucose cotransporter 2 (Na(+)/glucose cotransporter 2) (Low affinity sodium-glucose cotransporter) (Solute carrier family 5 member 2)"
+"73","PGEN_.00g108800",2.04122042293318,0.0268374654664017,"Day7","Second","MvS","Q10751","Angiotensin-converting enzyme (ACE) (EC 3.2.1.-) (EC 3.4.15.1) (Dipeptidyl carboxypeptidase I) (Kininase II) (Fragment)"
+"74","PGEN_.00g113600",2.58684426180503,0.0380893468958248,"Day7","Primary","AvM","P37801","Calponin homolog OV9M"
+"75","PGEN_.00g114360",3.38109128691358,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"76","PGEN_.00g114780",-5.86054436641451,0.00374099524243751,"Day7","Primary","AvM","Q7RTX9","Monocarboxylate transporter 14 (MCT 14) (Solute carrier family 16 member 14)"
+"77","PGEN_.00g116130",-3.03998097572458,0.00553050346534647,"Day7","Second","AvM","B3EWY9","Mucin-like protein (Fragment)"
+"78","PGEN_.00g118430",3.58343366693115,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"79","PGEN_.00g118430",-3.4897104542522,0.00710282235715907,"Day7","Second","AvM",NA,NA
+"80","PGEN_.00g118780",2.23530425482268,0.0372876733320999,"Day7","Second","AvM","P18755","Protein c-ets-1-A (C-ets-1A)"
+"81","PGEN_.00g119160",2.63761289621588,0.0196068877226823,"Day7","Primary","AvM","P82596","Perlucin"
+"82","PGEN_.00g119160",-2.31581468119895,0.012294257787565,"Day7","Second","AvM","P82596","Perlucin"
+"83","PGEN_.00g119470",3.72347030234535,0.00374099524243751,"Day7","Primary","AvM","P05099","Cartilage matrix protein (Matrilin-1)"
+"84","PGEN_.00g119470",-2.53618017920952,0.0295645413623532,"Day7","Second","AvM","P05099","Cartilage matrix protein (Matrilin-1)"
+"85","PGEN_.00g122110",2.32867822989474,0.00806734598506181,"Day7","Primary","AvM","P57721","Poly(rC)-binding protein 3 (Alpha-CP3) (PCBP3-overlapping transcript) (PCBP3-overlapping transcript 1)"
+"86","PGEN_.00g122110",-1.69974185287715,0.0265046579407501,"Day7","Second","AvM","P57721","Poly(rC)-binding protein 3 (Alpha-CP3) (PCBP3-overlapping transcript) (PCBP3-overlapping transcript 1)"
+"87","PGEN_.00g122510",-3.40343625333428,0.00541119285516217,"Day7","Second","AvM",NA,NA
+"88","PGEN_.00g122870",-2.64813902456281,0.03110153591427,"Day7","Second","AvM","Q9JHA8","von Willebrand factor A domain-containing protein 7 (Protein G7c)"
+"89","PGEN_.00g124090",-3.10895128897335,0.0487967876663336,"Day7","Primary","AvM",NA,NA
+"90","PGEN_.00g126730",-1.75425641925297,0.0236427993287893,"Day7","Second","AvM",NA,NA
+"91","PGEN_.00g127990",-2.61569632445992,0.0328093158713588,"Day7","Second","AvM","Q60847","Collagen alpha-1(XII) chain"
+"92","PGEN_.00g130110",4.63018974481767,1.88004135209243e-05,"Day7","Primary","AvM",NA,NA
+"93","PGEN_.00g130390",-7.42422749844393,0.00374099524243751,"Day7","Primary","AvM",NA,NA
+"94","PGEN_.00g130720",-2.58669982830649,0.0153555842543452,"Day7","Second","AvM",NA,NA
+"95","PGEN_.00g133710",3.57834881526996,0.0487422533006379,"Day7","Primary","AvM",NA,NA
+"96","PGEN_.00g133820",-2.26066118024867,0.0236427993287893,"Day7","Second","AvM",NA,NA
+"97","PGEN_.00g145490",-3.08536721131359,0.0177603586633455,"Day7","Second","AvM","A7MCS3","UPF0764 protein C16orf89 homolog"
+"98","PGEN_.00g146370",-3.26206470160308,0.00424127204141121,"Day7","Second","AvM","P77735","1-deoxyxylulose-5-phosphate synthase YajO (EC 1.1.-.-)"
+"99","PGEN_.00g147360",-3.03507441840566,0.0168590165457877,"Day7","Second","AvM",NA,NA
+"100","PGEN_.00g147530",3.23986301146824,0.0366877278013744,"Day7","Second","AvM",NA,NA
+"101","PGEN_.00g149990",-14.2898086188163,1.61504058897473e-08,"Day7","Primary","AvM",NA,NA
+"102","PGEN_.00g155150",4.0049310142306,0.00871956194644044,"Day7","Primary","AvM","O08782","Aldose reductase-related protein 2 (AR) (EC 1.1.1.21) (Aldehyde reductase) (Aldo-keto reductase)"
+"103","PGEN_.00g155650",-7.40304493087803,0.00555617216058156,"Day7","Primary","AvM","H2A0N4","Protein PIF [Cleaved into: Protein Pif97; Protein Pif80 (Aragonite-binding protein)]"
+"104","PGEN_.00g155710",-1.99445509639372,0.00710282235715907,"Day7","Second","AvM","Q0VDN7","RUN domain-containing protein 1"
+"105","PGEN_.00g156050",3.07699740346041,0.00301218050298679,"Day7","Primary","AvM","O00338","Sulfotransferase 1C2 (ST1C2) (EC 2.8.2.-) (Sulfotransferase 1C1) (SULT1C#1) (humSULTC2)"
+"106","PGEN_.00g156660",-5.20867475536887,0.00424127204141121,"Day7","Second","AvM",NA,NA
+"107","PGEN_.00g158570",4.14758867979486,0.00157511844756976,"Day7","Primary","AvM",NA,NA
+"108","PGEN_.00g158920",3.82020745135921,0.0101630611261477,"Day7","Second","MvS","A0A0R4IBK5","E3 ubiquitin-protein ligase rnf213-alpha (EC 2.3.2.27) (EC 3.6.4.-) (Mysterin-A) (Mysterin-alpha) (RING finger protein 213-A) (RING finger protein 213-alpha) (RING-type E3 ubiquitin transferase rnf213-alpha)"
+"109","PGEN_.00g159750",-3.28876540441872,0.00710282235715907,"Day7","Second","AvM","P83553","Dermatopontin (Tyrosine-rich acidic matrix protein) (TRAMP)"
+"110","PGEN_.00g162900",-10.9279678208282,7.37162670607822e-07,"Day7","Primary","AvM",NA,NA
+"111","PGEN_.00g164270",4.15321797449176,0.013126300302301,"Day7","Primary","AvM",NA,NA
+"112","PGEN_.00g164540",3.74146872686254,0.0198172775960397,"Day7","Primary","AvM","Q16820","Meprin A subunit beta (EC 3.4.24.63) (Endopeptidase-2) (Meprin B) (N-benzoyl-L-tyrosyl-P-amino-benzoic acid hydrolase subunit beta) (PABA peptide hydrolase) (PPH beta)"
+"113","PGEN_.00g164660",3.9311323595292,0.0320718293166305,"Day7","Primary","AvM","Q16820","Meprin A subunit beta (EC 3.4.24.63) (Endopeptidase-2) (Meprin B) (N-benzoyl-L-tyrosyl-P-amino-benzoic acid hydrolase subunit beta) (PABA peptide hydrolase) (PPH beta)"
+"114","PGEN_.00g167300",5.05023068125851,0.000761845639988624,"Day7","Primary","AvM","O46640","Amine sulfotransferase (EC 2.8.2.3) (AST-RB1) (Sulfotransferase 3A1) (ST3A1)"
+"115","PGEN_.00g169390",1.92833049977085,0.0482037548021864,"Day7","Primary","AvM","Q9VSL3","Pyrimidodiazepine synthase (EC 1.5.4.1) (Protein sepia)"
+"116","PGEN_.00g169480",-3.5144871871714,0.00127425550268711,"Day7","Second","AvM","Q13231","Chitotriosidase-1 (EC 3.2.1.14) (Chitinase-1)"
+"117","PGEN_.00g169480",3.51772908746443,0.00868747313860514,"Day7","Primary","AvM","Q13231","Chitotriosidase-1 (EC 3.2.1.14) (Chitinase-1)"
+"118","PGEN_.00g169810",-2.7862714589176,0.0498269946636164,"Day7","Second","AvM","A2AX52","Collagen alpha-4(VI) chain"
+"119","PGEN_.00g171640",-1.05830369679305,0.0453188901203807,"Day7","Second","AvM","Q6P1X6","UPF0598 protein C8orf82"
+"120","PGEN_.00g171900",-3.24017707470688,0.00710282235715907,"Day7","Second","AvM","P86952","Tyrosinase-like protein (Tyrosinase-2)"
+"121","PGEN_.00g174160",1.63553151870749,0.0470150882217187,"Day7","Primary","AvM","Q8BNJ6","Neuropilin and tolloid-like protein 2 (Brain-specific transmembrane protein containing 2 CUB and 1 LDL-receptor class A domains protein 2)"
+"122","PGEN_.00g177450",1.17103790354432,0.0260696952550342,"Day7","Second","AvM",NA,NA
+"123","PGEN_.00g179250",-2.09181209581148,0.0488171125318629,"Day7","Second","AvM","A0A0H5BMX5","Tuliposide B-converting enzyme 1, amyloplastic (TgTCEB1) (EC 4.2.99.23)"
+"124","PGEN_.00g180630",1.86290635261057,0.0196068877226823,"Day7","Primary","AvM","P78417","Glutathione S-transferase omega-1 (GSTO-1) (EC 2.5.1.18) (Glutathione S-transferase omega 1-1) (GSTO 1-1) (Glutathione-dependent dehydroascorbate reductase) (EC 1.8.5.1) (Monomethylarsonic acid reductase) (MMA(V) reductase) (EC 1.20.4.2) (S-(Phenacyl)glutathione reductase) (SPG-R)"
+"125","PGEN_.00g182870",-7.23705586286253,0.00555617216058156,"Day7","Primary","AvM","P86952","Tyrosinase-like protein (Tyrosinase-2)"
+"126","PGEN_.00g186570",-4.05851706942229,0.00555617216058156,"Day7","Primary","AvM",NA,NA
+"127","PGEN_.00g188250",2.90779263371479,0.00887595854179786,"Day7","Primary","AvM","P15941","Mucin-1 (MUC-1) (Breast carcinoma-associated antigen DF3) (Cancer antigen 15-3) (CA 15-3) (Carcinoma-associated mucin) (Episialin) (H23AG) (Krebs von den Lungen-6) (KL-6) (PEMT) (Peanut-reactive urinary mucin) (PUM) (Polymorphic epithelial mucin) (PEM) (Tumor-associated epithelial membrane antigen) (EMA) (Tumor-associated mucin) (CD antigen CD227) [Cleaved into: Mucin-1 subunit alpha (MUC1-NT) (MUC1-alpha); Mucin-1 subunit beta (MUC1-beta) (MUC1-CT)]"
+"128","PGEN_.00g189040",2.690223483473,0.000724644363194887,"Day7","Primary","AvM","Q9GKX2","Dehydrogenase/reductase SDR family member 4 (EC 1.1.1.184) (NADPH-dependent carbonyl reductase/NADP-retinol dehydrogenase) (CR) (PHCR) (NADPH-dependent retinol dehydrogenase/reductase) (NDRD) (Peroxisomal short-chain alcohol dehydrogenase) (PSCD) (rabNRDR) (Fragment)"
+"129","PGEN_.00g191620",-7.55269406888311,0.0151995795916794,"Day7","Primary","AvM",NA,NA
+"130","PGEN_.00g195120",-1.39968252464459,0.0181067443245168,"Day7","Second","MvS",NA,NA
+"131","PGEN_.00g195810",1.59872004694624,0.0453188901203807,"Day7","Second","AvM","Q4UMH6","Putative ankyrin repeat protein RF_0381"
+"132","PGEN_.00g198990",-2.54640735307418,0.0483477141364126,"Day7","Second","AvM",NA,NA
+"133","PGEN_.00g199810",-2.82630647317754,0.00710282235715907,"Day7","Second","AvM","P28840","Neuroendocrine convertase 1 (NEC 1) (EC 3.4.21.93) (Prohormone convertase 1) (Proprotein convertase 1) (PC1)"
+"134","PGEN_.00g199810",2.81119010903936,0.0470150882217187,"Day7","Primary","AvM","P28840","Neuroendocrine convertase 1 (NEC 1) (EC 3.4.21.93) (Prohormone convertase 1) (Proprotein convertase 1) (PC1)"
+"135","PGEN_.00g203030",-5.22520270212202,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"136","PGEN_.00g204830",3.17144582692232,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"137","PGEN_.00g204840",-6.34680786509492,0.00028807753515026,"Day7","Primary","AvM",NA,NA
+"138","PGEN_.00g205460",1.98424052151605,0.0399806880990927,"Day7","Second","MvS","P91685","Metabotropic glutamate receptor (DmGluRA)"
+"139","PGEN_.00g205860",3.53717173907834,0.0196068877226823,"Day7","Primary","AvM","Q60997","Deleted in malignant brain tumors 1 protein (Apactin) (CRP-ductin) (Glycoprotein 300) (gp300) (Hensin) (Mucin-like glycoprotein) (Muclin) (Vomeroglandin) (p80)"
+"140","PGEN_.00g208950",-3.78675438856429,0.000689172214104696,"Day7","Second","AvM",NA,NA
+"141","PGEN_.00g211250",3.27729466359395,0.0196068877226823,"Day7","Primary","AvM","Q9BXJ4","Complement C1q tumor necrosis factor-related protein 3 (Collagenous repeat-containing sequence 26 kDa protein) (CORS26) (Secretory protein CORS26)"
+"142","PGEN_.00g211330",-3.4451856136459,0.0418060077269786,"Day7","Second","AvM","Q6UVY6","DBH-like monooxygenase protein 1 (EC 1.14.17.-) (Monooxygenase X)"
+"143","PGEN_.00g211890",-3.60118905564443,0.0153555842543452,"Day7","Second","AvM","D3YXG0","Hemicentin-1 (Fibulin-6) (FIBL-6)"
+"144","PGEN_.00g212330",-1.51486180827705,0.0418060077269786,"Day7","Second","AvM",NA,NA
+"145","PGEN_.00g215190",-1.30529821152068,0.0122892552954118,"Day7","Primary","AvM","Q8JZL1","Interleukin-17 receptor D (IL-17 receptor D) (IL-17RD) (Interleukin-17 receptor-like protein) (Sef homolog) (mSef)"
+"146","PGEN_.00g215970",-1.24908027989006,0.00868747313860514,"Day7","Primary","AvM","Q6TEN1","Ras-related protein Rap-1b"
+"147","PGEN_.00g216740",-2.88525011944368,0.023979480372244,"Day7","Second","AvM",NA,NA
+"148","PGEN_.00g220610",-1.64205971408144,0.038284049440095,"Day7","Second","AvM","Q29116","Tenascin (TN) (Cytotactin) (GMEM) (GP 150-225) (Glioma-associated-extracellular matrix antigen) (Hexabrachion) (JI) (Myotendinous antigen) (Neuronectin) (P230) (Tenascin-C) (TN-C)"
+"149","PGEN_.00g224680",-1.81846300867741,0.0418060077269786,"Day7","Second","AvM",NA,NA
+"150","PGEN_.00g224810",-2.37421265700591,0.00743514033310634,"Day7","Second","MvS",NA,NA
+"151","PGEN_.00g227770",-2.91210029091948,0.0158286616489808,"Day7","Second","AvM",NA,NA
+"152","PGEN_.00g231670",2.20045921633294,0.0380893468958248,"Day7","Primary","AvM","A8MYZ0","Inactive ubiquitin carboxyl-terminal hydrolase MINDY-4B (Protein FAM188B2)"
+"153","PGEN_.00g238060",2.72491865516447,0.0358913978184176,"Day7","Primary","AvM","O94898","Leucine-rich repeats and immunoglobulin-like domains protein 2 (LIG-2)"
+"154","PGEN_.00g238060",-2.2858720728452,0.027960575457625,"Day7","Second","AvM","O94898","Leucine-rich repeats and immunoglobulin-like domains protein 2 (LIG-2)"
+"155","PGEN_.00g238430",-1.02719116967932,0.0346137126099373,"Day7","Primary","AvM","Q6P549","Phosphatidylinositol 3,4,5-trisphosphate 5-phosphatase 2 (EC 3.1.3.86) (AblSH3-binding protein) (Inositol polyphosphate phosphatase-like protein 1) (INPPL-1) (SH2 domain-containing inositol 5'-phosphatase 2) (SH2 domain-containing inositol phosphatase 2) (SHIP-2)"
+"156","PGEN_.00g239280",-2.11897364853827,0.000803744394327983,"Day7","Second","MvS",NA,NA
+"157","PGEN_.00g239280",1.82967808409757,0.00424127204141121,"Day7","Second","AvM",NA,NA
+"158","PGEN_.00g240470",2.70479566382222,0.0114450489351332,"Day7","Second","AvM","P0C6B8","Sushi, von Willebrand factor type A, EGF and pentraxin domain-containing protein 1"
+"159","PGEN_.00g240940",2.47285837468399,0.0169179148058178,"Day7","Second","MvS",NA,NA
+"160","PGEN_.00g240940",-2.61748986578435,0.00424127204141121,"Day7","Second","AvM",NA,NA
+"161","PGEN_.00g245440",-7.89264002224461,0.0101069019660299,"Day7","Second","AvS",NA,NA
+"162","PGEN_.00g247310",-2.81068273175688,0.0462284534530045,"Day7","Second","AvM","Q61830","Macrophage mannose receptor 1 (MMR) (CD antigen CD206)"
+"163","PGEN_.00g255020",1.91395027092748,0.0490958723220459,"Day7","Primary","AvM",NA,NA
+"164","PGEN_.00g255920",1.04241200217178,0.0396871835317046,"Day7","Second","AvM","A8E7C5","Phosphatidylinositide phosphatase SAC2 (EC 3.1.3.25) (Inositol polyphosphate 5-phosphatase F) (Sac domain-containing inositol phosphatase 2) (Sac domain-containing phosphoinositide 4-phosphatase 2) (hSAC2)"
+"165","PGEN_.00g261000",2.66353901849526,0.0151995795916794,"Day7","Primary","AvM","Q17320","Protein white"
+"166","PGEN_.00g263590",-3.62603446558912,0.0418060077269786,"Day7","Second","AvM","Q4U2R1","E3 ubiquitin-protein ligase HERC2 (EC 2.3.2.26) (HECT domain and RCC1-like domain-containing protein 2) (HECT-type E3 ubiquitin transferase HERC2)"
+"167","PGEN_.00g263770",-2.41694655148321,0.0420548137194819,"Day7","Second","AvM","Q9XTA0","Dopamine beta-hydroxylase (EC 1.14.17.1) [Cleaved into: Soluble dopamine beta-hydroxylase]"
+"168","PGEN_.00g266130",-12.4453116609063,5.58759808566521e-07,"Day7","Primary","AvM","Q5XWD5","Cobalamin binding intrinsic factor (Gastric intrinsic factor) (Intrinsic factor) (IF) (INF) (Pancreatic intrinsic factor)"
+"169","PGEN_.00g272710",-2.42040209834528,0.0236427993287893,"Day7","Second","AvM","B3EWZ3","Coadhesin (Fragment)"
+"170","PGEN_.00g272710",2.84309396970888,0.0320718293166305,"Day7","Primary","AvM","B3EWZ3","Coadhesin (Fragment)"
+"171","PGEN_.00g274880",-3.15553083846293,0.0361837551547694,"Day7","Second","AvM","Q90WJ8","Lactose-binding lectin l-2 (Ajl-2)"
+"172","PGEN_.00g274890",-4.09670757551763,0.000248175585895871,"Day7","Second","AvM","Q90WJ8","Lactose-binding lectin l-2 (Ajl-2)"
+"173","PGEN_.00g274890",3.3769700225421,0.0101630611261477,"Day7","Second","MvS","Q90WJ8","Lactose-binding lectin l-2 (Ajl-2)"
+"174","PGEN_.00g275400",-1.96427825536063,0.0490958723220459,"Day7","Primary","AvM",NA,NA
+"175","PGEN_.00g279100",4.04461689872459,0.00165676484711975,"Day7","Primary","AvM",NA,NA
+"176","PGEN_.00g279590",3.47367487619959,0.0122811046301587,"Day7","Primary","AvM","Q8SPI0","Apolipoprotein D (Apo-D) (ApoD)"
+"177","PGEN_.00g279590",-2.46635568968898,0.0453188901203807,"Day7","Second","AvM","Q8SPI0","Apolipoprotein D (Apo-D) (ApoD)"
+"178","PGEN_.00g281940",-4.02423097906526,0.00553050346534647,"Day7","Second","AvM",NA,NA
+"179","PGEN_.00g281950",-1.65379163412934,0.0295645413623532,"Day7","Second","AvM",NA,NA
+"180","PGEN_.00g282910",-1.31736372587571,0.0418060077269786,"Day7","Second","AvM","Q5T1M5","FK506-binding protein 15 (FKBP-15) (133 kDa FK506-binding protein) (133 kDa FKBP) (FKBP-133) (WASP- and FKBP-like protein) (WAFL)"
+"181","PGEN_.00g284500",-3.07113890482944,0.00553050346534647,"Day7","Second","AvM",NA,NA
+"182","PGEN_.00g285590",-2.73075346889865,0.0453188901203807,"Day7","Second","AvM","Q1EHB3","A disintegrin and metalloproteinase with thrombospondin motifs 7 (ADAM-TS 7) (ADAM-TS7) (ADAMTS-7) (EC 3.4.24.-) (COMPase)"
+"183","PGEN_.00g285590",3.4399428156332,0.0380893468958248,"Day7","Primary","AvM","Q1EHB3","A disintegrin and metalloproteinase with thrombospondin motifs 7 (ADAM-TS 7) (ADAM-TS7) (ADAMTS-7) (EC 3.4.24.-) (COMPase)"
+"184","PGEN_.00g286180",-5.19403532812735,0.0358913978184176,"Day7","Primary","AvM",NA,NA
+"185","PGEN_.00g289810",-3.05013577642981,0.0490958723220459,"Day7","Primary","AvM",NA,NA
+"186","PGEN_.00g289900",-3.29025490224854,0.00615438051410284,"Day7","Second","AvM",NA,NA
+"187","PGEN_.00g291230",-8.27298361914212,0.0001660700050582,"Day7","Primary","AvM",NA,NA
+"188","PGEN_.00g295020",-13.573057307638,7.16330301322963e-08,"Day7","Primary","AvM",NA,NA
+"189","PGEN_.00g295510",-4.1393949426179,2.48567267340477e-05,"Day7","Primary","AvM",NA,NA
+"190","PGEN_.00g298760",-1.15982113063646,0.0490958723220459,"Day7","Primary","AvM","Q63739","Protein tyrosine phosphatase type IVA 1 (EC 3.1.3.48) (Protein-tyrosine phosphatase 4a1) (Protein-tyrosine phosphatase of regenerating liver 1) (PRL-1)"
+"191","PGEN_.00g299010",3.53556621394542,0.0380893468958248,"Day7","Primary","AvM",NA,NA
+"192","PGEN_.00g302300",-0.974652712384705,0.0490958723220459,"Day7","Primary","AvM","Q03172","Zinc finger protein 40 (Alpha A-crystallin-binding protein 1) (Alpha A-CRYBP1) (Alpha A-crystallin-binding protein I) (Transcription factor alphaA-CRYBP1)"
+"193","PGEN_.00g305410",-3.03439737094982,0.0114450489351332,"Day7","Second","AvM",NA,NA
+"194","PGEN_.00g308130",-2.88940521105344,0.00424127204141121,"Day7","Second","AvM","P43691","Transcription factor GATA-4 (GATA-binding factor 4) (Fragment)"
+"195","PGEN_.00g308530",-2.18773212471512,0.0146493204646373,"Day7","Second","AvM","O18326","Protein hunchback (Fragment)"
+"196","PGEN_.00g311860",-2.74180695512581,0.0260696952550342,"Day7","Second","AvM","P13608","Aggrecan core protein (Cartilage-specific proteoglycan core protein) (CSPCP)"
+"197","PGEN_.00g311890",-1.29137156086279,0.0196068877226823,"Day7","Primary","AvM",NA,NA
+"198","PGEN_.00g311950",2.70758908036351,0.0470150882217187,"Day7","Primary","AvM",NA,NA
+"199","PGEN_.00g312070",-4.82075234949879,0.0260696952550342,"Day7","Second","AvM",NA,NA
+"200","PGEN_.00g313880",3.54334431625954,0.0490958723220459,"Day7","Primary","AvM",NA,NA
+"201","PGEN_.00g313940",-2.47299010140949,0.0379191341503209,"Day7","Second","AvM",NA,NA
+"202","PGEN_.00g315340",-1.74652620548343,0.0199793329550769,"Day7","Second","AvM",NA,NA
+"203","PGEN_.00g315910",-1.96240403743948,0.0255671294021725,"Day7","Primary","AvM",NA,NA
+"204","PGEN_.00g319180",-6.49287896168895,0.00395948453730616,"Day7","Primary","AvM",NA,NA
+"205","PGEN_.00g323180",-2.19250957648259,0.00301218050298679,"Day7","Primary","AvM","P38942","4-hydroxybutyrate coenzyme A transferase (EC 2.8.3.-)"
+"206","PGEN_.00g327660",5.61398434720766,0.00422379233716075,"Day7","Primary","AvM",NA,NA
+"207","PGEN_.00g328520",-1.73950909458531,0.00868747313860514,"Day7","Primary","AvM",NA,NA
+"208","PGEN_.00g329260",3.41963978848832,0.0286210094018919,"Day7","Primary","AvM",NA,NA
+"209","PGEN_.00g330100",-7.71694089952346,0.00168758754533757,"Day7","Primary","AvM",NA,NA
+"210","PGEN_.00g330240",-2.82195245029113,0.0147917373230462,"Day7","Second","AvM","B0UZC8","von Willebrand factor C domain-containing protein 2-like"
+"211","PGEN_.00g333460",-6.81989262773739,1.24374828291012e-07,"Day7","Primary","AvM",NA,NA
+"212","PGEN_.00g336900",2.8246206261323,0.04965759301789,"Day7","Second","AvM","G5E8K5","Ankyrin-3 (ANK-3) (Ankyrin-G)"
+"213","PGEN_.00g339710",-3.61415415963357,0.00765159757631641,"Day7","Second","AvM",NA,NA
+"214","PGEN_.00g340090",-3.40298010037462,0.0265046579407501,"Day7","Second","AvM","A6H584","Collagen alpha-5(VI) chain (Collagen alpha-1(XXIX) chain)"
+"215","PGEN_.00g340250",-9.52326384430507,2.24709398277222e-06,"Day7","Primary","AvM",NA,NA
+"216","PGEN_.00g340260",-5.81927913584071,0.0196068877226823,"Day7","Primary","AvM",NA,NA
+"217","PGEN_.00g344510",-2.2157840216912,0.038284049440095,"Day7","Second","AvM","Q4V885","Collectin-12 (Collectin placenta protein 1) (CL-P1) (Nurse cell scavenger receptor 2)"
+"218","PGEN_.00g344880",2.68019491004346,0.0470150882217187,"Day7","Primary","AvM",NA,NA
+"219","PGEN_.00g344880",-2.52186727647601,0.0144388352401379,"Day7","Second","AvM",NA,NA
+"220","PGEN_.00g344990",4.16216900213096,0.0122811046301587,"Day7","Primary","AvM","Q5G267","Neurotrypsin (EC 3.4.21.-) (Serine protease 12)"
+"221","PGEN_.00g345620",-1.88118089183996,0.0265440555432103,"Day7","Second","AvM","Q66PG1","LARGE xylosyl- and glucuronyltransferase 2 (EC 2.4.-.-) (Glycosyltransferase-like 1B) [Includes: Xylosyltransferase LARGE2 (EC 2.4.2.-); Beta-1,3-glucuronyltransferase LARGE2 (EC 2.4.1.-)]"
+"222","PGEN_.00g345680",-3.90098576012787,0.0265046579407501,"Day7","Second","AvM","Q28944","Cathepsin L1 (EC 3.4.22.15) (Cathepsin L) [Cleaved into: Cathepsin L1 heavy chain; Cathepsin L1 light chain]"
+"223","PGEN_.00g346230",-3.12057142298827,0.0265046579407501,"Day7","Second","AvM","Q9QW30","Neurogenic locus notch homolog protein 2 (Notch 2) [Cleaved into: Notch 2 extracellular truncation; Notch 2 intracellular domain]"
+"224","PGEN_.00g347800",2.32924016710027,0.0188809826514246,"Day7","Primary","AvM",NA,NA
+"225","PGEN_.00g348040",4.09222867047127,0.0274621265807232,"Day7","Primary","AvM","A2AJ76","Hemicentin-2"
+"226","PGEN_.00g348220",2.64975688152867,0.0482037548021864,"Day7","Primary","AvM","Q9ES87","Prostasin (EC 3.4.21.-) (Channel-activating protease 1) (CAP1) (Serine protease 8) [Cleaved into: Prostasin light chain; Prostasin heavy chain]"
+"227","PGEN_.00g348570",2.66967016003166,0.0490958723220459,"Day7","Primary","AvM","Q9ES87","Prostasin (EC 3.4.21.-) (Channel-activating protease 1) (CAP1) (Serine protease 8) [Cleaved into: Prostasin light chain; Prostasin heavy chain]"
+"228","PGEN_.00g348580",3.23619620189616,0.011958160562874,"Day7","Second","MvS","B2RX12","Canalicular multispecific organic anion transporter 2 (ATP-binding cassette sub-family C member 3) (Multidrug resistance-associated protein 3)"
+"229","PGEN_.00g348850",-2.41168427478489,0.0453188901203807,"Day7","Second","AvM","Q12913","Receptor-type tyrosine-protein phosphatase eta (Protein-tyrosine phosphatase eta) (R-PTP-eta) (EC 3.1.3.48) (Density-enhanced phosphatase 1) (DEP-1) (HPTP eta) (Protein-tyrosine phosphatase receptor type J) (R-PTP-J) (CD antigen CD148)"

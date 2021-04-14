@@ -2,7 +2,7 @@
   # title: "day21_WGCNA"
   # author: "Samuel Gurr"
   # date: "January 8, 2021"
-  ---
+---
   
 # LOAD PACKAGES
 library(WGCNA) # note: this was previously installed with the command `BiocManager::install("WGCNA")`
@@ -24,9 +24,9 @@ library(hrbrthemes)
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 # LOAD DATA
 # Tagaseq filtered counts 
-day21.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day21.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
 # Treatment and Phenotype data
-Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
+Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 d21.Treatment_Phenotype.data     <- Master.Treatment_Phenotype.data %>%  dplyr ::filter(Date %in% 20190814) # split for day 7 data 
 
 

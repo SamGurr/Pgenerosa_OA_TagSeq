@@ -1,0 +1,87 @@
+"","Gene_IDs","Day","Uniprot","gene","count"
+"1","PGEN_.00g024130","Day7","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",3
+"2","PGEN_.00g024130","Day14","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",3
+"3","PGEN_.00g024130","Day21","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",3
+"4","PGEN_.00g026480","Day7","Q55E31","Ras-related protein Rab-32B",3
+"5","PGEN_.00g026480","Day21","Q55E31","Ras-related protein Rab-32B",3
+"6","PGEN_.00g026480","Day14","Q55E31","Ras-related protein Rab-32B",3
+"7","PGEN_.00g134530","Day21","O35643","AP-1 complex subunit beta-1 ",3
+"8","PGEN_.00g134530","Day7","O35643","AP-1 complex subunit beta-1 ",3
+"9","PGEN_.00g134530","Day14","O35643","AP-1 complex subunit beta-1 ",3
+"10","PGEN_.00g147170","Day21","Q00610","Clathrin heavy chain 1 ",3
+"11","PGEN_.00g147170","Day7","Q00610","Clathrin heavy chain 1 ",3
+"12","PGEN_.00g147170","Day14","Q00610","Clathrin heavy chain 1 ",3
+"13","PGEN_.00g149140","Day21","Q16932","Syntaxin",3
+"14","PGEN_.00g149140","Day14","Q16932","Syntaxin",3
+"15","PGEN_.00g149140","Day7","Q16932","Syntaxin",3
+"16","PGEN_.00g155710","Day7","Q0VDN7","RUN domain-containing protein 1",3
+"17","PGEN_.00g155710","Day21","Q0VDN7","RUN domain-containing protein 1",3
+"18","PGEN_.00g155710","Day14","Q0VDN7","RUN domain-containing protein 1",3
+"19","PGEN_.00g192770","Day21","Q3UHD6","Sorting nexin-27",3
+"20","PGEN_.00g192770","Day7","Q3UHD6","Sorting nexin-27",3
+"21","PGEN_.00g192770","Day14","Q3UHD6","Sorting nexin-27",3
+"22","PGEN_.00g198530","Day14","Q9CWK8","Sorting nexin-2",3
+"23","PGEN_.00g198530","Day21","Q9CWK8","Sorting nexin-2",3
+"24","PGEN_.00g198530","Day7","Q9CWK8","Sorting nexin-2",3
+"25","PGEN_.00g305960","Day14","Q13637","Ras-related protein Rab-32",3
+"26","PGEN_.00g305960","Day21","Q13637","Ras-related protein Rab-32",3
+"27","PGEN_.00g305960","Day7","Q13637","Ras-related protein Rab-32",3
+"28","PGEN_.00g313920","Day14","P04973","Clathrin light chain A ",3
+"29","PGEN_.00g313920","Day21","P04973","Clathrin light chain A ",3
+"30","PGEN_.00g313920","Day7","P04973","Clathrin light chain A ",3
+"31","PGEN_.00g012190","Day21","P62743","AP-2 complex subunit sigma ",2
+"32","PGEN_.00g012190","Day14","P62743","AP-2 complex subunit sigma ",2
+"33","PGEN_.00g021240","Day21","Q96JC1","Vam6/Vps39-like protein ",2
+"34","PGEN_.00g021240","Day14","Q96JC1","Vam6/Vps39-like protein ",2
+"35","PGEN_.00g040090","Day7","Q9Y5X2","Sorting nexin-8",2
+"36","PGEN_.00g040090","Day21","Q9Y5X2","Sorting nexin-8",2
+"37","PGEN_.00g132090","Day14","Q5U316","Ras-related protein Rab-35",2
+"38","PGEN_.00g132090","Day21","Q5U316","Ras-related protein Rab-35",2
+"39","PGEN_.00g162260","Day21","P17427","AP-2 complex subunit alpha-2 ",2
+"40","PGEN_.00g162260","Day14","P17427","AP-2 complex subunit alpha-2 ",2
+"41","PGEN_.00g180380","Day14","Q5F361","TBC domain-containing protein kinase-like protein",2
+"42","PGEN_.00g180380","Day21","Q5F361","TBC domain-containing protein kinase-like protein",2
+"43","PGEN_.00g204750","Day7","Q8WUA7","TBC1 domain family member 22A",2
+"44","PGEN_.00g204750","Day14","Q8WUA7","TBC1 domain family member 22A",2
+"45","PGEN_.00g208790","Day21","Q3MII6","TBC1 domain family member 25",2
+"46","PGEN_.00g208790","Day7","Q3MII6","TBC1 domain family member 25",2
+"47","PGEN_.00g272730","Day14","Q6PHS6","Sorting nexin-13",2
+"48","PGEN_.00g272730","Day21","Q6PHS6","Sorting nexin-13",2
+"49","PGEN_.00g305230","Day7","Q5RID7","Sorting nexin-17",2
+"50","PGEN_.00g305230","Day21","Q5RID7","Sorting nexin-17",2
+"51","PGEN_.00g325430","Day14","O55029","Coatomer subunit beta' ",2
+"52","PGEN_.00g325430","Day21","O55029","Coatomer subunit beta' ",2
+"53","PGEN_.00g331740","Day14","O00203","AP-3 complex subunit beta-1 ",2
+"54","PGEN_.00g331740","Day21","O00203","AP-3 complex subunit beta-1 ",2
+"55","PGEN_.00g339990","Day7","P35280","Ras-related protein Rab-8A",2
+"56","PGEN_.00g339990","Day14","P35280","Ras-related protein Rab-8A",2
+"57","PGEN_.00g006210","Day21","Q86Y82","Syntaxin-12",1
+"58","PGEN_.00g013560","Day21","Q08DB5","Syntaxin-5",1
+"59","PGEN_.00g014380","Day7","P54923","[Protein ADP-ribosylarginine] hydrolase ",1
+"60","PGEN_.00g021820","Day7","Q5TYV4","Spermatogenesis-defective protein 39 homolog ",1
+"61","PGEN_.00g032460","Day21","Q15907","Ras-related protein Rab-11B ",1
+"62","PGEN_.00g036060","Day14","Q3UPL0","Protein transport protein Sec31A ",1
+"63","PGEN_.00g039830","Day7","Q7T2P6","Mitochondrial import inner membrane translocase subunit Tim23",1
+"64","PGEN_.00g040080","Day21","Q8CFD4","Sorting nexin-8",1
+"65","PGEN_.00g054860","Day21","Q9BZE9","Tether containing UBX domain for GLUT4 ",1
+"66","PGEN_.00g062920","Day14","Q29122","Unconventional myosin-VI ",1
+"67","PGEN_.00g083720","Day21","Q60949","TBC1 domain family member 1",1
+"68","PGEN_.00g095990","Day14","Q8BHH2","Ras-related protein Rab-9B",1
+"69","PGEN_.00g100450","Day21","O95714","E3 ubiquitin-protein ligase HERC2 ",1
+"70","PGEN_.00g127920","Day21","Q92609","TBC1 domain family member 5",1
+"71","PGEN_.00g131010","Day7","Q9UMZ2","Synergin gamma ",1
+"72","PGEN_.00g131980","Day21","A5HK05","Amyloid protein-binding protein 2 ",1
+"73","PGEN_.00g156010","Day14","Q6ZT07","TBC1 domain family member 9 ",1
+"74","PGEN_.00g166220","Day21","P26990","ADP-ribosylation factor 6",1
+"75","PGEN_.00g181780","Day21","P61019","Ras-related protein Rab-2A",1
+"76","PGEN_.00g185010","Day21","Q8BVI5","Syntaxin-16",1
+"77","PGEN_.00g199700","Day21","O95714","E3 ubiquitin-protein ligase HERC2 ",1
+"78","PGEN_.00g210520","Day21","Q9UBN7","Histone deacetylase 6 ",1
+"79","PGEN_.00g228950","Day14","Q9DB50","AP-1 complex subunit sigma-2 ",1
+"80","PGEN_.00g262850","Day21","P49754","Vacuolar protein sorting-associated protein 41 homolog ",1
+"81","PGEN_.00g274350","Day14","P84080","ADP-ribosylation factor 1",1
+"82","PGEN_.00g290440","Day21","Q91V41","Ras-related protein Rab-14",1
+"83","PGEN_.00g295070","Day14","Q9NVG8","TBC1 domain family member 13",1
+"84","PGEN_.00g297680","Day14","Q92783","Signal transducing adapter molecule 1 ",1
+"85","PGEN_.00g318890","Day7","P24668","Cation-dependent mannose-6-phosphate receptor ",1
+"86","PGEN_.00g338640","Day14","P18708","Vesicle-fusing ATPase ",1

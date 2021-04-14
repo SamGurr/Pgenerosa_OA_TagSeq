@@ -16,20 +16,20 @@ library(gridExtra)
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # upload data
-day0.primaryDE<-read.csv("Analysis/Output/DESeq2/Day0/ Day0.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day7.primaryDE<-read.csv("Analysis/Output/DESeq2/Day7/ Day7.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day14.primaryDE<-read.csv("Analysis/Output/DESeq2/Day14/ Day14.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day21.primaryDE<-read.csv("Analysis/Output/DESeq2/Day21/ Day21.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day0.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day0/ Day0.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day7.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/ Day7.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/ Day14.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day21.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day21/ Day21.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 
 # Day 7 check
-day7.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests/ Day7.Primary_res_main.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day7.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests/ Day7.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day7.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/Day7/D7_res_model_tests/ Day7.Primary_res_grouptest.full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day7.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/D7_res_model_tests/ Day7.Primary_res_main.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day7.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/D7_res_model_tests/ Day7.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day7.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/D7_res_model_tests/ Day7.Primary_res_grouptest.full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 
 # Day 14 check
-day14.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_main.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day14.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
-day14.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/Day14/D14_res_model_tests/ Day14.Primary_res_grouptest.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/ Day14.Primary_res_main.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/ Day14.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day14.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/ Day14.Primary_res_grouptest.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 
 
 
@@ -110,7 +110,7 @@ grouptest_day14.primaryDE_DOWN$Day <- "Day14"
 
 # Day21 primary treatment effect  ------------------------------------------------------------------------ #
 # group mod
-ay21.primaryDE_UP <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1)  %>%  dplyr::select('Gene')
+day21.primaryDE_UP <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1)  %>%  dplyr::select('Gene')
 day21.primaryDE_UP$Dir <- "upregulated"
 day21.primaryDE_UP$Day <- "Day21"
 day21.primaryDE_DOWN <- day21.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < -1)  %>%  dplyr::select('Gene')

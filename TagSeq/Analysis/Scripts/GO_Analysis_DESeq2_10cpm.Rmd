@@ -38,6 +38,7 @@ library(ComplexHeatmap)
 library(circlize)
 library(GSEABase)
 library(data.table)
+library(stringr)
 ```
 
 
@@ -125,6 +126,7 @@ nrow(All.primary.UPREG) ==sum( (nrow(DE_d21.primary.UPREG)) , (nrow(DE_d14.prima
 ```
 
 
+# If youve run this befoe: after load and prep... you can skip down to GOslim to sload the goseq outputs 
 
 
 ```{r Primary_Treatment_constant_DEGs}
@@ -214,24 +216,24 @@ GO.terms <- data.frame(v1 = rep.int(Geoduck_GOterms$transcript.ID, sapply(splitt
 (3) Gene length 
 Set ID and gene length vectors, and make a binary matrix indicating which genes are differentially expressed. These are used as input to nullp, which for calculates a Probability Weighting Function for each set of DEGs.
 ```{r Unique_genes}
-
-# call unique IDvector(s) for each of the experiment days
+# Prepare dataframe(s) and vectors for goseq 
+# Format 'GO.term' for goseq from the P.generosa annotation .fna file 'Geoduck_annotation'
 IDvector.d0 <- as.vector(unique(Day0_all.counts$gene.ID))   # call unique genes (those filtered and used in DESEq2) on day0 - 'IDvector'
 IDvector.d7 <- as.vector(unique(Day7_all.counts$gene.ID))  # call unique genes (those filtered and used in DESEq2) on day7 - 'IDvector'
 IDvector.d14 <- as.vector(unique(Day14_all.counts$gene.ID)) # call unique genes (those filtered and used in DESEq2) on day14 - 'IDvector'
 IDvector.d21 <- as.vector(unique(Day21_all.counts$gene.ID)) # call unique genes (those filtered and used in DESEq2) on day21 - 'IDvector'
+GO_unique.genes.all <- as.vector(unique(Geoduck_annotation$V1)) # call all unique genes for GO analysis (goseq)
 
-#  length vectors (from entire annotation file - no genes ommitted from filtering)  
+# Gene length 
 GO_gene.length <- Geoduck_annotation %>% dplyr::mutate(length = V4-V3) %>%  dplyr::select(c("V1","length"))
 names(GO_gene.length)[1] <- "gene.ID" # cange the column name to merge with the gene counts on each day to call ID and length vectors UNIQUE to the experiment day
-
 # merge length with counts data
+length_vector   <- GO_gene.length$length
 GeneLength.d0   <- merge(GO_gene.length, Day0_all.counts, by = "gene.ID")   # merge day0 counts with 'GO_gene.length' 
 GeneLength.d7   <- merge(GO_gene.length, Day7_all.counts, by = "gene.ID")  # merge day7 counts with 'GO_gene.length' 
 GeneLength.d14  <- merge(GO_gene.length, Day14_all.counts, by = "gene.ID")  # merge day14 counts with 'GO_gene.length' 
 GeneLength.d21  <- merge(GO_gene.length, Day21_all.counts, by = "gene.ID")  # merge day21 counts with 'GO_gene.length'
-
-# call length values for goseq
+# call length values for goseq - confirms that the IDvector and length_vector are the same!!!
 length_vector.d0 <- GeneLength.d0$length    # length vector for all unique reads address in DESeq2 on day 0 
 sum(sapply(length_vector.d0,length)) == dim(Day0_all.counts)[1] #should be TRUE
 length_vector.d7 <- GeneLength.d7$length    # length vector for all unique reads address in DESeq2 on day 7
@@ -247,78 +249,126 @@ sum(sapply(length_vector.d21,length)) == dim(Day21_all.counts)[1] #should be TRU
 (4) Call DE datasets (from DESeq2) - merge to the genes list 'GO_unique.genes.all' to create a binary vector 0 = not DE'd; 1 = DE'd
 ```{r Binary_DEGs - must run the prep steps above}
 # (1) DEGs: Primary Ambient_v_Moderate 
+
+
 # DAY 0 ------------------------------------------- #
-DE.d0._Primary.UP    <-as.integer(IDvector.d0%in%(DE_d0.primary.UPREG$gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(DE.d0._Primary.UP)=IDvector.d0
-sum(sapply(DE.d0._Primary.UP,length)) # should be 9207
+
+
+# DE.d0._Primary.UP    <-as.integer(IDvector.d0%in%(DE_d0.primary.UPREG$gene.ID)) # Day 0 - Primary - Upregulated DEGs
+# names(DE.d0._Primary.UP)=IDvector.d0
+DE.d0._Primary.UP    <-as.integer(GO_unique.genes.all%in%(DE_d0.primary.UPREG$gene.ID)) # Day 0 - Primary - Upregulated DEGs
+names(DE.d0._Primary.UP)=GO_unique.genes.all
+sum(sapply(DE.d0._Primary.UP,length)) # 34947 (9207 if you use the ID vecotr specific to filtered genes at Day 0)
 sum(DE.d0._Primary.UP == 1) # should be 11
 
-DE.d0._Primary.DOWN  <-as.integer(IDvector.d0%in%(DE_d0.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
-names(DE.d0._Primary.DOWN)=IDvector.d0
-sum(sapply(DE.d0._Primary.DOWN,length)) # should be 9207
+# DE.d0._Primary.DOWN  <-as.integer(IDvector.d0%in%(DE_d0.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
+# names(DE.d0._Primary.DOWN)=IDvector.d0
+DE.d0._Primary.DOWN  <-as.integer(GO_unique.genes.all%in%(DE_d0.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
+names(DE.d0._Primary.DOWN)=GO_unique.genes.all
+sum(sapply(DE.d0._Primary.DOWN,length)) # 34947 (9207 if you use the ID vecotr specific to filtered genes at Day 0)
 sum(DE.d0._Primary.DOWN == 1) # should be 3
 
-DE.d0._Primary.ALL   <-as.integer(IDvector.d0%in%(DE_d0.primary$gene.ID)) # Day 0 - Primary - All DEGs
-names(DE.d0._Primary.ALL)=IDvector.d0
-sum(sapply(DE.d0._Primary.ALL,length)) # should be 9207
+# DE.d0._Primary.ALL   <-as.integer(IDvector.d0%in%(DE_d0.primary$gene.ID)) # Day 0 - Primary - All DEGs
+# names(DE.d0._Primary.ALL)=IDvector.d0
+DE.d0._Primary.ALL   <-as.integer(GO_unique.genes.all%in%(DE_d0.primary$gene.ID)) # Day 0 - Primary - All DEGs
+names(DE.d0._Primary.ALL)=GO_unique.genes.all
+sum(sapply(DE.d0._Primary.ALL,length)) # 34947 (9207 if you use the ID vecotr specific to filtered genes at Day 0)
 sum(DE.d0._Primary.ALL == 1) # should be 14
 
+
+
 # DAY 7 ------------------------------------------- #
-DE.d7._Primary.UP    <-as.integer(IDvector.d7%in%DE_d7.primary.UPREG$gene.ID) # Day 0 - Primary - Upregulated DEGs
-names(DE.d7._Primary.UP)=IDvector.d7
-sum(sapply(DE.d7._Primary.UP,length)) # should be 8548
+
+
+# DE.d7._Primary.UP    <-as.integer(IDvector.d7%in%DE_d7.primary.UPREG$gene.ID) # Day 7 - Primary - Upregulated DEGs
+# names(DE.d7._Primary.UP)=IDvector.d7
+DE.d7._Primary.UP    <-as.integer(GO_unique.genes.all%in%DE_d7.primary.UPREG$gene.ID) # Day 7 - Primary - Upregulated DEGs
+names(DE.d7._Primary.UP)=GO_unique.genes.all
+sum(sapply(DE.d7._Primary.UP,length)) # 34947 (8548 if you use the ID vecotr specific to filtered genes at Day 7) 
 sum(DE.d7._Primary.UP == 1) # should be 62
 
-DE.d7._Primary.DOWN  <-as.integer(IDvector.d7%in%(DE_d7.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
-names(DE.d7._Primary.DOWN)=IDvector.d7
-sum(sapply(DE.d7._Primary.DOWN,length)) # should be 8548
+# DE.d7._Primary.DOWN  <-as.integer(IDvector.d7%in%(DE_d7.primary.DWNREG$gene.ID)) # Day 7 - Primary - Downregulated DEGs
+# names(DE.d7._Primary.DOWN)=IDvector.d7
+DE.d7._Primary.DOWN  <-as.integer(GO_unique.genes.all%in%(DE_d7.primary.DWNREG$gene.ID)) # Day 7 - Primary - Downregulated DEGs
+names(DE.d7._Primary.DOWN)=GO_unique.genes.all
+sum(sapply(DE.d7._Primary.DOWN,length)) # 34947 (8548 if you use the ID vecotr specific to filtered genes at Day 7) 
 sum(DE.d7._Primary.DOWN == 1) # should be 46
 
-DE.d7._Primary.ALL   <-as.integer(IDvector.d7%in%(DE_d7.primary$gene.ID)) # Day 0 - Primary - All DEGs
-names(DE.d7._Primary.ALL)=IDvector.d7
-sum(sapply(DE.d7._Primary.ALL,length)) # should be 8548
+# DE.d7._Primary.ALL   <-as.integer(IDvector.d7%in%(DE_d7.primary$gene.ID)) # Day 7 - Primary - All DEGs
+# names(DE.d7._Primary.ALL)=IDvector.d7
+DE.d7._Primary.ALL   <-as.integer(GO_unique.genes.all%in%(DE_d7.primary$gene.ID)) # Day 7 - Primary - All DEGs
+names(DE.d7._Primary.ALL)=GO_unique.genes.all
+sum(sapply(DE.d7._Primary.ALL,length)) # 34947 (8548 if you use the ID vecotr specific to filtered genes at Day 7) 
 sum(DE.d7._Primary.ALL == 1) # should be 108
 
+
+
 # DAY 14 ------------------------------------------- #
-DE.d14._Primary.UP    <-as.integer(IDvector.d14%in%(DE_d14.primary.UPREG$gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(DE.d14._Primary.UP)=IDvector.d14
-sum(sapply(DE.d14._Primary.UP,length)) # should be 8626
+
+
+# DE.d14._Primary.UP    <-as.integer(IDvector.d14%in%(DE_d14.primary.UPREG$gene.ID)) # Day 14 - Primary - Upregulated DEGs
+# names(DE.d14._Primary.UP)=IDvector.d14
+DE.d14._Primary.UP    <-as.integer(GO_unique.genes.all%in%(DE_d14.primary.UPREG$gene.ID)) # Day 14 - Primary - Upregulated DEGs
+names(DE.d14._Primary.UP)=GO_unique.genes.all
+sum(sapply(DE.d14._Primary.UP,length)) # 34947 (8626 if you use the ID vecotr specific to filtered genes at Day 14)  
 sum(DE.d14._Primary.UP == 1) # should be 317
 
-DE.d14._Primary.DOWN  <-as.integer(IDvector.d14%in%(DE_d14.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
-names(DE.d14._Primary.DOWN)=IDvector.d14
-sum(sapply(DE.d14._Primary.DOWN,length)) # should be 8626
+# DE.d14._Primary.DOWN  <-as.integer(IDvector.d14%in%(DE_d14.primary.DWNREG$gene.ID)) # Day 14 - Primary - Downregulated DEGs
+# names(DE.d14._Primary.DOWN)=IDvector.d14
+DE.d14._Primary.DOWN  <-as.integer(GO_unique.genes.all%in%(DE_d14.primary.DWNREG$gene.ID)) # Day 14 - Primary - Downregulated DEGs
+names(DE.d14._Primary.DOWN)=GO_unique.genes.all
+sum(sapply(DE.d14._Primary.DOWN,length)) # 34947 (8626 if you use the ID vecotr specific to filtered genes at Day 14) 
 sum(DE.d14._Primary.DOWN == 1) # should be 112
 
-DE.d14._Primary.ALL   <-as.integer(IDvector.d14%in%(DE_d14.primary$gene.ID)) # Day 0 - Primary - All DEGs
-names(DE.d14._Primary.ALL)=IDvector.d14
-sum(sapply(DE.d14._Primary.ALL,length)) # should be 8626
+# DE.d14._Primary.ALL   <-as.integer(IDvector.d14%in%(DE_d14.primary$gene.ID)) # Day 14 - Primary - All DEGs
+# names(DE.d14._Primary.ALL)=IDvector.d14
+DE.d14._Primary.ALL   <-as.integer(GO_unique.genes.all%in%(DE_d14.primary$gene.ID)) # Day 14 - Primary - All DEGs
+names(DE.d14._Primary.ALL)=GO_unique.genes.all
+sum(sapply(DE.d14._Primary.ALL,length)) # 34947 (8626 if you use the ID vecotr specific to filtered genes at Day 14) 
 sum(DE.d14._Primary.ALL == 1) # should be 429
 
-# DAY 21 ------------------------------------------- #
-DE.d21._Primary.UP    <-as.integer(IDvector.d21%in%(DE_d21.primary.UPREG$gene.ID)) # Day 0 - Primary - Upregulated DEGs
-names(DE.d21._Primary.UP)=IDvector.d21
-sum(sapply(DE.d21._Primary.UP,length)) # should be 8421
-sum(DE.d21._Primary.UP == 1) # should be 429
 
-DE.d21._Primary.DOWN  <-as.integer(IDvector.d21%in%(DE_d21.primary.DWNREG$gene.ID)) # Day 0 - Primary - Downregulated DEGs
-names(DE.d21._Primary.DOWN)=IDvector.d21
-sum(sapply(DE.d21._Primary.DOWN,length)) # should be 8421
+
+# DAY 21 ------------------------------------------- #
+
+
+
+# DE.d21._Primary.UP    <-as.integer(IDvector.d21%in%(DE_d21.primary.UPREG$gene.ID)) # Day 21 - Primary - Upregulated DEGs
+# names(DE.d21._Primary.UP)=IDvector.d21
+DE.d21._Primary.UP    <-as.integer(GO_unique.genes.all%in%(DE_d21.primary.UPREG$gene.ID)) # Day 21 - Primary - Upregulated DEGs
+names(DE.d21._Primary.UP)=GO_unique.genes.all
+sum(sapply(DE.d21._Primary.UP,length)) # 34947 (8421 if you use the ID vecotr specific to filtered genes at Day 21)  
+sum(DE.d21._Primary.UP == 1) # should be 101
+
+# DE.d21._Primary.DOWN  <-as.integer(IDvector.d21%in%(DE_d21.primary.DWNREG$gene.ID)) # Day 21 - Primary - Downregulated DEGs
+# names(DE.d21._Primary.DOWN)=IDvector.d21
+DE.d21._Primary.DOWN  <-as.integer(GO_unique.genes.all%in%(DE_d21.primary.DWNREG$gene.ID)) # Day 21 - Primary - Downregulated DEGs
+names(DE.d21._Primary.DOWN)=GO_unique.genes.all
+sum(sapply(DE.d21._Primary.DOWN,length)) # 34947 (8421 if you use the ID vecotr specific to filtered genes at Day 21)  
 sum(DE.d21._Primary.DOWN == 1) # should be 54
 
-DE.d21._Primary.ALL   <-as.integer(IDvector.d21%in%(DE_d21.primary$gene.ID)) # Day 0 - Primary - All DEGs
-names(DE.d21._Primary.ALL)=IDvector.d21
-sum(sapply(DE.d21._Primary.ALL,length)) # should be 8421
+# DE.d21._Primary.ALL   <-as.integer(IDvector.d21%in%(DE_d21.primary$gene.ID)) # Day 21 - Primary - All DEGs
+# names(DE.d21._Primary.ALL)=IDvector.d21
+DE.d21._Primary.ALL   <-as.integer(GO_unique.genes.all%in%(DE_d21.primary$gene.ID)) # Day 21 - Primary - All DEGs
+names(DE.d21._Primary.ALL)=GO_unique.genes.all
+sum(sapply(DE.d21._Primary.ALL,length)) # 34947 (8421 if you use the ID vecotr specific to filtered genes at Day 21)  
 sum(DE.d21._Primary.ALL == 1) # should be 155
 
+
+
 #Constant DEGs ------------------------------------ #
+
+
+
 # Note: these are degenes that were upregulated and downregulated throughout the 21-day experiment due to the effect of primary treatment
 # data from the cluster {r Primary_Treatment_constant_DEGs}
 DE_Contant_upreg <-as.integer(GO_unique.genes.all%in%(Contant_upreg$Row.names)) # Day 0 - Primary - All DEGs
 names(DE_Contant_upreg)=GO_unique.genes.all
+sum(DE_Contant_upreg == 1) # should be 14
 
 DE_Contant_dwnreg <-as.integer(GO_unique.genes.all%in%(Contant_dwnreg$Row.names)) # Day 0 - Primary - All DEGs
 names(DE_Contant_dwnreg)=GO_unique.genes.all
+sum(DE_Contant_dwnreg == 1) # should be  8
 ```
 
 
@@ -356,29 +406,57 @@ Calculate Probability Weighting Function
 #Calculate Probability Weighting Function (using 'nullp')
 
 # (1) DEGs: Primary Ambient_v_Moderate 
+
+
 # DAY 0 ------------------------------------------- #
-DEG.pwf_d0.all    <-nullp(DE.d0._Primary.ALL,   id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
-DEG.pwf_d0.UP     <-nullp(DE.d0._Primary.UP,    id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
-DEG.pwf_d0.DOWN   <-nullp(DE.d0._Primary.DOWN,  id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
+
+
+# DEG.pwf_d0.all    <-nullp(DE.d0._Primary.ALL,   id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
+# DEG.pwf_d0.UP     <-nullp(DE.d0._Primary.UP,    id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
+# DEG.pwf_d0.DOWN   <-nullp(DE.d0._Primary.DOWN,  id=IDvector.d0, bias.data=length_vector.d0) #weight vector by length of gene
+DEG.pwf_d0.all    <-nullp(DE.d0._Primary.ALL,   id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d0.UP     <-nullp(DE.d0._Primary.UP,    id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d0.DOWN   <-nullp(DE.d0._Primary.DOWN,  id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
 
 # DAY 7 ------------------------------------------- #
-DEG.pwf_d7.all    <-nullp(DE.d7._Primary.ALL,   id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
-DEG.pwf_d7.UP     <-nullp(DE.d7._Primary.UP,    id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
-DEG.pwf_d7.DOWN   <-nullp(DE.d7._Primary.DOWN,  id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
+
+
+# DEG.pwf_d7.all    <-nullp(DE.d7._Primary.ALL,   id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
+# DEG.pwf_d7.UP     <-nullp(DE.d7._Primary.UP,    id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
+# DEG.pwf_d7.DOWN   <-nullp(DE.d7._Primary.DOWN,  id=IDvector.d7, bias.data=length_vector.d7) #weight vector by length of gene
+DEG.pwf_d7.all    <-nullp(DE.d7._Primary.ALL,   id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d7.UP     <-nullp(DE.d7._Primary.UP,    id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d7.DOWN   <-nullp(DE.d7._Primary.DOWN,  id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+
 
 # DAY 14 ------------------------------------------- #
-DEG.pwf_d14.all   <-nullp(DE.d14._Primary.ALL,  id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
-DEG.pwf_d14.UP    <-nullp(DE.d14._Primary.UP,   id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
-DEG.pwf_d14.DOWN  <-nullp(DE.d14._Primary.DOWN, id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
+
+
+# DEG.pwf_d14.all   <-nullp(DE.d14._Primary.ALL,  id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
+# DEG.pwf_d14.UP    <-nullp(DE.d14._Primary.UP,   id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
+# DEG.pwf_d14.DOWN  <-nullp(DE.d14._Primary.DOWN, id=IDvector.d14, bias.data=length_vector.d14) #weight vector by length of gene
+DEG.pwf_d14.all   <-nullp(DE.d14._Primary.ALL,  id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d14.UP    <-nullp(DE.d14._Primary.UP,   id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d14.DOWN  <-nullp(DE.d14._Primary.DOWN, id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+
 
 # DAY 21 ------------------------------------------- #
-DEG.pwf_d21.all   <-nullp(DE.d21._Primary.ALL,  id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
-DEG.pwf_d21.UP    <-nullp(DE.d21._Primary.UP,   id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
-DEG.pwf_d21.DOWN  <-nullp(DE.d21._Primary.DOWN, id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
+
+
+# DEG.pwf_d21.all   <-nullp(DE.d21._Primary.ALL,  id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
+# DEG.pwf_d21.UP    <-nullp(DE.d21._Primary.UP,   id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
+# DEG.pwf_d21.DOWN  <-nullp(DE.d21._Primary.DOWN, id=IDvector.d21, bias.data=length_vector.d21) #weight vector by length of gene
+DEG.pwf_d21.all   <-nullp(DE.d21._Primary.ALL,  id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d21.UP    <-nullp(DE.d21._Primary.UP,   id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_d21.DOWN  <-nullp(DE.d21._Primary.DOWN, id=GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+
+
 
 # Constant DEGs ------------------------------------ #
-# DEG.pwf_Constant.UP<-nullp(DE_Contant_upreg, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
-# DEG.pwf_Constant.DOWN<-nullp(DE_Contant_dwnreg, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+
+
+DEG.pwf_Constant.UP   <- nullp(DE_Contant_upreg, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
+DEG.pwf_Constant.DOWN <- nullp(DE_Contant_dwnreg, GO_unique.genes.all, bias.data=length_vector) #weight vector by length of gene
 ```
 
 
@@ -387,31 +465,35 @@ Run goseq
 ```{r goseq}
 # (1) DEGs: Primary Ambient_v_Moderate 
 # DAY 0 ------------------------------------------- #
-GO_d0.all    <-goseq(DEG.pwf_d0.all,  IDvector.d0, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d0.UP     <-goseq(DEG.pwf_d0.UP,   IDvector.d0, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d0.DOWN   <-goseq(DEG.pwf_d0.DOWN, IDvector.d0, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d0.all    <-goseq(DEG.pwf_d0.all,  GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d0.UP     <-goseq(DEG.pwf_d0.UP,   GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d0.DOWN   <-goseq(DEG.pwf_d0.DOWN, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 # DAY 7 ------------------------------------------- #
-GO_d7.all    <-goseq(DEG.pwf_d7.all,  IDvector.d7, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d7.UP     <-goseq(DEG.pwf_d7.UP,   IDvector.d7, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d7.DOWN   <-goseq(DEG.pwf_d7.DOWN, IDvector.d7, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d7.all    <-goseq(DEG.pwf_d7.all,  GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d7.UP     <-goseq(DEG.pwf_d7.UP,   GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d7.DOWN   <-goseq(DEG.pwf_d7.DOWN, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 # DAY 14 ------------------------------------------- #
-GO_d14.all   <-goseq(DEG.pwf_d14.all,  IDvector.d14, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d14.UP    <-goseq(DEG.pwf_d14.UP,   IDvector.d14, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d14.DOWN  <-goseq(DEG.pwf_d14.DOWN, IDvector.d14, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d14.all   <-goseq(DEG.pwf_d14.all,  GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d14.UP    <-goseq(DEG.pwf_d14.UP,   GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d14.DOWN  <-goseq(DEG.pwf_d14.DOWN, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 # DAY 21 ------------------------------------------- #
-GO_d21.all   <-goseq(DEG.pwf_d21.all,  IDvector.d21, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d21.UP    <-goseq(DEG.pwf_d21.UP,   IDvector.d21, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-GO_d21.DOWN  <-goseq(DEG.pwf_d21.DOWN, IDvector.d21, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d21.all   <-goseq(DEG.pwf_d21.all,  GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d21.UP    <-goseq(DEG.pwf_d21.UP,   GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_d21.DOWN  <-goseq(DEG.pwf_d21.DOWN, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 # Constant DEGs ------------------------------------ #
-# GO_Constant.UP<-goseq(DEG.pwf_Constant.UP, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-# GO_Constant.DOWN<-goseq(DEG.pwf_Constant.DOWN, ID.vector, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_Constant.UP   <- goseq(DEG.pwf_Constant.UP, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+GO_Constant.DOWN <- goseq(DEG.pwf_Constant.DOWN, GO_unique.genes.all, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
 ```
 
 
 
 Find only enriched GO terms that are statistically significant at cutoff
 ```{r}
+
+
 # Day0 Primary Treatment effect
+
+
 # UPREGULATED GENES - those with higher expression from ambient (control) stress priming
 d0.UP.05<-GO_d0.UP$category[GO_d0.UP$over_represented_pvalue<.05]
 d0.UP.05<-data.frame(d0.UP.05)
@@ -434,7 +516,10 @@ nrow(filter(d0.DOWN.05, ontology=="MF")) #number sig MF terms == 5
 nrow(d0.DOWN.05) # == 12
 
 
+
 # Day7 Primary Treatment effect
+
+
 # UPREGULATED GENES - those with higher expression from ambient (control) stress priming
 d7.UP.05<-GO_d7.UP$category[GO_d7.UP$over_represented_pvalue<.05]
 d7.UP.05<-data.frame(d7.UP.05)
@@ -456,7 +541,10 @@ nrow(filter(d7.DOWN.05, ontology=="BP")) #number sig BP terms == 40
 nrow(filter(d7.DOWN.05, ontology=="MF")) #number sig MF terms == 15
 nrow(d7.DOWN.05) # == 60
 
+
 # Day14 Primary Treatment effect
+
+
 # UPREGULATED GENES - those with higher expression from ambient (control) stress priming
 d14.UP.05<-GO_d14.UP$category[GO_d14.UP$over_represented_pvalue<.05]
 d14.UP.05<-data.frame(d14.UP.05)
@@ -478,7 +566,12 @@ nrow(filter(d14.DOWN.05, ontology=="BP")) #number sig BP terms == 146
 nrow(filter(d14.DOWN.05, ontology=="MF")) #number sig MF terms == 53
 nrow(d14.DOWN.05) # == 228
 
+
+
 # Day21 Primary Treatment effect
+
+
+
 # UPREGULATED GENES - those with higher expression from ambient (control) stress priming
 d21.UP.05<-GO_d21.UP$category[GO_d21.UP$over_represented_pvalue<.05]
 d21.UP.05<-data.frame(d21.UP.05)
@@ -499,6 +592,35 @@ d21.DOWN.05$term <- as.factor(d21.DOWN.05$term)
 nrow(filter(d21.DOWN.05, ontology=="BP")) #number sig BP terms == 39
 nrow(filter(d21.DOWN.05, ontology=="MF")) #number sig MF terms == 16
 nrow(d21.DOWN.05) # == 67
+
+
+
+# ALL CONSTANT DEGS Primary Treatment effect
+
+
+
+# UPREGULATED GENES - those with higher expression from ambient (control) stress priming
+Const.UP.05<-GO_Constant.UP$category[GO_Constant.UP$over_represented_pvalue<.05]
+Const.UP.05<-data.frame(Const.UP.05)
+colnames(Const.UP.05) <- c("category")
+Const.UP.05 <- merge(Const.UP.05, GO_Constant.UP, by="category")
+Const.UP.05 <- Const.UP.05[order(Const.UP.05$ontology, Const.UP.05$over_represented_pvalue, -Const.UP.05$numDEInCat),]
+Const.UP.05$term <- as.factor(Const.UP.05$term)
+nrow(filter(Const.UP.05, ontology=="BP")) #number sig BP terms == 65
+nrow(filter(Const.UP.05, ontology=="MF")) #number sig MF terms == 37
+nrow(Const.UP.05) # == 104
+#DOWNREGULATED GENES  - those with higher expression from moderate stress priming
+Const.DOWN.05<-GO_Constant.DOWN$category[GO_Constant.DOWN$over_represented_pvalue<.05]
+Const.DOWN.05<-data.frame(Const.DOWN.05)
+colnames(Const.DOWN.05) <- c("category")
+Const.DOWN.05 <- merge(Const.DOWN.05, GO_Constant.DOWN, by="category")
+Const.DOWN.05 <- Const.DOWN.05[order(Const.DOWN.05$ontology, Const.DOWN.05$over_represented_pvalue, -Const.DOWN.05$numDEInCat),]
+Const.DOWN.05$term <- as.factor(Const.DOWN.05$term)
+nrow(filter(Const.DOWN.05, ontology=="BP")) #number sig BP terms == 39
+nrow(filter(Const.DOWN.05, ontology=="MF")) #number sig MF terms == 16
+nrow(Const.DOWN.05) # == 16
+
+
 ```
 
 
@@ -543,6 +665,9 @@ write.csv(d14.DOWN.05, file = "../Output/GO/DESeq2_goseq/Day14/GO.05.Day14_PrimE
 
 write.csv(d21.UP.05, file   = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(d21.DOWN.05, file = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Downregulated.csv", row.names = FALSE)
+
+write.csv(Const.UP.05, file   = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Upregulated.csv", row.names = FALSE)
+write.csv(Const.DOWN.05, file = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Downregulated.csv", row.names = FALSE)
 ```
 
 
@@ -550,18 +675,21 @@ write.csv(d21.DOWN.05, file = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimE
 GOslim analysis - data reduction from the many GO terms to more broad function/processes
 Read in files if previous steps not run.
 ```{r}
+# getwd()
+d0.UP.05    <- read.csv("../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated.csv")
+d0.DOWN.05  <- read.csv("../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Downregulated.csv")
 
-d0.UP.05    <- read.csv("../Output/GO/goseq/Day0/GO.05.Day0_PrimEffect_Upregulated.csv")
-d0.DOWN.05  <- read.csv("../Output/GO/goseq/Day0/GO.05.Day0_PrimEffect_Downregulated.csv")
+d7.UP.05    <- read.csv("../Output/GO/DESeq2_goseq/Day7/GO.05.Day0_PrimEffect_Upregulated.csv")
+d7.DOWN.05  <- read.csv("../Output/GO/DESeq2_goseq/Day7/GO.05.Day0_PrimEffect_Downregulated.csv")
 
-d7.UP.05    <- read.csv("../Output/GO/goseq/Day7/GO.05.Day0_PrimEffect_Upregulated.csv")
-d7.DOWN.05  <- read.csv("../Output/GO/goseq/Day7/GO.05.Day0_PrimEffect_Downregulated.csv")
+d14.UP.05   <- read.csv("../Output/GO/DESeq2_goseq/Day14/GO.05.Day0_PrimEffect_Upregulated.csv")
+d14.DOWN.05 <- read.csv("../Output/GO/DESeq2_goseq/Day14/GO.05.Day0_PrimEffect_Downregulated.csv")
 
-d14.UP.05   <- read.csv("../Output/GO/goseq/Day14/GO.05.Day0_PrimEffect_Upregulated.csv")
-d14.DOWN.05 <- read.csv("../Output/GO/goseq/Day14/GO.05.Day0_PrimEffect_Downregulated.csv")
+d21.UP.05   <- read.csv("../Output/GO/DESeq2_goseq/Day21/GO.05.Day0_PrimEffect_Upregulated.csv")
+d21.DOWN.05 <- read.csv("../Output/GO/DESeq2_goseq/Day21/GO.05.Day0_PrimEffect_Downregulated.csv")
 
-d21.UP.05   <- read.csv("../Output/GO/goseq/Day21/GO.05.Day0_PrimEffect_Upregulated.csv")
-d21.DOWN.05 <- read.csv("../Output/GO/goseq/Day21/GO.05.Day0_PrimEffect_Downregulated.csv")
+Constant.UP.05   <- read.csv("../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Upregulated.csv")
+Constant.DOWN.05 <- read.csv("../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Downregulated.csv")
 
 
 d0.UP.05$dir    <- "Day0_Up"
@@ -857,16 +985,12 @@ All.DOWN_MFslim_final <- data.frame(slim_term=All.DOWN_MFslim_C$Term, slim_cat=A
 ```
 
 
+PLOTTING 
 
-Stacked bar plots -  Gene Counts within GOslim term (NOTE: there are likely duplicates (or more) BETWEEN the GOslim bins - however EACH bin contains UNIQUE genes)
-```{r barplots} 
-# create color palette  --------------------------------------------------------------------------------------- #
-library(RColorBrewer)
-cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
-          "#F0E442", "#0072B2", "#D55E00", "#CC79A7") # color blind pallette
-OrangeRed <- brewer.pal(2, "OrRd") 
-GreenBlue <- brewer.pal(2, "GnBu") 
 
+
+prep
+```{r prep data}
 # add ontology column  ---------------------------------------------------------------------------------------- #
 All.UP_BPslim_final$Ontolgy <- "BP_Upregulated_all"
 All.UP_MFslim_final$Ontolgy <- "MF_Upregulated_all"
@@ -885,6 +1009,18 @@ MF_All <- rbind(All.UP_MFslim_final, All.DOWN_MFslim_final) # merge the data by 
 MF_All$Ont <- "MF" # create a new common clumn to call in the plot 
 MF_All$Ontolgy <- factor(MF_All$Ontolgy, levels = c("MF_Upregulated_all", "MF_Downregulated_all")) # reorder the facotr level for the facet wrap plot 
 MF_All_filtered <- MF_All %>%  dplyr::filter(Gene.Count > 1) # ommit all with gene counts >1
+```
+
+Stacked bar plots -  Gene Counts within GOslim term (NOTE: there are likely duplicates (or more) BETWEEN the GOslim bins - however EACH bin contains UNIQUE genes)
+```{r barplots - ALL DEGs PrimEffect} 
+# create color palette  --------------------------------------------------------------------------------------- #
+library(RColorBrewer)
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7") # color blind pallette
+OrangeRed <- brewer.pal(2, "OrRd") 
+GreenBlue <- brewer.pal(2, "GnBu") 
+
+
 # PLOTTING --------------------------------------------------------------------------------------------------- #
 BP_Plot_PrimEffect_All <- ggplot(data = BP_All_filtered, aes(x = Ont, y = Gene.Count, fill=forcats::fct_reorder(slim_term,Gene.Count,.desc = TRUE))) + # BP plot
                                geom_bar(color = "white",size=1.5,stat="identity") + # call bar and create lines between each slim term
@@ -905,7 +1041,7 @@ MF_Plot_PrimEffect_All <- ggplot(data = MF_All_filtered, aes(x = Ont, y = Gene.C
                                facet_wrap(~Ontolgy) # facet by the upregulated and downregulated datasets
 
 # SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
-pdf(paste("../Output/GO/goseq/GOslim_All_PrimEff_BP.pdf", sep =''), width=15, height=20)
+pdf(paste("../Output/GO/DESeq2_goseq/GOslim_All_PrimEff_BP.pdf", sep =''), width=15, height=20)
 print(ggarrange(BP_Plot_PrimEffect_All,         
                 plotlist = NULL,
                 ncol = 1,
@@ -913,7 +1049,7 @@ print(ggarrange(BP_Plot_PrimEffect_All,
             labels = NULL))
 dev.off()     
 
-pdf(paste("../Output/GO/goseq/GOslim_All_PrimEff_MF.pdf", sep =''), width=15, height=20)
+pdf(paste("../Output/GO/DESeq2_goseq/GOslim_All_PrimEff_MF.pdf", sep =''), width=15, height=20)
 print(ggarrange(MF_Plot_PrimEffect_All,         
                 plotlist = NULL,
                 ncol = 1,
@@ -923,6 +1059,47 @@ dev.off()
 
 ```
 
+Geomtile Heatmaps
+```{r geom_tile heatmaps- ALL DEGs PrimEffect}
+
+# plots
+BP_Plot_PrimEffect_All <-ggplot(data = BP_All_filtered, aes(x = Ont, y = slim_term)) + 
+                          geom_tile(aes(fill=Gene.Count, width = 1)) + 
+                          scale_fill_gradient(low = "thistle1", high = "steelblue4") +
+                          facet_grid(~Ontolgy, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+                          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                             strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                             strip.text.x = element_text(size = 8, face = "bold"),
+                                             axis.title.x = element_blank(),
+                                             axis.title.y = element_text(size=8),
+                                             axis.text = element_text(size = 8), legend.position = "right",
+                                             plot.margin = unit(c(0,1,0,0.25), "cm"))+
+                          ggtitle('GOslim Biological Process: DESeq2 DEGs PrimEffect')
+
+# plot MF
+MF_Plot_PrimEffect_All <-ggplot(data = MF_All_filtered, aes(x = Ont, y = slim_term)) + 
+                          geom_tile(aes(fill=Gene.Count, width = 1)) + 
+                          scale_fill_gradient(low = "azure2", high = "springgreen4") +
+                          facet_grid(~Ontolgy, labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
+                          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                             strip.text.y = element_text(angle=0, size = 8, face = "bold"),
+                                             strip.text.x = element_text(size = 8, face = "bold"),
+                                             axis.title.x = element_blank(),
+                                             axis.title.y = element_text(size=8),
+                                             axis.text = element_text(size = 8), legend.position = "right",
+                                             plot.margin = unit(c(0,1,0,0.25), "cm"))+
+                          ggtitle('GOslim Molecular Function: DESeq2 DEGs PrimEffect')
+
+pdf(paste("../Output/GO/DESeq2_goseq/GOslim_All_PrimEff_Heatmap.pdf", sep =''), width=20, height=8)
+print(ggarrange(BP_Plot_PrimEffect_All, MF_Plot_PrimEffect_All,         
+                plotlist = NULL,
+                ncol = 2,
+                nrow = 1,
+                labels = NULL))
+dev.off() 
+```
 
 
 Follow-up from the stacked blots above...
@@ -963,9 +1140,9 @@ Pgen_annot$Gene.name <- str_extract(Pgen_annot$Gene.name, "[^(]+") # call all ge
 # loop through the gene IDsin each GOslim bin, DESeq2 results heatmap facetted by sampling day in for loop
 for (i in 1:nrow(Master_GOslim)) {
   
-  genes <- data.frame(geneids = unlist(Master_GOslim[i,1]))
+  genes <- data.frame(geneids = unlist(Master_GOslim[i,4]))
   
-  if (Master_GOslim[i,4] == "downregulated") {
+  if (Master_GOslim[i,3] == "downregulated") {
   
     DEG_data <- All_DEGs_Primary.Ambieant_v_Moderate %>% dplyr::filter(down %in% TRUE)  # filter only downregualted genes
     DEG_data_loop <- DEG_data %>% dplyr::filter(Gene.ID %in% genes$geneids)
@@ -987,7 +1164,7 @@ for (i in 1:nrow(Master_GOslim)) {
                 axis.text = element_text(size = 12), legend.position = "right",
                 plot.margin = unit(c(0,1,0,0.25), "cm"))+
                 ggtitle(Master_GOslim[i,5])
-    pdf(paste("../Output/GO/goseq/All_PrimEff_GOslim/Downregulated/",Master_GOslim[i,5],".pdf", sep =''), width=18, height=10)
+    pdf(paste("../Output/GO/DESeq2_goseq/All_PrimEff_GOslim/Downregulated/",Master_GOslim[i,5],".pdf", sep =''), width=18, height=10)
     print(Plot)
     dev.off()
   
@@ -1012,7 +1189,7 @@ for (i in 1:nrow(Master_GOslim)) {
                     axis.text = element_text(size = 12), legend.position = "right",
                     plot.margin = unit(c(0,1,0,0.25), "cm"))+
                     ggtitle(Master_GOslim[i,5])
-        pdf(paste("../Output/GO/goseq/All_PrimEff_GOslim/Upregulated/",Master_GOslim[i,5],".pdf", sep =''), width=18, height=10)
+        pdf(paste("../Output/GO/DESeq2_goseq/All_PrimEff_GOslim/Upregulated/",Master_GOslim[i,5],".pdf", sep =''), width=18, height=10)
         print(Plot)
         dev.off()
   } # end of if else statement
@@ -1024,87 +1201,17 @@ for (i in 1:nrow(Master_GOslim)) {
 
 
 
-Save slim info with GO enrichment info for heatmap dataframes.
-```{r}
-ALL_Upreg_GO.BP <- right_join(All.UP_BPslim_final, filter(all.UP.05, ontology=="BP"), by="category") #add back GO enrichment info for each offspring term
-ALL_Upreg_GO.BP <- na.omit(ALL_Upreg_GO.BP)
-ALL_Upreg_GO.MF <- right_join(All.UP_MFslim_final, filter(all.UP.05, ontology=="MF"), by="category") #add back GO enrichment info for each offspring term
-
-d14.Upreg_GO.BP <- right_join(d14.UP_BPslim, filter(d14.UP.05, ontology=="BP"), by="category") #add back GO enrichment info for each offspring term
-d14.Upreg_GO.MF <- right_join(d14.UP_MFslim, filter(d14.UP.05, ontology=="MF"), by="category") #add back GO enrichment info for each offspring term
-
-
-```
 
 
 
-Make heatmap
-```{r}
-All_BPplot <- ALL_Upreg_GO.BP %>% 
-  # filter(numInCat>5) %>% 
-  ggplot(aes(x = dir, y = term)) + 
-  geom_tile(aes(fill=over_represented_pvalue, width = 1)) + 
-  facet_grid(slim_term ~ ontology, scales = "free_y", labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-  strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-  strip.text.x = element_text(size = 12, face = "bold"),
-  axis.title.x = element_blank(),
-  axis.title.y = element_text(size=15),
-  axis.text = element_text(size = 12), legend.position = "None",
-  plot.margin = unit(c(0,1,0,0.25), "cm"))
-
-ggsave("../Output/GO/goseq/All.PrimaryEffect.Upreg_BP.pdf", All_BPplot, width = 25, height = 45, units = c("in"))
-
-All_MFplot <- ALL_Upreg_GO.MF %>% 
-  filter(numInCat>5) %>% 
-  ggplot(aes(x = dir, y = term)) + 
-  geom_tile(aes(fill=over_represented_pvalue, width = 1)) + 
-  facet_grid(slim_term ~ ontology, scales = "free_y", labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-  strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-  strip.text.x = element_text(size = 12, face = "bold"),
-  axis.title.x = element_blank(),
-  axis.title.y = element_text(size=15),
-  axis.text = element_text(size = 12), legend.position = "None",
-  plot.margin = unit(c(0,1,0,0.25), "cm"))
-
-ggsave("../Output/GO/goseq/All.PrimaryEffect.Upreg_MF.pdf", All_MFplot, width = 25, height = 35, units = c("in"))
 
 
-# DAY 14
-# Upregulated
-Day14_BPplot <- d7.UP_BPslim %>% filter(numInCat>5) %>% ggplot(aes(x = dir, y = term)) + 
-  geom_tile(aes(fill=over_represented_pvalue, width = 1)) + 
-  facet_grid(slim_term ~ ontology, scales = "free_y", labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-  strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-  strip.text.x = element_text(size = 12, face = "bold"),
-  axis.title.x = element_blank(),
-  axis.title.y = element_text(size=15),
-  axis.text = element_text(size = 12), legend.position = "None",
-  plot.margin = unit(c(0,1,0,0.25), "cm"))
-
-ggsave("../Output/GO/goseq/Day14/Day14.PrimaryEffect.Upreg_BP.pdf", Day14_BPplot, width = 25, height = 45, units = c("in"))
-
-Day14_MFplot <- d7.UP_MFslim %>% filter(numInCat>5) %>% ggplot(aes(x = dir, y = term)) + 
-  geom_tile(aes(fill=over_represented_pvalue, width = 1)) + 
-  facet_grid(slim_term ~ ontology, scales = "free_y", labeller = label_wrap_gen(width = 10, multi_line = TRUE))+
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-  strip.text.y = element_text(angle=0, size = 11, face = "bold"),
-  strip.text.x = element_text(size = 12, face = "bold"),
-  axis.title.x = element_blank(),
-  axis.title.y = element_text(size=15),
-  axis.text = element_text(size = 12), legend.position = "None",
-  plot.margin = unit(c(0,1,0,0.25), "cm"))
-
-ggsave("../Output/GO/goseq/Day14/Day14.PrimaryEffect.Upreg_MF.pdf", Day14_MFplot, width = 25, height = 35, units = c("in"))
 
 
-```
+
+
+
+
 
 
 
