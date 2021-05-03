@@ -1,0 +1,6 @@
+"","GO_terms","over_represented_pvalue","under_represented_pvalue","numDEInCat","numInCat","term","ontology","dir","Day","slim_term","Gene_IDs"
+"1","GO:0004222",0.00409453519709903,0.999697646700974,3,131,"metalloendopeptidase activity","MF","Up","Day7","peptidase activity","PGEN_.00g164540;PGEN_.00g164660;PGEN_.00g199810;PGEN_.00g285590;PGEN_.00g344990;PGEN_.00g348220;PGEN_.00g348570"
+"2","GO:0004252",0.000149623185884743,0.999992823164263,4,108,"serine-type endopeptidase activity","MF","Up","Day7","peptidase activity","PGEN_.00g164540;PGEN_.00g164660;PGEN_.00g199810;PGEN_.00g285590;PGEN_.00g344990;PGEN_.00g348220;PGEN_.00g348570"
+"3","GO:0004364",0.00224282719134521,0.999952612800195,2,32,"glutathione transferase activity","MF","Up","Day7","transferase activity, transferring ...","PGEN_.00g169390;PGEN_.00g180630"
+"4","GO:0004867",0.0139848687213481,0.99922057672549,2,72,"serine-type endopeptidase inhibitor activity","MF","Up","Day7","enzyme regulator activity","PGEN_.00g057310;PGEN_.00g086610"
+"5","GO:0045174",4.69091642027071e-05,0.999999900549457,2,5,"glutathione dehydrogenase (ascorbate) activity","MF","Up","Day7","oxidoreductase activity","PGEN_.00g169390;PGEN_.00g180630"

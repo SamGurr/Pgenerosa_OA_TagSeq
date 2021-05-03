@@ -1,0 +1,6 @@
+"","GO_terms","over_represented_pvalue","under_represented_pvalue","numDEInCat","numInCat","term","ontology","dir","Day","slim_term","Gene_IDs"
+"1","GO:0004175",0.0281478844091671,0.997712245070619,2,66,"endopeptidase activity","MF","Up","Day21","peptidase activity","PGEN_.00g009930;PGEN_.00g033640;PGEN_.00g057170;PGEN_.00g057190;PGEN_.00g199810;PGEN_.00g345680;PGEN_.00g348220;PGEN_.00g348570"
+"2","GO:0004252",2.90688446328418e-07,0.99999998615228,7,108,"serine-type endopeptidase activity","MF","Up","Day21","peptidase activity","PGEN_.00g009930;PGEN_.00g033640;PGEN_.00g057170;PGEN_.00g057190;PGEN_.00g199810;PGEN_.00g345680;PGEN_.00g348220;PGEN_.00g348570"
+"3","GO:0004303",0.00385827097187009,0.99989355123371,2,23,"estradiol 17-beta-dehydrogenase activity","MF","Up","Day21","oxidoreductase activity","PGEN_.00g002290;PGEN_.00g282850"
+"4","GO:0004568",0.00251940431114194,0.999945209628964,2,18,"chitinase activity","MF","Up","Day21","hydrolase activity, acting on glyco...","PGEN_.00g057130;PGEN_.00g169480"
+"5","GO:0008047",0.00595836214329899,0.999791889843145,2,28,"enzyme activator activity","MF","Up","Day21","enzyme regulator activity","PGEN_.00g145340;PGEN_.00g327850"

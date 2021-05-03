@@ -1,0 +1,6 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","effect_dir"
+"1","peptidase activity","GO:0008233",3,"GO:0004175","GO:0004175;GO:0004197;GO:0004252",6,"PGEN_.00g006380;PGEN_.00g009930;PGEN_.00g033640;PGEN_.00g057170;PGEN_.00g199810;PGEN_.00g345680","secondAvM_Down"
+"2","oxidoreductase activity","GO:0016491",2,"GO:0004500","GO:0004500;GO:0016715",2,"PGEN_.00g211330;PGEN_.00g263770","secondAvM_Down"
+"3","enzyme regulator activity","GO:0030234",1,"GO:0004867","GO:0004867",2,"PGEN_.00g086610;PGEN_.00g086660","secondAvM_Down"
+"4","structural molecule activity","GO:0005198",1,"GO:0005201","GO:0005201",3,"PGEN_.00g085780;PGEN_.00g095380;PGEN_.00g119470","secondAvM_Down"
+"5","ion binding","GO:0043167",1,"GO:0005507","GO:0005507",2,"PGEN_.00g211330;PGEN_.00g263770","secondAvM_Down"

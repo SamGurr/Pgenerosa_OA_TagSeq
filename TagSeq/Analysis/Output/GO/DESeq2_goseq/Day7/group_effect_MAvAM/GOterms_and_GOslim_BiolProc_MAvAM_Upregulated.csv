@@ -1,0 +1,7 @@
+"","GO_terms","over_represented_pvalue","under_represented_pvalue","numDEInCat","numInCat","term","ontology","dir","effect","slim_term","Gene_IDs"
+"1","GO:0030041",0.000484806722841078,0.999995435767812,2,28,"actin filament polymerization","BP","Up","MAvAM","cellular component assembly","PGEN_.00g235110;PGEN_.00g260530;PGEN_.00g332250"
+"2","GO:0030041",0.000484806722841078,0.999995435767812,2,28,"actin filament polymerization","BP","Up","MAvAM","cytoskeleton organization","PGEN_.00g260530;PGEN_.00g332250"
+"3","GO:0030041",0.000484806722841078,0.999995435767812,2,28,"actin filament polymerization","BP","Up","MAvAM","protein-containing complex assembly","PGEN_.00g260530;PGEN_.00g332250"
+"4","GO:0030335",0.00443530298166422,0.999866663962707,2,81,"positive regulation of cell migration","BP","Up","MAvAM","cell motility","PGEN_.00g298760;PGEN_.00g332250"
+"5","GO:0030335",0.00443530298166422,0.999866663962707,2,81,"positive regulation of cell migration","BP","Up","MAvAM","locomotion","PGEN_.00g298760;PGEN_.00g332250"
+"6","GO:0060271",0.0201367373053242,0.998657339493831,2,171,"cilium assembly","BP","Up","MAvAM","cellular component assembly","PGEN_.00g235110;PGEN_.00g260530;PGEN_.00g332250"

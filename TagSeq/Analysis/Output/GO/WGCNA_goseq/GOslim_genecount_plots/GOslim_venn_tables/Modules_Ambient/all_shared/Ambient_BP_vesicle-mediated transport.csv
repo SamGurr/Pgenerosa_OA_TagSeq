@@ -1,0 +1,76 @@
+"","Gene_IDs","Day","Uniprot","gene","count"
+"1","PGEN_.00g020290","Day14","Q17031","Cdc42 homolog ",2
+"2","PGEN_.00g020290","Day21","Q17031","Cdc42 homolog ",2
+"3","PGEN_.00g056330","Day14","O88204","Low-density lipoprotein receptor-related protein 3 ",2
+"4","PGEN_.00g056330","Day21","O88204","Low-density lipoprotein receptor-related protein 3 ",2
+"5","PGEN_.00g057120","Day7","Q13231","Chitotriosidase-1 ",2
+"6","PGEN_.00g057120","Day14","Q13231","Chitotriosidase-1 ",2
+"7","PGEN_.00g122170","Day7","O43242","26S proteasome non-ATPase regulatory subunit 3 ",2
+"8","PGEN_.00g122170","Day14","O43242","26S proteasome non-ATPase regulatory subunit 3 ",2
+"9","PGEN_.00g169480","Day7","Q13231","Chitotriosidase-1 ",2
+"10","PGEN_.00g169480","Day14","Q13231","Chitotriosidase-1 ",2
+"11","PGEN_.00g198530","Day21","Q9CWK8","Sorting nexin-2",2
+"12","PGEN_.00g198530","Day14","Q9CWK8","Sorting nexin-2",2
+"13","PGEN_.00g225360","Day7","O00571","ATP-dependent RNA helicase DDX3X ",2
+"14","PGEN_.00g225360","Day14","O00571","ATP-dependent RNA helicase DDX3X ",2
+"15","PGEN_.00g282910","Day14","Q5T1M5","FK506-binding protein 15 ",2
+"16","PGEN_.00g282910","Day21","Q5T1M5","FK506-binding protein 15 ",2
+"17","PGEN_.00g283520","Day21","Q6PAR5","GTPase-activating protein and VPS9 domain-containing protein 1 ",2
+"18","PGEN_.00g283520","Day14","Q6PAR5","GTPase-activating protein and VPS9 domain-containing protein 1 ",2
+"19","PGEN_.00g288810","Day7","P27105","Erythrocyte band 7 integral membrane protein ",2
+"20","PGEN_.00g288810","Day14","P27105","Erythrocyte band 7 integral membrane protein ",2
+"21","PGEN_.00g297280","Day21","Q96QG7","Myotubularin-related protein 9 ",2
+"22","PGEN_.00g297280","Day14","Q96QG7","Myotubularin-related protein 9 ",2
+"23","PGEN_.00g348850","Day7","Q12913","Receptor-type tyrosine-protein phosphatase eta ",2
+"24","PGEN_.00g348850","Day14","Q12913","Receptor-type tyrosine-protein phosphatase eta ",2
+"25","PGEN_.00g019320","Day14","Q6BWX4","Cofilin ",1
+"26","PGEN_.00g024130","Day21","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",1
+"27","PGEN_.00g024630","Day21","P17081","Rho-related GTP-binding protein RhoQ ",1
+"28","PGEN_.00g035110","Day21","Q96AJ9","Vesicle transport through interaction with t-SNAREs homolog 1A ",1
+"29","PGEN_.00g050660","Day21","F1MH24","AP2-associated protein kinase 1 ",1
+"30","PGEN_.00g055970","Day14","P63000","Ras-related C3 botulinum toxin substrate 1 ",1
+"31","PGEN_.00g062340","Day21","Q9VI75","Phosphatidylinositol-binding clathrin assembly protein LAP ",1
+"32","PGEN_.00g062920","Day14","Q29122","Unconventional myosin-VI ",1
+"33","PGEN_.00g075760","Day21","Q67FQ3","Low density lipoprotein receptor adapter protein 1-B ",1
+"34","PGEN_.00g079680","Day21","Q8HY02","CD209 antigen ",1
+"35","PGEN_.00g082330","Day14","Q96G03","Phosphoglucomutase-2 ",1
+"36","PGEN_.00g082970","Day7","Q5ZL74","Vesicle-associated membrane protein 7 ",1
+"37","PGEN_.00g104520","Day14","Q01484","Ankyrin-2 ",1
+"38","PGEN_.00g108790","Day21","Q3TZZ7","Extended synaptotagmin-2 ",1
+"39","PGEN_.00g109150","Day14","Q8BTI9","Phosphatidylinositol 4,5-bisphosphate 3-kinase catalytic subunit beta isoform ",1
+"40","PGEN_.00g114300","Day21","Q9UBG0","C-type mannose receptor 2 ",1
+"41","PGEN_.00g127920","Day21","Q92609","TBC1 domain family member 5",1
+"42","PGEN_.00g132070","Day21","Q5R9Z1","Vacuolar protein sorting-associated protein 29 ",1
+"43","PGEN_.00g132090","Day21","Q5U316","Ras-related protein Rab-35",1
+"44","PGEN_.00g147170","Day21","Q00610","Clathrin heavy chain 1 ",1
+"45","PGEN_.00g157600","Day21","O75096","Low-density lipoprotein receptor-related protein 4 ",1
+"46","PGEN_.00g170650","Day7","O75131","Copine-3 ",1
+"47","PGEN_.00g185010","Day21","Q8BVI5","Syntaxin-16",1
+"48","PGEN_.00g185910","Day21","Q9UN37","Vacuolar protein sorting-associated protein 4A ",1
+"49","PGEN_.00g186210","Day21","O43861","Probable phospholipid-transporting ATPase IIB ",1
+"50","PGEN_.00g192770","Day21","Q3UHD6","Sorting nexin-27",1
+"51","PGEN_.00g204640","Day14","P51638","Caveolin-3",1
+"52","PGEN_.00g205400","Day21","Q2M389","WASH complex subunit 4 ",1
+"53","PGEN_.00g208710","Day21","Q5R7A4","Ras-related protein Rab-7L1 ",1
+"54","PGEN_.00g212320","Day21","A4IG59","WASH complex subunit 1 ",1
+"55","PGEN_.00g213930","Day14","Q8BL66","Early endosome antigen 1",1
+"56","PGEN_.00g220140","Day14","Q8R4U0","Stabilin-2 ",1
+"57","PGEN_.00g229320","Day21","P98158","Low-density lipoprotein receptor-related protein 2 ",1
+"58","PGEN_.00g229340","Day21","P98158","Low-density lipoprotein receptor-related protein 2 ",1
+"59","PGEN_.00g236720","Day14","Q86WV6","Stimulator of interferon genes protein ",1
+"60","PGEN_.00g240510","Day21","Q99J21","Mucolipin-1 ",1
+"61","PGEN_.00g243370","Day21","Q155U0","Vacuolar protein sorting-associated protein 51 homolog ",1
+"62","PGEN_.00g249860","Day21","Q8WUX9","Charged multivesicular body protein 7 ",1
+"63","PGEN_.00g257240","Day21","P42859","Huntingtin ",1
+"64","PGEN_.00g257250","Day21","P51111","Huntingtin ",1
+"65","PGEN_.00g284150","Day21","Q9GQQ0","Protein spinster ",1
+"66","PGEN_.00g297150","Day14","Q86VP6","Cullin-associated NEDD8-dissociated protein 1 ",1
+"67","PGEN_.00g313220","Day14","Q9UBG0","C-type mannose receptor 2 ",1
+"68","PGEN_.00g313720","Day21","Q6PGL7","WASH complex subunit 2",1
+"69","PGEN_.00g313730","Day21","Q641Q2","WASH complex subunit 2A",1
+"70","PGEN_.00g323600","Day21","Q98930","Sortilin-related receptor ",1
+"71","PGEN_.00g328600","Day21","Q4A1L5","Beclin-1 [Cleaved into: Beclin-1-C 35 kDa; Beclin-1-C 37 kDa]",1
+"72","PGEN_.00g331940","Day7","O75165","DnaJ homolog subfamily C member 13 ",1
+"73","PGEN_.00g332010","Day7","O75165","DnaJ homolog subfamily C member 13 ",1
+"74","PGEN_.00g341690","Day14","Q5S006","Leucine-rich repeat serine/threonine-protein kinase 2 ",1
+"75","PGEN_.00g343270","Day14","P54939","Talin-1",1

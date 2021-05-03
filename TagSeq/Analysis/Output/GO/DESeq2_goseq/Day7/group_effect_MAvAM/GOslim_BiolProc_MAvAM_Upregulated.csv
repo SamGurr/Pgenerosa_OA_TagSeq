@@ -1,0 +1,6 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","effect_dir"
+"1","cellular component assembly","GO:0022607",2,"GO:0030041","GO:0030041;GO:0060271",3,"PGEN_.00g235110;PGEN_.00g260530;PGEN_.00g332250","MAvAM_Up"
+"2","cytoskeleton organization","GO:0007010",1,"GO:0030041","GO:0030041",2,"PGEN_.00g260530;PGEN_.00g332250","MAvAM_Up"
+"3","protein-containing complex assembly","GO:0065003",1,"GO:0030041","GO:0030041",2,"PGEN_.00g260530;PGEN_.00g332250","MAvAM_Up"
+"4","cell motility","GO:0048870",1,"GO:0030335","GO:0030335",2,"PGEN_.00g298760;PGEN_.00g332250","MAvAM_Up"
+"5","locomotion","GO:0040011",1,"GO:0030335","GO:0030335",2,"PGEN_.00g298760;PGEN_.00g332250","MAvAM_Up"

@@ -1,0 +1,4 @@
+"","GO_terms","over_represented_pvalue","under_represented_pvalue","numDEInCat","numInCat","term","ontology","dir","Day","slim_term","Gene_IDs"
+"1","GO:0004867",0.0103196166326384,0.999510986970251,2,72,"serine-type endopeptidase inhibitor activity","MF","Down","Day21","enzyme regulator activity","PGEN_.00g092260;PGEN_.00g092270"
+"2","GO:0005507",0.000632180356646144,0.999976019665588,3,88,"copper ion binding","MF","Down","Day21","ion binding","PGEN_.00g161570;PGEN_.00g168590;PGEN_.00g169010"
+"3","GO:0016716",0.000701653877226761,0.999992053873553,2,20,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, another compound as one donor, and incorporation of one atom of oxygen","MF","Down","Day21","oxidoreductase activity","PGEN_.00g168590;PGEN_.00g169010"

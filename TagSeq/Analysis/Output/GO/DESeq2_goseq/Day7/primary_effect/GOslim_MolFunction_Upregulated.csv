@@ -1,0 +1,7 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","module_day"
+"1","peptidase activity","GO:0008233",2,"GO:0004222","GO:0004222;GO:0004252",7,"PGEN_.00g164540;PGEN_.00g164660;PGEN_.00g199810;PGEN_.00g285590;PGEN_.00g344990;PGEN_.00g348220;PGEN_.00g348570","Day7_Up"
+"2","transferase activity, transferring ...","GO:0016765",1,"GO:0004364","GO:0004364",2,"PGEN_.00g169390;PGEN_.00g180630","Day7_Up"
+"3","transferase activity, transferring ...","GO:0016757",0,"GO:0004364","",0,"","Day7_Up"
+"4","transferase activity, transferring ...","GO:0016746",0,"GO:0004364","",0,"","Day7_Up"
+"5","enzyme regulator activity","GO:0030234",1,"GO:0004867","GO:0004867",2,"PGEN_.00g057310;PGEN_.00g086610","Day7_Up"
+"6","oxidoreductase activity","GO:0016491",1,"GO:0045174","GO:0045174",2,"PGEN_.00g169390;PGEN_.00g180630","Day7_Up"

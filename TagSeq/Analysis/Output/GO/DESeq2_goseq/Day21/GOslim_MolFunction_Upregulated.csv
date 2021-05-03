@@ -1,0 +1,5 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","module_day"
+"1","peptidase activity","GO:0008233",2,"GO:0004175","GO:0004175;GO:0004252",8,"PGEN_.00g009930;PGEN_.00g033640;PGEN_.00g057170;PGEN_.00g057190;PGEN_.00g199810;PGEN_.00g345680;PGEN_.00g348220;PGEN_.00g348570","Day21_Up"
+"2","oxidoreductase activity","GO:0016491",1,"GO:0004303","GO:0004303",2,"PGEN_.00g002290;PGEN_.00g282850","Day21_Up"
+"3","hydrolase activity, acting on glyco...","GO:0016798",1,"GO:0004568","GO:0004568",2,"PGEN_.00g057130;PGEN_.00g169480","Day21_Up"
+"4","enzyme regulator activity","GO:0030234",1,"GO:0008047","GO:0008047",2,"PGEN_.00g145340;PGEN_.00g327850","Day21_Up"

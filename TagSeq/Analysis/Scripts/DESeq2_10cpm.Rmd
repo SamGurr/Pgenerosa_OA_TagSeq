@@ -573,6 +573,14 @@ res.d7.Second_AM_grouptest<- results(dds.d7.group, contrast = list(("All_Treatme
 table(res.d7.Second_AM_grouptest$padj<0.05) #  0 DEGs (same as above?)
 
 
+# after running all the group interaction slater in this script... I found that the majority of the A v M second treatment effect 
+# appears to be ddriven by AM  vs. MA treatment groups. Here is the table supporting this.
+res.d7.Second_MA_AM <- results(dds.d7.group, contrast = list(c("All_TreatmentMA"),c("All_TreatmentAM")),  alpha= 0.05)
+table(res.d7.Second_MA_AM$padj<0.05) # 168 DEGs - 168 total DEGs in this pairwise group model! 
+# what does this say?? The second treatment had an effect on differneital expression, and the weight of this effect 
+# is driven by the recovery of the moderate primed animals versus the initial encounter of the ambient (naive) animals! 
+# outpt this table to Day 7 folder to run a venn diagram agains the second ambient vs. moderate (106 DEGs total) to look for overlap here
+
 
 # Secondary treatment A v S ========================================================================================================= #
 
@@ -812,6 +820,24 @@ path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomic
 write.csv(resdata.d7.second.MS, paste(path_out.d7,"Day7.SecondDEGs_MvS_DESeq2results.csv")) # write
 
 
+
+# primary x Secondary treatment  MA vs. AM  ============================================================================================ 
+# view the comments above as to why to oouput this pairwise dataset specifically 
+# in summary... the for loop later in this script outputs EACH full pariwise DE test and AM v. MA appears to carry the weight 
+# of this UNIQUE treatment effect of 106 DEGs! (all other second and third treatment effects are minimal with 0 - 13 DEGs total)
+
+# DEGs total for the primary treatment effect
+d7.numDEGs_padj_MA_AM            <- data.frame(table(res.d7.Second_MA_AM$padj<0.05))[2,2] # DEGs - NOT considering LFC - just p adj
+res.d7.MA_AM_ordered             <- res.d7.Second_MA_AM[order(res.d7.Second_MA_AM$padj), ] # Order by adjusted p-value - 110 DEGs
+d7.num.UpReg_MA_AM               <- sum((res.d7.MA_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_MA_AM] > 0) == TRUE) #  LFC >= 1
+d7.num.DownReg_MA_AM             <- sum((res.d7.MA_AM_ordered$log2FoldChange[1:d7.numDEGs_padj_MA_AM] < 0) == TRUE) # LFC >= 1
+d7.total_MA_AM                   <- sum(d7.num.UpReg_MA_AM,d7.num.DownReg_MA_AM) # 106 TOTAL DEGs with the criteria pdj < 0.05 + LFC>1 (< -1)
+
+resdata.d7.MA_AM <- merge(as.data.frame(res.d7.MA_AM_ordered), as.data.frame(counts(dds.d7, normalized=TRUE)), by="row.names", sort=FALSE) ## Merge with normalized count data
+names(resdata.d7.MA_AM)[1] <- "Gene"
+resdata.d7.MA_AM <- resdata.d7.MA_AM[order(resdata.d7.MA_AM$padj), ] # Order by adjusted p-value
+path_out.d7 = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/' # call path
+write.csv(resdata.d7.MA_AM, paste(path_out.d7,"Day7.SecondDEGs_MA_AM_DESeq2results.csv")) # write
 
 
 
@@ -1635,6 +1661,13 @@ write.csv(DE_d0.primary, "../Output/DESeq2/10cpm/Day0/DE_Day0_Primary.csv")
 # Day 7 
 DE_d7.primary <- merge(as.data.frame(res.d7.primary), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
 write.csv(DE_d7.primary, "../Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv")
+
+DE_d7.second <- merge(as.data.frame(res.d7.Second_AM), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
+write.csv(DE_d7.second, "../Output/DESeq2/10cpm/Day7/DE_Day7_Second.csv") # second treatment A v M (106 DEGs)
+
+DE_d7.MA_AM <- merge(as.data.frame(res.d7.Second_MA_AM), as.data.frame(counts(dds.d7, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)
+write.csv(DE_d7.MA_AM, "../Output/DESeq2/10cpm/Day7/DE_Day7_MA_AM.csv") # full model AM v MA (168 DEGs)
+
 
 # Day 14 
 DE_d14.primary <- merge(as.data.frame(res.d14_primary), as.data.frame(counts(dds.d14, normalized=FALSE)), by="row.names", sort=FALSE) %>% dplyr::filter(padj < 0.05) %>% mutate(up = log2FoldChange > 0) %>% mutate(down = log2FoldChange < 0)

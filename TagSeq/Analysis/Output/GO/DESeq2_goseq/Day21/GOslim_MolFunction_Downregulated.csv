@@ -1,0 +1,4 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","module_day"
+"1","enzyme regulator activity","GO:0030234",1,"GO:0004867","GO:0004867",2,"PGEN_.00g092260;PGEN_.00g092270","Day21_Down"
+"2","ion binding","GO:0043167",1,"GO:0005507","GO:0005507",3,"PGEN_.00g161570;PGEN_.00g168590;PGEN_.00g169010","Day21_Down"
+"3","oxidoreductase activity","GO:0016491",1,"GO:0016716","GO:0016716",2,"PGEN_.00g168590;PGEN_.00g169010","Day21_Down"

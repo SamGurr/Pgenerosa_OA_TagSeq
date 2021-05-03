@@ -16,6 +16,7 @@ library(gridExtra)
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # upload data
+# PRIMARY EFFECT MODS  (note most the DEGs found formain effects were due to the primary treatment)
 day0.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day0/ Day0.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 day7.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/ Day7.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 day14.primaryDE<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/ Day14.Primary_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
@@ -31,13 +32,20 @@ day14.primaryDE_mainmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_mo
 day14.primaryDE_fullmod<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/ Day14.Primary_res_full.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 day14.primaryDE_grouptest<-read.csv("Analysis/Output/DESeq2/10cpm/Day14/D14_res_model_tests/ Day14.Primary_res_grouptest.mod.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
 
+# SECOND  treatmetn Day 7  (the one exception was 106 DEGs second ambietn v. moderate with 167 DEGs in the full model for AM v. MA
+# objective with the this data is to look at the Venn diagram to see ho wmuch of the weight of the main effect is due to the pairwise AM v. MA 
+day7.secondDE_AvM<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/ Day7.SecondDEGs_AvM_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+day7.fullDE_MA_AM<-read.csv("Analysis/Output/DESeq2/10cpm/Day7/ Day7.SecondDEGs_MA_AM_DESeq2results.csv", header=TRUE, sep=",", na.string="NA", as.is=TRUE) 
+
 
 
 # call only sig DEGs - osolate just the gene names - rename column to day
 
-################################################################# #
-# primary Treatmennt A v M      ################################# #
-################################################################# #
+##############################################################################################################################
+# primary Treatmennt A v M   :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+############################################################################################################################## 
 
 # Day0 primary treatment effect ------------------------------------------------------------------------ #
 day0.primaryDE_UP <- day0.primaryDE %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 1) %>%  dplyr::select('Gene')
@@ -272,3 +280,51 @@ dev.off()
 pdf("Analysis/Output/DESeq2/Day14/D14_res_model_tests/Venn_DE_Day14_test.pdf")
 grid.arrange(up.venn2_day14_mods, down.venn2__day14_mods, ncol=1, nrow=2, clip="off")
 dev.off()
+
+
+##############################################################################################################################
+# Day 7 Second treatment ( with MA v. AM pairwise )   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+############################################################################################################################## 
+
+# prep data - filter log fold change and call sig DEGs + build new columns (not necessary for the venns done below but whatevs)
+day7.secondDE_AvM_UP <- day7.secondDE_AvM %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 0) %>%  dplyr::select('Gene')
+day7.secondDE_AvM_UP$Dir <- "upregulated"
+day7.secondDE_AvM_UP$Effect <- "Second_AvM"
+day7.secondDE_AvM_DOWN <- day7.secondDE_AvM %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < 0)  %>%  dplyr::select('Gene')
+day7.secondDE_AvM_DOWN$Dir <- "downregulated"
+day7.secondDE_AvM_DOWN$Effect <- "Second_AvM"
+# group test of the full mod
+day7.fullDE_MA_AM_UP <- day7.fullDE_MA_AM %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange > 0) %>%  dplyr::select('Gene')
+day7.fullDE_MA_AM_UP$Dir <- "upregulated"
+day7.fullDE_MA_AM_UP$Effect <- "MA_vs_AM"
+day7.fullDE_MA_AM_DOWN <- day7.fullDE_MA_AM %>% dplyr::filter(padj < 0.05) %>% dplyr::filter(log2FoldChange < 0)  %>%  dplyr::select('Gene')
+day7.fullDE_MA_AM_DOWN$Dir <- "downregulated"
+day7.fullDE_MA_AM_DOWN$Effect <- "MA_vs_AM"
+
+
+# create list for Venn to call common and unique gene names assocaited with the up and down reg of the two models...
+ListUPREG_Day7 <- list(
+  Second_AvM    = day7.secondDE_AvM_UP$Gene, 
+  MA_vs_AM      = day7.fullDE_MA_AM_UP$Gene
+)
+ListDOWNREG_Day7 <- list(
+  Second_AvM  = day7.secondDE_AvM_DOWN$Gene, 
+  MA_vs_AM    = day7.fullDE_MA_AM_DOWN$Gene
+)
+
+
+# Venn Diagram
+Ureg_Day7_main_v_full <- ggvenn(ListUPREG_Day7, 
+                              fill_color = c("white", "white"),
+                              stroke_size = 0.5, set_name_size = 4)
+Ureg_Day7_main_v_full <- Ureg_Day7_main_v_full + ggtitle("UPREGULATED: Day 7 Second treatment mods")
+Ureg_Day7_main_v_full
+Downreg_Day7_main_v_full <- ggvenn(ListDOWNREG_Day7, 
+                                 fill_color = c("white", "white"),
+                                 stroke_size = 0.5, set_name_size = 4)
+Downreg_Day7_main_v_full <- Downreg_Day7_main_v_full + ggtitle("DOWNREGULATED: Day 7 Second treatment mods")
+Day7_main_v_full <- grid.arrange(Ureg_Day7_main_v_full, Downreg_Day7_main_v_full, ncol=2, nrow=1, clip="off")
+
+

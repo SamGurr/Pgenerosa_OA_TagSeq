@@ -1,0 +1,36 @@
+"","Day_color","Translation","n"
+"1","Day14_black","acid-base regulation",1
+"2","Day14_black","ATP synthase",3
+"3","Day14_black","Complex I",2
+"4","Day14_black","reduction of Fe3.2+ to Fe2+",2
+"5","Day14_black","Sirtuins",1
+"6","Day14_black","Stress signaling (MAPK)",1
+"7","Day14_brown","ATP synthase",1
+"8","Day14_brown","Complex I",3
+"9","Day14_brown","Oxidative stress response",6
+"10","Day14_brown","reduction of Fe3.2+ to Fe2+",1
+"11","Day14_brown","SAM",1
+"12","Day21_blue","acid-base regulation",2
+"13","Day21_blue","ATP synthase",2
+"14","Day21_blue","Complex I",2
+"15","Day21_blue","Histone demethylation",1
+"16","Day21_blue","Histone methyltransferases",1
+"17","Day21_blue","Mitochondrial uncoupling proteins",2
+"18","Day21_blue","Oxidative stress response",6
+"19","Day21_blue","SAM",1
+"20","Day21_blue","Stress signaling (MAPK)",4
+"21","Day21_magenta","ATP synthase",1
+"22","Day21_magenta","Complex I",1
+"23","Day21_yellow","acid-base regulation",1
+"24","Day21_yellow","Histone acetyltransferases",1
+"25","Day21_yellow","Histone demethylation",2
+"26","Day21_yellow","Histone methyltransferases",4
+"27","Day21_yellow","Oxidative stress response",1
+"28","Day21_yellow","reduction of Fe3.2+ to Fe2+",1
+"29","Day21_yellow","Stress signaling (MAPK)",1
+"30","Day7_brown","Histone acetyltransferases",1
+"31","Day7_brown","Mitochondrial uncoupling proteins",1
+"32","Day7_brown","Oxidative stress response",5
+"33","Day7_brown","reduction of Fe3.2+ to Fe2+",2
+"34","Day7_brown","SAM",1
+"35","Day7_brown","Stress signaling (MAPK)",1

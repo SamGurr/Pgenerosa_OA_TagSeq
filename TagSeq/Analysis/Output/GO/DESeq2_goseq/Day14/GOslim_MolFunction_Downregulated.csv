@@ -1,0 +1,8 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs","module_day"
+"1","DNA-binding transcription factor ac...","GO:0003700",2,"GO:0000981","GO:0000981;GO:0001228",5,"PGEN_.00g017110;PGEN_.00g027450;PGEN_.00g054330;PGEN_.00g316240;PGEN_.00g321390","Day14_Down"
+"2","ion binding","GO:0043167",2,"GO:0005507","GO:0005507;GO:0050897",6,"PGEN_.00g017110;PGEN_.00g045080;PGEN_.00g110440;PGEN_.00g168590;PGEN_.00g169010;PGEN_.00g279740","Day14_Down"
+"3","transmembrane transporter activity","GO:0022857",1,"GO:0008271","GO:0008271",2,"PGEN_.00g042540;PGEN_.00g163390","Day14_Down"
+"4","oxidoreductase activity","GO:0016491",1,"GO:0016716","GO:0016716",3,"PGEN_.00g045080;PGEN_.00g168590;PGEN_.00g169010","Day14_Down"
+"5","cytoskeletal protein binding","GO:0008092",1,"GO:0030507","GO:0030507",2,"PGEN_.00g015880;PGEN_.00g042540","Day14_Down"
+"6","transcription factor binding","GO:0008134",1,"GO:0035258","GO:0035258",2,"PGEN_.00g229320;PGEN_.00g229340","Day14_Down"
+"7","DNA binding","GO:0003677",1,"GO:0043565","GO:0043565",6,"PGEN_.00g017110;PGEN_.00g054330;PGEN_.00g316240;PGEN_.00g319930;PGEN_.00g321390;PGEN_.00g331370","Day14_Down"

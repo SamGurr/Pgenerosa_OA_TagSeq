@@ -1,0 +1,14 @@
+,a priori target genes of interest,,Day7 ,,Day14,,Day21,
+,,n,WGCNA,DESeq2,WGCNA,DESeq2,WGCNA,DESeq2
+1,AOX,1,-,-,-,-,-,-
+2,Complex I,17,-,-,5,-,3,-
+3,Complex III,3,-,-,-,-,-,-
+4,Histone acetyltransferases,7,1,-,-,1,1,-
+5,Histone demethylation,15,-,-,-,-,3,-
+6,Histone methyltransferases,29,-,-,-,1,5,-
+7,Mitochondrial uncoupling proteins,4,1,-,-,-,1,-
+8,Oxidative stress response,37,5,1,6,3,7,1
+9,reduction of Fe3.2+ to Fe2+,11,2,1,3,1,1,-
+10,SAM,4,1,-,1,1,1,-
+11,Sirtuins,6,-,-,1,-,-,-
+12,Stress signaling (MAPK),22,1,-,1,-,3,-

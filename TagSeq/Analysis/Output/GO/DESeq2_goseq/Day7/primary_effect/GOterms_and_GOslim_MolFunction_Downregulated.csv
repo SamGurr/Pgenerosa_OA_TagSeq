@@ -1,0 +1,2 @@
+"","GO_terms","over_represented_pvalue","under_represented_pvalue","numDEInCat","numInCat","term","ontology","dir","Day","slim_term","Gene_IDs"
+"1","GO:0004867",0.00889169365139516,0.999611924707941,2,72,"serine-type endopeptidase inhibitor activity","MF","Down","Day7","enzyme regulator activity","PGEN_.00g092260;PGEN_.00g092270"
