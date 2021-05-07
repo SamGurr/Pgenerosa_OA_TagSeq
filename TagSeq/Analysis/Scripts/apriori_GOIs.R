@@ -423,14 +423,38 @@ apriori_WGCNA_AllModules <- read.csv(file="Analysis/Output/a_priori_hypothesis/ 
 # if ( (nrow(Day7_meanExpr %>%  dplyr::filter(genes %in% target_GOIs[i,1]))) > 0 ) {
 
 
+    
+# ===================================================================================
 ################################################################################ #       
 # CALL A GENE AND PLOT IT ...little plotting machine to view target GOIs
-################################################################################ #       
+################################################################################ #   
+# ===================================================================================
+
+
+
+# NOTE here are KEGG targets to plot 
+KEGG_targets <- dplyr::filter(annot.condenced, grepl('E3 ubiquitin-protein ligase XIAP|E3 ubiquitin-protein ligase TRIP12|
+                                                     |threonine-protein kinase PINK1|threonine-protein kinase TBK1|optineurin|
+                                                     |sorting nexin-2|sorting nexin-6|clathrin light chain A|
+                                                     |peroxisomal acyl-coenzyme A oxidase 1|peroxisomal acyl-coenzyme A oxidase 3|alcohol dehydrogenase class-3', Gene_term, ignore.case = TRUE))
+KEGG_targets$Gene_term <- gsub( "/", "", as.character(KEGG_targets$Gene_term)) # removes all occurances of '/' and replaces with a NULL for all gene terms 
+KEGG_targets$Gene_term <- gsub( " ", "_", as.character(KEGG_targets$Gene_term)) # removes all occurances of '/' and replaces with a NULL for all gene terms 
+KEGG_priori_WGCNA <- merge(Sig_WGCNA.modules,KEGG_targets[c(1,3)], by= "GeneID") # %>% dplyr::select('Sample.Name', 'Primary_Treatment', 'Second_Treament', 'Third_Treatment', any_of(target_GOIs$GeneID))
+
+# Clathrin_light_chain_A_ == PGEN_.00g313920 
+# Sorting_nexin-2 == PGEN_.00g198530
+# Peroxisomal_acyl-coenzyme_A_oxidase_3 ==  PGEN_.00g135600
+# Peroxisomal_acyl-coenzyme_A_oxidase_1 == PGEN_.00g300030
+# Sorting_nexin-6 ==  PGEN_.00g024130
+# Alcohol_dehydrogenase_class-3 == PGEN_.00g048930
+# E3_ubiquitin-protein_ligase_TRIP12 == PGEN_.00g239600
+# Serinethreonine-protein_kinase_PINK1,_mitochondria == PGEN_.00g322450
+# Serinethreonine-protein_kinase_TBK1 == PGEN_.00g211820
 
 pd <- position_dodge(0.3)
 allmeanExr <- rbind(Day7_meanExpr, Day14_meanExpr, Day21_meanExpr)
 
-GOI_name <- 'PGEN_.00g255890' # call your gene you want to see!
+GOI_name <- 'PGEN_.00g220600' # call your gene you want to see!
 
 ExpMin <- floor(  min((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$mean.vstExp) - max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$sd.vsdtExp)  )
 ExpMax <- ceiling(  max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$mean.vstExp) + max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$sd.vsdtExp)  )
@@ -507,7 +531,7 @@ if ( (nrow(Day21_meanExpr %>%  dplyr::filter(GeneID %in% GOI_name))) > 0 ) {
     facet_wrap(~SecondTreatment)
 } else { d21_GOI_plot <- plot.new() }
 
-pdf(paste("Analysis/Output/a_priori_hypothesis/other/",GOI_name,"_Carbonic_anhydrase.pdf", sep =''), width=15, height=5)
+pdf(paste("Analysis/Output/a_priori_hypothesis/other/",GOI_name,"_Optineurin.pdf", sep =''), width=15, height=5)
 print(ggarrange(d7_GOI_plot, d14_GOI_plot, d21_GOI_plot,        
                 plotlist = NULL,
                 ncol = 3,
