@@ -1,0 +1,6 @@
+"","Cgigas_KEGG_IDs","Cgigas_PathwayID","Pathway_Description","Pathway_gene_list","Pathway_gene_count","gene_IDs","Gene_terms"
+"1","crg:105327391","crg03050","Proteasome","105327391/105329473/105330688/105337951/105341026",5,"105327391","26S proteasome non-ATPase regulatory subunit 4"
+"2","crg:105329473","crg03050","Proteasome","105327391/105329473/105330688/105337951/105341026",5,"105329473","26S proteasome non-ATPase regulatory subunit 14"
+"3","crg:105330688","crg03050","Proteasome","105327391/105329473/105330688/105337951/105341026",5,"105330688","26S proteasome non-ATPase regulatory subunit 1"
+"4","crg:105337951","crg03050","Proteasome","105327391/105329473/105330688/105337951/105341026",5,"105337951","proteasome subunit beta type-5"
+"5","crg:105341026","crg03050","Proteasome","105327391/105329473/105330688/105337951/105341026",5,"105341026","26S proteasome non-ATPase regulatory subunit 13"

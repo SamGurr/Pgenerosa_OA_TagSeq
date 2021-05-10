@@ -325,7 +325,7 @@ for (i in 1:nrow(Day21_WGCNA_sigmodules)) {
 
   # merge and calculate the percent mapping
   # Lets merge with the Cgigas genome! 
-  # EnrichedGenes_2$Gene_terms <- gsub("[[]", "", EnrichedGenes_2$Gene_terms) # need to run this for turquoise - an open bracket [ in one of the genes
+  # EnrichedGenes_2$Gene_terms <- gsub("[[]", "", EnrichedGenes_2$Gene_terms) - need to run this for turquoise - an open bracket [ in one of the genes
   vector                 <- as.vector(EnrichedGenes_2$Gene_terms) # call the gene term as a vector 
   vector_with_asserts    <- paste("^", vector, "$", sep='') # assets help to call the exact beginning and end of the gene term in grep1 (exact mtatch!) - otheriwse grep will use an 'in it' like funciton and call any genes that contain the whole term in addition to extra string chracters
 
