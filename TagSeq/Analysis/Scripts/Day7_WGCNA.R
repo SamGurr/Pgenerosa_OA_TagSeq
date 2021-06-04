@@ -1,5 +1,5 @@
 ---
-  # title: "Day7_WGCNA"
+  # title: "Day7_WGCNA_10cpm"
   # author: "Samuel Gurr"
   # date: "January 8, 2021"
 ---
@@ -102,7 +102,7 @@ sizeGrWindow(12,9) # The user should change the dimensions if the window is too 
 par(cex = 0.6);
 par(mar = c(0,4,2,0))
 
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_Precut.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_Precut.png", 1000, 1000, pointsize=20)
 plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
      cex.axis = 1.5, cex.main = 2) # appears there are two outliers SG55 and SG 105; can remove by hand or an automatic appraoch 
 abline(h = 110, col = "red") # add line to plot to show the cut-off od outlier samples (40000) SG105 and SG55
@@ -128,7 +128,7 @@ nSamples = nrow(dds.d7_vst) # number of samples == 35  - the cut tree removed 6 
 
 # plot the tree with the 'keep samples' bollean (T/F) to ommit outlier samples 
 sampleTree2 = hclust(dist(dds.d7_vst), method = "average") # Next we cluster the samples (in contrast to clustering genes that will come later)  to see if there are any obvious outliers.
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_Postcut.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_Postcut.png", 1000, 1000, pointsize=20)
 plot(sampleTree2, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
      cex.axis = 1.5, cex.main = 2)
 dev.off()
@@ -228,7 +228,7 @@ d7.Traits.phys<- d7.Traits[,c(3:(ncol(d7.Traits)))] # pphysiologial measuremetns
 # ===================================================================================
 
 # All Traits
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_AllTraits.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_AllTraits.png", 1000, 1000, pointsize=20)
 sampleTree2 = hclust(dist(dds.d7_vst), method = "average")
 traitColors = labels2colors(d7.Traits); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColors, # Plot the sample dendrogram and the colors underneath.
@@ -237,7 +237,7 @@ plotDendroAndColors(sampleTree2, traitColors, # Plot the sample dendrogram and t
 dev.off()
 
 # Primary treatment Only
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_PrimaryTreatment.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_PrimaryTreatment.png", 1000, 1000, pointsize=20)
 traitColors_Primary = labels2colors(d7.Traits.Primary); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColors_Primary, # Plot the sample dendrogram and the colors underneath.
                     groupLabels = names(d7.Traits.Primary), 
@@ -245,7 +245,7 @@ plotDendroAndColors(sampleTree2, traitColors_Primary, # Plot the sample dendrogr
 dev.off()
 
 # Second treatment 
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_SecondTreatment.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_SecondTreatment.png", 1000, 1000, pointsize=20)
 traitColors_Second = labels2colors(d7.Traits.Secondary); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColors_Second, # Plot the sample dendrogram and the colors underneath.
                     groupLabels = names(d7.Traits.Secondary), 
@@ -253,7 +253,7 @@ plotDendroAndColors(sampleTree2, traitColors_Second, # Plot the sample dendrogra
 dev.off()
 
 # gROUP treatment (primary_second)
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_GroupTreatment.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_GroupTreatment.png", 1000, 1000, pointsize=20)
 traitColorsGroup = labels2colors(d7.Traits.Group); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColorsGroup, # Plot the sample dendrogram and the colors underneath.
                     groupLabels = names(d7.Traits.Group), 
@@ -262,7 +262,7 @@ dev.off()
 
 
 # Phys Only
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterTree_PhysOnly.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterTree_PhysOnly.png", 1000, 1000, pointsize=20)
 traitColors_phys = labels2colors(d7.Traits.phys); # Convert traits to a color representation: white means low, red means high, grey means missing entry
 plotDendroAndColors(sampleTree2, traitColors_phys, # Plot the sample dendrogram and the colors underneath.
                     groupLabels = names(d7.Traits.phys), 
@@ -271,13 +271,13 @@ dev.off()
 
 
 # save data
-save(dds.d7_vst, d7.Traits, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput.RData")
-save(dds.d7_vst, d7.Traits.phys, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput_treatmentonly.RData")
-save(dds.d7_vst, d7.Traits.treat, file = "Analysis/Output/WGCNA/Day7/d.7-dataInput_physonly.RData")
+save(dds.d7_vst, d7.Traits, file = "Analysis/Output/WGCNA/10cpm/Day7/d.7-dataInput.RData")
+save(dds.d7_vst, d7.Traits.phys, file = "Analysis/Output/WGCNA/10cpm/Day7/d.7-dataInput_treatmentonly.RData")
+save(dds.d7_vst, d7.Traits.treat, file = "Analysis/Output/WGCNA/10cpm/Day7/d.7-dataInput_physonly.RData")
 
 
 # write the vst transformed data 
-write.csv(dds.d7_vst, "Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.csv") # write
+write.csv(dds.d7_vst, "Analysis/Output/WGCNA/10cpm/Day7/Day7_vstTransformed_WGCNAdata.csv") # write
 
 
 
@@ -298,7 +298,7 @@ sft = pickSoftThreshold(dds.d7_vst, powerVector = powers, verbose = 5) #...wait 
 # function returns a set of network indices that should be inspected
 sizeGrWindow(9, 5) # set window size 
 # png to output 
-png("Analysis/Output/WGCNA/Day7/Day7_ScaleTopology_SoftThresh.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ScaleTopology_SoftThresh.png", 1000, 1000, pointsize=20)
 par(mfrow = c(1,2));
 cex1 = 0.9;
 # Scale-free topology fit index as a function of the soft-thresholding power
@@ -330,9 +330,9 @@ dev.off() # output
 #  Satrt the step-wise module construction:  
 # Step 1 = create adjacency matrix 
 # https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
-# https://www.rdocumentation.org/packages/WGCNA/versions/1.69/topics/adjacency
+# https://www.rdocumentation.org/packages/WGCNA/10cpm/versions/1.69/topics/adjacency
 # https://ramellose.github.io/networktutorials/wgcna.html
-# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/TechnicalReports/signedTOM.pdf
+# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/10cpm/TechnicalReports/signedTOM.pdf
 #=====================================================================================
 softPower = 3 # set your soft threshold based on the plots above 
 # unsigned 
@@ -461,7 +461,7 @@ MEDiss = 1-cor(MEs);
 METree = hclust(as.dist(MEDiss), method = "average");
 # Plot the result
 sizeGrWindow(7, 6)
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterEigengenes.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterEigengenes.png", 1000, 1000, pointsize=20)
 plot(METree, main = "Clustering of module eigengenes - SIGNED (dissimilarity calc = MEDiss = 1-cor(MEs))",
      xlab = "", sub = "")
 dev.off()
@@ -488,13 +488,13 @@ mergedMEs = merge$newMEs;
 #
 #=====================================================================================
 sizeGrWindow(12, 9)
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram_unsigned.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterDendrogram_unsigned.png", 1000, 1000, pointsize=20)
 plotDendroAndColors(geneTree_unsign, cbind(dynamicColors_unsign, mergedColors),
                     c("Dynamic Tree Cut", "Merged dynamic"),
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
 dev.off()
-png("Analysis/Output/WGCNA/Day7/Day7_ClusterDendrogram_signed.png", 1000, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ClusterDendrogram_signed.png", 1000, 1000, pointsize=20)
 plotDendroAndColors(geneTree_sign, cbind(dynamicColors_sign, mergedColors),
                     c("Dynamic Tree Cut", "Merged dynamic"),
                     dendroLabels = FALSE, hang = 0.03,
@@ -512,9 +512,9 @@ colorOrder = c("grey", standardColors(50));
 moduleLabels = match(moduleColors, colorOrder)-1;
 MEs = mergedMEs;
 # Save module colors and labels for use in subsequent parts
-save(MEs, moduleLabels, moduleColors, geneTree, file = "Analysis/Output/WGCNA/Day7/Day7-networkConstruction-stepByStep.RData")
+save(MEs, moduleLabels, moduleColors, geneTree, file = "Analysis/Output/WGCNA/10cpm/Day7/Day7-networkConstruction-stepByStep.RData")
 # write csv - save the module eigengenes
-write.csv(MEs, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
+write.csv(MEs, file = "Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulEigengenes.csv")
 table(mergedColors)
 
 #=====================================================================================
@@ -536,7 +536,7 @@ table(mergedColors)
 # total_cols <- length(colnames(dds.d21_vst)) # run this if ou data isnt already numeric
 # dds.d21_vst[2:total_cols] = lapply(dds.d21_vst[2:total_cols], as.numeric) # run this if ou data isnt already numeric
 
-# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/TechnicalReports/signedTOM.pdf
+# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/10cpm/TechnicalReports/signedTOM.pdf
 # The central idea of TOM is to count the direct connection strengths as well as connection strengths
 # "mediated" by shared neighbors. The standard, or "unsigned" TOM assumes that neighbor-mediated
 # connections can always be considered as "reinforcing" the direct connection. This may not always be the
@@ -558,7 +558,7 @@ table(mergedColors)
 #                      #  pamRespectsDendro = FALSE,
 #                        TOMType = "signed",  
 #                        saveTOMs = TRUE,
-#                        saveTOMFileBase = "Analysis/Output/WGCNA/Day7/d7.Geoduck", 
+#                        saveTOMFileBase = "Analysis/Output/WGCNA/10cpm/Day7/d7.Geoduck", 
 #                        verbose = 3) #... wait for this to finish 
 # moduleColors = labels2colors(net$colors) # assign colors to eigengene
 
@@ -609,7 +609,7 @@ table(mergedColors)
 # MEs = orderMEs(MEs0) # reorders the columns (colors/modules)
 # 
 # # write csv - save the module eigengenes
-# write.csv(MEs, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
+# write.csv(MEs, file = "Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulEigengenes.csv")
 # 
 # # change chanracter treatments to integers
 # # ALL TRAIT DATA
@@ -675,7 +675,7 @@ d7.PRIMARYTreatments.matrix <-  paste(signif(moduleTraitCor_Primary, 2), "\n(",
 #dim(textMatrix) == dim(moduleTraitCor_treatonly)
 par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
-png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Treatments_Primary_heatmap2.png", 500, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Treatments_Primary_heatmap2.png", 500, 1000, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor_Primary,
                xLabels = names(d7.Traits.Primary),
                yLabels = names(MEs),
@@ -693,8 +693,8 @@ dev.off()
 d7.PRIMARYtreatment.text <-  as.matrix(signif(moduleTraitPvalue_Primary, 3))
 pa = cluster::pam(d7.PRIMARYtreatment.text, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
-png("Analysis/Output/WGCNA/Day7/Day7_Treatments_Primary_heatmap.png", 500, 1000, pointsize=20)
-pdf("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Treatments_Primary_heatmap.pdf", width=5, height=6)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_Treatments_Primary_heatmap.png", 500, 1000, pointsize=20)
+pdf("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Treatments_Primary_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Primary, 
         name = "gene_cor", 
         rect_gp = gpar(col = "grey", lwd = 1),
@@ -733,7 +733,7 @@ d7.SECONDTreatments.matrix <-  paste(signif(moduleTraitCor_Secondary, 2), "\n(",
                                       signif(moduleTraitPvalue_Secondary, 3), ")", sep = "")
 par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
-png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Treatments_Second_heatmap2.png", 1000, 500, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Treatments_Second_heatmap2.png", 1000, 500, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor_Secondary,
                xLabels = names(d7.Traits.Secondary),
                yLabels = names(MEs),
@@ -753,8 +753,8 @@ d7.SECONDtreatment_cor <-  as.matrix(signif(moduleTraitCor_Secondary, 4))
 pa = cluster::pam(d7.SECONDtreatment_cor, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
 
-png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Treatments_Second_heatmap.png", 500, 1000, pointsize=20)
-pdf("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Treatments_Second_heatmap.pdf", width=5, height=6)
+png("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Treatments_Second_heatmap.png", 500, 1000, pointsize=20)
+pdf("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Treatments_Second_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Secondary, 
         name = "gene_cor", 
         rect_gp = gpar(col = "grey", lwd = 1),
@@ -795,7 +795,7 @@ d7.GROUPTreatments.matrix <-  paste(signif(moduleTraitCor_Group, 2), "\n(",
                                      signif(moduleTraitPvalue_Group, 3), ")", sep = "")
 par(mar = c(8, 9.5, 5, 3));
 # Display the correlation values within a heatmap plot
-png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Group_heatmap2.png", 1000, 500, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Group_heatmap2.png", 1000, 500, pointsize=20)
 labeledHeatmap(Matrix = moduleTraitCor_Group,
                xLabels = names(d7.Traits.Group),
                yLabels = names(MEs),
@@ -815,8 +815,8 @@ d7.GROUPtreatment_cor <-  as.matrix(signif(moduleTraitCor_Group, 4))
 pa = cluster::pam(d7.GROUPtreatment_cor, k = 3)
 col_fun = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
 
-png("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Group_heatmap.png", 500, 1000, pointsize=20)
-pdf("Analysis/Output/WGCNA/Day7/heatmaps/Day7_Group_heatmap.pdf", width=5, height=6)
+png("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Group_heatmap.png", 500, 1000, pointsize=20)
+pdf("Analysis/Output/WGCNA/10cpm/Day7/heatmaps/Day7_Group_heatmap.pdf", width=5, height=6)
 Heatmap(moduleTraitCor_Group, 
         name = "gene_cor", 
         rect_gp = gpar(col = "grey", lwd = 1),
@@ -849,7 +849,7 @@ MEsPlotting <- merge(d7.Treatment_Phenotype.data, MEs_table, by = 'Sample.Name')
 MEsPlotting <- MEsPlotting[,-c(4:9)] # ommit the phys data to just plot the module colors 
 MEsPlotting_melt <- melt(MEsPlotting, id=c('Sample.Name', 'Primary_Treatment', 'Second_Treament'))
 #plot it
-png("Analysis/Output/WGCNA/Day7/Day7_ME_Boxplot.png", 600, 1000, pointsize=20)
+png("Analysis/Output/WGCNA/10cpm/Day7/Day7_ME_Boxplot.png", 600, 1000, pointsize=20)
 ggplot(MEsPlotting_melt, aes(x=Second_Treament, y=value, fill = factor(Primary_Treatment), shape=Primary_Treatment)) +
   geom_boxplot(aes(middle = mean(value)), position=position_dodge(0.8), outlier.size = 0, alpha = 0.5) + 
   stat_summary(fun.y = mean, color = "black", position = position_dodge(0.75),
@@ -1155,7 +1155,7 @@ ggplot(black_mod_05_MM_melt, aes(x=Second, y=value, group=Gene.ID, color = Prima
 #=====================================================================================
 # call the module of interest for follow-up GO analysis 
 
-write.csv(geneInfo_GROUPS, file = "Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")
+write.csv(geneInfo_GROUPS, file = "Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulMembership.csv")
 
 #=====================================================================================
 #
@@ -1183,9 +1183,9 @@ library(ggplot2)
 library(tidyr)
 library(forcats) # for plotting later..
 # Load data 
-d7_ModEigen <- read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulEigengenes.csv")
-d7_Annot_ModuleMembership <-  read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")
-d7_vst_data <- read.csv("Analysis/Output/WGCNA/Day7/Day7_vstTransformed_WGCNAdata.csv")
+d7_ModEigen <- read.csv("Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulEigengenes.csv")
+d7_Annot_ModuleMembership <-  read.csv("Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulMembership.csv")
+d7_vst_data <- read.csv("Analysis/Output/WGCNA/10cpm/Day7/Day7_vstTransformed_WGCNAdata.csv")
 Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/ Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 
 
@@ -1330,9 +1330,9 @@ for(i in 1:ncol(modules)) {
   p6 <- p + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[6]), sep =' ')) + theme(legend.position="none")
   
   # save plot grid 
-  #png("Analysis/Output/WGCNA/Day21/Day21_PhysOnly_heatmap2.png", 1000, 1000, pointsize=20)
+  #png("Analysis/Output/WGCNA/10cpm/Day21/Day21_PhysOnly_heatmap2.png", 1000, 1000, pointsize=20)
   ggarrange(p1, p2, p3, p4, p5, p6, ncol = 2, nrow = 3)
-  ggsave(paste0("Analysis/Output/WGCNA/Day7/EigengenePlots/Day7_EigengenePlot_", module_color, ".png"))
+  ggsave(paste0("Analysis/Output/WGCNA/10cpm/Day7/EigengenePlots/Day7_EigengenePlot_", module_color, ".png"))
 }
 
 
@@ -1436,7 +1436,7 @@ for(i in 1:nrow(modcolor)) {
   
   # output 
   
-  pdf(paste("Analysis/Output/WGCNA/Day7/ModuleExpression_Treatment/day7_Exp_Module",modcolor[i,],".pdf"), width=6, height=6)
+  pdf(paste("Analysis/Output/WGCNA/10cpm/Day7/ModuleExpression_Treatment/day7_Exp_Module",modcolor[i,],".pdf"), width=6, height=6)
   print(ggarrange(Primary.vst.Mod, Sec.vst.Mod,         
                   plotlist = NULL,
                   ncol = 1,
@@ -1487,7 +1487,7 @@ for(i in 1:nrow(modcolor)) {
  
   phys <- meanExp_Mod.MASTER[, 8:13]  # call only the phys columns for the subseqent for loop - plotting each 
   
-  dir.create(paste0("Analysis/Output/WGCNA/Day7/ModuleExpresion_Phenotype/",module_color), showWarnings = FALSE)
+  dir.create(paste0("Analysis/Output/WGCNA/10cpm/Day7/ModuleExpresion_Phenotype/",module_color), showWarnings = FALSE)
   
   for(m in 1:ncol(phys)) {
    # phys[,m] # the column
@@ -1522,7 +1522,7 @@ for(i in 1:nrow(modcolor)) {
     facet_wrap(~Second_Treament) 
   PrimSec_facetplot <- PrimSec_facetplot + ggtitle(paste("WGCNAmodule:", module_color, "&",(names(phys)[m]), sep =' ')) + theme(legend.position="none")
   
-  png(paste("Analysis/Output/WGCNA/Day7/ModuleExpresion_Phenotype/",module_color,"/Day7_Exp_Module_",module_color, "_",(names(phys)[m]),".png", sep = ''), 600, 1000, pointsize=20)
+  png(paste("Analysis/Output/WGCNA/10cpm/Day7/ModuleExpresion_Phenotype/",module_color,"/Day7_Exp_Module_",module_color, "_",(names(phys)[m]),".png", sep = ''), 600, 1000, pointsize=20)
   print(ggarrange(Primary_plot, PrimSec_facetplot,         
                   plotlist = NULL,
                   ncol = 1,
@@ -1663,7 +1663,7 @@ for(i in 1:nrow(modcolor)) {
                       ggtitle('') +
                       theme(legend.position="none") 
   # output the tile plots 
-  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=25, height=50)
+  pdf(paste("Analysis/Output/WGCNA/10cpm/Day7/goseq_modules/Day7_goseq_tiles_ME",modcolor[i,],".pdf", sep =''), width=25, height=50)
   print(ggarrange(MF_tile_plot, BP_tile_plot,         
                   plotlist = NULL,
                   ncol = 2,
@@ -1703,7 +1703,7 @@ for(i in 1:nrow(modcolor)) {
     geom_hline(yintercept = 1.3, linetype="dashed", 
                color = "grey", size=1)
   
-  pdf(paste("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_ME",modcolor[i,],".pdf", sep =''), width=8, height=5)
+  pdf(paste("Analysis/Output/WGCNA/10cpm/Day7/goseq_modules/Day7_goseq_ME",modcolor[i,],".pdf", sep =''), width=8, height=5)
   print(Plot)
   dev.off()
 }
@@ -1807,7 +1807,7 @@ for(i in 1:nrow(modcolor)) {
 # num_red   <- dim(GO_red_genes)[1] # call num upregulated genes
 # 
 # library(tidyr)
-# pdf("Analysis/Output/WGCNA/Day7/goseq_modules/Day7_goseq_MEred.pdf", width=8, height=5)
+# pdf("Analysis/Output/WGCNA/10cpm/Day7/goseq_modules/Day7_goseq_MEred.pdf", width=8, height=5)
 # red_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term = fct_reorder(term, (-log10(over_represented_pvalue)) )) %>%
 #   dplyr::filter(ontology %in% c('MF', 'BP')) %>% 
 #   mutate(term = fct_reorder(term, ontology)) %>%

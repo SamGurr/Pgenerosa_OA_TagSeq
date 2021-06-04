@@ -98,6 +98,32 @@ slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/gosli
 
 ```
 
+```{r }
+
+# create a referecne from the Geoduck annotation file to merge with the DE sumamry lists 
+ref <- Geoduck_annotation[,c(1,7)]
+colnames(ref) <- c("gene.ID", "gene.annotation")
+
+# Day 0 primary 
+DE_d0.primary_SHORT <- DE_d0.primary %>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day0_primary")
+# Day 7 primary 
+DE_d7.primary_SHORT <- DE_d7.primary %>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day7_primary")
+# Day 7 second 
+DE_d7.second_SHORT <- DE_d7.second%>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day7_second")
+# Day 7 MA versus AM
+DE_d7.MAversusAM_SHORT <- DE_d7.MA_AM %>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day7_MAversusAM")
+# Day 14 primary 
+DE_d14.primary_SHORT <- DE_d14.primary %>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day14_primary")
+# Day 21 primary 
+DE_d21.primary_SHORT <- DE_d21.primary %>% dplyr::select("gene.ID", 'log2FoldChange', 'up', 'down') %>% mutate(Effect = "Day21_primary")
+
+
+DE_Master <- rbind(DE_d0.primary_SHORT, DE_d7.primary_SHORT, DE_d7.second_SHORT, DE_d7.MAversusAM_SHORT, DE_d14.primary_SHORT, DE_d21.primary_SHORT)
+
+DE_Master_with_annotation <- merge(DE_Master, ref, by="gene.ID")
+
+write.csv(DE_Master_with_annotation, file = "../Output/DESeq2/10cpm/DE_All_Annotation.csv", row.names = FALSE)
+```
 Prep Differential Expression data (from DESeq2) by Date and direction of DE 
 ```{r}
 # Objective here is to call the DE genes (up and down) 
