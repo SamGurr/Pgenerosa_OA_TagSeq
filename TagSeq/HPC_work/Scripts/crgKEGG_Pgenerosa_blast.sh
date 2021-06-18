@@ -27,7 +27,6 @@ makeblastdb -in $1 -dbtype nucl -out ./db/database
 
 #runs blast on the P generosa genome files against the Pacific oyster KEGG database we created above
 blastn -query $2 -db ./db/database \
-  evalue 20 # default evalue is 10 if you do not run this  
   -out ./${2}_out.tsv -outfmt 6 # qseqid sseqid pident evalue length qlen slen qstart qend sstart send sseq
 
 echo "Done"
