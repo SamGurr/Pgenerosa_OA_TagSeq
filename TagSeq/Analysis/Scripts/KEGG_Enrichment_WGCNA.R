@@ -17,23 +17,32 @@ library(ggplot2)
 library(scales)
 library(ape)
 
+
+
 # SET WORKING DIRECTORY AND LOAD DATA   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
-
-# Calland prep the reference annotation file...    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
-
-
+View(Geoduck_annotation)
+# load data
 Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+ref_update_20210602 <- read.gff("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
+crgKEGG_Pgenref_BLAST <- read.table(file ="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/Blast_crgkegg_Pgenerosa.tsv", sep = '\t', header = F)
+
+# lets see the coverage of the blast hist to the crg KEGG genome
+length(na.omit(Geoduck_annotation$V7)) # 14671 total genes with a gene name
+length(unique(crgKEGG_Pgenref_BLAST$geneSymbol)) # only 331 of 14,671
+(( length(unique(crgKEGG_Pgenref_BLAST$geneSymbol)) ) / ( length(na.omit(Geoduck_annotation$V7)) ) ) * 100 # only 2.256152 % of genes had a blast hit on default settings!
+
+
+# Call and prep the reference annotation file...    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+
+# condence the ref annotatation file for fewer collumns and edit what we need
 annot.condenced <- Geoduck_annotation[,c(1,7)] # load just the PGEN ID and the putative gene terms
 annot.condenced$Gene_term    <- sub(" \\(EC.*", "", annot.condenced$V7)  # call the gene term BEFORe the EC is listed
 Pgen_reference <- na.omit(annot.condenced[c(1,3)]) # ommit unannotated genes
 names(Pgen_reference)  <- c('Pgenerosa_Gene_IDs', 'Gene_terms') # rename the columns to merge with the modules below...
 
-# check the .gff updated reference file 
-ref_update_20210602 <- read.gff("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
-# to cal the gene ID....
-# We can use gsub. 
+# to cal the gene ID We can use gsub. 
 # Match the pattern of one or more characters that are not a - ([^-]+) from the start (^) of the string followed by a - or (| a - followed by characters (.*) and replace it with blank ("")
 ref_update_20210602$Pgenerosa_Gene_IDs  <- substr(ref_update_20210602$attributes, 4, 18)
 ref_update_20210602$gene_notes  <-  sub(".*Notes//", "", ref_update_20210602$attributes)
@@ -48,11 +57,9 @@ View(test) # 34940
 
 
 
-
-
 # PREPARE THE KEGG  Crassostra gigas (Pacific oyster) genome 'Crass_gigas_genome_dataframe' will be called in the KEGG analysis for loops  :::::::::::::::::::::::::::::::::::::::::::::::::;: #
 
-
+View(Crass_gigas_genome_dataframe)
 
 # Crassostrea gigas - prep for merge with genes of interest (i.e. genes in modules with significant GO enrichment)
 #NOTE: view the Pgenerasa genome - there are no instance of '-like', '-like isoform', '-like protein precursor', 'isoform X', 'precursor' at the end of terms,
@@ -161,7 +168,7 @@ for (i in 1:nrow(PrimEff_loop)) {
 ###############################################################################################################################################
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
-#   WGCNA DATA: KEGG ANALYSIS OF ALL GENES IN SIGNIFICATN MODULES 
+#   WGCNA DATA: KEGG ANALYSIS OF ALL GENES IN SIGNIFICANT MODULES 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 ###############################################################################################################################################
@@ -172,9 +179,9 @@ for (i in 1:nrow(PrimEff_loop)) {
 
 # LOAD DATA    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 # BIOLOGICAL PROCESS  GO  SLIMS
-d7_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulMembership.csv")
+d7_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/10cpm/Day7/d7.WGCNA_ModulMembership.csv")
 d14_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/10cpm/Day14/d14.WGCNA_ModulMembership.csv")
-d21_WGCNA_all  <- read.csv("Analysis/Output/WGCNA/10cpm/Day21/d21.WGCNA_ModulMembership.csv")
+d21_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/10cpm/Day21/d21.WGCNA_ModulMembership.csv")
 
 
 # Day 7 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
@@ -552,6 +559,265 @@ PrimaryEff_KEGG_WGCNA
 pdf(paste("Analysis/Output/KEGG/WGCNA/PrimaryEffectModules_RichFactor.pdf", sep =''), width=12, height=10)
 print(PrimaryEff_KEGG_WGCNA)
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################################################################################
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+#   WGCNA DATA: KEGG ANALYSIS OF ONLY GENES THAT ALIGNED WITH OYSTER KEGG DATABASE (BLASTED AGINST THE OYSTER)
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+###############################################################################################################################################
+
+# Notes on this pseudo-cluster....
+# this cluster was writteni in May  2021 to tackle the KEGG analysis of ALL genes in significant WGCNA modules
+
+
+# LOAD DATA    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
+# BIOLOGICAL PROCESS  GO  SLIMS
+crgKEGG_Pgenref_BLAST$V1
+colnames(crgKEGG_Pgenref_BLAST)[1:2] <- c('geneSymbol', 'crg_KO')
+
+d7_WGCNA_BLAST_crgKEGGhits  <- merge(d7_WGCNA_all, crgKEGG_Pgenref_BLAST[,c(1:2)], by ='geneSymbol')
+d14_WGCNA_BLAST_crgKEGGhits <- merge(d14_WGCNA_all, crgKEGG_Pgenref_BLAST[,c(1:2)], by ='geneSymbol')
+d21_WGCNA_BLAST_crgKEGGhits <- merge(d21_WGCNA_all, crgKEGG_Pgenref_BLAST[,c(1:2)], by ='geneSymbol')
+
+
+# Day 7 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
+Day7_WGCNA_sigmodules <- as.data.frame(c('brown','yellow', 'green'))
+for (i in 1:nrow(Day7_WGCNA_sigmodules)) {
+  # start with loop by calling the row value common with the 'Master_KEGG_BPTerms' data frind from rbind above 
+  modColor <- Day7_WGCNA_sigmodules[i,1]
+  
+  # call the module color in the Day 7 data
+  ModuleLoop <- d7_WGCNA_BLAST_crgKEGGhits %>% dplyr::filter(moduleColor %in% modColor)
+  genes_per_module <- nrow(ModuleLoop) # use this for the looped print out 
+
+  # calaculate the percent mapped and print this...
+  print(paste("Day7", modColor, " ", genes_per_module, " genes called", sep = ' '))
+  
+  # Run KEGG analysis
+  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop$crg_KO)) # ommit the 'crg:' before the actual terms
+  KEGG_cgigas <- enrichKEGG(gene = KEGG_vector_Pgen_Cgigas, 
+                            organism  = 'crg', # 'hsa' is human 'crg' is pacific oyster 
+                            pvalueCutoff = 0.05) 
+  # if loop to output the KEGG enrichment analysis ONLY if genes were successfully mapped...
+  if (  nrow(as.data.frame(head(KEGG_cgigas))) > 0 ) {
+    # creat dateframe and write the csv file out 
+    df <- as.data.frame(head(KEGG_cgigas))
+    rownames(df) <- c()
+    KEGGoutput <- as.data.frame(do.call(cbind.data.frame, df))
+    KEGGoutput$GeneRatio_2 <- gsub("/"," of ", KEGGoutput$GeneRatio)
+    KEGGoutput$Rich_Factor <- (  (as.numeric(sub("/.*", "", KEGGoutput$GeneRatio))) / (as.numeric(sub("/.*", "", KEGGoutput$BgRatio)))  ) 
+    
+    # write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/WGCNA/Day7_",modColor,"_KEGG_allgenes.csv", sep ='')) 
+    
+    # Plot
+    theme_set(theme_classic())
+    plot<- KEGGoutput %>%  
+      ggplot(aes(x=reorder(Description, Rich_Factor), y= Rich_Factor)) + 
+      geom_point( aes(col=qvalue, size=Count)) +   # Draw points
+      geom_segment(aes(x=Description, 
+                       xend=Description, 
+                       y=min(Rich_Factor), 
+                       yend=max(Rich_Factor)),  
+                   linetype=NA, 
+                   size=0) +   # Draw dashed lines
+      labs(title="Day 7", 
+           x = "Pathway",
+           y = "Rich Factor",
+           subtitle=paste("WGCNA Module:", modColor, sep =' ')) +
+      coord_flip()
+    # pdf(paste("Analysis/Output/KEGG/WGCNA/Day7_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
+    # print(plot)
+    # dev.off()
+    
+    
+    # stringsplit and unnest for a data set of genes and IDs associated with each pathway 
+    df_2 <- as.data.frame(KEGG_cgigas)[c(1:2,8:9)]
+    df_2$gene_IDs <- as.vector(strsplit(as.character(df_2$geneID), "/"))
+    colnames(df_2) <- c("Cgigas_PathwayID", "Pathway_Description", "Pathway_gene_list", "Pathway_gene_count", "gene_IDs")
+    df_3 <- unnest(df_2, gene_IDs)
+    df_3$Cgigas_KEGG_IDs <- paste("crg:", df_3$gene_IDs, sep='')
+    df_final <- merge(df_3, Crass_gigas_genome_dataframe, by='Cgigas_KEGG_IDs')
+    write.csv(df_final, file = paste("Analysis/Output/KEGG/WGCNA/Day7_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
+    
+  } else {}
+  
+  print(paste("Finished! Day7 module = ", modColor, sep = " "))
+}
+
+
+
+
+
+# Day 14 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
+Day14_WGCNA_sigmodules <- as.data.frame(c('brown','black', 'magenta', 'pink'))
+for (i in 1:nrow(Day14_WGCNA_sigmodules)) {
+  # start with loop by calling the row value common with the 'Master_KEGG_BPTerms' data frind from rbind above 
+  modColor <- Day14_WGCNA_sigmodules[i,1]
+  
+  # call the module color in the Day 7 data
+  ModuleLoop <- d14_WGCNA_BLAST_crgKEGGhits %>% dplyr::filter(moduleColor %in% modColor)
+  genes_per_module <- nrow(ModuleLoop) # use this for the looped print out 
+  
+  # calaculate the percent mapped and print this...
+  print(paste("Day14", modColor, " ", genes_per_module, " genes called", sep = ' '))
+  
+  # Run KEGG analysis
+  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop$crg_KO)) # ommit the 'crg:' before the actual terms
+  KEGG_cgigas <- enrichKEGG(gene = KEGG_vector_Pgen_Cgigas, 
+                            organism  = 'crg', # 'hsa' is human 'crg' is pacific oyster 
+                            pvalueCutoff = 0.05)
+  
+  # if lloop to output the KEGG enrichment analysis ONLY if genes were successfully mapped...
+  if (  nrow(as.data.frame(head(KEGG_cgigas))) > 0 ) {
+    # creat dateframe and write the csv file out 
+    df <- as.data.frame(head(KEGG_cgigas))
+    rownames(df) <- c()
+    KEGGoutput <- as.data.frame(do.call(cbind.data.frame, df))
+    KEGGoutput$GeneRatio_2 <- gsub("/"," of ", KEGGoutput$GeneRatio)
+    KEGGoutput$Rich_Factor <- (  (as.numeric(sub("/.*", "", KEGGoutput$GeneRatio))) / (as.numeric(sub("/.*", "", KEGGoutput$BgRatio)))  ) 
+    
+    # write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/WGCNA/Day14_",modColor,"_KEGG_allgenes.csv", sep ='')) 
+    
+    # Plot
+    theme_set(theme_classic())
+    plot<- KEGGoutput %>%  
+      ggplot(aes(x=reorder(Description, Rich_Factor), y= Rich_Factor)) + 
+      geom_point( aes(col=qvalue, size=Count)) +   # Draw points
+      geom_segment(aes(x=Description, 
+                       xend=Description, 
+                       y=min(Rich_Factor), 
+                       yend=max(Rich_Factor)),  
+                   linetype=NA, 
+                   size=0) +   # Draw dashed lines
+      labs(title="Day 14", 
+           x = "Pathway",
+           y = "Rich Factor",
+           subtitle=paste("WGCNA Module:", modColor, sep =' ')) +
+      coord_flip()
+    #pdf(paste("Analysis/Output/KEGG/WGCNA/Day14_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
+    #print(plot)
+    #dev.off()
+    
+    
+    # stringsplit and unnest for a data set of genes and IDs associated with each pathway 
+    df_2 <- as.data.frame(KEGG_cgigas)[c(1:2,8:9)]
+    df_2$gene_IDs <- as.vector(strsplit(as.character(df_2$geneID), "/"))
+    colnames(df_2) <- c("Cgigas_PathwayID", "Pathway_Description", "Pathway_gene_list", "Pathway_gene_count", "gene_IDs")
+    df_3 <- unnest(df_2, gene_IDs)
+    df_3$Cgigas_KEGG_IDs <- paste("crg:", df_3$gene_IDs, sep='')
+    df_final <- merge(df_3, Crass_gigas_genome_dataframe, by='Cgigas_KEGG_IDs')
+    write.csv(df_final, file = paste("Analysis/Output/KEGG/WGCNA/Day14_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
+    
+  } else {}
+  
+  print(paste("Finished! Day14 module = ", modColor, sep = " "))
+}
+
+
+
+
+# Day 21 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
+Day21_WGCNA_sigmodules <- as.data.frame(c('blue','magenta', 'yellow', 'black', 'pink', 'red', 'turquoise'))
+for (i in 1:nrow(Day21_WGCNA_sigmodules)) {
+  # start with loop by calling the row value common with the 'Master_KEGG_BPTerms' data frind from rbind above 
+  modColor <- Day21_WGCNA_sigmodules[i,1]
+  
+  # call the module color in the Day 7 data
+  ModuleLoop <- d21_WGCNA_BLAST_crgKEGGhits %>% dplyr::filter(moduleColor %in% modColor)
+  genes_per_module <- nrow(ModuleLoop) # use this for the looped print out 
+  
+  # calaculate the percent mapped and print this...
+  print(paste("Day21", modColor, " ", genes_per_module, " genes called", sep = ' '))
+  
+  # Run KEGG analysis
+  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop$crg_KO)) # ommit the 'crg:' before the actual terms
+  KEGG_cgigas <- enrichKEGG(gene = KEGG_vector_Pgen_Cgigas, 
+                            organism  = 'crg', # 'hsa' is human 'crg' is pacific oyster 
+                            pvalueCutoff = 0.05)
+  
+  # if lloop to output the KEGG enrichment analysis ONLY if genes were successfully mapped...
+  if (  nrow(as.data.frame(head(KEGG_cgigas))) > 0 ) {
+    # creat dateframe and write the csv file out 
+    df <- as.data.frame(head(KEGG_cgigas))
+    rownames(df) <- c()
+    KEGGoutput <- as.data.frame(do.call(cbind.data.frame, df))
+    KEGGoutput$GeneRatio_2 <- gsub("/"," of ", KEGGoutput$GeneRatio)
+    KEGGoutput$Rich_Factor <- (  (as.numeric(sub("/.*", "", KEGGoutput$GeneRatio))) / (as.numeric(sub("/.*", "", KEGGoutput$BgRatio)))  ) 
+    
+    # write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/WGCNA/Day21_",modColor,"_KEGG_allgenes.csv", sep ='')) 
+    
+    # Plot
+    theme_set(theme_classic())
+    plot<- KEGGoutput %>%  
+      ggplot(aes(x=reorder(Description, Rich_Factor), y= Rich_Factor)) + 
+      geom_point( aes(col=qvalue, size=Count)) +   # Draw points
+      geom_segment(aes(x=Description, 
+                       xend=Description, 
+                       y=min(Rich_Factor), 
+                       yend=max(Rich_Factor)),  
+                   linetype=NA, 
+                   size=0) +   # Draw dashed lines
+      labs(title="Day 14", 
+           x = "Pathway",
+           y = "Rich Factor",
+           subtitle=paste("WGCNA Module:", modColor, sep =' ')) +
+      coord_flip()
+    # pdf(paste("Analysis/Output/KEGG/WGCNA/Day21_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
+    # print(plot)
+    # dev.off()
+    
+    
+    # stringsplit and unnest for a data set of genes and IDs associated with each pathway 
+    df_2 <- as.data.frame(KEGG_cgigas)[c(1:2,8:9)]
+    df_2$gene_IDs <- as.vector(strsplit(as.character(df_2$geneID), "/"))
+    colnames(df_2) <- c("Cgigas_PathwayID", "Pathway_Description", "Pathway_gene_list", "Pathway_gene_count", "gene_IDs")
+    df_3 <- unnest(df_2, gene_IDs)
+    df_3$Cgigas_KEGG_IDs <- paste("crg:", df_3$gene_IDs, sep='')
+    df_final <- merge(df_3, Crass_gigas_genome_dataframe, by='Cgigas_KEGG_IDs')
+    # write.csv(df_final, file = paste("Analysis/Output/KEGG/Day21_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
+    
+  } else {}
+  
+  print(paste("Finished! Day21 module = ", modColor, sep = " "))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ###############################################################################################################################################
