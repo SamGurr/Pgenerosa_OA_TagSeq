@@ -1,0 +1,136 @@
+"","Gene_IDs","Day","Uniprot","gene","count"
+"1","PGEN_.00g005530","Day7","Q61361","Brevican core protein",2
+"2","PGEN_.00g005530","Day14","Q61361","Brevican core protein",2
+"3","PGEN_.00g024130","Day7","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",2
+"4","PGEN_.00g024130","Day14","Q5R613","Sorting nexin-6 [Cleaved into: Sorting nexin-6, N-terminally processed]",2
+"5","PGEN_.00g077860","Day7","Q9UMY4","Sorting nexin-12",2
+"6","PGEN_.00g077860","Day14","Q9UMY4","Sorting nexin-12",2
+"7","PGEN_.00g135600","Day7","O15254","Peroxisomal acyl-coenzyme A oxidase 3 ",2
+"8","PGEN_.00g135600","Day14","O15254","Peroxisomal acyl-coenzyme A oxidase 3 ",2
+"9","PGEN_.00g177440","Day7","P11404","Fatty acid-binding protein, heart ",2
+"10","PGEN_.00g177440","Day14","P11404","Fatty acid-binding protein, heart ",2
+"11","PGEN_.00g192770","Day7","Q3UHD6","Sorting nexin-27",2
+"12","PGEN_.00g192770","Day14","Q3UHD6","Sorting nexin-27",2
+"13","PGEN_.00g198530","Day7","Q9CWK8","Sorting nexin-2",2
+"14","PGEN_.00g198530","Day14","Q9CWK8","Sorting nexin-2",2
+"15","PGEN_.00g267990","Day14","Q9UJ83","2-hydroxyacyl-CoA lyase 1 ",2
+"16","PGEN_.00g267990","Day7","Q9UJ83","2-hydroxyacyl-CoA lyase 1 ",2
+"17","PGEN_.00g268270","Day14","Q9UJ83","2-hydroxyacyl-CoA lyase 1 ",2
+"18","PGEN_.00g268270","Day7","Q9UJ83","2-hydroxyacyl-CoA lyase 1 ",2
+"19","PGEN_.00g311860","Day7","P13608","Aggrecan core protein ",2
+"20","PGEN_.00g311860","Day14","P13608","Aggrecan core protein ",2
+"21","PGEN_.00g318440","Day7","Q96GW7","Brevican core protein ",2
+"22","PGEN_.00g318440","Day14","Q96GW7","Brevican core protein ",2
+"23","PGEN_.00g323100","Day7","P07897","Aggrecan core protein ",2
+"24","PGEN_.00g323100","Day14","P07897","Aggrecan core protein ",2
+"25","PGEN_.00g001030","Day7","Q15831","Serine/threonine-protein kinase STK11 ",1
+"26","PGEN_.00g003030","Day7","Q86YT6","E3 ubiquitin-protein ligase MIB1 ",1
+"27","PGEN_.00g003940","Day7","Q2PFX5","Regucalcin ",1
+"28","PGEN_.00g014380","Day7","P54923","[Protein ADP-ribosylarginine] hydrolase ",1
+"29","PGEN_.00g018500","Day14","P47990","Xanthine dehydrogenase/oxidase [Includes: Xanthine dehydrogenase ",1
+"30","PGEN_.00g021940","Day7","Q8K4B0","Metastasis-associated protein MTA1",1
+"31","PGEN_.00g025590","Day7","Q13114","TNF receptor-associated factor 3 ",1
+"32","PGEN_.00g033030","Day21","Q6RT24","Centromere-associated protein E ",1
+"33","PGEN_.00g033890","Day21","Q14692","Ribosome biogenesis protein BMS1 homolog ",1
+"34","PGEN_.00g038510","Day7","A9KET6","L-threonine 3-dehydrogenase ",1
+"35","PGEN_.00g040090","Day7","Q9Y5X2","Sorting nexin-8",1
+"36","PGEN_.00g042000","Day21","Q4QY64","ATPase family AAA domain-containing protein 5 ",1
+"37","PGEN_.00g042250","Day7","P79896","Alcohol dehydrogenase class-3 ",1
+"38","PGEN_.00g042450","Day21","Q8TD57","Dynein heavy chain 3, axonemal ",1
+"39","PGEN_.00g044210","Day7","A0A0K0MJN3","Fatty acid-binding protein, adipocyte ",1
+"40","PGEN_.00g046630","Day7","A0KDV2","L-rhamnonate dehydratase ",1
+"41","PGEN_.00g048930","Day7","P79896","Alcohol dehydrogenase class-3 ",1
+"42","PGEN_.00g049840","Day7","Q64230","Meprin A subunit alpha ",1
+"43","PGEN_.00g055720","Day7","Q7ZX03","Forkhead box protein K2 ",1
+"44","PGEN_.00g061000","Day21","A3KMI0","ATP-dependent RNA helicase dhx29 ",1
+"45","PGEN_.00g071610","Day7","Q24306","Death-associated inhibitor of apoptosis 1 ",1
+"46","PGEN_.00g072380","Day21","Q14166","Tubulin--tyrosine ligase-like protein 12 ",1
+"47","PGEN_.00g083780","Day7","Q5F457","WW domain-binding protein 4 ",1
+"48","PGEN_.00g088660","Day21","Q8BYM8","Probable cysteine--tRNA ligase, mitochondrial ",1
+"49","PGEN_.00g093050","Day21","P91427","Probable phosphoglycerate kinase ",1
+"50","PGEN_.00g095990","Day14","Q8BHH2","Ras-related protein Rab-9B",1
+"51","PGEN_.00g108800","Day7","Q10751","Angiotensin-converting enzyme ",1
+"52","PGEN_.00g110440","Day21","P34897","Serine hydroxymethyltransferase, mitochondrial ",1
+"53","PGEN_.00g115120","Day7","P12821","Angiotensin-converting enzyme ",1
+"54","PGEN_.00g127760","Day14","P51174","Long-chain specific acyl-CoA dehydrogenase, mitochondrial ",1
+"55","PGEN_.00g132090","Day14","Q5U316","Ras-related protein Rab-35",1
+"56","PGEN_.00g132570","Day7","O18973","Rab5 GDP/GTP exchange factor ",1
+"57","PGEN_.00g135000","Day14","Q00169","Phosphatidylinositol transfer protein alpha isoform ",1
+"58","PGEN_.00g136520","Day7","P17405","Sphingomyelin phosphodiesterase ",1
+"59","PGEN_.00g137330","Day7","P17405","Sphingomyelin phosphodiesterase ",1
+"60","PGEN_.00g140190","Day7","Q5SPL2","PHD finger protein 12 ",1
+"61","PGEN_.00g145470","Day21","O14578","Citron Rho-interacting kinase ",1
+"62","PGEN_.00g145740","Day21","B0S6U7","GTPase Era, mitochondrial ",1
+"63","PGEN_.00g153420","Day14","Q5RI75","Ras and EF-hand domain-containing protein homolog",1
+"64","PGEN_.00g154880","Day21","P79800","GTPase KRas ",1
+"65","PGEN_.00g154930","Day7","P54276","DNA mismatch repair protein Msh6 ",1
+"66","PGEN_.00g156260","Day7","Q8BGC4","Prostaglandin reductase-3 ",1
+"67","PGEN_.00g156290","Day7","Q8VYA5","Serine/arginine-rich splicing factor RS2Z33 ",1
+"68","PGEN_.00g158040","Day7","Q5ZLY5","Pleckstrin homology domain-containing family F member 2 ",1
+"69","PGEN_.00g160870","Day7","P62875","DNA-directed RNA polymerases I, II, and III subunit RPABC5 ",1
+"70","PGEN_.00g162260","Day14","P17427","AP-2 complex subunit alpha-2 ",1
+"71","PGEN_.00g164540","Day7","Q16820","Meprin A subunit beta ",1
+"72","PGEN_.00g164550","Day7","Q64230","Meprin A subunit alpha ",1
+"73","PGEN_.00g164650","Day7","Q64230","Meprin A subunit alpha ",1
+"74","PGEN_.00g164660","Day7","Q16820","Meprin A subunit beta ",1
+"75","PGEN_.00g165960","Day7","Q60674","Nuclear receptor subfamily 1 group D member 2 ",1
+"76","PGEN_.00g166570","Day14","Q8I4E2","Sorting nexin lst-4 ",1
+"77","PGEN_.00g167600","Day7","Q3T106","Serine/arginine-rich splicing factor 7 ",1
+"78","PGEN_.00g168260","Day7","Q9Z2K9","Isocitrate dehydrogenase [NADP] cytoplasmic ",1
+"79","PGEN_.00g174890","Day7","P55261","Carboxypeptidase B ",1
+"80","PGEN_.00g176570","Day21","Q9GYZ0","Kinesin-like protein KIF15 ",1
+"81","PGEN_.00g178990","Day7","Q8QGW7","Lipopolysaccharide-induced tumor necrosis factor-alpha factor homolog ",1
+"82","PGEN_.00g183890","Day21","Q8BGQ7","Alanine--tRNA ligase, cytoplasmic ",1
+"83","PGEN_.00g187300","Day21","P29190","Phosphoenolpyruvate carboxykinase [GTP] ",1
+"84","PGEN_.00g188120","Day21","Q96GQ7","Probable ATP-dependent RNA helicase DDX27 ",1
+"85","PGEN_.00g192910","Day7","O60140","Uncharacterized protein C18H10.09",1
+"86","PGEN_.00g193490","Day7","P0DMQ6","Sorbitol dehydrogenase ",1
+"87","PGEN_.00g197630","Day7","A9JRL3","Cytosolic carboxypeptidase 1 ",1
+"88","PGEN_.00g204280","Day21","Q924S5","Lon protease homolog, mitochondrial ",1
+"89","PGEN_.00g206470","Day7","P56581","G/T mismatch-specific thymine DNA glycosylase ",1
+"90","PGEN_.00g206570","Day21","P22314","Ubiquitin-like modifier-activating enzyme 1 ",1
+"91","PGEN_.00g208330","Day21","Q95M18","Endoplasmin ",1
+"92","PGEN_.00g209070","Day21","Q66H61","Glutamine--tRNA ligase ",1
+"93","PGEN_.00g210730","Day21","P49410","Elongation factor Tu, mitochondrial ",1
+"94","PGEN_.00g212870","Day7","O09171","Betaine--homocysteine S-methyltransferase 1 ",1
+"95","PGEN_.00g213730","Day21","P41252","Isoleucine--tRNA ligase, cytoplasmic ",1
+"96","PGEN_.00g213920","Day14","P09623","Dihydrolipoyl dehydrogenase, mitochondrial ",1
+"97","PGEN_.00g220140","Day14","Q8R4U0","Stabilin-2 ",1
+"98","PGEN_.00g228900","Day21","Q62829","Serine/threonine-protein kinase PAK 3 ",1
+"99","PGEN_.00g234530","Day14","P49109","Dimethylaniline monooxygenase [N-oxide-forming] 5 ",1
+"100","PGEN_.00g235390","Day21","Q16S14","Elongation factor G, mitochondrial ",1
+"101","PGEN_.00g242070","Day7","Q9UPN9","E3 ubiquitin-protein ligase TRIM33 ",1
+"102","PGEN_.00g245730","Day7","Q05481","Zinc finger protein 91 ",1
+"103","PGEN_.00g251580","Day7","O42392","Vitamin D3 receptor ",1
+"104","PGEN_.00g253230","Day7","Q5SVQ0","Histone acetyltransferase KAT7 ",1
+"105","PGEN_.00g258130","Day14","P18172","Glucose dehydrogenase [FAD, quinone] ",1
+"106","PGEN_.00g258190","Day21","Q8TF76","Serine/threonine-protein kinase haspin ",1
+"107","PGEN_.00g263590","Day7","Q4U2R1","E3 ubiquitin-protein ligase HERC2 ",1
+"108","PGEN_.00g268580","Day14","Q9PRL8","Acyl-CoA-binding protein ",1
+"109","PGEN_.00g270460","Day21","Q04451","Glycine--tRNA ligase ",1
+"110","PGEN_.00g271390","Day21","A2A4P0","ATP-dependent RNA helicase DHX8 ",1
+"111","PGEN_.00g272230","Day7","Q9W719","Hypoxanthine-guanine phosphoribosyltransferase ",1
+"112","PGEN_.00g272730","Day14","Q6PHS6","Sorting nexin-13",1
+"113","PGEN_.00g274340","Day7","Q9ESL4","Mitogen-activated protein kinase kinase kinase 20 ",1
+"114","PGEN_.00g274350","Day21","P84080","ADP-ribosylation factor 1",1
+"115","PGEN_.00g276360","Day7","A1A547","Peptidoglycan recognition protein 3 ",1
+"116","PGEN_.00g285980","Day14","P97872","Dimethylaniline monooxygenase [N-oxide-forming] 5 ",1
+"117","PGEN_.00g286040","Day14","P08503","Medium-chain specific acyl-CoA dehydrogenase, mitochondrial ",1
+"118","PGEN_.00g298600","Day7","Q9ULU4","Protein kinase C-binding protein 1 ",1
+"119","PGEN_.00g299330","Day21","P25205","DNA replication licensing factor MCM3 ",1
+"120","PGEN_.00g300660","Day7","P81282","Versican core protein ",1
+"121","PGEN_.00g305230","Day7","Q5RID7","Sorting nexin-17",1
+"122","PGEN_.00g306480","Day21","Q8NI77","Kinesin-like protein KIF18A ",1
+"123","PGEN_.00g308130","Day7","P43691","Transcription factor GATA-4 ",1
+"124","PGEN_.00g321630","Day21","Q29RT6","Kinesin-like protein KIF20A",1
+"125","PGEN_.00g323140","Day21","Q4R4R0","26S proteasome regulatory subunit 7 ",1
+"126","PGEN_.00g331660","Day7","Q9P2E3","NFX1-type zinc finger-containing protein 1",1
+"127","PGEN_.00g333110","Day14","Q8K370","Acyl-CoA dehydrogenase family member 10 ",1
+"128","PGEN_.00g338640","Day21","P18708","Vesicle-fusing ATPase ",1
+"129","PGEN_.00g339830","Day21","O15975","Guanine nucleotide-binding protein G",1
+"130","PGEN_.00g339990","Day14","P35280","Ras-related protein Rab-8A",1
+"131","PGEN_.00g340820","Day14","P22129","Ras-related protein Rab-11B ",1
+"132","PGEN_.00g340990","Day14","P22129","Ras-related protein Rab-11B ",1
+"133","PGEN_.00g342850","Day21","Q9Y4I1","Unconventional myosin-Va ",1
+"134","PGEN_.00g342950","Day21","Q9ULV0","Unconventional myosin-Vb",1
+"135","PGEN_.00g343270","Day14","P54939","Talin-1",1

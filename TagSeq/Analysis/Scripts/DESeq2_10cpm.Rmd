@@ -75,6 +75,10 @@ d14.counts_matrix <- data.frame(d14.counts_matrix[,-1], row.names=d14.counts_mat
 d21.counts_matrix <- read.csv(file="../Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 d21.counts_matrix <- data.frame(d21.counts_matrix[,-1], row.names=d21.counts_matrix[,1]) 
 
+
+# Pgen annotation master
+Pgen_annot <- read.delim(file="../../Seq_details/Panopea-generosa-genes-annotations.txt", header=F) 
+
 ```
 
 
@@ -621,9 +625,6 @@ table(res.d7.Second_MS_fullmod$padj<0.05) #  0 DEGs
 # Group contrast - test the putative pariwise comparison with the ref level in fullmod
 res.d7.Second_MS_grouptest<- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentAS")),  alpha= 0.05) # look here at the group constrasts
 table(res.d7.Second_MS_grouptest$padj<0.05) #  0 DEGs (same as above?)
-
-
-
 
 
 
@@ -1622,6 +1623,90 @@ d21.rlog.heatmap <- pheatmap(topgenes_corrected,
 save_pheatmap(d21.rlog.heatmap, filename = "../Output/DESeq2/10cpm/Day21/Day21.PRIMARY.rlog_heatmap.png")
 ```
 
+#Subseq Encounters - Pariwise Targets
+```{r Subseqent Pairwise encounters}
+# GROUP interactions - Biological Hypothesis testing ========================================================== #
+# Hypothesis does previous history 'prime' response to subseqent stressor 
+# Thus we will investigate AM v MM and MS v MS
+
+# call path for all output cvs of DE results
+path_out.subseq_intxns = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/DEGs_pairwise_subseqent_exposures/' # call path
+
+
+
+# DAY 7
+
+
+
+res.d7.AMvMM                  <- results(dds.d7.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMM")),  alpha= 0.05)
+table(res.d7.AMvMM$padj<0.05) #  5 DEGs
+resdata.d7.AMvMM$geneSymbol   <- row.names(resdata.d7.AMvMM)
+resdata.d7.AMvMM_Annot        <- merge(Pgen_annot, resdata.d7.AMvMM, by.x='V1',by.y='geneSymbol')
+resdata.d7.AMvMM_Annot        <- as.data.frame(resdata.d7.AMvMM_Annot[order(resdata.d7.AMvMM_Annot$padj), ]) # Order by adjusted p-value
+resdata.d7.AMvMM_Annot_DEGs   <- resdata.d7.AMvMM_Annot %>% filter(padj <0.05)
+write.csv(resdata.d7.AMvMM_Annot_DEGs, paste(path_out.subseq_intxns,"Day7.AMvMM.csv")) # write
+
+res.d7.ASvMS                 <- results(dds.d7.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMS")),  alpha= 0.05)
+table(res.d7.ASvMS$padj<0.05) #  15 DEGs
+resdata.d7.ASvMS             <- as.data.frame(res.d7.ASvMS) # Order by adjusted p-value
+resdata.d7.ASvMS$geneSymbol  <- row.names(resdata.d7.ASvMS)
+res.d7.ASvMS_Annot           <- merge(Pgen_annot, resdata.d7.ASvMS, by.x='V1',by.y='geneSymbol')
+res.d7.ASvMS_Annot           <- as.data.frame(res.d7.ASvMS_Annot[order(res.d7.ASvMS_Annot$padj), ]) # Order by adjusted p-value
+res.d7.ASvMS_Annot_DEGs      <- res.d7.ASvMS_Annot %>% filter(padj <0.05)
+write.csv(res.d7.ASvMS_Annot_DEGs, paste(path_out.subseq_intxns,"Day7.ASvMS.csv")) # write
+
+
+
+# DAY 14
+
+
+
+res.d14.AMvMM                  <- results(dds.d14.group, contrast = list(("All_TreatmentAM"),("All_TreatmentMM")),  alpha= 0.05)
+table(res.d14.AMvMM$padj<0.05) #  5 DEGs
+resdata.d14.AMvMM              <- as.data.frame(res.d14.AMvMM) # Order by adjusted p-value
+resdata.d14.AMvMM$geneSymbol   <- row.names(resdata.d7.AMvMM)
+resdata.d14.AMvMM_Annot        <- merge(Pgen_annot, resdata.d14.AMvMM, by.x='V1',by.y='geneSymbol')
+resdata.d14.AMvMM_Annot        <- as.data.frame(resdata.d14.AMvMM_Annot[order(resdata.d14.AMvMM_Annot$padj), ]) # Order by adjusted p-value
+resdata.d14.AMvMM_Annot_DEGs   <- resdata.d14.AMvMM_Annot %>% filter(padj <0.05)
+write.csv(resdata.d14.AMvMM_Annot_DEGs, paste(path_out.subseq_intxns,"Day14.AMvMM.csv")) # write
+
+res.d14.ASvMS            <- results(dds.d14.group, contrast = list(("All_TreatmentAS"),("All_TreatmentMS")),  alpha= 0.05)
+table(res.d14.ASvMS$padj<0.05) #  15 DEGs
+resdata.d14.ASvMS              <- as.data.frame(res.d14.ASvMS) # Order by adjusted p-value
+resdata.d14.ASvMS             <- as.data.frame(resdata.d14.ASvMS) # Order by adjusted p-value
+resdata.d14.ASvMS$geneSymbol  <- row.names(resdata.d14.ASvMS)
+res.d14.ASvMS_Annot           <- merge(Pgen_annot, resdata.d14.ASvMS, by.x='V1',by.y='geneSymbol')
+res.d14.ASvMS_Annot           <- as.data.frame(res.d14.ASvMS_Annot[order(res.d14.ASvMS_Annot$padj), ]) # Order by adjusted p-value
+res.d14.ASvMS_Annot_DEGs      <- res.d14.ASvMS_Annot %>% filter(padj <0.05)
+write.csv(res.d14.ASvMS_Annot_DEGs, paste(path_out.subseq_intxns,"Day14.ASvMS.csv")) # write
+
+
+
+
+# DAY 21
+
+
+
+
+res.d21.AMMvMMM                 <- results(dds.d21.group, contrast = list(("All_TreatmentAMM"),("All_TreatmentMMM")),  alpha= 0.05)
+table(res.d21.AMMvMMM$padj<0.05) #   26 DEGs
+resdata.d21.AMMvMMM              <- as.data.frame(res.d21.AMMvMMM) # Order by adjusted p-value
+resdata.d21.AMMvMMM$geneSymbol   <- row.names(resdata.d21.AMMvMMM)
+resdata.d21.AMMvMMM_Annot        <- merge(Pgen_annot, resdata.d21.AMMvMMM, by.x='V1',by.y='geneSymbol')
+resdata.d21.AMMvMMM_Annot        <- as.data.frame(resdata.d21.AMMvMMM_Annot[order(resdata.d21.AMMvMMM_Annot$padj), ]) # Order by adjusted p-value
+resdata.d21.AMMvMMM_Annot_DEGs   <- resdata.d21.AMMvMMM_Annot %>% filter(padj <0.05)
+write.csv(resdata.d21.AMMvMMM_Annot_DEGs, paste(path_out.subseq_intxns,"Day21.AMMvMMM.csv")) # write
+
+res.d21.ASMvMSM                <- results(dds.d21.group, contrast = list(("All_TreatmentASM"),("All_TreatmentMSM")),  alpha= 0.05)
+table(res.d21.ASMvMSM$padj<0.05) #   26 DEGs
+resdata.d21.ASMvMSM              <- as.data.frame(res.d21.ASMvMSM) # Order by adjusted p-value
+resdata.d21.ASMvMSM$geneSymbol   <- row.names(resdata.d21.ASMvMSM)
+resdata.d21.ASMvMSM_Annot        <- merge(Pgen_annot, resdata.d21.ASMvMSM, by.x='V1',by.y='geneSymbol')
+resdata.d21.ASMvMSM_Annot        <- as.data.frame(resdata.d21.ASMvMSM_Annot[order(resdata.d21.ASMvMSM_Annot$padj), ]) # Order by adjusted p-value
+resdata.d21.ASMvMSM_Annot_DEGs   <- resdata.d21.ASMvMSM_Annot %>% filter(padj <0.05)
+write.csv(resdata.d21.ASMvMSM_Annot_DEGs, paste(path_out.subseq_intxns,"Day21.ASMvMSM.csv")) # write
+
+```
 # grid volcano - primary treatment effect with constant DEGs > 5 mean LFC
 ```{r grid volcano}
 volcano.Grid.Primary <- grid.arrange(Day7.volcano.primary, Day14.volcano.primary,ncol=1, nrow=2, clip="off")

@@ -21,13 +21,13 @@ query=$2
 
 mkdir ./db/
 
-# Make the database
-makeblastdb -in $1 -dbtype nucl -out ./db/database
+# Make the database - note build a protein database and follow with blastx (nucl query w/ protein database)
+makeblastdb -in $1 -dbtype prot -out ./db/database
 
 
-#runs blast on the P generosa genome files against the Pacific oyster KEGG database we created above
-blastn -query $2 -db ./db/database \
-  -out ./${2}_out.tsv -outfmt 6 # qseqid sseqid pident evalue length qlen slen qstart qend sstart send sseq
+#runs blast on the P generosa gene fasta against the Pacific oyster protein database we created above
+blastx -query $2 -db ./db/database \
+  -out ./crgKEGG_blast_out.tsv -outfmt 6 # qseqid sseqid pident evalue length qlen slen qstart qend sstart send sseq
 
 echo "Done"
 date

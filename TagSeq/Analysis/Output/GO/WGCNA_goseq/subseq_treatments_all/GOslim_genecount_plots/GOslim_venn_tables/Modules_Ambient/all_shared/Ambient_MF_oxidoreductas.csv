@@ -1,0 +1,72 @@
+"","Gene_IDs","Day","Uniprot","gene","count"
+"1","PGEN_.00g006490","Day7","Q9HAY6","Beta,beta-carotene 15,15'-dioxygenase ",2
+"2","PGEN_.00g006490","Day14","Q9HAY6","Beta,beta-carotene 15,15'-dioxygenase ",2
+"3","PGEN_.00g039290","Day7","Q91XV4","L-xylulose reductase ",2
+"4","PGEN_.00g039290","Day14","Q91XV4","L-xylulose reductase ",2
+"5","PGEN_.00g040690","Day7","Q920P0","L-xylulose reductase ",2
+"6","PGEN_.00g040690","Day14","Q920P0","L-xylulose reductase ",2
+"7","PGEN_.00g048930","Day7","P79896","Alcohol dehydrogenase class-3 ",2
+"8","PGEN_.00g048930","Day14","P79896","Alcohol dehydrogenase class-3 ",2
+"9","PGEN_.00g049360","Day14","Q4AEH3","Glutathione peroxidase 3 ",2
+"10","PGEN_.00g049360","Day7","Q4AEH3","Glutathione peroxidase 3 ",2
+"11","PGEN_.00g057660","Day7","Q61425","Hydroxyacyl-coenzyme A dehydrogenase, mitochondrial ",2
+"12","PGEN_.00g057660","Day14","Q61425","Hydroxyacyl-coenzyme A dehydrogenase, mitochondrial ",2
+"13","PGEN_.00g069180","Day7","Q6NYL3","Peroxisomal bifunctional enzyme ",2
+"14","PGEN_.00g069180","Day14","Q6NYL3","Peroxisomal bifunctional enzyme ",2
+"15","PGEN_.00g116940","Day7","G9JJU2","Glutathione peroxidase ",2
+"16","PGEN_.00g116940","Day14","G9JJU2","Glutathione peroxidase ",2
+"17","PGEN_.00g121900","Day14","Q27567","Glycerol-3-phosphate dehydrogenase [NAD",2
+"18","PGEN_.00g121900","Day7","Q27567","Glycerol-3-phosphate dehydrogenase [NAD",2
+"19","PGEN_.00g121940","Day7","Q27567","Glycerol-3-phosphate dehydrogenase [NAD",2
+"20","PGEN_.00g121940","Day14","Q27567","Glycerol-3-phosphate dehydrogenase [NAD",2
+"21","PGEN_.00g135600","Day7","O15254","Peroxisomal acyl-coenzyme A oxidase 3 ",2
+"22","PGEN_.00g135600","Day14","O15254","Peroxisomal acyl-coenzyme A oxidase 3 ",2
+"23","PGEN_.00g176480","Day14","P08684","Cytochrome P450 3A4 ",2
+"24","PGEN_.00g176480","Day7","P08684","Cytochrome P450 3A4 ",2
+"25","PGEN_.00g199660","Day21","Q8JG64","Protein disulfide-isomerase A3 ",2
+"26","PGEN_.00g199660","Day14","Q8JG64","Protein disulfide-isomerase A3 ",2
+"27","PGEN_.00g297980","Day21","Q63081","Protein disulfide-isomerase A6 ",2
+"28","PGEN_.00g297980","Day14","Q63081","Protein disulfide-isomerase A6 ",2
+"29","PGEN_.00g300030","Day7","Q9Z1N0","Peroxisomal acyl-coenzyme A oxidase 1 ",2
+"30","PGEN_.00g300030","Day14","Q9Z1N0","Peroxisomal acyl-coenzyme A oxidase 1 ",2
+"31","PGEN_.00g311290","Day7","A6QP15","Hydroxyacid-oxoacid transhydrogenase, mitochondrial ",2
+"32","PGEN_.00g311290","Day14","A6QP15","Hydroxyacid-oxoacid transhydrogenase, mitochondrial ",2
+"33","PGEN_.00g317160","Day7","Q99NF1","Beta,beta-carotene 9',10'-oxygenase ",2
+"34","PGEN_.00g317160","Day14","Q99NF1","Beta,beta-carotene 9',10'-oxygenase ",2
+"35","PGEN_.00g002290","Day14","Q71R50","Dehydrogenase/reductase SDR family member 11 ",1
+"36","PGEN_.00g002440","Day7","P48416","Cytochrome P450 10 ",1
+"37","PGEN_.00g010860","Day14","Q4V8D1","Cytochrome P450 2U1 ",1
+"38","PGEN_.00g012200","Day14","P00185","Cytochrome P450 1A1 ",1
+"39","PGEN_.00g018500","Day14","P47990","Xanthine dehydrogenase/oxidase [Includes: Xanthine dehydrogenase ",1
+"40","PGEN_.00g039850","Day7","Q6ZWL3","Cytochrome P450 4V2 ",1
+"41","PGEN_.00g042250","Day7","P79896","Alcohol dehydrogenase class-3 ",1
+"42","PGEN_.00g068260","Day14","C1C4R8","3-hydroxybutyrate dehydrogenase type 2 ",1
+"43","PGEN_.00g076740","Day14","P14755","Lambda-crystallin ",1
+"44","PGEN_.00g104910","Day14","P70097","Succinate dehydrogenase cytochrome b560 subunit, mitochondrial ",1
+"45","PGEN_.00g117300","Day21","Q2KIL5","Protein disulfide-isomerase A5 ",1
+"46","PGEN_.00g119840","Day14","P38117","Electron transfer flavoprotein subunit beta ",1
+"47","PGEN_.00g120210","Day14","P38117","Electron transfer flavoprotein subunit beta ",1
+"48","PGEN_.00g161270","Day14","Q8AVY8","Very-long-chain 3-oxoacyl-CoA reductase-B ",1
+"49","PGEN_.00g162660","Day14","Q3T001","17-beta-hydroxysteroid dehydrogenase type 6 ",1
+"50","PGEN_.00g169370","Day14","P78417","Glutathione S-transferase omega-1 ",1
+"51","PGEN_.00g169390","Day14","Q9VSL3","Pyrimidodiazepine synthase ",1
+"52","PGEN_.00g169450","Day14","Q9GKX2","Dehydrogenase/reductase SDR family member 4 ",1
+"53","PGEN_.00g180320","Day14","O36032","Glutaredoxin-1",1
+"54","PGEN_.00g180630","Day14","P78417","Glutathione S-transferase omega-1 ",1
+"55","PGEN_.00g188590","Day7","A8WGA0","Cytochrome P450 27C1 ",1
+"56","PGEN_.00g189040","Day7","Q9GKX2","Dehydrogenase/reductase SDR family member 4 ",1
+"57","PGEN_.00g203570","Day14","Q8VCC1","15-hydroxyprostaglandin dehydrogenase [NAD",1
+"58","PGEN_.00g213920","Day14","P09623","Dihydrolipoyl dehydrogenase, mitochondrial ",1
+"59","PGEN_.00g231830","Day14","O15439","Multidrug resistance-associated protein 4 ",1
+"60","PGEN_.00g236540","Day14","O86034","D-beta-hydroxybutyrate dehydrogenase ",1
+"61","PGEN_.00g261210","Day14","Q86W10","Cytochrome P450 4Z1 ",1
+"62","PGEN_.00g282850","Day14","Q5TJF5","Estradiol 17-beta-dehydrogenase 8 ",1
+"63","PGEN_.00g285980","Day7","P97872","Dimethylaniline monooxygenase [N-oxide-forming] 5 ",1
+"64","PGEN_.00g288870","Day7","P18172","Glucose dehydrogenase [FAD, quinone] ",1
+"65","PGEN_.00g291710","Day14","Q29496","Cytochrome P450 3A24 ",1
+"66","PGEN_.00g310290","Day14","Q8BSY0","Aspartyl/asparaginyl beta-hydroxylase ",1
+"67","PGEN_.00g310300","Day14","Q28056","Aspartyl/asparaginyl beta-hydroxylase ",1
+"68","PGEN_.00g318780","Day14","P51869","Cytochrome P450 4F4 ",1
+"69","PGEN_.00g325500","Day7","Q91X52","L-xylulose reductase ",1
+"70","PGEN_.00g325650","Day14","Q91XV4","L-xylulose reductase ",1
+"71","PGEN_.00g325710","Day14","Q8JIS3","D-erythrulose reductase ",1
