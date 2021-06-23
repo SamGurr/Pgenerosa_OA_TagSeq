@@ -1,0 +1,106 @@
+diamond v2.0.0.138 (C) Max Planck Society for the Advancement of Science
+Documentation, support and updates available at http://www.diamondsearch.org
+
+#CPU threads: 20
+Scoring parameters: (Matrix=BLOSUM62 Lambda=0.267 K=0.041 Penalties=11/1)
+Database input file: KEGG/genomes/crg/T03920.pep
+Opening the database file...  [0.22s]
+Loading sequences...  [0.281s]
+Masking sequences...  [0.078s]
+Writing sequences...  [0.006s]
+Hashing sequences...  [0.003s]
+Loading sequences...  [0s]
+Writing trailer...  [0s]
+Closing the input file...  [0s]
+Closing the database file...  [0.089s]
+Database hash = 19575b1cbfcbdb8eb53049ccfb8f42cc
+Processed 28410 sequences, 14150155 letters.
+Total time = 0.685s
+diamond v2.0.0.138 (C) Max Planck Society for the Advancement of Science
+Documentation, support and updates available at http://www.diamondsearch.org
+
+#CPU threads: 20
+Scoring parameters: (Matrix=BLOSUM62 Lambda=0.267 K=0.041 Penalties=11/1)
+Temporary directory: .
+Opening the database...  [0.389s]
+#Target sequences to report alignments for: 25
+Reference = ./Cgigasdb/Cgigas_db.dmnd
+Sequences = 28410
+Letters = 14150155
+Block size = 2000000000
+Opening the input file...  [0.032s]
+Opening the output file...  [0.094s]
+Loading query sequences...  [3.537s]
+Masking queries...  [2.429s]
+Building query seed set...  [0.043s]
+Algorithm: Double-indexed
+Building query histograms...  [0.833s]
+Allocating buffers...  [0s]
+Loading reference sequences...  [0.029s]
+Masking reference...  [0.053s]
+Initializing temporary storage...  [2.091s]
+Building reference histograms...  [0.03s]
+Allocating buffers...  [0s]
+Processing query block 0, reference block 0, shape 0, index chunk 0.
+Building reference seed array...  [0.028s]
+Building query seed array...  [0.535s]
+Computing hash join...  [0.151s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.04s]
+Processing query block 0, reference block 0, shape 0, index chunk 1.
+Building reference seed array...  [0.023s]
+Building query seed array...  [0.576s]
+Computing hash join...  [0.158s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.037s]
+Processing query block 0, reference block 0, shape 0, index chunk 2.
+Building reference seed array...  [0.024s]
+Building query seed array...  [0.974s]
+Computing hash join...  [0.152s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.037s]
+Processing query block 0, reference block 0, shape 0, index chunk 3.
+Building reference seed array...  [0.019s]
+Building query seed array...  [0.49s]
+Computing hash join...  [0.157s]
+Building seed filter...  [0.521s]
+Searching alignments...  [0.036s]
+Processing query block 0, reference block 0, shape 1, index chunk 0.
+Building reference seed array...  [0.028s]
+Building query seed array...  [0.513s]
+Computing hash join...  [0.151s]
+Building seed filter...  [0.007s]
+Searching alignments...  [0.037s]
+Processing query block 0, reference block 0, shape 1, index chunk 1.
+Building reference seed array...  [0.024s]
+Building query seed array...  [0.595s]
+Computing hash join...  [0.16s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.035s]
+Processing query block 0, reference block 0, shape 1, index chunk 2.
+Building reference seed array...  [0.024s]
+Building query seed array...  [0.717s]
+Computing hash join...  [0.155s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.037s]
+Processing query block 0, reference block 0, shape 1, index chunk 3.
+Building reference seed array...  [0.02s]
+Building query seed array...  [0.683s]
+Computing hash join...  [0.155s]
+Building seed filter...  [0.006s]
+Searching alignments...  [0.035s]
+Deallocating buffers...  [0s]
+Clearing query masking...  [0.148s]
+Computing alignments...  [132.554s]
+Deallocating reference...  [0s]
+Loading reference sequences...  [0s]
+Deallocating buffers...  [0.004s]
+Deallocating queries...  [0.005s]
+Loading query sequences...  [0s]
+Closing the input file...  [0.001s]
+Closing the output file...  [0.05s]
+Closing the database file...  [0s]
+Deallocating taxonomy...  [0s]
+Total time = 149.857s
+Reported 107098 pairwise alignments, 107098 HSPs.
+18027 queries aligned.

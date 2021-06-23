@@ -1,10 +1,10 @@
 ---
-  # title: "day21_WGCNA"
+  # title: "day21_WGCNA" - for subseqent exposures WGGCNA results (without ambient)
   # author: "Samuel Gurr"
   # date: "January 8, 2021"
 ---
   
-  # NOTE: what is the purpose of this script and how does it differ from the full dataset? 
+  # NOTE: what is the purpose of this script and how does it differ from the full dataset ('_all' version)?   
   # One can think of this analysis as a sanity test relative to the full analysis of controls (ambient exposures)
   #  to hone in on the our biological hypothesis; the goal of this experimental design is to determine whether 
   #  stress history (acclimation) affects gene expression under subseqent stress encounters. 
@@ -14,8 +14,7 @@
   # To do this....
   # We will focus on treatments MM, MS, AM, AS and ommit the treamtents MA and AA 
   # WHY? we are interest in the how the initial acclimation ( M and A) affected ability to response 
-  # during the subseqent stress. Ambient concurrent conditions (Second A) can do this to comapre response to elevated pCO2
-
+  # during the subseqent stress. Ambient concurrent conditions (i.e. Second A and Third A) to assess the response specifically under  elevated pCO2
 
 
 # LOAD PACKAGES
