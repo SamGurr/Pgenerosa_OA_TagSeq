@@ -1,0 +1,426 @@
+biosample_accession	library_ID	title	library_strategy	library_source	library_selection	library_layout	platform	instrument_model	design_description	filetype	filename	filename2	filename3	filename4	assembly	fasta_file
+SAMN19839120	SG103_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG103_S164_L001_R1_001.fastq.gz	SG103_S164_L002_R1_001.fastq.gz				
+SAMN19839119	SG50_juvenile_ModAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG50_S57_L001_R1_001.fastq.gz	SG50_S57_L002_R1_001.fastq.gz				
+SAMN19839118	SG28_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG28_S71_L001_R1_001.fastq.gz	SG28_S71_L002_R1_001.fastq.gz				
+SAMN19839117	SG67_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG67_S98_L001_R1_001.fastq.gz	SG67_S98_L002_R1_001.fastq.gz				
+SAMN19839116	SG36_juvenile_ModAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG36_S134_L001_R1_001.fastq.gz	SG36_S134_L002_R1_001.fastq.gz				
+SAMN19839115	SG141_juvenile_ModSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG141_S175_L001_R1_001.fastq.gz	SG141_S175_L002_R1_001.fastq.gz				
+SAMN19839114	SG69_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG69_S113_L001_R1_001.fastq.gz	SG69_S113_L002_R1_001.fastq.gz				
+SAMN19839113	SG114_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG114_S161_L001_R1_001.fastq.gz	SG114_S161_L002_R1_001.fastq.gz				
+SAMN19839112	SG71_juvenile_AmbSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG71_S129_L001_R1_001.fastq.gz	SG71_S129_L002_R1_001.fastq.gz				
+SAMN19839111	SG135_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG135_S151_L001_R1_001.fastq.gz	SG135_S151_L002_R1_001.fastq.gz				
+SAMN19839110	SG95_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG95_S131_L001_R1_001.fastq.gz	SG95_S131_L002_R1_001.fastq.gz				
+SAMN19839109	SG94_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG94_S123_L001_R1_001.fastq.gz	SG94_S123_L002_R1_001.fastq.gz				
+SAMN19839108	SG72_juvenile_ModAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG72_S137_L001_R1_001.fastq.gz	SG72_S137_L002_R1_001.fastq.gz				
+SAMN19839107	SG105_juvenile_ModAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG105_S172_L001_R1_001.fastq.gz	SG105_S172_L002_R1_001.fastq.gz				
+SAMN19839106	SG110_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG110_S145_L001_R1_001.fastq.gz	SG110_S145_L002_R1_001.fastq.gz				
+SAMN19839105	SG29_juvenile_AmbAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG29_S79_L001_R1_001.fastq.gz	SG29_S79_L002_R1_001.fastq.gz				
+SAMN19839104	SG124_juvenile_ModSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG124_S154_L001_R1_001.fastq.gz	SG124_S154_L002_R1_001.fastq.gz				
+SAMN19839103	SG32_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG32_S103_L001_R1_001.fastq.gz	SG32_S103_L002_R1_001.fastq.gz				
+SAMN19839102	SG104_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG104_S168_L001_R1_001.fastq.gz	SG104_S168_L002_R1_001.fastq.gz				
+SAMN19839101	SG106_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG106_S176_L001_R1_001.fastq.gz	SG106_S176_L002_R1_001.fastq.gz				
+SAMN19839100	SG53_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG53_S81_L001_R1_001.fastq.gz	SG53_S81_L002_R1_001.fastq.gz				
+SAMN19839099	SG48_juvenile_AmbSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG48_S135_L001_R1_001.fastq.gz	SG48_S135_L002_R1_001.fastq.gz				
+SAMN19839098	SG55_juvenile_ModSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG55_S97_L001_R1_001.fastq.gz	SG55_S97_L002_R1_001.fastq.gz				
+SAMN19839097	SG76_juvenile_ModSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG76_S75_L001_R1_001.fastq.gz	SG76_S75_L002_R1_001.fastq.gz				
+SAMN19839096	SG56_juvenile_ModSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG56_S105_L001_R1_001.fastq.gz	SG56_S105_L002_R1_001.fastq.gz				
+SAMN19839095	SG134_juvenile_AmbSevAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG134_S147_L001_R1_001.fastq.gz	SG134_S147_L002_R1_001.fastq.gz				
+SAMN19839094	SG74_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG74_S59_L001_R1_001.fastq.gz	SG74_S59_L002_R1_001.fastq.gz				
+SAMN19839093	SG121_juvenile_ModModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG121_S142_L001_R1_001.fastq.gz	SG121_S142_L002_R1_001.fastq.gz				
+SAMN19839092	SG31_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG31_S95_L001_R1_001.fastq.gz	SG31_S95_L002_R1_001.fastq.gz				
+SAMN19839091	SG70_juvenile_AmbModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG70_S121_L001_R1_001.fastq.gz	SG70_S121_L002_R1_001.fastq.gz				
+SAMN19839090	SG136_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG136_S155_L001_R1_001.fastq.gz	SG136_S155_L002_R1_001.fastq.gz				
+SAMN19839089	SG116_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG116_S169_L001_R1_001.fastq.gz	SG116_S169_L002_R1_001.fastq.gz				
+SAMN19839088	SG49_juvenile_AmbSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG49_S49_L001_R1_001.fastq.gz	SG49_S49_L002_R1_001.fastq.gz				
+SAMN19839087	SG84_juvenile_AmbSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG84_S138_L001_R1_001.fastq.gz	SG84_S138_L002_R1_001.fastq.gz				
+SAMN19839086	SG35_juvenile_AmbSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG35_S126_L001_R1_001.fastq.gz	SG35_S126_L002_R1_001.fastq.gz				
+SAMN19839085	SG125_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG125_S158_L001_R1_001.fastq.gz	SG125_S158_L002_R1_001.fastq.gz				
+SAMN19839084	SG83_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG83_S130_L001_R1_001.fastq.gz	SG83_S130_L002_R1_001.fastq.gz				
+SAMN19839083	SG51_juvenile_ModAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG51_S65_L001_R1_001.fastq.gz	SG51_S65_L002_R1_001.fastq.gz				
+SAMN19839082	SG30_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG30_S87_L001_R1_001.fastq.gz	SG30_S87_L002_R1_001.fastq.gz				
+SAMN19839081	SG113_juvenile_ModAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG113_S157_L001_R1_001.fastq.gz	SG113_S157_L002_R1_001.fastq.gz				
+SAMN19839080	SG96_juvenile_AmbSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG96_S139_L001_R1_001.fastq.gz	SG96_S139_L002_R1_001.fastq.gz				
+SAMN19839079	SG142_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG142_S179_L001_R1_001.fastq.gz	SG142_S179_L002_R1_001.fastq.gz				
+SAMN19839078	SG111_juvenile_AmbModMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG111_S149_L001_R1_001.fastq.gz	SG111_S149_L002_R1_001.fastq.gz				
+SAMN19839077	SG120_juvenile_AmbModMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG120_S184_L001_R1_001.fastq.gz	SG120_S184_L002_R1_001.fastq.gz				
+SAMN19839076	SG33_juvenile_AmbModMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG33_S110_L001_R1_001.fastq.gz	SG33_S110_L002_R1_001.fastq.gz				
+SAMN19839075	SG122_juvenile_ModModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG122_S146_L001_R1_001.fastq.gz	SG122_S146_L002_R1_001.fastq.gz				
+SAMN19839074	SG115_juvenile_ModModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG115_S165_L001_R1_001.fastq.gz	SG115_S165_L002_R1_001.fastq.gz				
+SAMN19839073	SG123_juvenile_ModModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG123_S150_L001_R1_001.fastq.gz	SG123_S150_L002_R1_001.fastq.gz				
+SAMN19839072	SG52_juvenile_ModAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG52_S73_L001_R1_001.fastq.gz	SG52_S73_L002_R1_001.fastq.gz				
+SAMN19839071	SG133_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG133_S143_L001_R1_001.fastq.gz	SG133_S143_L002_R1_001.fastq.gz				
+SAMN19839070	SG112_juvenile_ModAmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG112_S153_L001_R1_001.fastq.gz	SG112_S153_L002_R1_001.fastq.gz				
+SAMN19839069	SG68_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG68_S106_L001_R1_001.fastq.gz	SG68_S106_L002_R1_001.fastq.gz				
+SAMN19839068	SG126_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG126_S162_L001_R1_001.fastq.gz	SG126_S162_L002_R1_001.fastq.gz				
+SAMN19839067	SG34_juvenile_AmbModMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG34_S118_L001_R1_001.fastq.gz	SG34_S118_L002_R1_001.fastq.gz				
+SAMN19839066	SG47_juvenile_AmbModMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG47_S127_L001_R1_001.fastq.gz	SG47_S127_L002_R1_001.fastq.gz				
+SAMN19839065	SG73_juvenile_ModAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG73_S51_L001_R1_001.fastq.gz	SG73_S51_L002_R1_001.fastq.gz				
+SAMN19839064	SG54_juvenile_ModModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG54_S89_L001_R1_001.fastq.gz	SG54_S89_L002_R1_001.fastq.gz				
+SAMN19839063	SG75_juvenile_ModModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG75_S67_L001_R1_001.fastq.gz	SG75_S67_L002_R1_001.fastq.gz				
+SAMN19839062	SG132_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG132_S185_L001_R1_001.fastq.gz	SG132_S185_L002_R1_001.fastq.gz				
+SAMN19839061	SG85_juvenile_ModAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG85_S52_L001_R1_001.fastq.gz	SG85_S52_L002_R1_001.fastq.gz				
+SAMN19839060	SG86_juvenile_ModSevMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModSevMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG86_S60_L001_R1_001.fastq.gz	SG86_S60_L002_R1_001.fastq.gz				
+SAMN19839059	SG119_juvenile_AmbAmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG119_S181_L001_R1_001.fastq.gz	SG119_S181_L002_R1_001.fastq.gz				
+SAMN19839058	SG8_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG8_S101_L001_R1_001.fastq.gz	SG8_S101_L002_R1_001.fastq.gz				
+SAMN19839057	SG80_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG80_S107_L001_R1_001.fastq.gz	SG80_S107_L002_R1_001.fastq.gz				
+SAMN19839056	SG7_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG7_S93_L001_R1_001.fastq.gz	SG7_S93_L002_R1_001.fastq.gz				
+SAMN19839055	SG78_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG78_S91_L001_R1_001.fastq.gz	SG78_S91_L002_R1_001.fastq.gz				
+SAMN19839054	SG108_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG108_S183_L001_R1_001.fastq.gz	SG108_S183_L002_R1_001.fastq.gz				
+SAMN19839052	SG46_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG46_S119_L001_R1_001.fastq.gz	SG46_S119_L002_R1_001.fastq.gz				
+SAMN19839051	SG14_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG14_S54_L001_R1_001.fastq.gz	SG14_S54_L002_R1_001.fastq.gz				
+SAMN19839050	SG13_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG13_S46_L001_R1_001.fastq.gz	SG13_S46_L002_R1_001.fastq.gz				
+SAMN19839049	SG4_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG4_S69_L001_R1_001.fastq.gz	SG4_S69_L002_R1_001.fastq.gz				
+SAMN19839048	SG64_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG64_S74_L001_R1_001.fastq.gz	SG64_S74_L002_R1_001.fastq.gz				
+SAMN19839047	SG1_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG1_S45_L001_R1_001.fastq.gz	SG1_S45_L002_R1_001.fastq.gz				
+SAMN19839046	SG79_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG79_S99_L001_R1_001.fastq.gz	SG79_S99_L002_R1_001.fastq.gz				
+SAMN19839045	SG131_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG131_S182_L001_R1_001.fastq.gz	SG131_S182_L002_R1_001.fastq.gz				
+SAMN19839044	SG16_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG16_S70_L001_R1_001.fastq.gz	SG16_S70_L002_R1_001.fastq.gz				
+SAMN19839043	SG11_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG11_S124_L001_R1_001.fastq.gz	SG11_S124_L002_R1_001.fastq.gz				
+SAMN19839042	SG82_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG82_S122_L001_R1_001.fastq.gz	SG82_S122_L002_R1_001.fastq.gz				
+SAMN19839041	SG91_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG91_S100_L001_R1_001.fastq.gz	SG91_S100_L002_R1_001.fastq.gz				
+SAMN19839040	SG6_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG6_S85_L001_R1_001.fastq.gz	SG6_S85_L002_R1_001.fastq.gz				
+SAMN19839039	SG27_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG27_S63_L001_R1_001.fastq.gz	SG27_S63_L002_R1_001.fastq.gz				
+SAMN19839038	SG12_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG12_S132_L001_R1_001.fastq.gz	SG12_S132_L002_R1_001.fastq.gz				
+SAMN19839037	SG66_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG66_S90_L001_R1_001.fastq.gz	SG66_S90_L002_R1_001.fastq.gz				
+SAMN19839036	SG3_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG3_S61_L001_R1_001.fastq.gz	SG3_S61_L002_R1_001.fastq.gz				
+SAMN19839035	SG109_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG109_S141_L001_R1_001.fastq.gz	SG109_S141_L002_R1_001.fastq.gz				
+SAMN19839034	SG107_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG107_S180_L001_R1_001.fastq.gz	SG107_S180_L002_R1_001.fastq.gz				
+SAMN19839033	SG65_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG65_S82_L001_R1_001.fastq.gz	SG65_S82_L002_R1_001.fastq.gz				
+SAMN19839032	SG101_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG101_S156_L001_R1_001.fastq.gz	SG101_S156_L002_R1_001.fastq.gz				
+SAMN19839031	SG5_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG5_S77_L001_R1_001.fastq.gz	SG5_S77_L002_R1_001.fastq.gz				
+SAMN19839030	SG81_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG81_S114_L001_R1_001.fastq.gz	SG81_S114_L002_R1_001.fastq.gz				
+SAMN19839029	SG118_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG118_S177_L001_R1_001.fastq.gz	SG118_S177_L002_R1_001.fastq.gz				
+SAMN19839028	SG9_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG9_S108_L001_R1_001.fastq.gz	SG9_S108_L002_R1_001.fastq.gz				
+SAMN19839027	SG10_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG10_S116_L001_R1_001.fastq.gz	SG10_S116_L002_R1_001.fastq.gz				
+SAMN19839026	SG2_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG2_S53_L001_R1_001.fastq.gz	SG2_S53_L002_R1_001.fastq.gz				
+SAMN19839025	SG102_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG102_S160_L001_R1_001.fastq.gz	SG102_S160_L002_R1_001.fastq.gz				
+SAMN19839024	SG93_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG93_S115_L001_R1_001.fastq.gz	SG93_S115_L002_R1_001.fastq.gz				
+SAMN19839023	SG15_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG15_S62_L001_R1_001.fastq.gz	SG15_S62_L002_R1_001.fastq.gz				
+SAMN19839022	SG39_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG39_S64_L001_R1_001.fastq.gz	SG39_S64_L002_R1_001.fastq.gz				
+SAMN19839021	SG23_juvenile_ModdAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModdAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG23_S125_L001_R1_001.fastq.gz	SG23_S125_L002_R1_001.fastq.gz				
+SAMN19839020	SG127_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG127_S166_L001_R1_001.fastq.gz	SG127_S166_L002_R1_001.fastq.gz				
+SAMN19839019	SG18_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG18_S86_L001_R1_001.fastq.gz	SG18_S86_L002_R1_001.fastq.gz				
+SAMN19839018	SG24_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG24_S133_L001_R1_001.fastq.gz	SG24_S133_L002_R1_001.fastq.gz				
+SAMN19839017	SG130_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG130_S178_L001_R1_001.fastq.gz	SG130_S178_L002_R1_001.fastq.gz				
+SAMN19839016	SG99_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG99_S148_L001_R1_001.fastq.gz	SG99_S148_L002_R1_001.fastq.gz				
+SAMN19839015	SG139_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG139_S167_L001_R1_001.fastq.gz	SG139_S167_L002_R1_001.fastq.gz				
+SAMN19839014	SG42_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG42_S88_L001_R1_001.fastq.gz	SG42_S88_L002_R1_001.fastq.gz				
+SAMN19839013	SG59_juvenile_ModAmb_TagSeq	TagSeq of juvenile Panopea generosa pH ModAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG59_S128_L001_R1_001.fastq.gz	SG59_S128_L002_R1_001.fastq.gz				
+SAMN19839012	SG138_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG138_S163_L001_R1_001.fastq.gz	SG138_S163_L002_R1_001.fastq.gz				
+SAMN19839011	SG17_juvenile_AmbAmb_TagSeq	TagSeq of juvenile Panopea generosa pH AmbAmb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG17_S78_L001_R1_001.fastq.gz	SG17_S78_L002_R1_001.fastq.gz				
+SAMN19839010	SG100_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG100_S152_L001_R1_001.fastq.gz	SG100_S152_L002_R1_001.fastq.gz				
+SAMN19839009	SG63_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG63_S66_L001_R1_001.fastq.gz	SG63_S66_L002_R1_001.fastq.gz				
+SAMN19839008	SG140_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG140_S171_L001_R1_001.fastq.gz	SG140_S171_L002_R1_001.fastq.gz				
+SAMN19839007	SG22_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG22_S117_L001_R1_001.fastq.gz	SG22_S117_L002_R1_001.fastq.gz				
+SAMN19839006	SG26_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG26_S55_L001_R1_001.fastq.gz	SG26_S55_L002_R1_001.fastq.gz				
+SAMN19839005	SG58_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG58_S120_L001_R1_001.fastq.gz	SG58_S120_L002_R1_001.fastq.gz				
+SAMN19839004	SG45_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG45_S111_L001_R1_001.fastq.gz	SG45_S111_L002_R1_001.fastq.gz				
+SAMN19839003	SG61_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG61_S50_L001_R1_001.fastq.gz	SG61_S50_L002_R1_001.fastq.gz				
+SAMN19839002	SG129_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG129_S174_L001_R1_001.fastq.gz	SG129_S174_L002_R1_001.fastq.gz				
+SAMN19839001	SG21_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG21_S109_L001_R1_001.fastq.gz	SG21_S109_L002_R1_001.fastq.gz				
+SAMN19839000	SG41_juvenile_AmbSev_TagSeq	TagSeq of juvenile Panopea generosa pH AmbSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG41_S80_L001_R1_001.fastq.gz	SG41_S80_L002_R1_001.fastq.gz				
+SAMN19838999	SG62_juvenile_ModSev_TagSeq	TagSeq of juvenile Panopea generosa pH ModSev	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG62_S58_L001_R1_001.fastq.gz	SG62_S58_L002_R1_001.fastq.gz				
+SAMN19838998	SG20_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG20_S102_L001_R1_001.fastq.gz	SG20_S102_L002_R1_001.fastq.gz				
+SAMN19838997	SG57_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG57_S112_L001_R1_001.fastq.gz	SG57_S112_L002_R1_001.fastq.gz				
+SAMN19838996	SG19_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG19_S94_L001_R1_001.fastq.gz	SG19_S94_L002_R1_001.fastq.gz				
+SAMN19838995	SG77_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG77_S83_L001_R1_001.fastq.gz	SG77_S83_L002_R1_001.fastq.gz				
+SAMN19838994	SG44_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG44_S104_L001_R1_001.fastq.gz	SG44_S104_L002_R1_001.fastq.gz				
+SAMN19838993	SG43_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG43_S96_L001_R1_001.fastq.gz	SG43_S96_L002_R1_001.fastq.gz				
+SAMN19838992	SG40_juvenile_AmbM_TagSeq	TagSeq of juvenile Panopea generosa pH AmbM	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG40_S72_L001_R1_001.fastq.gz	SG40_S72_L002_R1_001.fastq.gz				
+SAMN19838991	SG89_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG89_S84_L001_R1_001.fastq.gz	SG89_S84_L002_R1_001.fastq.gz				
+SAMN19838990	SG128_juvenile_AmbMod_TagSeq	TagSeq of juvenile Panopea generosa pH AmbMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG128_S170_L001_R1_001.fastq.gz	SG128_S170_L002_R1_001.fastq.gz				
+SAMN19838989	SG90_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG90_S92_L001_R1_001.fastq.gz	SG90_S92_L002_R1_001.fastq.gz				
+SAMN19838988	SG60_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG60_S136_L001_R1_001.fastq.gz	SG60_S136_L002_R1_001.fastq.gz				
+SAMN19838987	SG25_juvenile_ModMod_TagSeq	TagSeq of juvenile Panopea generosa pH ModMod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG25_S47_L001_R1_001.fastq.gz	SG25_S47_L002_R1_001.fastq.gz				
+SAMN19838986	SG37_juvenile_Amb_TagSeq	TagSeq of juvenile Panopea generosa pH Amb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG37_S48_L001_R1_001.fastq.gz	SG37_S48_L002_R1_001.fastq.gz				
+SAMN19838985	SG98_juvenile_Mod_TagSeq	TagSeq of juvenile Panopea generosa pH Mod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG98_S144_L001_R1_001.fastq.gz	SG98_S144_L002_R1_001.fastq.gz				
+SAMN19838984	SG87_juvenile_Amb_TagSeq	TagSeq of juvenile Panopea generosa pH Amb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG87_S68_L001_R1_001.fastq.gz	SG87_S68_L002_R1_001.fastq.gz				
+SAMN19838983	SG88_juvenile_Mod_TagSeq	TagSeq of juvenile Panopea generosa pH Mod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG88_S76_L001_R1_001.fastq.gz	SG88_S76_L002_R1_001.fastq.gz				
+SAMN19838982	SG97_juvenile_Amb_TagSeq	TagSeq of juvenile Panopea generosa pH Amb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG97_S140_L001_R1_001.fastq.gz	SG97_S140_L002_R1_001.fastq.gz				
+SAMN19838981	SG38_juvenile_Mod_TagSeq	TagSeq of juvenile Panopea generosa pH Mod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG38_S56_L001_R1_001.fastq.gz	SG38_S56_L002_R1_001.fastq.gz				
+SAMN19838980	SG137_juvenile_Amb_TagSeq	TagSeq of juvenile Panopea generosa pH Amb	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG137_S159_L001_R1_001.fastq.gz	SG137_S159_L002_R1_001.fastq.gz				
+SAMN19838979	SG117_juvenile_Mod_TagSeq	TagSeq of juvenile Panopea generosa pH Mod	RNA-Seq	TRANSCRIPTOMIC	PCR	single	ILLUMINA	Illumina NovaSeq 6000	"Libraries were prepared by The Univeristy of Texas at Austin 
+Genomic Sequencing and Analysis Facility using the a 3' RNA based library prep for TagSeq"	fastq	SG117_S173_L001_R1_001.fastq.gz	SG117_S173_L002_R1_001.fastq.gz				
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
+																
