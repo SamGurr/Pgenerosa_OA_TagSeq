@@ -1,5 +1,5 @@
 ---
-  # title: "GO_Analysis_WGCNA_plots"
+  # title: "GO_Analysis_WGCNA_all"
   # author: "Samuel Gurr"
   # date: "April 12, 2021"
 ---
@@ -43,29 +43,36 @@ Pgen_GOterms2 <- na.omit(Pgen_GOterms2) # ommit the NAs  - genes without GO anno
 
 
 # WGCNa data results 
-d7_Annot_ModuleMembership      <-  read.csv("Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv")   # WGCNA results day 7  - Module membership 
+d0_Annot_ModuleMembership      <-  read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day0/d0.WGCNA_ModulMembership.csv")   # WGCNA results day 7  - Module membership 
+d0_Annot_ModuleMembership      <- d0_Annot_ModuleMembership[,c(3:4,7:8)] # call gene ID, module color, and GO annotation
+d0_Annot_ModuleMembership$Day  <- "Day0"  # common column to divide master dataset
+d0ModCols                      <- data.frame(moduleColor = unique(d0_Annot_ModuleMembership$moduleColor)) # call all unique module colors 
+d0ModCols                      <- d0ModCols %>% filter(moduleColor %in% 'midnightblue') # MODULES WITH SIG CORR WITH TREATMENT
+d0ModCols$Day                  <- "Day0" # common column for the for loop
+
+d7_Annot_ModuleMembership      <-  read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7.WGCNA_ModulMembership.csv")   # WGCNA results day 7  - Module membership 
 d7_Annot_ModuleMembership      <- d7_Annot_ModuleMembership[,c(3:4,7:8)] # call gene ID, module color, and GO annotation
 d7_Annot_ModuleMembership$Day  <- "Day7"  # common column to divide master dataset
 d7ModCols                      <- data.frame(moduleColor = unique(d7_Annot_ModuleMembership$moduleColor)) # call all unique module colors 
 d7ModCols                      <- d7ModCols %>% filter(moduleColor %in% c('brown', 'yellow', 'green')) # MODULES WITH SIG CORR WITH TREATMENT
 d7ModCols$Day                  <- "Day7" # common column for the for loop
 
-d14_Annot_ModuleMembership     <-  read.csv("Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMembership.csv") # WGCNA results day 14 - Module membership 
+d14_Annot_ModuleMembership     <-  read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv") # WGCNA results day 14 - Module membership 
 d14_Annot_ModuleMembership     <- d14_Annot_ModuleMembership[,c(3:4,7:8)] # call gene ID, module color, and GO annotation
 d14_Annot_ModuleMembership$Day <- "Day14"  # common column to divide master dataset
 d14ModCols                     <- data.frame(moduleColor = unique(d14_Annot_ModuleMembership$moduleColor)) # call all unique module colors 
 d14ModCols                     <- d14ModCols %>% filter(moduleColor %in% c('brown', 'black', 'pink', 'magenta')) # MODULES WITH SIG CORR WITH TREATMENT
 d14ModCols$Day                 <- "Day14" # common column for the for loop
 
-d21_Annot_ModuleMembership     <-  read.csv("Analysis/Output/WGCNA/Day21/d21.WGCNA_ModulMembership.csv") # WGCNA results day 21 - Module membership 
+d21_Annot_ModuleMembership     <-  read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day21/d21.WGCNA_ModulMembership.csv") # WGCNA results day 21 - Module membership 
 d21_Annot_ModuleMembership     <- d21_Annot_ModuleMembership[,c(3:4,7:8)] # call gene ID, module color, and GO annotation
 d21_Annot_ModuleMembership$Day <- "Day21" # common column to divide master dataset
 d21ModCols                     <- data.frame(moduleColor = unique(d21_Annot_ModuleMembership$moduleColor)) # call all unique module colors 
 d21ModCols                     <- d21ModCols %>% filter(moduleColor %in% c('magenta', 'blue', 'yellow', 'red', 'black', 'pink', 'turquoise')) # MODULES WITH SIG CORR WITH TREATMENT
 d21ModCols$Day                 <- "Day21" # common column for the for loop
  
-WGCNA_MasterModData   <-  rbind(d7_Annot_ModuleMembership, d14_Annot_ModuleMembership, d21_Annot_ModuleMembership) # master WGCNA data table 
-WGCNA_ColorList       <-  rbind(d7ModCols, d14ModCols, d21ModCols) # master WGCNA color list - use this to loop all the analysis 
+WGCNA_MasterModData   <-  rbind(d0_Annot_ModuleMembership, d7_Annot_ModuleMembership, d14_Annot_ModuleMembership, d21_Annot_ModuleMembership) # master WGCNA data table 
+WGCNA_ColorList       <-  rbind(d0ModCols, d7ModCols, d14ModCols, d21ModCols) # master WGCNA color list - use this to loop all the analysis 
 
 slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/goslim_generic.obo") #get GO database - # call goslim_generic.obo terms as 'slim'
 
@@ -73,6 +80,10 @@ slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/gosli
 # LOAD DATA - Raw Count Data - FILTERED COUNT MATRICES USED IN WGCNA- 10CPM in 50% of samples
 #
 #===================================================================================== # 
+# day7 filtered 10cpm in 50% samples ----------------------------- # 
+Day0_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+colnames(Day0_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
+
 # day7 filtered 10cpm in 50% samples ----------------------------- # 
 Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day7_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
@@ -111,6 +122,7 @@ GO.terms$Ontology  <- Ontology(GO.terms$v2)
 # (2) Unique Genes - vector based on all unique mapped reads 
 # Construct a named vector of all target genes for goseq
 GO_unique.genes.all <- as.vector(unique(Geoduck_annotation$V1)) # call all unique genes for GO analysis (goseq)
+IDvector.d0         <- as.vector(unique(Day0_all.counts$gene.ID))  # call unique genes (those filtered and used in DESEq2) on day0 - 'IDvector'
 IDvector.d7         <- as.vector(unique(Day7_all.counts$gene.ID))  # call unique genes (those filtered and used in DESEq2) on day7 - 'IDvector'
 IDvector.d14        <- as.vector(unique(Day14_all.counts$gene.ID)) # call unique genes (those filtered and used in DESEq2) on day14 - 'IDvector'
 IDvector.d21        <- as.vector(unique(Day21_all.counts$gene.ID)) # call unique genes (those filtered and used in DESEq2) on day21 - 'IDvector'
@@ -121,10 +133,13 @@ GO_gene.length <- Geoduck_annotation %>% dplyr::mutate(length = V4-V3) %>%  dply
 names(GO_gene.length)[1] <- "gene.ID"
 # merge length with counts data
 length_vector   <- GO_gene.length$length
+GeneLength.d0   <- merge(GO_gene.length, Day0_all.counts, by = "gene.ID")  # merge day0 counts with 'GO_gene.length' 
 GeneLength.d7   <- merge(GO_gene.length, Day7_all.counts, by = "gene.ID")  # merge day7 counts with 'GO_gene.length' 
 GeneLength.d14  <- merge(GO_gene.length, Day14_all.counts, by = "gene.ID")  # merge day14 counts with 'GO_gene.length' 
 GeneLength.d21  <- merge(GO_gene.length, Day21_all.counts, by = "gene.ID")  # merge day21 counts with 'GO_gene.length'
 # call length values for goseq - confirms that the IDvector and length_vector are the same!!!
+length_vector.d0 <- GeneLength.d0$length    # length vector for all unique reads address in WGCNA on day 0
+sum(sapply(length_vector.d0,length)) == dim(Day0_all.counts)[1] #should be TRUE
 length_vector.d7 <- GeneLength.d7$length    # length vector for all unique reads address in WGCNA on day 7
 sum(sapply(length_vector.d7,length)) == dim(Day7_all.counts)[1] #should be TRUE
 length_vector.d14 <- GeneLength.d14$length  # length vector for all unique reads address in WGCNA on day 14
@@ -150,8 +165,8 @@ sum(sapply(length_vector.d21,length)) == dim(Day21_all.counts)[1] #should be TRU
 
 
 for (i in 1:nrow(WGCNA_ColorList)) {
-        if (WGCNA_ColorList[i,2] == "Day7") {
-        Mod <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
+        if (WGCNA_ColorList[i,2] == "Day0") {
+        Mod <- d0_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
         Modgenes <- Mod[1]
         names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
         # Mod_integer <- as.integer(IDvector.d7 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
@@ -171,78 +186,109 @@ for (i in 1:nrow(WGCNA_ColorList)) {
         GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
         GO.05$term      <- as.factor(GO.05$term)
         GO.05$moduleColor <- WGCNA_ColorList[i,1]
-        GO.05$Day       <- "Day7"
+        GO.05$Day       <- "Day0"
         
         # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
         GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
         
-        write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+        write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day0/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
         
         print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
         
         
-         } else if (WGCNA_ColorList[i,2] == "Day14") {
-            Mod <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
-            Modgenes <- Mod[1]
-            names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
-            # Mod_integer <- as.integer(IDvector.d14 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
-            # names(Mod_integer)=IDvector.d14 # rename 
-            Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
-            names(Mod_integer)=GO_unique.genes.all # rename
-            
-            #pwf       <- nullp(Mod_integer,    id=IDvector.d14, bias.data=length_vector.d14) # make figure margins large enough for this to run...
-            pwf       <- nullp(Mod_integer,    id=GO_unique.genes.all, bias.data=length_vector) # make figure margins large enough for this to run...
-            
-            goseq     <- goseq(pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-            
-            GO.05.a         <- goseq$category[goseq$over_represented_pvalue<.05] # change twice here
-            GO.05           <- data.frame(GO.05.a)
-            colnames(GO.05) <- c("category")
-            GO.05           <- merge(GO.05, goseq, by="category") # change here
-            GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
-            GO.05$term      <- as.factor(GO.05$term)
-            GO.05$moduleColor <- WGCNA_ColorList[i,1]
-            GO.05$Day       <- "Day14"
-            
-            # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
-            GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
-            
-            write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
-            
-            print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
-            
-            
-            } else {
-              Mod <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
-              Modgenes <- Mod[1]
-              names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
-              # Mod_integer <- as.integer(IDvector.d21 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
-              # names(Mod_integer)=IDvector.d21 # rename
-              Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
-              names(Mod_integer)=GO_unique.genes.all # rename
-              
-              #pwf       <- nullp(Mod_integer,    id=IDvector.d21, bias.data=length_vector.d21) # make figure margins large enough for this to run...
-              pwf       <- nullp(Mod_integer, id=GO_unique.genes.all, bias.data=length_vector) # make figure margins large enough for this to run...
-              
-              goseq     <- goseq(pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
-              
-              GO.05.a         <- goseq$category[goseq$over_represented_pvalue<.05] # change twice here
-              GO.05           <- data.frame(GO.05.a)
-              colnames(GO.05) <- c("category")
-              GO.05           <- merge(GO.05, goseq, by="category") # change here
-              GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
-              GO.05$term      <- as.factor(GO.05$term)
-              GO.05$moduleColor <- WGCNA_ColorList[i,1]
-              GO.05$Day       <- "Day21"
-              
-              # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
-              GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
-
-              write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file              
-              
-              print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
-              
-            } #of if statement
+        } else if (WGCNA_ColorList[i,2] == "Day7") {
+          Mod <- d7_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
+          Modgenes <- Mod[1]
+          names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
+          # Mod_integer <- as.integer(IDvector.d14 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+          # names(Mod_integer)=IDvector.d14 # rename 
+          Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
+          names(Mod_integer)=GO_unique.genes.all # rename
+          
+          #pwf       <- nullp(Mod_integer,    id=IDvector.d14, bias.data=length_vector.d14) # make figure margins large enough for this to run...
+          pwf       <- nullp(Mod_integer,    id=GO_unique.genes.all, bias.data=length_vector) # make figure margins large enough for this to run...
+          
+          goseq     <- goseq(pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+          
+          GO.05.a         <- goseq$category[goseq$over_represented_pvalue<.05] # change twice here
+          GO.05           <- data.frame(GO.05.a)
+          colnames(GO.05) <- c("category")
+          GO.05           <- merge(GO.05, goseq, by="category") # change here
+          GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
+          GO.05$term      <- as.factor(GO.05$term)
+          GO.05$moduleColor <- WGCNA_ColorList[i,1]
+          GO.05$Day       <- "Day7"
+          
+          # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+          GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+          
+          write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+          
+          print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
+          
+          
+             } else if (WGCNA_ColorList[i,2] == "Day14") {
+                Mod <- d14_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
+                Modgenes <- Mod[1]
+                names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
+                # Mod_integer <- as.integer(IDvector.d14 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+                # names(Mod_integer)=IDvector.d14 # rename 
+                Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
+                names(Mod_integer)=GO_unique.genes.all # rename
+                
+                #pwf       <- nullp(Mod_integer,    id=IDvector.d14, bias.data=length_vector.d14) # make figure margins large enough for this to run...
+                pwf       <- nullp(Mod_integer,    id=GO_unique.genes.all, bias.data=length_vector) # make figure margins large enough for this to run...
+                
+                goseq     <- goseq(pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+                
+                GO.05.a         <- goseq$category[goseq$over_represented_pvalue<.05] # change twice here
+                GO.05           <- data.frame(GO.05.a)
+                colnames(GO.05) <- c("category")
+                GO.05           <- merge(GO.05, goseq, by="category") # change here
+                GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
+                GO.05$term      <- as.factor(GO.05$term)
+                GO.05$moduleColor <- WGCNA_ColorList[i,1]
+                GO.05$Day       <- "Day14"
+                
+                # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+                GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+                
+                write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
+                
+                print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
+                
+                
+                } else {
+                  Mod <- d21_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
+                  Modgenes <- Mod[1]
+                  names(Modgenes)[1] <- "Gene.ID" # 162 genws in the green module 
+                  # Mod_integer <- as.integer(IDvector.d21 %in% (Modgenes$Gene.ID)) # call the day-specific ID vector 
+                  # names(Mod_integer)=IDvector.d21 # rename
+                  Mod_integer <- as.integer(GO_unique.genes.all %in% (Modgenes$Gene.ID)) # w/o day-specific ID vector
+                  names(Mod_integer)=GO_unique.genes.all # rename
+                  
+                  #pwf       <- nullp(Mod_integer,    id=IDvector.d21, bias.data=length_vector.d21) # make figure margins large enough for this to run...
+                  pwf       <- nullp(Mod_integer, id=GO_unique.genes.all, bias.data=length_vector) # make figure margins large enough for this to run...
+                  
+                  goseq     <- goseq(pwf, gene2cat=GO.terms, test.cats=c("GO:CC", "GO:BP", "GO:MF"), method="Wallenius", use_genes_without_cat=TRUE)
+                  
+                  GO.05.a         <- goseq$category[goseq$over_represented_pvalue<.05] # change twice here
+                  GO.05           <- data.frame(GO.05.a)
+                  colnames(GO.05) <- c("category")
+                  GO.05           <- merge(GO.05, goseq, by="category") # change here
+                  GO.05           <- GO.05[order(GO.05$ontology, GO.05$over_represented_pvalue,-GO.05$numDEInCat),]
+                  GO.05$term      <- as.factor(GO.05$term)
+                  GO.05$moduleColor <- WGCNA_ColorList[i,1]
+                  GO.05$Day       <- "Day21"
+                  
+                  # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
+                  GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
+    
+                  write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file              
+                  
+                  print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
+                  
+                } #of if statement
     
 } # end of for loop
 
@@ -255,22 +301,24 @@ for (i in 1:nrow(WGCNA_ColorList)) {
 #
 #===================================================================================================
 # load the output from the previous for loop
-d7_GO.05brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05brownModule.csv")
-d7_GO.05greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05greenModule.csv")
-d7_GO.05yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GO.05yellowModule.csv")
+d0_GO.05midnightbluenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day0/GO.05midnightblueModule.csv")
 
-d14_GO.05blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05blackModule.csv")
-d14_GO.05brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05brownModule.csv")
-d14_GO.05magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05magentaModule.csv")
-d14_GO.05pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GO.05pinkModule.csv")
+d7_GO.05brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05brownModule.csv")
+d7_GO.05greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05greenModule.csv")
+d7_GO.05yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05yellowModule.csv")
 
-d21_GO.05blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05blackModule.csv")
-d21_GO.05blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05blueModule.csv")
-d21_GO.05magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05magentaModule.csv")
-d21_GO.05pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05pinkModule.csv")
-d21_GO.05redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05redModule.csv")
-d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05yellowModule.csv")
-d21_GO.05turquoiseModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GO.05turquoiseModule.csv")
+d14_GO.05blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05blackModule.csv")
+d14_GO.05brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05brownModule.csv")
+d14_GO.05magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05magentaModule.csv")
+d14_GO.05pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05pinkModule.csv")
+
+d21_GO.05blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05blackModule.csv")
+d21_GO.05blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05blueModule.csv")
+d21_GO.05magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05magentaModule.csv")
+d21_GO.05pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05pinkModule.csv")
+d21_GO.05redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05redModule.csv")
+d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05yellowModule.csv")
+d21_GO.05turquoiseModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05turquoiseModule.csv")
 # View(d21_GO.05yellowModule)
 Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 # build annotation file to merge with the mean LFC tables
@@ -281,7 +329,8 @@ names(Pgen_reference)  <- c('PgenIDs', 'Gene_terms')
 
 
 # Master ALL WGCNA significant modules with treatment
-Master_goseq_results      <- rbind(d7_GO.05brownModule, d7_GO.05greenModule, d7_GO.05yellowModule,
+Master_goseq_results      <- rbind(d0_GO.05midnightbluenModule,
+                              d7_GO.05brownModule, d7_GO.05greenModule, d7_GO.05yellowModule,
                               d14_GO.05blackModule, d14_GO.05brownModule, d14_GO.05magentaModule, d14_GO.05pinkModule,
                               d21_GO.05blackModule, d21_GO.05blueModule, d21_GO.05magentaModule, d21_GO.05pinkModule, d21_GO.05redModule, d21_GO.05yellowModule, d21_GO.05turquoiseModule)
 # View(Master_goseq_results)
@@ -294,8 +343,8 @@ GOslimLoop_vars <- unique(Master_goseq_results[c(9,10)])
 
 for (i in 1:nrow(GOslimLoop_vars)) {
   # call the target dataset
-  goseq_res       <- Master_goseq_results %>%  dplyr::filter(Day %in% GOslimLoop_vars[i,2], moduleColor %in% GOslimLoop_vars[i,1])
-  WGCNA_res       <- WGCNA_MasterModData  %>%  dplyr::filter(Day %in% GOslimLoop_vars[i,2], moduleColor %in% GOslimLoop_vars[i,1])
+  goseq_res       <- Master_goseq_results %>%  dplyr::filter(Day %in% GOslimLoop_vars[i,1], moduleColor %in% GOslimLoop_vars[i,2])
+  WGCNA_res       <- WGCNA_MasterModData  %>%  dplyr::filter(Day %in% GOslimLoop_vars[i,1], moduleColor %in% GOslimLoop_vars[i,2])
   gene_names      <- WGCNA_res$geneSymbol # all gene IDs in the particular WGCNA module 
   
   # Biological Function - run GOslim
@@ -423,14 +472,14 @@ for (i in 1:nrow(GOslimLoop_vars)) {
     } else (c(MFslim_GOterm_summary_final = NULL, MF_master_gene_reference = NULL))
     
     # save GOslim final datasets for BP and MF of each  module in their respective folder(s) by Day
-    write.csv(MFslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOslim_MolFunction_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file              
-    write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOslim_BiolProc_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file       
+    write.csv(MFslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOslim_MolFunction_",GOslimLoop_vars[i,2], "Module.csv", sep ='')) # save csv file              
+    write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOslim_BiolProc_",GOslimLoop_vars[i,2], "Module.csv", sep ='')) # save csv file       
 
-    write.csv(MFslim_GOterm_summary_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOterms_and_GOslim_MolFunction_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file              
-    write.csv(BPslim_GOterm_summary_final, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOterms_and_GOslim_BiolProc_",GOslimLoop_vars[i,1], "Module.csv", sep ='')) # save csv file       
+    write.csv(MFslim_GOterm_summary_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOterms_and_GOslim_MolFunction_",GOslimLoop_vars[i,2], "Module.csv", sep ='')) # save csv file              
+    write.csv(BPslim_GOterm_summary_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOterms_and_GOslim_BiolProc_",GOslimLoop_vars[i,2], "Module.csv", sep ='')) # save csv file       
     
-    write.csv(MF_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOterms_and_GOslim_MolFunction_",GOslimLoop_vars[i,1], "Module_GENE_REFERENCE.csv", sep ='')) # save csv file              
-    write.csv(BP_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/", GOslimLoop_vars[i,2], "/GOterms_and_GOslim_BiolProc_",GOslimLoop_vars[i,1], "Module_GENE_REFERENCE.csv", sep ='')) # save csv file       
+    write.csv(MF_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOterms_and_GOslim_MolFunction_",GOslimLoop_vars[i,2], "Module_GENE_REFERENCE.csv", sep ='')) # save csv file              
+    write.csv(BP_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/", GOslimLoop_vars[i,1], "/GOterms_and_GOslim_BiolProc_",GOslimLoop_vars[i,2], "Module_GENE_REFERENCE.csv", sep ='')) # save csv file       
   
     
     print(paste(GOslimLoop_vars[i,2], GOslimLoop_vars[i,1], "done", sep = ' '))
@@ -447,49 +496,49 @@ for (i in 1:nrow(GOslimLoop_vars)) {
 # load the output from the previous for loop
 # BIOLOGICAL PROCESS  GO  SLIMS
 # primary effect modules; ambient > moderate
-d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_BiolProc_brownModule_GENE_REFERENCE.csv")
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_BiolProc_brownModule_GENE_REFERENCE.csv")
 d7_slimBP_brownModule$Day <- "Day7"
 
-d14_slimBP_brownModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_brownModule_GENE_REFERENCE.csv")
+d14_slimBP_brownModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_brownModule_GENE_REFERENCE.csv")
 d14_slimBP_brownModule$Day <- "Day14"
 
-d21_slimBP_blueModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_blueModule_GENE_REFERENCE.csv")
+d21_slimBP_blueModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_blueModule_GENE_REFERENCE.csv")
 d21_slimBP_blueModule$Day <- "Day21"
-# d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_magentaModule.csv") # no BP terms!
+# d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_magentaModule.csv") # no BP terms!
 
 # primary effect modules; moderate > ambient 
-d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_BiolProc_yellowModule_GENE_REFERENCE.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_BiolProc_yellowModule_GENE_REFERENCE.csv")
 d7_slimBP_yellowModule$Day <- "Day7"
 
-d14_slimBP_blackModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_blackModule_GENE_REFERENCE.csv")
+d14_slimBP_blackModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_blackModule_GENE_REFERENCE.csv")
 d14_slimBP_blackModule$Day <- "Day14"
 
-d21_slimBP_yellowModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_yellowModule_GENE_REFERENCE.csv")
+d21_slimBP_yellowModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_yellowModule_GENE_REFERENCE.csv")
 d21_slimBP_yellowModule$Day <- "Day21"
 
 
 # MOLECULAR FUNCTION GO  SLIMS
 # primary effect modules; ambient > moderate
-d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_MolFunction_brownModule_GENE_REFERENCE.csv")
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_MolFunction_brownModule_GENE_REFERENCE.csv")
 d7_slimMF_brownModule$Day <- "Day7"
 
-d14_slimMF_brownModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_brownModule_GENE_REFERENCE.csv")
+d14_slimMF_brownModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_brownModule_GENE_REFERENCE.csv")
 d14_slimMF_brownModule$Day <- "Day14"
 
-d21_slimMF_blueModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_blueModule_GENE_REFERENCE.csv")
+d21_slimMF_blueModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_blueModule_GENE_REFERENCE.csv")
 d21_slimMF_blueModule$Day <- "Day21"
 
-d21_slimMF_magentaModule<- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_magentaModule_GENE_REFERENCE.csv")
+d21_slimMF_magentaModule<- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_magentaModule_GENE_REFERENCE.csv")
 d21_slimMF_magentaModule$Day <- "Day21"
 
 # primary effect modules; moderate > ambient 
-d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_MolFunction_yellowModule_GENE_REFERENCE.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_MolFunction_yellowModule_GENE_REFERENCE.csv")
 d7_slimMF_yellowModule$Day <- "Day7"
 
-d14_slimMF_blackModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_blackModule_GENE_REFERENCE.csv")
+d14_slimMF_blackModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_blackModule_GENE_REFERENCE.csv")
 d14_slimMF_blackModule$Day <- "Day14"
 
-d21_slimMF_yellowModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_yellowModule_GENE_REFERENCE.csv")
+d21_slimMF_yellowModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_yellowModule_GENE_REFERENCE.csv")
 d21_slimMF_yellowModule$Day <- "Day21"
 
 # BIND DATA TO TALLY BY GROUP USING 'dplyr'  ---------------------------------------------------------- #
@@ -619,40 +668,40 @@ write.csv(MF_Mod_AGGREG_2, file = paste("Analysis/Output/GO/WGCNA_goseq/Molecula
 # load the output from the previous for loop
 # BIOLOGICAL PROCESS  GO  SLIMS
 # View(d7_slimBP_brownModule)
-d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_BiolProc_brownModule.csv")
-d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_BiolProc_greenModule.csv")
-d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_BiolProc_yellowModule.csv")
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_BiolProc_brownModule.csv")
+d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_BiolProc_greenModule.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_BiolProc_yellowModule.csv")
 
-d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_blackModule.csv")
-d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_brownModule.csv")
-d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_magentaModule.csv")
-d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_BiolProc_pinkModule.csv")
+d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_blackModule.csv")
+d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_brownModule.csv")
+d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_magentaModule.csv")
+d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_BiolProc_pinkModule.csv")
 
-d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_blackModule.csv")
-d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_blueModule.csv")
-# d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_magentaModule.csv") # no BP terms!
-d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_pinkModule.csv")
-d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_yellowModule.csv")
-d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_BiolProc_turquoiseModule.csv")
+d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_blueModule.csv")
+# d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_magentaModule.csv") # no BP terms!
+d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_BiolProc_turquoiseModule.csv")
 
 # MOLECULAR FUNCTION GO  SLIMS
-d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_MolFunction_brownModule.csv")
-d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_MolFunction_greenModule.csv")
-d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOterms_and_GOslim_MolFunction_yellowModule.csv")
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_MolFunction_brownModule.csv")
+d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_MolFunction_greenModule.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOterms_and_GOslim_MolFunction_yellowModule.csv")
 
-d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_blackModule.csv")
-d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_brownModule.csv")
-d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_magentaModule.csv")
-d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOterms_and_GOslim_MolFunction_pinkModule.csv")
+d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_blackModule.csv")
+d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_brownModule.csv")
+d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_magentaModule.csv")
+d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOterms_and_GOslim_MolFunction_pinkModule.csv")
 
-d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_blackModule.csv")
-d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_blueModule.csv")
-d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_magentaModule.csv")
-d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_pinkModule.csv")
-d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_yellowModule.csv")
-d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOterms_and_GOslim_MolFunction_turquoiseModule.csv")
+d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOterms_and_GOslim_MolFunction_turquoiseModule.csv")
 
 # BIND DATA TO FACET THE PLOTS    ---------------------------------------------------------- #
 # (1) By sampling date 0 Day 7 14 and 21 separately
@@ -1072,40 +1121,40 @@ dev.off()
 # load the output from the previous for loop
 # BIOLOGICAL PROCESS  GO  SLIMS
 View(d7_slimBP_brownModule)
-d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_brownModule.csv")
-d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_greenModule.csv")
-d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_yellowModule.csv")
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_brownModule.csv")
+d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_greenModule.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_yellowModule.csv")
 
-d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_blackModule.csv")
-d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_brownModule.csv")
-d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_magentaModule.csv")
-d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_pinkModule.csv")
+d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_blackModule.csv")
+d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_brownModule.csv")
+d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_magentaModule.csv")
+d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_pinkModule.csv")
 
-d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
-d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
-d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
-d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
-d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
-d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_turquoiseModule.csv")
+d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blueModule.csv")
+d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_magentaModule.csv")
+d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_turquoiseModule.csv")
 
 # MOLECULAR FUNCTION GO  SLIMS
-d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
-d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
-d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_yellowModule.csv")
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_brownModule.csv")
+d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_greenModule.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_yellowModule.csv")
 
-d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_blackModule.csv")
-d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_brownModule.csv")
-d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_magentaModule.csv")
-d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_pinkModule.csv")
+d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_blackModule.csv")
+d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_brownModule.csv")
+d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_magentaModule.csv")
+d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_pinkModule.csv")
 
-d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
-d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
-d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
-d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
-d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
-d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_turquoiseModule.csv")
+d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_turquoiseModule.csv")
 
 # BIND DATA TO FACET THE PLOTS    ---------------------------------------------------------- #
 # (1) By sampling date 0 Day 7 14 and 21 separately
@@ -1281,7 +1330,7 @@ MF_D21_Plot <-ggplot(data = MF_D21, aes(x = Ont, y = forcats::fct_rev(slim_term)
 
 # SAVE PLOTS  ------------------------------------------------------------------------------------------------- #
 # WGCNA Day 7 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_day7.pdf", sep =''), width=18, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_day7.pdf", sep =''), width=18, height=8)
 print(ggarrange(BP_D7_Plot, MF_D7_Plot,         
                  plotlist = NULL,
                  ncol = 2,
@@ -1289,7 +1338,7 @@ print(ggarrange(BP_D7_Plot, MF_D7_Plot,
                  labels = NULL))
 dev.off()     
 # WGCNA Day 14 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_day14.pdf", sep =''), width=18, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_day14.pdf", sep =''), width=18, height=8)
 print(ggarrange(BP_D14_Plot, MF_D14_Plot,         
                 plotlist = NULL,
                 ncol = 2,
@@ -1297,7 +1346,7 @@ print(ggarrange(BP_D14_Plot, MF_D14_Plot,
                 labels = NULL))
 dev.off()     
 # WGCNA Day 21 - all significant modules (correlated with treatment(s))
-pdf(paste("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_day21.pdf", sep =''), width=20, height=8)
+pdf(paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_day21.pdf", sep =''), width=20, height=8)
 print(ggarrange(BP_D21_Plot, MF_D21_Plot,         
                 plotlist = NULL,
                 ncol = 2,
@@ -1466,40 +1515,40 @@ library(stringr)
 # =================================================================================== # 
 # LOAD DATA
 # BIOLOGICAL PROCESS  GO  SLIMS
-d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_brownModule.csv")
-d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_greenModule.csv")
-d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_yellowModule.csv")
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_brownModule.csv")
+d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_greenModule.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_yellowModule.csv")
 
-d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_blackModule.csv")
-d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_brownModule.csv")
-d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_magentaModule.csv")
-d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_pinkModule.csv")
+d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_blackModule.csv")
+d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_brownModule.csv")
+d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_magentaModule.csv")
+d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_pinkModule.csv")
 
-d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
-d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
-d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
-d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
-d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
-d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_turquoiseModule.csv")
+d21_slimBP_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blueModule.csv")
+d21_slimBP_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_magentaModule.csv")
+d21_slimBP_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_turquoiseModule.csv")
 
 # MOLECULAR FUNCTION GO  SLIMS
-d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
-d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
-d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_yellowModule.csv")
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_brownModule.csv")
+d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_greenModule.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_yellowModule.csv")
 
-d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_blackModule.csv")
-d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_brownModule.csv")
-d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_magentaModule.csv")
-d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_pinkModule.csv")
+d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_blackModule.csv")
+d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_brownModule.csv")
+d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_magentaModule.csv")
+d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_pinkModule.csv")
 
-d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
-d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
-d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
-d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
-d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
-d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_turquoiseModule.csv")
+d21_slimMF_blackModule       <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule        <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule         <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_turquoiseModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_turquoiseModule.csv")
 
 # Ambient and Moderate effect modules 
 # Ambient 
@@ -2740,38 +2789,38 @@ for (i in 1:nrow(MF_Mod_GOslim)) {
 library(stringr)
 library(DESeq2)
 # BIOLOGICAL PROCESS  GO  SLIMS
-d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_brownModule.csv")
-d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_greenModule.csv")
-d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_BiolProc_yellowModule.csv")
+d7_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_brownModule.csv")
+d7_slimBP_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_greenModule.csv")
+d7_slimBP_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_BiolProc_yellowModule.csv")
 
-d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_blackModule.csv")
-d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_brownModule.csv")
-d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_magentaModule.csv")
-d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_BiolProc_pinkModule.csv")
+d14_slimBP_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_blackModule.csv")
+d14_slimBP_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_brownModule.csv")
+d14_slimBP_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_magentaModule.csv")
+d14_slimBP_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_BiolProc_pinkModule.csv")
 
-d21_slimBP_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blackModule.csv")
-d21_slimBP_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_blueModule.csv")
-d21_slimBP_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_magentaModule.csv")
-d21_slimBP_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_pinkModule.csv")
-d21_slimBP_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_redModule.csv")
-d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_BiolProc_yellowModule.csv")
+d21_slimBP_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blackModule.csv")
+d21_slimBP_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_blueModule.csv")
+d21_slimBP_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_magentaModule.csv")
+d21_slimBP_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_pinkModule.csv")
+d21_slimBP_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_redModule.csv")
+d21_slimBP_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_BiolProc_yellowModule.csv")
 
 # MOLECULAR FUNCTION GO  SLIMS
-d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_brownModule.csv")
-d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_greenModule.csv")
-d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day7/GOslim_MolFunction_yellowModule.csv")
+d7_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_brownModule.csv")
+d7_slimMF_greenModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_greenModule.csv")
+d7_slimMF_yellowModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GOslim_MolFunction_yellowModule.csv")
 
-d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_blackModule.csv")
-d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_brownModule.csv")
-d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_magentaModule.csv")
-d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day14/GOslim_MolFunction_pinkModule.csv")
+d14_slimMF_blackModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_blackModule.csv")
+d14_slimMF_brownModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_brownModule.csv")
+d14_slimMF_magentaModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_magentaModule.csv")
+d14_slimMF_pinkModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GOslim_MolFunction_pinkModule.csv")
 
-d21_slimMF_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blackModule.csv")
-d21_slimMF_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_blueModule.csv")
-d21_slimMF_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_magentaModule.csv")
-d21_slimMF_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_pinkModule.csv")
-d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_redModule.csv")
-d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/Day21/GOslim_MolFunction_yellowModule.csv")
+d21_slimMF_blackModule    <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blackModule.csv")
+d21_slimMF_blueModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_blueModule.csv")
+d21_slimMF_magentaModule  <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_magentaModule.csv")
+d21_slimMF_pinkModule     <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_pinkModule.csv")
+d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_redModule.csv")
+d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_yellowModule.csv")
 
 # Load the annotation file 
 Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)

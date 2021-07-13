@@ -42,10 +42,12 @@ colnames(Crass_gigas_genome_dataframe) <- c('sseqid', 'Gene_name') # rename the 
 Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 ref_update_20210602     <- read.gff("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
 crgKEGG_Pgenref_DIAMOND <- read.table(file ="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/crgKEGG_diamond_out.txt", sep = '\t', header = F)
+colnames(crgKEGG_Pgenref_DIAMOND) <- c('qseqid','sseqid','pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore') # change the names of the columns if the best blast hits
 
 
 
 # WGCNA resilts (all treatments)
+d0_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day0/d0.WGCNA_ModulMembership.csv")
 d7_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7.WGCNA_ModulMembership.csv")
 d14_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv")
 d21_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day21/d21.WGCNA_ModulMembership.csv")
@@ -69,10 +71,6 @@ DESeq2_PrimaryEffects_master <- rbind(d7_PrimaryEffects_up, d7_PrimaryEffects_do
 
 
 
-
-
-
-
 # INITAL SANITY CHECKS AND FILTER FOR BEST BLAST HITS  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 
 
@@ -85,8 +83,6 @@ length(unique(crgKEGG_Pgenref_DIAMOND$qseqid)) # 18027 of 14671
 (( length(unique(crgKEGG_Pgenref_DIAMOND$qseqid)) ) / ( length(na.omit(Geoduck_annotation$V7)) ) ) * 100 # 122.8751 % of annotated unigenes genes had a blast hit on default settings!
 
 
-
-
 ###############################################################################################################################################
 #::::::::::::::::::::::::::::::::::: MERGE PGENEROSA WITH CGIGAS BY GENE SEQ RELATEDNESS :::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 #:::::::::::::::::::::::::::::::::::::: BEST OPTION!!! (next cluster is by gene name) ::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
@@ -94,9 +90,6 @@ length(unique(crgKEGG_Pgenref_DIAMOND$qseqid)) # 18027 of 14671
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::  crgKEGG_PgenREF_besthits  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 ###############################################################################################################################################
-
-# change the names of the columns if the best blast hits
-colnames(crgKEGG_Pgenref_DIAMOND) <- c('qseqid','sseqid','pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore')
 
 # merge with the cgigas KEGG genome IDs 
 crgKEGG_Pgenref_DIAMOND_merge  <- merge(crgKEGG_Pgenref_DIAMOND, Crass_gigas_genome_dataframe, by = 'sseqid')
@@ -107,7 +100,6 @@ Geoduck_annotation_OM <- na.omit(Geoduck_annotation) # remove all instances of N
 test <- Geoduck_annotation_OM %>% dplyr::filter(V1 %in% crgKEGG_Pgenref_DIAMOND_merge$qseqid) # filter this dataset by the names in the crg KEGG blast result set
 length(test$V1) # 12811 total unigenes from the blast hit in the pool of unigenes iwth gene name 
 ( length(test$V1) / length(Geoduck_annotation_OM$V1) ) * 100 # 87.32193 % of the Pgen genome (unigenes with gene name) had a successful blast hit to the Cgigas protein database!
-
 
 
 # NOTE: we see that there are many genes labeled as "uncharacterized protein ..." 
@@ -154,9 +146,94 @@ colStdevs(crgKEGG_PgenREF_besthits[,c('pident', 'length', 'evalue', 'bitscore')]
 crgKEGG_PgenREF_besthits$qseqid
 colnames(crgKEGG_PgenREF_besthits)[1:2] <- c('geneSymbol', 'crg_KO') # reanme the first two columns to merge witht he WGCNA results!
 
+d0_WGCNA_crgKEGGhits  <- merge(d0_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 d7_WGCNA_crgKEGGhits  <- merge(d7_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 d14_WGCNA_crgKEGGhits <- merge(d14_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 d21_WGCNA_crgKEGGhits <- merge(d21_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
+
+
+
+# Day 0 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
+Day0_WGCNA_sigmodules <- as.data.frame(c('midnightblue'))
+for (i in 1:nrow(Day0_WGCNA_sigmodules)) {
+  # start with loop by calling the row value common with the 'Master_KEGG_BPTerms' data frind from rbind above 
+  modColor <- Day0_WGCNA_sigmodules[i,1]
+  
+  # call the module color in the Day 0 data
+  module_without_filter   <- d0_WGCNA_all %>% dplyr::filter(moduleColor %in% modColor)
+  genes_per_module        <- length(unique(module_without_filter$geneSymbol)) # nrow(ModuleLoop) # use this for the looped print out 
+  annotgenes_per_module   <- length(na.omit(module_without_filter$HGNC)) # nrow(ModuleLoop) # use this for the looped print out 
+  
+  
+  ModuleLoop_blasthit            <- d0_WGCNA_crgKEGGhits %>% dplyr::filter(moduleColor %in% modColor)
+  genes_per_module_blasthit      <- na.omit(module_without_filter)  %>% # ommit  genes without gene name annotation 
+    dplyr::filter(moduleColor %in% modColor) %>%   # filter for the module loop
+    dplyr::filter(geneSymbol %in% d0_WGCNA_crgKEGGhits$geneSymbol) %>%  # call only genes that have a blast hit      
+    nrow() # 
+  perc_annot_genes_with_blasthit <- ( genes_per_module_blasthit / annotgenes_per_module ) *100
+  # calaculate the percent mapped and print this...
+  print(paste("Day0", modColor, " ", 
+              genes_per_module, "genes per module", 
+              annotgenes_per_module, " annotated; ", 
+              genes_per_module_blasthit, " or", perc_annot_genes_with_blasthit,"% annotated genes with blasthit", sep = ' '))
+  
+  # Run KEGG analysis
+  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop_blasthit$crg_KO)) # ommit the 'crg:' before the actual terms
+  KEGG_cgigas <- enrichKEGG(gene = KEGG_vector_Pgen_Cgigas, 
+                            organism  = 'crg', # 'hsa' is human 'crg' is pacific oyster 
+                            pvalueCutoff = 0.05) 
+  # if loop to output the KEGG enrichment analysis ONLY if genes were successfully mapped...
+  if (  nrow(as.data.frame(head(KEGG_cgigas))) > 0 ) {
+    # creat dateframe and write the csv file out 
+    df <- as.data.frame(head(KEGG_cgigas))
+    rownames(df) <- c()
+    KEGGoutput <- as.data.frame(do.call(cbind.data.frame, df))
+    KEGGoutput$GeneRatio_2 <- gsub("/"," of ", KEGGoutput$GeneRatio)
+    KEGGoutput$Rich_Factor <- (  (as.numeric(sub("/.*", "", KEGGoutput$GeneRatio))) / (as.numeric(sub("/.*", "", KEGGoutput$BgRatio)))  ) 
+    
+    write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes.csv", sep ='')) 
+    
+    # Plot
+    theme_set(theme_classic())
+    plot<- KEGGoutput %>%  
+      ggplot(aes(x=reorder(Description, Rich_Factor), y= Rich_Factor)) + 
+      geom_point( aes(col=qvalue, size=Count)) +   # Draw points
+      geom_segment(aes(x=Description, 
+                       xend=Description, 
+                       y=min(Rich_Factor), 
+                       yend=max(Rich_Factor)),  
+                   linetype=NA, 
+                   size=0) +   # Draw dashed lines
+      labs(title="Day 0", 
+           x = "Pathway",
+           y = "Rich Factor",
+           subtitle=paste("WGCNA Module:", modColor, sep =' ')) +
+      coord_flip()
+    pdf(paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
+    print(plot)
+    dev.off()
+    
+    
+    # stringsplit and unnest for a data set of genes and IDs associated with each pathway 
+    df_2 <- as.data.frame(KEGG_cgigas)[c(1:2,8:9)]
+    df_2$gene_IDs <- as.vector(strsplit(as.character(df_2$geneID), "/"))
+    colnames(df_2) <- c("Cgigas_PathwayID", "Pathway_Description", "Pathway_gene_list", "Pathway_gene_count", "gene_IDs")
+    df_3 <- unnest(df_2, gene_IDs)
+    df_3$Cgigas_KEGG_IDs <- paste("crg:", df_3$gene_IDs, sep='')
+    Crass_gigas_ref <- Crass_gigas_genome_dataframe %>% mutate(Cgigas_KEGG_IDs = Crass_gigas_genome_dataframe$sseqid) %>% select(c('Cgigas_KEGG_IDs','Gene_name'))
+    df_final <- merge(df_3, Crass_gigas_ref, by='Cgigas_KEGG_IDs')
+    write.csv(df_final, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
+    
+  } else {}
+  
+  print(paste("Finished! Day0 module = ", modColor, sep = " "))
+}
+
+
+
+
+
+
 
 
 # Day 7 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #

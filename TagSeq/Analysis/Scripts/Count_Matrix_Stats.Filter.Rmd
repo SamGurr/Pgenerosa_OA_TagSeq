@@ -23,7 +23,7 @@ library(ggplot2)
 ```{r  setup, include=TRUE}
 print(getwd())  # working directory is the scipts folder 
 # path for output ting all .csv filtered count files
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/filtered_counts' # run this for all count matrix outputs!!!
+path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts' # run this for all count matrix outputs!!!
 
 ```
 
@@ -351,6 +351,7 @@ Figure shows that the 3CPM threshold looks like the best filter for consistant c
 a) close to the asymmptote when low reads were filtered out
 b) all genes have >50 mean read count sample-1
 c) 13k-15k genes selected across matrices - ~40% decrease in the total reference genome
+### LENIENT CUT-OFF [ 3 CPM IN 50% SAMPLES ]
 ```{r  3 CPM 50% SAMPLES}
 # ========================================================== 
 #
@@ -507,10 +508,7 @@ write.csv(cts.matrix.d14.filtered,"../Data/Filtered_Counts/3cpm_50perc/day14.cou
 write.csv(cts.matrix.d21.filtered,"../Data/Filtered_Counts/3cpm_50perc/day21.counts.filtered_3cpm50perc.csv") # 'path' called in previous # write .csv section
 
 ```
-
-
-
-### (1) LENIENT CUT-OFF [ 5 CPM IN 50% SAMPLES ]
+### LENIENT CUT-OFF [ 5 CPM IN 50% SAMPLES ]
 ```{r  5 CPM 50% SAMPLES}
 # ========================================================== 
 #
@@ -667,10 +665,7 @@ write.csv(cts.matrix.d14.filtered,"../Data/Filtered_Counts/5cpm_50perc/day14.cou
 write.csv(cts.matrix.d21.filtered,"../Data/Filtered_Counts/5cpm_50perc/day21.counts.filtered_5cpm50perc.csv") # 'path' called in previous # write .csv section
 
 ```
-
-
-
-### (2) MPORE STRICT CUT-OFF [10 CPM IN 50% SAMPLES ]
+### MORE STRICT CUT-OFF [10 CPM IN 50% SAMPLES ]
 ```{r  10 CPM 50% SAMPLES}
 # ========================================================== 
 #
@@ -858,4 +853,56 @@ filt_cts_table$PercAnnot_10cpm  <- c(All_PercAnnot_10cpm,Day0_PercAnnot_10cpm,Da
 # knitr
 knitr::kable(filt_cts_table, caption = "Filtered counts: Number & % difference of PASSED genes at two thresholds")
 write.csv(filt_cts_table, "../Data/filtered_counts/Summary_filtered_counts.csv")
+```
+
+```{r filtered counts data}
+d0_filt_10CPM  <- read.csv("../Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+d0_filt_10CPM  <- d0_filt_10CPM[,-1] 
+d7_filt_10CPM  <- read.csv("../Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+d7_filt_10CPM  <- d7_filt_10CPM[,-1] 
+d14_filt_10CPM  <- read.csv("../Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+d14_filt_10CPM  <- d14_filt_10CPM[,-1] 
+d21_filt_10CPM  <- read.csv("../Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+d21_filt_10CPM  <- d21_filt_10CPM[,-1] 
+
+# Mean +- SD filtered read counts for 10 CPM 50% filtered data 
+d0means  <- as.data.frame(colMeans(d0_filt_10CPM))
+rownames(d0means)<-NULL
+colnames(d0means) <- "mean"
+d7means  <- as.data.frame(colMeans(d7_filt_10CPM))
+rownames(d7means)<-NULL
+colnames(d7means) <- "mean"
+d14means <- as.data.frame(colMeans(d14_filt_10CPM))
+rownames(d14means)<-NULL
+colnames(d14means) <- "mean"
+d21means <- as.data.frame(colMeans(d21_filt_10CPM))
+rownames(d21means)<-NULL
+colnames(d21means) <- "mean"
+
+meanMaster_10cpm <-rbind(d0means, d7means, d14means, d21means)
+colMeans(meanMaster_10cpm)
+colSdDiffs(meanMaster_10cpm)
+
+
+# Sum  read counts for 10 CPM 50% filtered data 
+d0sum  <- as.data.frame(colSums(d0_filt_10CPM))
+rownames(d0sum)<-NULL
+colnames(d0sum) <- "sum"
+d7sum  <- as.data.frame(colSums(d7_filt_10CPM))
+rownames(d7sum)<-NULL
+colnames(d7sum) <- "sum"
+d14sum <- as.data.frame(colSums(d14_filt_10CPM))
+rownames(d14sum)<-NULL
+colnames(d14sum) <- "sum"
+d21sum <- as.data.frame(colSums(d21_filt_10CPM))
+rownames(d21sum)<-NULL
+colnames(d21sum) <- "sum"
+
+sumMaster_10cpm <-rbind(d0sum, d7sum, d14sum, d21sum)
+colMeans(sumMaster_10cpm)
+colSdDiffs(sumMaster_10cpm)
+
+
+
+
 ```
