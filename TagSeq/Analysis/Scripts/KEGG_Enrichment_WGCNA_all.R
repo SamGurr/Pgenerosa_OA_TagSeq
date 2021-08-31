@@ -6,6 +6,7 @@
 # INFORMATION FOR KEGG IN R FOUND HERE: (http://yulab-smu.top/clusterProfiler-book/chapter6.html#kegg-over-representation-test)
 
 # LOAD PACKAGES
+BiocManager::install("KEGGprofile")
 library(KEGGprofile) # BiocManager::install("KEGGprofile")
 library(clusterProfiler)
 library(KEGGREST)
@@ -20,7 +21,7 @@ library(tidyverse)
 library(fBasics)
 
 # SET WORKING DIRECTORY   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 
 # LOAD DATA  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
@@ -39,14 +40,14 @@ colnames(Crass_gigas_genome_dataframe) <- c('sseqid', 'Gene_name') # rename the 
 
 
 # Pgen annotation files and the blastx (using DIAMONd) hits to Cgigas to use downstream in KEGG pathway analysis 
-Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
-ref_update_20210602     <- read.gff("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
-crgKEGG_Pgenref_DIAMOND <- read.table(file ="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/crgKEGG_diamond_out.txt", sep = '\t', header = F)
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+ref_update_20210602     <- read.gff("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
+crgKEGG_Pgenref_DIAMOND <- read.table(file ="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/crgKEGG_diamond_out.txt", sep = '\t', header = F)
 colnames(crgKEGG_Pgenref_DIAMOND) <- c('qseqid','sseqid','pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore') # change the names of the columns if the best blast hits
 
 
 
-# WGCNA resilts (all treatments)
+# WGCNA results (all treatments)
 d0_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day0/d0.WGCNA_ModulMembership.csv")
 d7_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7.WGCNA_ModulMembership.csv")
 d14_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv")
@@ -401,7 +402,7 @@ for (i in 1:nrow(Day14_WGCNA_sigmodules)) {
 Day21_WGCNA_sigmodules <- as.data.frame(c('blue','magenta', 'yellow', 'black', 'pink', 'red', 'turquoise'))
 for (i in 1:nrow(Day21_WGCNA_sigmodules)) {
   # start with loop by calling the row value common with the 'Master_KEGG_BPTerms' data frind from rbind above 
-  modColor <- Day21_WGCNA_sigmodules[i,1]
+  modColor <- Day21_WGCNA_sigmodules[3,1]
   
   # call the module color in the Day 7 data
   module_without_filter   <- d21_WGCNA_all %>% dplyr::filter(moduleColor %in% modColor)
@@ -424,7 +425,7 @@ for (i in 1:nrow(Day21_WGCNA_sigmodules)) {
   
   
   # Run KEGG analysis
-  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop_blasthit$crg_KO)) # ommit the 'crg:' before the actual terms
+  KEGG_vector_Pgen_Cgigas   <- as.vector(gsub(".*:","",ModuleLoop_blasthit$crg_KO)) # omit the 'crg:' before the actual terms
   KEGG_cgigas <- enrichKEGG(gene = KEGG_vector_Pgen_Cgigas, 
                             organism  = 'crg', # 'hsa' is human 'crg' is pacific oyster 
                             pvalueCutoff = 0.05)
