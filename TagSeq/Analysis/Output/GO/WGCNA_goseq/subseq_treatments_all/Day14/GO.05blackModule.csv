@@ -11,7 +11,7 @@
 "10","GO:0031597",0.00370363478742745,0.999936899171582,2,4,"cytosolic proteasome complex","CC","black","Day14"
 "11","GO:0005758",0.00374244742299308,0.999574392941017,4,42,"mitochondrial intermembrane space","CC","black","Day14"
 "12","GO:0005634",0.00444500448598899,0.996988437106737,80,3216,"nucleus","CC","black","Day14"
-"13","GO:0072546",0.00691520261653658,0.99977537751906,2,8,"ER membrane protein complex","CC","black","Day14"
+"13","GO:0072546",0.00691520261653658,0.99977537751906,2,8,"EMC complex","CC","black","Day14"
 "14","GO:0031105",0.00705578869199073,0.999805397493105,2,5,"septin complex","CC","black","Day14"
 "15","GO:0008541",0.00933842637337601,0.999635393209812,2,9,"proteasome regulatory particle, lid subcomplex","CC","black","Day14"
 "16","GO:0005669",0.0105446468227152,0.998939656178722,3,27,"transcription factor TFIID complex","CC","black","Day14"

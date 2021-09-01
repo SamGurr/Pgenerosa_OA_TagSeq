@@ -25,7 +25,7 @@
 "24","GO:0005790",0.0015339640584188,0.999925523493663,3,19,"smooth endoplasmic reticulum","CC","magenta","Day21"
 "25","GO:1990023",0.00192488005506275,0.999970517319013,2,6,"mitotic spindle midzone","CC","magenta","Day21"
 "26","GO:0000940",0.00195342392540988,0.999972281321035,2,5,"condensed chromosome outer kinetochore","CC","magenta","Day21"
-"27","GO:0072546",0.00233562775943025,0.999956702791612,2,8,"ER membrane protein complex","CC","magenta","Day21"
+"27","GO:0072546",0.00233562775943025,0.999956702791612,2,8,"EMC complex","CC","magenta","Day21"
 "28","GO:0005844",0.00281062987747025,0.999829101587765,3,21,"polysome","CC","magenta","Day21"
 "29","GO:0045271",0.00339758055094041,1,1,1,"respiratory chain complex I","CC","magenta","Day21"
 "30","GO:0005871",0.0036907867554127,0.999580395205402,4,48,"kinesin complex","CC","magenta","Day21"

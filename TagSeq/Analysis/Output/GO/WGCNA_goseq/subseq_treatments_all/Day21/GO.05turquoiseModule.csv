@@ -123,7 +123,7 @@
 "122","GO:0001103",0.0209039420386791,0.996692840389513,4,12,"RNA polymerase II repressing transcription factor binding","MF","turquoise","Day21"
 "123","GO:0045504",0.0236888864650601,0.996016199370107,4,13,"dynein heavy chain binding","MF","turquoise","Day21"
 "124","GO:0045174",0.0258240428982075,0.998577988666832,2,5,"glutathione dehydrogenase (ascorbate) activity","MF","turquoise","Day21"
-"125","GO:0030374",0.0260775839797055,0.991279048024307,8,38,"nuclear receptor transcription coactivator activity","MF","turquoise","Day21"
+"125","GO:0030374",0.0260775839797055,0.991279048024307,8,38,"nuclear receptor coactivator activity","MF","turquoise","Day21"
 "126","GO:0003950",0.0261926459547543,0.989826837749133,10,56,"NAD+ ADP-ribosyltransferase activity","MF","turquoise","Day21"
 "127","GO:0003810",0.0266346779177124,0.994190857093832,5,16,"protein-glutamine gamma-glutamyltransferase activity","MF","turquoise","Day21"
 "128","GO:0001046",0.0277172738852433,0.999016459371179,2,3,"core promoter sequence-specific DNA binding","MF","turquoise","Day21"

@@ -6,7 +6,7 @@
   
 
 # SET WORKING DIRECTORY AND LOAD DATA
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # Load libraries 
 library(dplyr)
@@ -35,7 +35,7 @@ library(stringr)
 #
 # =================================================================================================
 # Build a master list of all genes and GO terms 'Pgen_GOterms2'
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
 Pgen_GOterms <- Geoduck_annotation %>% dplyr::select(c('V1','V8')) # select only two columns - those with the gene IDs and those with the GO terms
 Pgen_GOterms2 <- strsplit(Pgen_GOterms$V8, split = "; ") # create a string splitting by delimiter '; ' - view the data to see that this separates each GO term entry in the string
 Pgen_GOterms2 <- data.frame(gene.ID = rep(Pgen_GOterms$V1, sapply(Pgen_GOterms2, length)), Go.terms = unlist(Pgen_GOterms2)) # create new dataframe 'Pgen_GOterms2' listing genes for each GO term (MUCH longer!)
@@ -81,19 +81,19 @@ slim <- getOBOCollection("http://current.geneontology.org/ontology/subsets/gosli
 #
 #===================================================================================== # 
 # day7 filtered 10cpm in 50% samples ----------------------------- # 
-Day0_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day0_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day0_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day7 filtered 10cpm in 50% samples ----------------------------- # 
-Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day7_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day14 filtered 10cpm in 50% samples ----------------------------- # 
-Day14_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day14_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day14_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day21 filtered 10cpm in 50% samples ----------------------------- # 
-Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day21_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 
@@ -102,7 +102,7 @@ colnames(Day21_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 #
 #===================================================================================== #
 #Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
 # build annotation file to merge with the mean LFC tables
 annot.condenced <- Geoduck_annotation[,c(1,3:9)]
@@ -162,8 +162,6 @@ sum(sapply(length_vector.d21,length)) == dim(Day21_all.counts)[1] #should be TRU
 # =================================================================================================
 
 
-
-
 for (i in 1:nrow(WGCNA_ColorList)) {
         if (WGCNA_ColorList[i,2] == "Day0") {
         Mod <- d0_Annot_ModuleMembership %>% dplyr::filter(moduleColor %in% WGCNA_ColorList[i,1]) # call the WGCNA Day - essential here!
@@ -191,6 +189,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
         # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
         GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
         
+        write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day0/GO.05",WGCNA_ColorList[i,1], "Module_unfiltered.csv", sep ='')) # save csv file
         write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day0/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
         
         print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
@@ -222,6 +221,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
           # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
           GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
           
+          write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05",WGCNA_ColorList[i,1], "Module_unfiltered.csv", sep ='')) # save csv file
           write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day7/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
           
           print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
@@ -253,6 +253,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
                 # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
                 GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
                 
+                write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05",WGCNA_ColorList[i,1], "Module_unfiltered.csv", sep ='')) # save csv file
                 write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day14/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file
                 
                 print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
@@ -284,6 +285,7 @@ for (i in 1:nrow(WGCNA_ColorList)) {
                   # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
                   GO.05_filtered <- GO.05 %>% filter(!(numDEInCat<10 & ontology == "BP"), !(numDEInCat<2 & ontology == "MF"))
     
+                  write.csv(GO.05, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05",WGCNA_ColorList[i,1], "Module_unfiltered.csv", sep ='')) # save csv file
                   write.csv(GO.05_filtered, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05",WGCNA_ColorList[i,1], "Module.csv", sep ='')) # save csv file              
                   
                   print(paste(WGCNA_ColorList[i,2], WGCNA_ColorList[i,1], "done", sep = ' '))
@@ -320,7 +322,7 @@ d21_GO.05redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treat
 d21_GO.05yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05yellowModule.csv")
 d21_GO.05turquoiseModule <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GO.05turquoiseModule.csv")
 # View(d21_GO.05yellowModule)
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 # build annotation file to merge with the mean LFC tables
 Pgen_condenced <- Geoduck_annotation[,c(1,7)] # load just the PGEN ID and the putative gene terms
 Pgen_condenced$Gene_term    <- sub(" \\(EC.*", "", Pgen_condenced$V7)  # str_extract(annot.condenced$V7, "[^(]+")
@@ -1559,7 +1561,7 @@ BP_Mod <- rbind(d7_slimBP_yellowModule, d14_slimBP_blackModule, d21_slimBP_yello
 MF_Mod <- rbind(d7_slimMF_yellowModule, d14_slimMF_blackModule, d21_slimMF_yellowModule) # merge the data by binding rows 
 
 # Load the annotation file 
-Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 annot.condenced         <- Geoduck_annotation[,c(1,5,7)] # build annotation file to merge with master: gene ID, uniprot ID, gene terms with EC (for KEGG)
 names(annot.condenced)  <- c('Gene_IDs', 'Uniprot', 'Gene_term_EC') # RENAME THE COLUMNS 
 annot.condenced$gene    <- str_extract(annot.condenced$Gene_term_EC, "[^(]+")
@@ -2823,7 +2825,7 @@ d21_slimMF_redModule      <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_tre
 d21_slimMF_yellowModule   <- read.csv("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Day21/GOslim_MolFunction_yellowModule.csv")
 
 # Load the annotation file 
-Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 annot.condenced         <- Geoduck_annotation[,c(1,5,7)] # build annotation file to merge with master: gene ID, uniprot ID, gene terms with EC (for KEGG)
 names(annot.condenced)  <- c('Gene_IDs', 'Uniprot', 'Gene_term_EC') # RENAME THE COLUMNS 
 annot.condenced$gene    <- str_extract(annot.condenced$Gene_term_EC, "[^(]+") # condence the gene ID to all characters before the first occurance of a open parenthese '('
