@@ -40,57 +40,57 @@ Set working directory and outpath
 ```{r set_wd, include = TRUE}
 
 # SET WORKING DIRECTORY AND LOAD DATA
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/")
-path_out='C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/GO/'
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/")
+path_out='C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/GO/'
 ```
 
 LOAD DATA:
 Annotation and DE data (from DESeq2 Rmd script)
 ```{r Load_annot_and_DE_files, include = TRUE}
 ### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
 # DE files - all genes and filtered raw counts
 #  contains boolean for upregulated and downregulated DEGs
 # DEGs: Primary Effect  - Ambient_v_Moderate
-DE_d0.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/DE_Day0_Primary.csv", sep=',', header=TRUE)
+DE_d0.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/DE_Day0_Primary.csv", sep=',', header=TRUE)
 colnames(DE_d0.primary)[2] <- "gene.ID" # rename Pgen gene ID column
 
-DE_d7.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE) 
+DE_d7.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d7.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 
-DE_d7.second <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Second.csv", sep=',', header=TRUE) 
+DE_d7.second <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Second.csv", sep=',', header=TRUE) 
 colnames(DE_d7.second)[2] <- "gene.ID"# rename Pgen gene ID column
 
-DE_d7.MA_AM <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_MA_AM.csv", sep=',', header=TRUE) 
+DE_d7.MA_AM <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_MA_AM.csv", sep=',', header=TRUE) 
 colnames(DE_d7.MA_AM)[2] <- "gene.ID"# rename Pgen gene ID column
 
 
 
-DE_d14.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) 
+DE_d14.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d14.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 
-DE_d21.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/DE_Day21_Primary.csv", sep=',', header=TRUE) 
+DE_d21.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/DE_Day21_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d21.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 
 #  mapped read counts for each Day (addressed separately in DESeq2)
 # day0 filtered 10cpm in 50% samples
-Day0_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day0_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day0.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day0_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day7 filtered 10cpm in 50% samples
-Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day7_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day7_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day14 filtered 10cpm in 50% samples
-Day14_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day14_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day14_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
 # day21 filtered 10cpm in 50% samples
-Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
+Day21_all.counts <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE) 
 colnames(Day21_all.counts)[1] <- "gene.ID"# rename Pgen gene ID column
 
-All_DEGs_Primary.Ambieant_v_Moderate<-read.csv("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv")
+All_DEGs_Primary.Ambieant_v_Moderate<-read.csv("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv")
 
 
 # GOslim
@@ -795,26 +795,44 @@ print(NAs.ontology)
 
 Save significant terms
 ```{r, warning=FALSE}
+write.csv(d0.UP.05, file    = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d0.DOWN.05, file  = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d0.UP.05_filtered, file    = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(d0.DOWN.05_filtered, file  = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Downregulated.csv", row.names = FALSE)
 
+
+write.csv(d7.UP.05, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d7.DOWN.05, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d7.UP.05_filtered, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(d7.DOWN.05_filtered, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_PrimEffect_Downregulated.csv", row.names = FALSE)
 
+ 
+write.csv(d7.UP.05_second, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_SecondEffect_AvM_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d7.DOWN.05_second, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_SecondEffect_AvM_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d7.UP.05_second_filtered, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_SecondEffect_AvM_Upregulated.csv", row.names = FALSE)
 write.csv(d7.DOWN.05_second_filtered, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_SecondEffect_AvM_Downregulated.csv", row.names = FALSE)
 
+
+write.csv(d7.UP.05_MA_AM, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_GroupEffect_MAvAM_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d7.DOWN.05_MA_AM, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_GroupEffect_MAvAM_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d7.UP.05_MA_AM_filtered, file    = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_GroupEffect_MAvAM_Upregulated.csv", row.names = FALSE)
 write.csv(d7.DOWN.05_MA_AM_filtered, file  = "../Output/GO/DESeq2_goseq/Day7/GO.05.Day7_GroupEffect_MAvAM_Downregulated.csv", row.names = FALSE)
 
 
-
+write.csv(d14.UP.05, file   = "../Output/GO/DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d14.DOWN.05, file = "../Output/GO/DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d14.UP.05_filtered, file   = "../Output/GO/DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(d14.DOWN.05_filtered, file = "../Output/GO/DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Downregulated.csv", row.names = FALSE)
 
+
+write.csv(d21.UP.05, file   = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(d21.DOWN.05, file = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d21.UP.05_filtered, file   = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(d21.DOWN.05_filtered, file = "../Output/GO/DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Downregulated.csv", row.names = FALSE)
 
+
+write.csv(Const.UP.05, file   = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
+write.csv(Const.DOWN.05, file = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(Const.UP.05_filtered, file   = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Upregulated.csv", row.names = FALSE)
 write.csv(Const.DOWN.05_filtered, file = "../Output/GO/DESeq2_goseq/GO.05.ConstantDEGs_PrimEffect_Downregulated.csv", row.names = FALSE)
 ```
@@ -868,19 +886,19 @@ Master_goseq_results      <- rbind(d0.UP.05, d7.UP.05, d14.UP.05,d21.UP.05,
                               d0.DOWN.05, d7.DOWN.05, d14.DOWN.05, d21.DOWN.05) # Master GOseq OF ALL PRIMARY EFFECTS
 Master_goseq_results <- Master_goseq_results %>%  dplyr::filter(!ontology %in% 'CC') # Master GOseq OF ALL PRIMARY EFFECTS
 
-DE_d0.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/DE_Day0_Primary.csv", sep=',', header=TRUE)
+DE_d0.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day0/DE_Day0_Primary.csv", sep=',', header=TRUE)
 colnames(DE_d0.primary)[2] <- "gene.ID" # rename Pgen gene ID column
 DE_d0.primary$Day <- "Day0"
 
-DE_d7.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE) 
+DE_d7.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d7.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 DE_d7.primary$Day <- "Day7"
 
-DE_d14.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) 
+DE_d14.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day14/DE_Day14_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d14.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 DE_d14.primary$Day <- "Day14"
 
-DE_d21.primary <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/DE_Day21_Primary.csv", sep=',', header=TRUE) 
+DE_d21.primary <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day21/DE_Day21_Primary.csv", sep=',', header=TRUE) 
 colnames(DE_d21.primary)[2] <- "gene.ID"# rename Pgen gene ID column
 DE_d21.primary$Day <- "Day21"
 
@@ -909,11 +927,11 @@ Master_goseq_results_SECOND  <- rbind(d7.Second.UP.05, d7.Second.DOWN.05,
                               d7.MAvAM.UP.05, d7.MAvAM.DOWN.05) # Master GOseq OF ALL PRIMARY EFFECTS
 Master_goseq_results_SECOND <- Master_goseq_results_SECOND %>%  dplyr::filter(!ontology %in% 'CC') # Master GOseq OF ALL PRIMARY EFFECTS
 
-DE_d7.second <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Second.csv", sep=',', header=TRUE) 
+DE_d7.second <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_Second.csv", sep=',', header=TRUE) 
 colnames(DE_d7.second)[2] <- "gene.ID"# rename Pgen gene ID column
 DE_d7.second$effect <- "secondAvM"
 
-DE_d7.MAvAM <- read.csv(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_MA_AM.csv", sep=',', header=TRUE) 
+DE_d7.MAvAM <- read.csv(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/Day7/DE_Day7_MA_AM.csv", sep=',', header=TRUE) 
 colnames(DE_d7.MAvAM)[2] <- "gene.ID"# rename Pgen gene ID column
 DE_d7.MAvAM$effect <- "MAvAM"
 
@@ -922,7 +940,7 @@ Master_DESeq2_results_SECOND  <- rbind(DE_d7.second[,c('gene.ID','up','down','ef
 
 
 # Build a master list of all genes and GO terms 'Pgen_GOterms2'
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
 Pgen_GOterms <- Geoduck_annotation %>% dplyr::select(c('V1','V8')) # select only two columns - those with the gene IDs and those with the GO terms
 Pgen_GOterms2 <- strsplit(Pgen_GOterms$V8, split = "; ") # create a string splitting by delimiter '; ' - view the data to see that this separates each GO term entry in the string
 Pgen_GOterms2 <- data.frame(gene.ID = rep(Pgen_GOterms$V1, sapply(Pgen_GOterms2, length)), Go.terms = unlist(Pgen_GOterms2)) # create new dataframe 'Pgen_GOterms2' listing genes for each GO term (MUCH longer!)
@@ -1804,7 +1822,7 @@ rownames(All.UP_BPslim)  <-NULL
 Master_GOslim <- rbind(All.DOWN_MFslim[,c(10,7,9,8,3,4,5)], All.DOWN_BPslim[,c(10,7,9,8,3,4,5)], All.UP_MFslim[,c(10,7,9,8,3,4,5)], All.UP_BPslim[,c(10,7,9,8,3,4,5)]) # merge for a master table with rbind
 
 # load DESeq2 results 
-All_DEGs_Primary.Ambieant_v_Moderate<-read.csv("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv")
+All_DEGs_Primary.Ambieant_v_Moderate<-read.csv("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv")
 All_DEGs_Primary.Ambieant_v_Moderate <- All_DEGs_Primary.Ambieant_v_Moderate[2:(ncol(All_DEGs_Primary.Ambieant_v_Moderate))] # ommit the first column - DESEq2 results data 
 names(All_DEGs_Primary.Ambieant_v_Moderate)[1] <- 'Gene.ID' # rename the column 
 
@@ -1897,7 +1915,7 @@ Geom_Segment Plotting: -log1- p alue all primary efffect down regualted and upre
 ```{r All Upreg and Downreg GO terms in response to priming}
 
 # Build a master list of all genes and GO terms 'Pgen_GOterms2'
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
 Pgen_GOterms <- Geoduck_annotation %>% dplyr::select(c('V1','V8')) # select only two columns - those with the gene IDs and those with the GO terms
 Pgen_GOterms2 <- strsplit(Pgen_GOterms$V8, split = "; ") # create a string splitting by delimiter '; ' - view the data to see that this separates each GO term entry in the string
 Pgen_GOterms2 <- data.frame(gene.ID = rep(Pgen_GOterms$V1, sapply(Pgen_GOterms2, length)), Go.terms = unlist(Pgen_GOterms2)) # create new dataframe 'Pgen_GOterms2' listing genes for each GO term (MUCH longer!)
@@ -2062,7 +2080,7 @@ Geom_Segment Plotting: -log1- p alue all primary efffect down regualted and upre
 ```{r All Upreg and Downreg GO terms in response to priming}
 
 # Build a master list of all genes and GO terms 'Pgen_GOterms2'
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F) # Load themaster Pgenerosa gene list 
 Pgen_GOterms <- Geoduck_annotation %>% dplyr::select(c('V1','V8')) # select only two columns - those with the gene IDs and those with the GO terms
 Pgen_GOterms2 <- strsplit(Pgen_GOterms$V8, split = "; ") # create a string splitting by delimiter '; ' - view the data to see that this separates each GO term entry in the string
 Pgen_GOterms2 <- data.frame(gene.ID = rep(Pgen_GOterms$V1, sapply(Pgen_GOterms2, length)), Go.terms = unlist(Pgen_GOterms2)) # create new dataframe 'Pgen_GOterms2' listing genes for each GO term (MUCH longer!)
@@ -3561,7 +3579,7 @@ GOplot.merge_DOWN <- DOWN_enriched.GO.05 %>% drop_na(ontology) %>% mutate(term =
 # GOplot.merge_DOWN
 
 GO.plot_Constant<-grid.arrange(GOplot.merge_UP, GOplot.merge_DOWN, nrow=2, clip="off")
-ggsave("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/GO/GOplot_Constant.Primary.pdf", GO.plot_Constant, width = 21, height = 21, units = c("in"))
+ggsave("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/GO/GOplot_Constant.Primary.pdf", GO.plot_Constant, width = 21, height = 21, units = c("in"))
 ```
 
 
@@ -3583,16 +3601,16 @@ Create all files for the GO_MWU.R script
 output two-column csv of just the gene.id and log2fc 
 ```{r GO_MWU files - Primary_Treatment}
 DE_d0.P <- data.frame(DE_d0.primary[,c(2,4)])
-write.csv(DE_d0.P,"C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d0.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
+write.csv(DE_d0.P,"C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d0.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
 
 DE_d7.P <- data.frame(DE_d7.primary[,c(2,4)])
-write.csv(DE_d7.P,"C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d7.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
+write.csv(DE_d7.P,"C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d7.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
 
 DE_d14.P <- data.frame(DE_d14.primary[,c(2,4)])
-write.csv(DE_d14.P,"C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d14.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
+write.csv(DE_d14.P,"C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d14.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
 
 DE_d21.P <- data.frame(DE_d21.primary[,c(2,4)])
-write.csv(DE_d21.P,"C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d21.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
+write.csv(DE_d21.P,"C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/GO_MWU/d21.P.DE_GO.terms.csv",row.names=FALSE,quote=FALSE)
 
 ```
 
@@ -3666,7 +3684,7 @@ GW.d14.primary.DWNREG.om <- na.omit(GW.d14.primary.DWNREG)
 GW.d21.primary.UPREG.om  <- na.omit(GW.d21.primary.UPREG)
 GW.d21.primary.DWNREG.om <- na.omit(GW.d21.primary.DWNREG)
 
-path_genewalk='C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/Genewalk_files/' # call path
+path_genewalk='C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/GO/Genewalk_files/' # call path
 # output files 
 write.table(GW.d0.primary.UPREG.om,paste(path_genewalk,"Day0_upreg.csv", sep =''),sep=",", col.names=FALSE,row.names=FALSE, quote=FALSE)
 write.table(GW.d0.primary.DWNREG.om, paste(path_genewalk,"Day0_downreg.csv", sep =''), sep=",", col.names=FALSE,row.names=FALSE, quote=FALSE)

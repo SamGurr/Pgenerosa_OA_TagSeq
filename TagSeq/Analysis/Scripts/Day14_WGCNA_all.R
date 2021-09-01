@@ -21,7 +21,7 @@ library(hrbrthemes)
 
 
 # SET WORKING DIRECTORY AND LOAD DATA
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 # LOAD DATA
 # Tagaseq filtered counts 
 day14.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
@@ -1153,7 +1153,7 @@ write.csv(geneInfo_GROUPS, file = "Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMe
 #=====================================================================================
 
 # SET WORKING DIRECTORY AND LOAD DATA
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # Load libraries 
 library(dplyr)
@@ -1545,7 +1545,7 @@ for(i in 1:nrow(modcolor)) {
 #===================================================================================== 
 library(forcats) # for plotting later..
 ### Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
 # build annotation file to merge with the mean LFC tables
 annot.condenced <- Geoduck_annotation[,c(1,3:9)]

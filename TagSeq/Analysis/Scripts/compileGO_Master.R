@@ -7,13 +7,21 @@
   
 # Purpose: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-# (1) UNFILTERED GO term data
+# (1) UNFILTERED GO term data - WGCNA modules only
 # The objective of this script is to complile all of the enriched gene ontology terms in significant WGCNa modules into one master
 # cumulative csv file. This file will be used as the supplementary material for our manuscript - data in our manuscript contained a 
 # filtering step in which only BP terms with >=10 genes and only MF terms with >= 2 genes were used for goslim analysis
   # PRODUCT: All_GOterms_unfiltered_Master.csv
+
   
-# (2) GOSlim data
+# (2) UNFILTERED GO term data - DESEq2 results only
+# The objective of this script is to complile all of the enriched gene ontology terms in significant WGCNa modules into one master
+# cumulative csv file. This file will be used as the supplementary material for our manuscript - data in our manuscript contained a 
+# filtering step in which only BP terms with >=10 genes and only MF terms with >= 2 genes were used for goslim analysis
+# PRODUCT: All_GOterms_unfiltered_Master.csv
+
+
+# (3) GOSlim data - WGCNA modules only
 # The next part of this script is to compile all of the GOslim results from the FILTERED GO enrichment analysis (NOT the unfiltered in #1)
   # PRODUCT: All_GOSlim_Master.csv
 
@@ -180,7 +188,58 @@ write.csv(GO_Master_AllTreatments, file = paste("subseq_treatments_all/All_GOter
 
 
 
+
 # (2) 
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Compile all UNFILTERED GO term data for DESeq2 resutls!!!!  "...GENE_REFERENCE.csv" files! 
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Day 0 
+
+d0_PrimEff_downreg  <- read.csv("../DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Downregulated_unfiltered.csv") %>% dplyr::mutate(Day_effect = 'Day0_Primary_AvM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d0_PrimEff_upreg  <- read.csv("../DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated_unfiltered.csv")     %>%  dplyr::mutate(Day_effect = 'Day0_Primary_AvM') %>% dplyr::mutate(Dir = 'Upregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA'))  %>% arrange(ontology, desc(numDEInCat))
+
+d7_PrimEff_downreg <- read.csv("../DESeq2_goseq/Day7/primary_effect/GO.05.Day7_PrimEffect_Downregulated_unfiltered.csv") %>%  dplyr::mutate(Day_effect = 'Day7_Primary_AvM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d7_PrimEff_upreg   <- read.csv("../DESeq2_goseq/Day7/primary_effect/GO.05.Day7_PrimEffect_Upregulated_unfiltered.csv")   %>%  dplyr::mutate(Day_effect = 'Day7_Primary_AvM') %>% dplyr::mutate(Dir = 'Upregulated')  %>% dplyr::filter(!ontology %in% c('CC', 'NA'))  %>% arrange(ontology, desc(numDEInCat))
+
+d7_SecondEffect_AvM_downreg   <- read.csv("../DESeq2_goseq/Day7/second_effect_AvM/GO.05.Day7_SecondEffect_AvM_Downregulated_unfiltered.csv") %>%  dplyr::mutate(Day_effect = 'Day7_Second_AvM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d7_SecondEffect_AvM_upreg     <- read.csv("../DESeq2_goseq/Day7/second_effect_AvM/GO.05.Day7_SecondEffect_AvM_Upregulated_unfiltered.csv")   %>%  dplyr::mutate(Day_effect = 'Day7_Second_AvM') %>% dplyr::mutate(Dir = 'Upregulated')   %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+
+d7_GroupEffect_MAvAM_downreg      <- read.csv("../DESeq2_goseq/Day7/group_effect_MAvAM/GO.05.Day7_GroupEffect_MAvAM_Downregulated_unfiltered.csv") %>%  dplyr::mutate(Day_effect = 'Day7_Group_MAvAM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d7_GroupEffect_MAvAM_upreg        <- read.csv("../DESeq2_goseq/Day7/group_effect_MAvAM/GO.05.Day7_GroupEffect_MAvAM_Upregulated_unfiltered.csv")   %>%  dplyr::mutate(Day_effect = 'Day7_Group_MAvAM') %>% dplyr::mutate(Dir = 'Upregulated')   %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+
+d14_PrimEff_downreg  <- read.csv("../DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Downregulated_unfiltered.csv") %>%  dplyr::mutate(Day_effect = 'Day14_Primary_AvM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d14_PrimEff_upreg  <- read.csv("../DESeq2_goseq/Day14/GO.05.Day14_PrimEffect_Upregulated_unfiltered.csv")     %>%  dplyr::mutate(Day_effect = 'Day14_Primary_AvM') %>% dplyr::mutate(Dir = 'Upregulated')   %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+
+d21_PrimEff_downreg  <- read.csv("../DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Downregulated_unfiltered.csv") %>%  dplyr::mutate(Day_effect = 'Day21_Primary_AvM') %>% dplyr::mutate(Dir = 'Downregulated') %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+d21_PrimEff_upreg  <- read.csv("../DESeq2_goseq/Day21/GO.05.Day21_PrimEffect_Upregulated_unfiltered.csv")     %>%  dplyr::mutate(Day_effect = 'Day21_Primary_AvM') %>% dplyr::mutate(Dir = 'Upregulated')   %>% dplyr::filter(!ontology %in% c('CC', 'NA')) %>% arrange(ontology, desc(numDEInCat))
+
+
+# compile master file
+GO_Master_DESeq2 <- rbind(d0_PrimEff_downreg, d0_PrimEff_upreg,
+                      d7_PrimEff_downreg, d7_PrimEff_upreg,
+                      d7_SecondEffect_AvM_downreg, d7_SecondEffect_AvM_upreg,
+                      d7_GroupEffect_MAvAM_downreg, d7_GroupEffect_MAvAM_upreg,
+                      d14_PrimEff_downreg, d14_PrimEff_upreg,
+                      d21_PrimEff_downreg, d21_PrimEff_upreg)
+
+View(GO_Master_DESeq2)
+
+write.csv(GO_Master_DESeq2, file = paste("../DESeq2_goseq/DESEq2_GOterms_unfiltered_Master.csv", sep ='')) # write the file
+
+
+  
+  
+  
+  
+  
+  
+
+# (3) 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Compile all GOslim data! "...GENE_REFERENCE.csv" files! 
