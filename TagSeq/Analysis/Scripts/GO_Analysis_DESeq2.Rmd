@@ -555,6 +555,13 @@ Find only enriched GO terms that are statistically significant at cutoff
 ```{r}
 
 
+##### NOTE #####
+# each of the GO analysis below contains two data sets: 
+# (1) the UNFILTERED data (i.e. d0.UP.05 = day 0, upregualted genes, significant GO terms < 0.05)
+# (2) the FILTERED data (i.e. d0.UP.05_filtered = day 0, upregualted genes, significant GO terms < 0.05 AND filtered for BP terms >= 2 genes per term + MG terms >= 2 per term)
+# ....review  the compileGO.R script for the cumulative spreadsheet of ALL UNFILTERED GO terms for the funtional analysis of each pairwise DE below!
+
+
 # Day0 Primary Treatment effect  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;
 
 
@@ -795,6 +802,13 @@ print(NAs.ontology)
 
 Save significant terms
 ```{r, warning=FALSE}
+
+##### NOTE #####
+# Save both the filtered and unfiltered data sets! (two output files for each pairwise DE analysis)
+# The data sets without the filter (number of genes for GO calls) were compiled into a cumulative data file 'compileGO_Master.R' in the Scripts folder 
+# Review the output from this script - this spreadsheet contains ALL unfiltered data!!!
+
+
 write.csv(d0.UP.05, file    = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d0.DOWN.05, file  = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Downregulated_unfiltered.csv", row.names = FALSE) # unfiltered of GO terms <= 2 numDEinCAT
 write.csv(d0.UP.05_filtered, file    = "../Output/GO/DESeq2_goseq/Day0/GO.05.Day0_PrimEffect_Upregulated.csv", row.names = FALSE)

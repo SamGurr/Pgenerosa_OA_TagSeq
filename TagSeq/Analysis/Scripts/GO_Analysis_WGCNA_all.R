@@ -149,6 +149,11 @@ sum(sapply(length_vector.d21,length)) == dim(Day21_all.counts)[1] #should be TRU
 
 
 
+##### NOTE #####
+# The for loops below output both the filtered and unfiltered data sets! (two output files for the network analysis on each sampling day)
+# The data sets without the filter (number of genes for GO calls) were compiled into a cumulative data file 'compileGO_Master.R' in the Scripts folder 
+# Review this spreadsheet for ALL unfiltered data!!!
+
 
 
 # =================================================================================================

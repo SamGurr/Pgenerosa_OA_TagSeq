@@ -23,7 +23,7 @@ library(ggplot2)
 ```{r  setup, include=TRUE}
 print(getwd())  # working directory is the scipts folder 
 # path for output ting all .csv filtered count files
-path = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts' # run this for all count matrix outputs!!!
+path = 'C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/Filtered_Counts' # run this for all count matrix outputs!!!
 
 ```
 
@@ -34,7 +34,7 @@ raw_counts <- read.csv("../../HPC_work/Output/20210227_transcript_count_matrix__
 UT_seq_map <- read.csv(file="../../Seq_details/20201020_Gurr_TagSeq_UTAustin.csv", sep=',', header=TRUE)
 smpl_ref <- read.csv(file="../../Seq_details/Sample_reference.csv", sep=',', header=TRUE)
 treatment_ref <- read.csv(file="../../Seq_details/Extraction_checklist.csv", sep=',', header=TRUE)
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 
 
 nrow(Geoduck_annotation)
@@ -46,17 +46,18 @@ Geoduck_annotationOM <- na.omit(Geoduck_annotation) # genes with annotation - om
 
 
 ```{r  }
+
 # MASTER REFERENCE DATA.FRAME
 # format and merge to buld master reference dataframe
-smpl_ref$Seq_Pos <- paste(smpl_ref$ï..TagSeq_Plate, smpl_ref$TagSeq_Well, sep="_")
+smpl_ref$Seq_Pos <- paste(smpl_ref$Ã¯..TagSeq_Plate, smpl_ref$TagSeq_Well, sep="_")
 smpl_ref <- smpl_ref[,-c(1:2)]
-UT_seq_map$Seq_Pos  <- paste(UT_seq_map$ï..Plate, UT_seq_map$Well, sep="_")
+UT_seq_map$Seq_Pos  <- paste(UT_seq_map$Ã¯..Plate, UT_seq_map$Well, sep="_")
 UT_seq_map <- UT_seq_map[-c(1:2)]
 Seq.Ref <- merge(smpl_ref, UT_seq_map, by = "Seq_Pos")
 Mstr.Ref <- merge(Seq.Ref, treatment_ref, by = "Geoduck_ID") %>% dplyr::select(c(1,3,8:14))
 # View(Mstr.Ref)
 # write .csv
-path.out = 'C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/'
+path.out = 'C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Data/'
 write.csv(Mstr.Ref,paste(path.out,"Master_Exp.Treatment_Metadata.csv"))
 ```
 
@@ -138,7 +139,7 @@ raw.cts.d0 <- data.frame(raw.cts.d0[,-1], row.names=raw.cts.d0[,1])
 raw.cts.d0  <-as.matrix(raw.cts.d0, row.names="transcript_id")
 ncol(raw.cts.d0) # 8  samples from just Day 0
 nrow(raw.cts.d0) # 34947 total genes
-paste( (mean(colSums(raw.cts.d0))) , (sd(colSums(raw.cts.d0))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(raw.cts.d0))) , (sd(colSums(raw.cts.d0))), sep ='?')  # mean SD read count per sample
 colnames(raw.cts.d0) == exp.data.d0$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
 
 # ========================================================== 
@@ -150,7 +151,7 @@ raw.cts.d7 <- data.frame(raw.cts.d7[,-1], row.names=raw.cts.d7[,1])
 raw.cts.d7  <-as.matrix(raw.cts.d7, row.names="transcript_id")
 ncol(raw.cts.d7) # 36  samples from just Day 7
 nrow(raw.cts.d7) # 34947 total genes
-paste( (mean(colSums(raw.cts.d7))) , (sd(colSums(raw.cts.d7))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(raw.cts.d7))) , (sd(colSums(raw.cts.d7))), sep ='?')  # mean SD read count per sample
 colnames(raw.cts.d7) == exp.data.d7$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
 
 # ========================================================== 
@@ -162,7 +163,7 @@ raw.cts.d14 <- data.frame(raw.cts.d14[,-1], row.names=raw.cts.d14[,1])
 raw.cts.d14  <-as.matrix(raw.cts.d14, row.names="transcript_id")
 ncol(raw.cts.d14) # 35  samples from just Day 14
 nrow(raw.cts.d14) # 34947 total genes
-paste( (mean(colSums(raw.cts.d14))) , (sd(colSums(raw.cts.d14))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(raw.cts.d14))) , (sd(colSums(raw.cts.d14))), sep ='?')  # mean SD read count per sample
 colnames(raw.cts.d14) == exp.data.d14$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
 
 # ========================================================== 
@@ -174,7 +175,7 @@ raw.cts.d21 <- data.frame(raw.cts.d21[,-1], row.names=raw.cts.d21[,1])
 raw.cts.d21  <-as.matrix(raw.cts.d21, row.names="transcript_id")
 ncol(raw.cts.d21) # 8  samples from just Day 21
 nrow(raw.cts.d21) # 34947 total genes
-paste( (mean(colSums(raw.cts.d21))) , (sd(colSums(raw.cts.d21))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(raw.cts.d21))) , (sd(colSums(raw.cts.d21))), sep ='?')  # mean SD read count per sample
 colnames(raw.cts.d21) == exp.data.d21$Sample.Name # check if TRUE, means the same as the exp/design dataframe exp.data.d0
 
 
@@ -692,7 +693,7 @@ all_2_samp <- dim(cts.matrix.all_2.filtered)[2]
 # % Genes with annotation == (filtered genes with annotation / filtered genes) * 100 
 All_PercAnnot_10cpm <- paste( ( (nrow(Geoduck_annotationOM %>% dplyr::filter(V1  %in% (rownames(cts.matrix.all_2.filtered))))) / nrow(cts.matrix.all_2.filtered) * 100), " %", sep = '')
 
-paste( (mean(colSums(cts.matrix.all_2.filtered))) , (sd(colSums(cts.matrix.all_2.filtered))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(cts.matrix.all_2.filtered))) , (sd(colSums(cts.matrix.all_2.filtered))), sep ='?')  # mean SD read count per sample
 
 
 # ========================================================== 
@@ -719,7 +720,7 @@ summary(keep.d0_2) # FALSE 25740 & TRUE 9207 -- more than half of the genes did 
 cts.matrix.d0_2.filtered <- cts.matrix.d0_2[keep.d0_2,] # Subset the rows of countdata to keep the more highly expressed genes
 dim(cts.matrix.d0_2.filtered) #  9207 genes & 8 samples
 
-paste( (mean(colSums(cts.matrix.d0_2.filtered))) , (sd(colSums(cts.matrix.d0_2.filtered))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(cts.matrix.d0_2.filtered))) , (sd(colSums(cts.matrix.d0_2.filtered))), sep ='?')  # mean SD read count per sample
 
 hist_2_d0<-qplot((colSums(cts.matrix.d0_2.filtered)) , geom="histogram")
 d0_2_numgenes <- dim(cts.matrix.d0_2.filtered)[1]
@@ -754,7 +755,7 @@ hist_2_d7<-qplot((colSums(cts.matrix.d7_2.filtered)) , geom="histogram")
 d7_2_numgenes <- dim(cts.matrix.d7_2.filtered)[1]
 d7_2_samp <- dim(cts.matrix.d7_2.filtered)[2]
 
-paste( (mean(colSums(cts.matrix.d7_2.filtered))) , (sd(colSums(cts.matrix.d7_2.filtered))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(cts.matrix.d7_2.filtered))) , (sd(colSums(cts.matrix.d7_2.filtered))), sep ='?')  # mean SD read count per sample
 
 
 Day7_PercAnnot_10cpm <- paste( ( (nrow(Geoduck_annotationOM %>% dplyr::filter(V1  %in% (rownames(cts.matrix.d7_2.filtered))))) / nrow(cts.matrix.d7_2.filtered) * 100), " %", sep = '')
@@ -786,7 +787,7 @@ hist_2_d14<-qplot((colSums(cts.matrix.d14_2.filtered)) , geom="histogram")
 d14_2_numgenes <- dim(cts.matrix.d14_2.filtered)[1]
 d14_2_samp <- dim(cts.matrix.d14_2.filtered)[2]
 
-paste( (mean(colSums(cts.matrix.d14_2.filtered))) , (sd(colSums(cts.matrix.d14_2.filtered))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(cts.matrix.d14_2.filtered))) , (sd(colSums(cts.matrix.d14_2.filtered))), sep ='?')  # mean SD read count per sample
 
 
 Day14_PercAnnot_10cpm <- paste( ( (nrow(Geoduck_annotationOM %>% dplyr::filter(V1  %in% (rownames(cts.matrix.d14_2.filtered))))) / nrow(cts.matrix.d14_2.filtered) * 100), " %", sep = '')
@@ -816,7 +817,7 @@ hist_2_d21<-qplot((colSums(cts.matrix.d21_2.filtered)) , geom="histogram")
 d21_2_numgenes <- dim(cts.matrix.d21_2.filtered)[1]
 d21_2_samp <- dim(cts.matrix.d21_2.filtered)[2]
 
-paste( (mean(colSums(cts.matrix.d21_2.filtered))) , (sd(colSums(cts.matrix.d21_2.filtered))), sep ='±')  # mean SD read count per sample
+paste( (mean(colSums(cts.matrix.d21_2.filtered))) , (sd(colSums(cts.matrix.d21_2.filtered))), sep ='?')  # mean SD read count per sample
 
 Day21_PercAnnot_10cpm <- paste( ( (nrow(Geoduck_annotationOM %>% dplyr::filter(V1  %in% (rownames(cts.matrix.d21_2.filtered))))) / nrow(cts.matrix.d21_2.filtered) * 100), " %", sep = '')
 
@@ -850,6 +851,7 @@ filt_cts_table$GeneCount_diff_10cpm_5cpm <- c( (all_2_numgenes/all_1_numgenes*10
 
 filt_cts_table$PercAnnot_5cpm   <- c(All_PercAnnot_5cpm,Day0_PercAnnot_5cpm,Day7_PercAnnot_5cpm,Day14_PercAnnot_5cpm, Day21_PercAnnot_5cpm)
 filt_cts_table$PercAnnot_10cpm  <- c(All_PercAnnot_10cpm,Day0_PercAnnot_10cpm,Day7_PercAnnot_10cpm,Day14_PercAnnot_10cpm, Day21_PercAnnot_10cpm)
+
 # knitr
 knitr::kable(filt_cts_table, caption = "Filtered counts: Number & % difference of PASSED genes at two thresholds")
 write.csv(filt_cts_table, "../Data/filtered_counts/Summary_filtered_counts.csv")
@@ -883,7 +885,6 @@ meanMaster_10cpm <-rbind(d0means, d7means, d14means, d21means)
 colMeans(meanMaster_10cpm)
 colSdDiffs(meanMaster_10cpm)
 
-
 # Sum  read counts for 10 CPM 50% filtered data 
 d0sum  <- as.data.frame(colSums(d0_filt_10CPM))
 rownames(d0sum)<-NULL
@@ -901,8 +902,8 @@ colnames(d21sum) <- "sum"
 sumMaster_10cpm <-rbind(d0sum, d7sum, d14sum, d21sum)
 colMeans(sumMaster_10cpm)
 colSdDiffs(sumMaster_10cpm)
-
-
-
+min(sumMaster_10cpm)
+max(sumMaster_10cpm)
+View(sumMaster_10cpm)
 
 ```
