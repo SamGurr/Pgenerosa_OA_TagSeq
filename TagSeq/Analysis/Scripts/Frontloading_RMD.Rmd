@@ -1,0 +1,373 @@
+---
+title: "Frontloading_RMD"
+author: "Samuel Gurr"
+date: "9/23/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+# LOAD PACKAGES
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(kableExtra)
+library(knitr)
+# SET WORKING DIRECTORY AND LOAD DATA
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+
+ # LOAD DATA 
+annot = read.delim2(file = "Seq_details/Panopea-generosa-genes-annotations.txt",header = F) # annotation file P generosa 
+
+# WGCNA modules
+day7.ModMem   <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)   %>%  dplyr::rename(Pgen_ID = X) %>%  mutate(Pgen_ID = as.character(Pgen_ID)) %>%  dplyr::select(c('Pgen_ID','moduleColor'))
+day14.ModMem  <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE)  %>%  dplyr::rename(Pgen_ID = X) %>%  mutate(Pgen_ID = as.character(Pgen_ID)) %>%  dplyr::select(c('Pgen_ID','moduleColor'))
+day21.ModMem  <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE)  %>%  dplyr::rename(Pgen_ID = X) %>%  mutate(Pgen_ID = as.character(Pgen_ID)) %>%  dplyr::select(c('Pgen_ID','moduleColor'))
+
+# expression read counts 
+# Day 7
+Day7_exp_data <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day7/ Day7.PrimaryDEGs_AvM__DESeq2results.csv", sep=',', header=TRUE) %>% dplyr::select(!c('X','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'))
+# Day 14
+Day14_exp_data <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day14/ Day14.Primary_DESeq2results.csv", sep=',', header=TRUE) %>% dplyr::select(!c('X','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'))
+# Day 21
+Day21_exp_data <- read.csv(file="Analysis/Output/DESeq2/10cpm/Day21/ Day21.Primary_DESeq2results.csv", sep=',', header=TRUE) %>% dplyr::select(!c('X','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj'))
+
+# experiment metadata (treatments)
+Day7_Master.Exp.Metadata   <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE) %>% 
+  dplyr::filter(Date %in% 20190731) %>% # call only day 7 
+  dplyr::select(c('Sample.Name', 'All_Treatment')) %>% # select only the sample names and the treatment groups 
+  dplyr::mutate(All_Treatment = factor(All_Treatment)) # make the treatment groups a factor 
+Day14_Master.Exp.Metadata   <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE) %>% 
+  dplyr::filter(Date %in% 20190807) %>% # call only day 7 
+  dplyr::select(c('Sample.Name', 'All_Treatment')) %>% # select only the sample names and the treatment groups 
+  dplyr::mutate(All_Treatment = factor(All_Treatment)) # make the treatment groups a factor 
+Day21_Master.Exp.Metadata   <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE) %>% 
+  dplyr::filter(Date %in% 20190814) %>% # call only day 7 
+  dplyr::select(c('Sample.Name', 'All_Treatment')) %>% # select only the sample names and the treatment groups 
+  dplyr::mutate(All_Treatment = factor(All_Treatment)) # make the treatment groups a factor 
+```
+
+## Call modules representing higher expression by naive clams throughout the subseqent exposures 
+
+- 'Naive_modules' == all mods of interest
+
+```{r naive mods, echo=TRUE}
+day7.brown    <- day7.ModMem %>% dplyr::filter(moduleColor %in% 'brown')     %>% dplyr::mutate(day ='Day7')
+day14.brown   <- day14.ModMem %>% dplyr::filter(moduleColor %in% 'brown')    %>% dplyr::mutate(day ='Day14')
+day21.blue    <- day21.ModMem %>% dplyr::filter(moduleColor %in% 'blue')     %>% dplyr::mutate(day ='Day21')
+day21.magenta <- day21.ModMem %>% dplyr::filter(moduleColor %in% 'magenta')  %>% dplyr::mutate(day ='Day21')
+
+Naive_modules <- rbind(day7.brown, day14.brown, day21.blue, day21.magenta)
+
+```
+
+- 'NaiveResponse_genes_data' call all genes that occured THREE times in 'Naive_modules'
+- Why? These genes are represent those with persistant high expression relative to the pre-exposed (primed) clams!
+- there are 315 total genes in this category
+
+```{r persistantly expressed by naive, echo=T}
+
+NaiveResponse_genes <- Naive_modules %>% 
+                        dplyr::group_by(Pgen_ID) %>% 
+                        dplyr::summarise(count = n()) %>% 
+                        dplyr::filter(count == 3)
+# View(NaiveResponse_genes) 
+NaiveResponse_genes        = NaiveResponse_genes$Pgen_ID
+NaiveResponse_genes_ANNOT  = match(NaiveResponse_genes, annot$V1)
+NaiveResponse_genes_data   <- data.frame(geneSymbol = annot$V1[NaiveResponse_genes_ANNOT],
+                                         Annotation = annot$V7[NaiveResponse_genes_ANNOT])
+# nrow(NaiveResponse_genes_data) # 315 genes present on all sampling days 
+```
+
+# Calculate the contorl ratio (Y axis) and the foldchangie ratio (x axis) 
+
+```{r merge with expression data for plotting, echo=T}
+# Day 7 gene expression
+Day_WGCNA_genes <- Day7_exp_data %>% 
+  dplyr::filter(Gene %in% NaiveResponse_genes)
+Day7_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
+  reshape2::melt(id.var = 'Gene') %>% 
+  dplyr::rename(Sample.Name = variable)
+Day7_WGCNA_genes_Merge <- merge(Day7_WGCNA_genes_melted, Day7_Master.Exp.Metadata, by = 'Sample.Name') %>% 
+  dplyr::group_by(Gene, All_Treatment) %>% 
+  dplyr::select(!'Sample.Name') %>% 
+  dplyr::summarise(meanExp = mean(value))
+Day7_READY <- dcast(Day7_WGCNA_genes_Merge, Gene ~ All_Treatment)
+for (i in 1:nrow(Day7_READY)) {
+          # Moderate - higher expression AM > AA
+        if (Day7_READY$AM[i] > Day7_READY$AA[i]) {
+          Day7_READY$wgcna.xall_mod[i] <- ( (Day7_READY$MM[i] / Day7_READY$MA[i]) / (Day7_READY$AM[i] / Day7_READY$AA[i]) ) # call MA as the control for MM ratio
+          Day7_READY$wgcna.yall_mod[i] <- (Day7_READY$MA[i] / Day7_READY$AA[i]) # Y Axis - this is simply the conditioned control over the naive control ( MA / AA ) 
+              } else {
+                Day7_READY$wgcna.xall_mod[i] <- NA  # X axis  - call NA    
+                Day7_READY$wgcna.yall_mod[i] <- NA # Y Axis  - call NA
+              }
+            # Severe - higher expression AS > AA
+          if (Day7_READY$AS[i] > Day7_READY$AA[i]) {
+            Day7_READY$wgcna.xall_sev[i] <- ( (Day7_READY$MS[i] / Day7_READY$MA[i]) / (Day7_READY$AS[i] / Day7_READY$AA[i]) ) # call AA as the control for MM ratio
+            Day7_READY$wgcna.yall_sev[i] <- (Day7_READY$MA[i] / Day7_READY$AA[i])            # Y Axis - this is simply the conditioned control over the naive control ( MA / AA ) 
+                } else {
+                  Day7_READY$wgcna.xall_sev[i] <- NA  # X axis  - call NA 
+                  Day7_READY$wgcna.yall_sev[i] <- NA # Y Axis  - call NA
+                }
+}
+# Day7_READY
+
+# Day 14 gene expression
+Day_WGCNA_genes <- Day14_exp_data %>% 
+  dplyr::filter(Gene %in% NaiveResponse_genes)
+Day14_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
+  reshape2::melt(id.var = 'Gene') %>% 
+  dplyr::rename(Sample.Name = variable)
+Day14_WGCNA_genes_Merge <- merge(Day14_WGCNA_genes_melted, Day14_Master.Exp.Metadata, by = 'Sample.Name') %>% 
+  dplyr::group_by(Gene, All_Treatment) %>% 
+  dplyr::select(!'Sample.Name') %>% 
+  dplyr::summarise(meanExp = mean(value))
+Day14_READY <- dcast(Day14_WGCNA_genes_Merge, Gene ~ All_Treatment)
+for (i in 1:nrow(Day14_READY)) {
+          # Moderate - higher expression AM > AA
+        if (Day14_READY$AM[i] > Day14_READY$AA[i]) {
+          Day14_READY$wgcna.xall_mod[i] <- ( (Day14_READY$MM[i] / Day14_READY$MA[i]) / (Day14_READY$AM[i] / Day14_READY$AA[i]) ) # call MA as the control for MM ratio
+          Day14_READY$wgcna.yall_mod[i] <- (Day14_READY$MA[i] / Day14_READY$AA[i]) # Y Axis - this is simply the conditioned control over the naive control ( MA / AA ) 
+              } else {
+                Day14_READY$wgcna.xall_mod[i] <- NA  # X axis  - call NA    
+                Day14_READY$wgcna.yall_mod[i] <- NA # Y Axis  - call NA
+              }
+            # Severe - higher expression AS > AA
+          if (Day14_READY$AS[i] > Day14_READY$AA[i]) {
+            Day14_READY$wgcna.xall_sev[i] <- ( (Day14_READY$MS[i] / Day14_READY$MA[i]) / (Day14_READY$AS[i] / Day14_READY$AA[i]) ) # call AA as the control for MM ratio
+            Day14_READY$wgcna.yall_sev[i] <- (Day14_READY$MA[i] / Day14_READY$AA[i])            # Y Axis - this is simply the conditioned control over the naive control ( MA / AA ) 
+                } else {
+                  Day14_READY$wgcna.xall_sev[i] <- NA  # X axis  - call NA 
+                  Day14_READY$wgcna.yall_sev[i] <- NA # Y Axis  - call NA
+                }
+}
+# Day14_READY
+
+
+# Day 21 gene expression
+Day_WGCNA_genes <- Day21_exp_data %>% 
+  dplyr::filter(Gene %in% NaiveResponse_genes)
+Day21_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
+  reshape2::melt(id.var = 'Gene') %>% 
+  dplyr::rename(Sample.Name = variable)
+Day21_WGCNA_genes_Merge <- merge(Day21_WGCNA_genes_melted, Day21_Master.Exp.Metadata, by = 'Sample.Name') %>% 
+  dplyr::group_by(Gene, All_Treatment) %>% 
+  dplyr::select(!'Sample.Name') %>% 
+  dplyr::summarise(meanExp = mean(value))
+Day21_READY <- dcast(Day21_WGCNA_genes_Merge, Gene ~ All_Treatment)
+for (i in 1:nrow(Day21_READY)) {
+          # Moderate - higher expression AM > AA
+        if (Day21_READY$AAM[i] > Day21_READY$AAA[i]) {
+          Day21_READY$wgcna.xall_mod[i] <- ( (Day21_READY$MAM[i] / Day21_READY$MAA[i]) / (Day21_READY$AAM[i] / Day21_READY$AAA[i]) ) # call MA as the control for MM ratio
+          Day21_READY$wgcna.yall_mod[i] <- (Day21_READY$MAA[i] / Day21_READY$AAA[i]) # Y Axis - this is simply the conditioned control over the naive control ( MA / AA ) 
+              } else {
+                Day21_READY$wgcna.xall_mod[i] <- NA  # X axis  - call NA    
+                Day21_READY$wgcna.yall_mod[i] <- NA # Y Axis  - call NA
+              }
+}
+# Day21_READY
+```
+
+### Day 7 - Frontloaded genes (Plot)
+
+```{r plotting Day 7, echo=FALSE}
+# plot the frontloaded genes formula using x axis for the moderate treatment (second exposure, day 7)
+P.wgcna.mod <- Day7_READY %>% 
+  dplyr::select(c('wgcna.xall_mod', 'wgcna.yall_mod')) %>% 
+  na.omit() %>% 
+  dplyr::filter(wgcna.yall_mod < 3) %>% 
+  ggplot(aes(x=wgcna.xall_mod, y=wgcna.yall_mod)) +
+  geom_point() +
+  theme_classic() + 
+  stat_smooth(method = "lm", 
+              formula = y ~ x + poly(x, 2) - 1) +
+  geom_vline(xintercept=1, linetype="dotted") + 
+  geom_hline(yintercept=1, linetype="dotted") + 
+  labs(y= "Conditioned to naive control ratio", 
+       x = "Conditioned to naive foldchange ratio",
+       title = "Day 7 
+       Frontloaded genes; response to moderate pCO2") + 
+  expand_limits(x = 0, y = 0) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 1, ymax = 1.5,
+           alpha = .2) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+           alpha = .5)
+P.wgcna.mod
+
+
+# plot the frontloaded genes formula using x axis for the severe treatment (second exposure, day 7)
+P.wgcna.sev <- Day7_READY %>% 
+  dplyr::select(c('wgcna.xall_sev', 'wgcna.yall_sev')) %>% 
+  na.omit() %>% 
+  dplyr::filter(wgcna.yall_sev < 3) %>% 
+  ggplot(aes(x=wgcna.xall_sev, y=wgcna.yall_sev)) +
+  geom_point() +
+  theme_classic() + 
+  stat_smooth(method = "lm", 
+              formula = y ~ x + poly(x, 2) - 1) +
+  geom_vline(xintercept=1, linetype="dotted") + 
+  geom_hline(yintercept=1, linetype="dotted") + 
+  labs(y= "Conditioned to naive control ratio", 
+       x = "Conditioned to naive foldchange ratio",
+       title = "Day 7 Frontloaded genes; response to severe pCO2") + 
+  expand_limits(x = 0, y = 0) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 1, ymax = 1.5,
+           alpha = .2) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+           alpha = .5)
+P.wgcna.sev
+
+```
+
+### Day 7 - Frontloaded genes (Table)
+
+```{r table Day 7, echo=TRUE}
+
+# MODERATE second treatment
+Day7.wgcna.frontloaded_genes_mod <- Day7_READY %>% 
+                                dplyr::filter(wgcna.xall_mod < 1) %>% 
+                                dplyr::filter(wgcna.yall_mod > 1) %>%
+                                dplyr::select('Gene')
+
+Day7.wgcna.frontloadprobes_mod        = Day7.wgcna.frontloaded_genes_mod$Gene
+probes2annot_mod                      = match(Day7.wgcna.frontloadprobes_mod, annot$V1)
+Day7.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
+                                              Genes = annot$V7[probes2annot_mod])
+kable(Day7.wgcna.frontloaded_mod_ANNOT)
+
+# SEVERE second treatment
+Day7.wgcna.frontloaded_genes_sev <- Day7_READY %>% 
+                                dplyr::filter(wgcna.xall_sev < 1) %>% 
+                                dplyr::filter(wgcna.yall_sev > 1) %>%
+                                dplyr::select('Gene')
+
+Day7.wgcna.frontloadprobes_sev        = Day7.wgcna.frontloaded_genes_sev$Gene
+probes2annot_sev                      = match(Day7.wgcna.frontloadprobes_sev, annot$V1)
+Day7.wgcna.frontloaded_sev_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_sev],
+                                              Genes = annot$V7[probes2annot_sev])
+kable(Day7.wgcna.frontloaded_sev_ANNOT)
+```
+
+### Day 14 - Frontloaded genes (Plot)
+
+```{r plotting Day 14, echo=F}
+# plot the frontloaded genes formula using x axis for the moderate treatment (second exposure, day 14)
+P.wgcna.mod <- Day14_READY %>% 
+  dplyr::select(c('wgcna.xall_mod', 'wgcna.yall_mod')) %>% 
+  na.omit() %>% 
+  #dplyr::filter(wgcna.yall_mod < 3) %>% 
+  ggplot(aes(x=wgcna.xall_mod, y=wgcna.yall_mod)) +
+  geom_point() +
+  theme_classic() + 
+  stat_smooth(method = "lm", 
+              formula = y ~ x + poly(x, 2) - 1) +
+  geom_vline(xintercept=1, linetype="dotted") + 
+  geom_hline(yintercept=1, linetype="dotted") + 
+  labs(y= "Conditioned to naive control ratio", 
+       x = "Conditioned to naive foldchange ratio",
+       title = "Day 14 
+       Frontloaded genes; response to moderate pCO2") + 
+  expand_limits(x = 0, y = 0) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 1, ymax = 1.5,
+           alpha = .2) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+           alpha = .5)
+P.wgcna.mod
+
+
+# plot the frontloaded genes formula using x axis for the severe treatment (second exposure, day 14)
+P.wgcna.sev <- Day14_READY %>% 
+  dplyr::select(c('wgcna.xall_sev', 'wgcna.yall_sev')) %>% 
+  na.omit() %>% 
+  dplyr::filter(wgcna.yall_sev < 3) %>% 
+  ggplot(aes(x=wgcna.xall_sev, y=wgcna.yall_sev)) +
+  geom_point() +
+  theme_classic() + 
+  stat_smooth(method = "lm", 
+              formula = y ~ x + poly(x, 2) - 1) +
+  geom_vline(xintercept=1, linetype="dotted") + 
+  geom_hline(yintercept=1, linetype="dotted") + 
+  labs(y= "Conditioned to naive control ratio", 
+       x = "Conditioned to naive foldchange ratio",
+       title = "Day 14 Frontloaded genes; response to severe pCO2") + 
+  expand_limits(x = 0, y = 0) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 1, ymax = 1.5,
+           alpha = .2) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+           alpha = .5)
+P.wgcna.sev
+
+```
+
+### Day 14 - Frontloaded genes (Table)
+
+```{r table Day 14, echo=T}
+# MODERATE second treatment
+Day14.wgcna.frontloaded_genes_mod <- Day14_READY %>% 
+                                dplyr::filter(wgcna.xall_mod < 1) %>% 
+                                dplyr::filter(wgcna.yall_mod > 1) %>%
+                                dplyr::select('Gene') # %>% 
+
+Day14.wgcna.frontloadprobes_mod        = Day14.wgcna.frontloaded_genes_mod$Gene
+probes2annot_mod                       = match(Day14.wgcna.frontloadprobes_mod, annot$V1)
+Day14.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
+                                         Genes = annot$V7[probes2annot_mod])
+kable(Day14.wgcna.frontloaded_mod_ANNOT)
+
+# SEVERE second treatment
+Day14.wgcna.frontloaded_genes_sev <- Day14_READY %>% 
+                                dplyr::filter(wgcna.xall_sev < 1) %>% 
+                                dplyr::filter(wgcna.yall_sev > 1) %>%
+                                dplyr::select('Gene') # %>% 
+
+Day14.wgcna.frontloadprobes_sev        = Day14.wgcna.frontloaded_genes_sev$Gene
+probes2annot_sev                       = match(Day14.wgcna.frontloadprobes_sev, annot$V1)
+Day14.wgcna.frontloaded_sev_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_sev],
+                                              Genes = annot$V7[probes2annot_sev])
+kable(Day14.wgcna.frontloaded_sev_ANNOT)
+```
+
+### Day 21 - Frontloaded genes (Plot)
+
+```{r plotting Day 21, echo=F}
+# plot the frontloaded genes formula using x axis for the moderate treatment (second exposure, day 21)
+par(mfrow=c(1,2))
+P.wgcna.mod <- Day21_READY %>% 
+  dplyr::select(c('wgcna.xall_mod', 'wgcna.yall_mod')) %>% 
+  na.omit() %>% 
+  #dplyr::filter(wgcna.yall_mod < 3) %>% 
+  ggplot(aes(x=wgcna.xall_mod, y=wgcna.yall_mod)) +
+  geom_point() +
+  theme_classic() + 
+  stat_smooth(method = "lm", 
+              formula = y ~ x + poly(x, 2) - 1) +
+  geom_vline(xintercept=1, linetype="dotted") + 
+  geom_hline(yintercept=1, linetype="dotted") + 
+  labs(y= "Conditioned to naive control ratio", 
+       x = "Conditioned to naive foldchange ratio",
+       title = "Day 21 
+       Frontloaded genes; response to moderate pCO2") + 
+  expand_limits(x = 0, y = 0) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 1, ymax = 4.5,
+           alpha = .2) + 
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+           alpha = .5)
+P.wgcna.mod
+
+```
+
+### Day 21 - Frontloaded genes (Table)
+
+```{r table Day 21, echo=T}
+# MODERATE second treatment
+Day21.wgcna.frontloaded_genes_mod <- Day21_READY %>% 
+                                dplyr::filter(wgcna.xall_mod < 1) %>% 
+                                dplyr::filter(wgcna.yall_mod > 1) %>%
+                                dplyr::select('Gene') # %>% 
+
+Day21.wgcna.frontloadprobes_mod        = Day21.wgcna.frontloaded_genes_mod$Gene
+probes2annot_mod                       = match(Day21.wgcna.frontloadprobes_mod, annot$V1)
+Day21.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
+                                         Genes = annot$V7[probes2annot_mod])
+kable(Day21.wgcna.frontloaded_mod_ANNOT)
+```
