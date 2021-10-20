@@ -15,7 +15,7 @@ library(ggpubr)
 library(stringr)
 
 # SET WORKING DIRECTORY AND LOAD DATA 
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 # LOAD DATA
 # count data
@@ -24,15 +24,15 @@ day14.counts.matrix
 day21.counts.matrix
 
 
-day7.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
-day14.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
-day21.counts.matrix <- read.csv(file="Analysis/Data/Filtered_Counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day7.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/10cpm_50perc/day7.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day14.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/10cpm_50perc/day14.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
+day21.counts.matrix <- read.csv(file="Analysis/Data/filtered_counts/10cpm_50perc/day21.counts.filtered_10cpm50perc.csv", sep=',', header=TRUE)
 # trait data
 Master.Treatment_Phenotype.data <- read.csv(file="Analysis/Data/Experiment_Metadata/Master_Phyenotype.and.Exp.Treatment_Metadata.csv", sep=',', header=TRUE)
 # WGCNA results 
-D7_WGCNA     <- read.csv(file="Analysis/Output/WGCNA/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)    %>% dplyr::mutate(Day = "Day7") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
-D14_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day14") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
-D21_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day21") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+D7_WGCNA     <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7.WGCNA_ModulMembership.csv", sep=',', header=TRUE)    %>% dplyr::mutate(Day = "Day7") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+D14_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day14") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
+D21_WGCNA    <- read.csv(file="Analysis/Output/WGCNA/subseq_treatments_all/Day21/d21.WGCNA_ModulMembership.csv", sep=',', header=TRUE) %>% dplyr::mutate(Day = "Day21") %>%  dplyr::select(c('geneSymbol','moduleColor', 'Day'))
 WGCNA_Master <- rbind(D7_WGCNA, D14_WGCNA, D21_WGCNA)
 
 # DESEq2 results 
@@ -53,7 +53,7 @@ DESeq2_MainEffectsMaster <- rbind(D0_Main.DEGs.Master,D7_Main.DEGs.Master,D14_Ma
 names(DESeq2_MainEffectsMaster)[2] <- 'geneSymbol' # match the WGCNA master file
 
 #Panopea generosa - load .fna ('Geoduck_annotation') and foramt GO terms ('Geoduck_GOterms') and vectors
-Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
 # build annotation file to merge with the mean LFC tables
 annot.condenced <- Geoduck_annotation[,c(1,7)] # load just the PGEN ID and the putative gene terms
 annot.condenced$Gene_term    <- sub(" \\(EC.*", "", annot.condenced$V7)  # str_extract(annot.condenced$V7, "[^(]+")
@@ -134,7 +134,9 @@ annot.condenced[c(1:2),] # view or condenced table
 
 View(Target_GOIs)
 
-Target_GOIs <- dplyr::filter(annot.condenced, grepl('Dnmt3a|Dnmt3b|Dnmt1|S-adenosylmethionine|
+Target_GOIs <- dplyr::filter(annot.condenced, grepl('Apolipophorins|
+                                                     |Cathepsin|
+                                                     |Dnmt3a|Dnmt3b|Dnmt1|S-adenosylmethionine|
                                                      |Jumonji|JmjC|Lysine-specific demethylase| 
                                                      |histone acetyltransferase|histone methyltransferase|Histone-lysine N-methyltransferase|
                                                      |ferric-chelate reductase|
@@ -143,7 +145,8 @@ Target_GOIs <- dplyr::filter(annot.condenced, grepl('Dnmt3a|Dnmt3b|Dnmt1|S-adeno
                                                      |Mitogen-activated protein kinase|
                                                      |Mitochondrial uncoupling protein|ucp|alternative oxidase|NADH dehydrogenase|cytochrome reductase|cytochrome b-c1|
                                                      |ATP synthase|sir1|sir2|sir3|sirt4|sir5|sir6|sir7|NAD-dependent protein deacetylase|sirtuin', Gene_term, ignore.case = TRUE))
-Target_GOIs$Translation <- ifelse(grepl("Dnmt3a|Dnmt3b|Dnmt1", Target_GOIs$Gene_term, ignore.case = TRUE), "DNA methyltransferase", 
+Target_GOIs$Translation <- ifelse(grepl("Cathepsin|Apolipophorins", Target_GOIs$Gene_term, ignore.case = TRUE), "Frontloaded genes",
+                           ifelse(grepl("Dnmt3a|Dnmt3b|Dnmt1", Target_GOIs$Gene_term, ignore.case = TRUE), "DNA methyltransferase", 
                            ifelse(grepl("S-adenosylmethionine", Target_GOIs$Gene_term, ignore.case = TRUE), "SAM",
                            ifelse(grepl("acetyltransferase", Target_GOIs$Gene_term, ignore.case = TRUE), "Histone acetyltransferases",
                            ifelse(grepl("histone methyltransferase|Histone-lysine N-methyltransferase", Target_GOIs$Gene_term, ignore.case = TRUE), "Histone methyltransferases",
@@ -158,7 +161,7 @@ Target_GOIs$Translation <- ifelse(grepl("Dnmt3a|Dnmt3b|Dnmt1", Target_GOIs$Gene_
                            ifelse(grepl("alternative oxidase", Target_GOIs$Gene_term, ignore.case = TRUE), "AOX",
                            ifelse(grepl("ATP synthase", Target_GOIs$Gene_term, ignore.case = TRUE), "ATP synthase",
                            ifelse(grepl("carbonic anhydrase", Target_GOIs$Gene_term, ignore.case = TRUE), "acid-base regulation",
-                           ifelse(grepl("deacetylase|sirtuin|sirt", Target_GOIs$Gene_term, ignore.case = TRUE), "Sirtuins", "Other"))))))))))))))))
+                           ifelse(grepl("deacetylase|sirtuin|sirt", Target_GOIs$Gene_term, ignore.case = TRUE), "Sirtuins", "Other")))))))))))))))))
 Target_GOIs$Gene_term <- gsub( "/", "", as.character(Target_GOIs$Gene_term)) # removes all occurances of '/' and replaces with a NULL for all gene terms 
 Target_GOIs$Gene_term <- gsub( " ", "_", as.character(Target_GOIs$Gene_term)) # removes all occurances of '/' and replaces with a NULL for all gene terms 
 
@@ -454,7 +457,7 @@ KEGG_priori_WGCNA <- merge(Sig_WGCNA.modules,KEGG_targets[c(1,3)], by= "GeneID")
 pd <- position_dodge(0.3)
 allmeanExr <- rbind(Day7_meanExpr, Day14_meanExpr, Day21_meanExpr)
 
-GOI_name <- 'PGEN_.00g220600' # call your gene you want to see!
+GOI_name <- 'PGEN_.00g070040' # call your gene you want to see!
 
 ExpMin <- floor(  min((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$mean.vstExp) - max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$sd.vsdtExp)  )
 ExpMax <- ceiling(  max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$mean.vstExp) + max((allmeanExr %>% dplyr::filter(GeneID %in% GOI_name))$sd.vsdtExp)  )
