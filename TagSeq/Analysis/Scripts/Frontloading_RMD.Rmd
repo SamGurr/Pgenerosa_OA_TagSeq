@@ -12,6 +12,7 @@ library(reshape2)
 library(ggplot2)
 library(kableExtra)
 library(knitr)
+library(tidyverse)
 # SET WORKING DIRECTORY AND LOAD DATA
 setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
@@ -83,7 +84,9 @@ NaiveResponse_genes_data   <- data.frame(geneSymbol = annot$V1[NaiveResponse_gen
 ```{r merge with expression data for plotting, echo=T}
 # Day 7 gene expression
 Day_WGCNA_genes <- Day7_exp_data %>% 
-  dplyr::filter(Gene %in% NaiveResponse_genes)
+  dplyr::filter(Gene %in% day7.brown$Pgen_ID ) # call all genes in the module
+  #dplyr::filter(Gene %in% NaiveResponse_genes)
+ 
 Day7_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
   reshape2::melt(id.var = 'Gene') %>% 
   dplyr::rename(Sample.Name = variable)
@@ -124,9 +127,10 @@ Day7_Frontload_2 <- Day7_Frontload %>%
                       dplyr::rename(ControlRatioModerate = wgcna.yall_mod) %>% 
                       dplyr::rename(foldChangeRatioModerate = wgcna.xall_mod) %>% 
                       dplyr::rename(ControlRatioSevere = wgcna.yall_sev) %>% 
-                      dplyr::rename(foldChangeRatioSevere = wgcna.xall_sev)
+                      dplyr::rename(foldChangeRatioSevere = wgcna.xall_sev) %>%
+                      dplyr::mutate(Frontloaded = ifelse(ControlRatioModerate > 1.00 & foldChangeRatioModerate < 1.00, "frontloaded", "Not frontloaded"))
 write.csv(Day7_Frontload_2,paste("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Day7_FrontloadedGenes.csv"))
-
+View(Day7_Frontload_2)
 
 D7Frontloaded <- Day7_Frontload_2 %>% filter(ControlRatioModerate > 1) %>% filter(foldChangeRatioModerate < 1)
 for (i in 1:nrow(D7Frontloaded)) { 
@@ -149,7 +153,7 @@ for (i in 1:nrow(D7Frontloaded)) {
         scale_fill_manual(values=c("grey85","grey50")) +
         #scale_color_manual(values=c("#56B4E9","#E69F00")) +
         # ggtitle(paste("Day 7:",apriori_DESeq2_condenced[i,1],":", apriori_DESeq2_condenced[i,3],sep='')) +
-        ggtitle(gsub(" .*", "\\1", D7Frontloaded[i,2])) +
+        ggtitle(paste(  D7Frontloaded[i,1], gsub(" .*", "\\1", D7Frontloaded[i,2]), sep = '_') ) +
         # expand_limits(y=0) +                                                    # Expand y range
         # scale_y_continuous(limits=c((min_p1), (max_p1))) +
         # scale_y_continuous(limits = c((max(sdExp)+0.5),(min(sdExp)-0.5)))  +
@@ -162,7 +166,7 @@ for (i in 1:nrow(D7Frontloaded)) {
   gene <- D7Frontloaded[i,1]
   title <- gsub(" .*", "\\1", (sub(" ", "_",  D7Frontloaded[i,2])) )
   
-pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day7/",gene,"_", title,".pdf", sep = ''))
+pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day7/",gene,"_", (sub("/", "_",  title)),".pdf", sep = ''))
 print(x2)
 dev.off()
 
@@ -183,7 +187,8 @@ dev.off()
 
 # Day 14 gene expression
 Day_WGCNA_genes <- Day14_exp_data %>% 
-  dplyr::filter(Gene %in% NaiveResponse_genes)
+  dplyr::filter(Gene %in% day14.brown$Pgen_ID ) # call all genes in the module
+  # dplyr::filter(Gene %in% NaiveResponse_genes)
 Day14_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
   reshape2::melt(id.var = 'Gene') %>% 
   dplyr::rename(Sample.Name = variable)
@@ -224,7 +229,8 @@ Day14_Frontload_2 <- Day14_Frontload %>%
                       dplyr::rename(ControlRatioModerate = wgcna.yall_mod) %>% 
                       dplyr::rename(foldChangeRatioModerate = wgcna.xall_mod) %>% 
                       dplyr::rename(ControlRatioSevere = wgcna.yall_sev) %>% 
-                      dplyr::rename(foldChangeRatioSevere = wgcna.xall_sev)
+                      dplyr::rename(foldChangeRatioSevere = wgcna.xall_sev) %>% 
+                      dplyr::mutate(Frontloaded = ifelse(ControlRatioModerate > 1.00 & foldChangeRatioModerate < 1.00, "frontloaded", "Not frontloaded"))
 write.csv(Day14_Frontload_2,paste("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Day14_FrontloadedGenes.csv"))
 
 
@@ -249,7 +255,7 @@ for (i in 1:nrow(D14Frontloaded)) {
         scale_fill_manual(values=c("grey85","grey50")) +
         #scale_color_manual(values=c("#56B4E9","#E69F00")) +
         # ggtitle(paste("Day 7:",apriori_DESeq2_condenced[i,1],":", apriori_DESeq2_condenced[i,3],sep='')) +
-        ggtitle(gsub(" .*", "\\1", D14Frontloaded[i,2])) +
+        ggtitle(paste(  D14Frontloaded[i,1], gsub(" .*", "\\1", D14Frontloaded[i,2]), sep = '_') ) +
         # expand_limits(y=0) +                                                    # Expand y range
         # scale_y_continuous(limits=c((min_p1), (max_p1))) +
         # scale_y_continuous(limits = c((max(sdExp)+0.5),(min(sdExp)-0.5)))  +
@@ -262,7 +268,7 @@ for (i in 1:nrow(D14Frontloaded)) {
   gene <- D14Frontloaded[i,1]
   title <- gsub(" .*", "\\1", (sub(" ", "_",  D14Frontloaded[i,2])) )
   
-pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day14/",gene, "_", title,".pdf", sep = ''))
+pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day14/",gene, "_", (sub("/", "_",  title)),".pdf", sep = ''))
 print(x2)
 dev.off()
 
@@ -279,8 +285,10 @@ dev.off()
 
 
 # Day 21 gene expression
+day21.blue_magenta <- rbind(day21.blue, day21.magenta)
 Day_WGCNA_genes <- Day21_exp_data %>% 
-  dplyr::filter(Gene %in% NaiveResponse_genes)
+  dplyr::filter(Gene %in% day21.blue_magenta$Pgen_ID) # call all genes in the module
+  #dplyr::filter(Gene %in% NaiveResponse_genes)
 Day21_WGCNA_genes_melted     <- Day_WGCNA_genes %>% 
   reshape2::melt(id.var = 'Gene') %>% 
   dplyr::rename(Sample.Name = variable)
@@ -311,7 +319,8 @@ Day21_Frontload_2 <- Day21_Frontload %>%
                       dplyr::mutate(baseMeanNAIVE_foldChangeModerate = ((AAM) / (AAA))  ) %>% 
                       dplyr::mutate(baseMeanPRIMED_foldChangeModerate = ((MAM) / (MAA)) ) %>% 
                       dplyr::rename(ControlRatio = wgcna.yall_mod) %>% 
-                      dplyr::rename(foldChangeRatio = wgcna.xall_mod)
+                      dplyr::rename(foldChangeRatio = wgcna.xall_mod) %>% 
+                      dplyr::mutate(Frontloaded = ifelse(ControlRatio > 1.00 & foldChangeRatio < 1.00, "frontloaded", "Not frontloaded"))
 write.csv(Day21_Frontload_2,paste("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Day21_FrontloadedGenes.csv"))
 
 
@@ -338,7 +347,7 @@ for (i in 1:nrow(D21Frontloaded)) {
         scale_fill_manual(values=c("grey85","grey50")) +
         #scale_color_manual(values=c("#56B4E9","#E69F00")) +
         # ggtitle(paste("Day 7:",apriori_DESeq2_condenced[i,1],":", apriori_DESeq2_condenced[i,3],sep='')) +
-        ggtitle(gsub(" .*", "\\1", D21Frontloaded[i,2])) +
+        ggtitle(paste(  D21Frontloaded[i,1], gsub(" .*", "\\1", D21Frontloaded[i,2]), sep = '_') ) +
         # expand_limits(y=0) +                                                    # Expand y range
         # scale_y_continuous(limits=c((min_p1), (max_p1))) +
         # scale_y_continuous(limits = c((max(sdExp)+0.5),(min(sdExp)-0.5)))  +
@@ -351,7 +360,7 @@ for (i in 1:nrow(D21Frontloaded)) {
   gene <- D21Frontloaded[i,1]
   title <- gsub(" .*", "\\1", (sub(" ", "_",  D21Frontloaded[i,2])) )
   
-pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day21/",gene, "_", title,".pdf", sep = ''))
+pdf(paste0("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Frontloading_plots/Day21/",gene, "_", (sub("/", "_",  title)),".pdf", sep = ''))
 print(x2)
 dev.off()
 
@@ -388,6 +397,7 @@ P.wgcna.sev <- Day7_READY %>%
   dplyr::select(c('wgcna.xall_sev', 'wgcna.yall_sev')) %>% 
   na.omit() %>% 
   dplyr::filter(wgcna.yall_sev < 3) %>% 
+  dplyr::filter(wgcna.xall_sev < 4) %>% 
   ggplot(aes(x=wgcna.xall_sev, y=wgcna.yall_sev)) +
   geom_point() +
   theme_classic() + 
@@ -419,8 +429,9 @@ Day7.wgcna.frontloadprobes_mod        = Day7.wgcna.frontloaded_genes_mod$Gene
 probes2annot_mod                      = match(Day7.wgcna.frontloadprobes_mod, annot$V1)
 Day7.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
                                               Genes = annot$V7[probes2annot_mod])
-kable(Day7.wgcna.frontloaded_mod_ANNOT)
-
+kable(head(Day7.wgcna.frontloaded_mod_ANNOT))
+perc_mod7_mod <- 100 -( ( ( (nrow(day7.brown)) - (nrow(Day7.wgcna.frontloaded_mod_ANNOT)) ) / (nrow(day7.brown)) ) * 100)
+print(paste("Total frontloaded genes = ", nrow(Day7.wgcna.frontloaded_mod_ANNOT), "; Percent of naive module = ",perc_mod7_mod ,  sep = ''))
 # SEVERE second treatment
 Day7.wgcna.frontloaded_genes_sev <- Day7_READY %>% 
                                 dplyr::filter(wgcna.xall_sev < 1) %>% 
@@ -431,7 +442,12 @@ Day7.wgcna.frontloadprobes_sev        = Day7.wgcna.frontloaded_genes_sev$Gene
 probes2annot_sev                      = match(Day7.wgcna.frontloadprobes_sev, annot$V1)
 Day7.wgcna.frontloaded_sev_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_sev],
                                               Genes = annot$V7[probes2annot_sev])
-kable(Day7.wgcna.frontloaded_sev_ANNOT)
+
+kable(head(Day7.wgcna.frontloaded_sev_ANNOT))
+perc_mod7_sev <- 100 -( ( ( (nrow(day7.brown)) - (nrow(Day7.wgcna.frontloaded_sev_ANNOT)) ) / (nrow(day7.brown)) ) * 100)
+print(paste("Total frontloaded genes = ", nrow(Day7.wgcna.frontloaded_sev_ANNOT), "; Percent of naive module = ",perc_mod7_sev ,  sep = ''))
+
+
 ```
 
 ### Day 14 - Frontloaded genes (Plot)
@@ -441,6 +457,7 @@ kable(Day7.wgcna.frontloaded_sev_ANNOT)
 P.wgcna.mod <- Day14_READY %>% 
   dplyr::select(c('wgcna.xall_mod', 'wgcna.yall_mod')) %>% 
   na.omit() %>% 
+  dplyr::filter(wgcna.xall_mod < 4) %>% 
   #dplyr::filter(wgcna.yall_mod < 3) %>% 
   ggplot(aes(x=wgcna.xall_mod, y=wgcna.yall_mod)) +
   geom_point() +
@@ -495,8 +512,9 @@ Day14.wgcna.frontloadprobes_mod        = Day14.wgcna.frontloaded_genes_mod$Gene
 probes2annot_mod                       = match(Day14.wgcna.frontloadprobes_mod, annot$V1)
 Day14.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
                                          Genes = annot$V7[probes2annot_mod])
-kable(Day14.wgcna.frontloaded_mod_ANNOT)
-
+kable(head(Day14.wgcna.frontloaded_mod_ANNOT))
+perc_mod14_mod <- 100 -( ( ( (nrow(day14.brown)) - (nrow(Day14.wgcna.frontloaded_mod_ANNOT)) ) / (nrow(day14.brown)) ) * 100)
+print(paste("Total frontloaded genes = ", nrow(Day14.wgcna.frontloaded_mod_ANNOT), "; Percent of naive module = ",perc_mod14_mod ,  sep = ''))
 # SEVERE second treatment
 Day14.wgcna.frontloaded_genes_sev <- Day14_READY %>% 
                                 dplyr::filter(wgcna.xall_sev < 1) %>% 
@@ -507,7 +525,10 @@ Day14.wgcna.frontloadprobes_sev        = Day14.wgcna.frontloaded_genes_sev$Gene
 probes2annot_sev                       = match(Day14.wgcna.frontloadprobes_sev, annot$V1)
 Day14.wgcna.frontloaded_sev_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_sev],
                                               Genes = annot$V7[probes2annot_sev])
-kable(Day14.wgcna.frontloaded_sev_ANNOT)
+kable(head(Day14.wgcna.frontloaded_sev_ANNOT))
+perc_mod14_sev <- 100 -( ( ( (nrow(day14.brown)) - (nrow(Day14.wgcna.frontloaded_sev_ANNOT)) ) / (nrow(day14.brown)) ) * 100)
+print(paste("Total frontloaded genes = ", nrow(Day14.wgcna.frontloaded_sev_ANNOT), "; Percent of naive module = ",perc_mod14_sev ,  sep = ''))
+
 ```
 
 ### Day 21 - Frontloaded genes (Plot)
@@ -550,13 +571,19 @@ Day21.wgcna.frontloadprobes_mod        = Day21.wgcna.frontloaded_genes_mod$Gene
 probes2annot_mod                       = match(Day21.wgcna.frontloadprobes_mod, annot$V1)
 Day21.wgcna.frontloaded_mod_ANNOT      = data.frame(geneSymbol = annot$V1[probes2annot_mod],
                                          Genes = annot$V7[probes2annot_mod])
-kable(Day21.wgcna.frontloaded_mod_ANNOT)
+kable(head(Day21.wgcna.frontloaded_mod_ANNOT))
+perc_mod21 <- ( ( ( (nrow(day21.blue_magenta)) - (nrow(Day21.wgcna.frontloaded_mod_ANNOT)) ) / (nrow(day21.blue_magenta)) ) * 100)
+print(paste("Total frontloaded genes = ", nrow(Day21.wgcna.frontloaded_mod_ANNOT), "; Percent of naive module(s) = ",perc_mod21 , sep = ''))
 ```
 
 ```{r summary table, echo = T} 
 
 
-View(rbind(Day7.wgcna.frontloaded_mod_ANNOT, Day14.wgcna.frontloaded_mod_ANNOT, Day21.wgcna.frontloaded_mod_ANNOT) %>% 
-  dplyr::count(Genes))
+Frontloaded_ModerateExposures <- rbind(Day7.wgcna.frontloaded_mod_ANNOT, Day21.wgcna.frontloaded_mod_ANNOT) %>% 
+  dplyr::count(geneSymbol, Genes) %>%
+  dplyr::filter(n ==2) %>%
+  select(!n)
+
+write.csv(Frontloaded_ModerateExposures,paste("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Analysis/Output/WGCNA/subseq_treatments_all/Day7and21_FrontloadedGenes.csv"))
 
 ```
