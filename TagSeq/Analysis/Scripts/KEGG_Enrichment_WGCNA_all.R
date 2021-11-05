@@ -5,9 +5,9 @@
 ---
 # INFORMATION FOR KEGG IN R FOUND HERE: (http://yulab-smu.top/clusterProfiler-book/chapter6.html#kegg-over-representation-test)
 
-# LOAD PACKAGES
-BiocManager::install("KEGGprofile")
-library(KEGGprofile) # BiocManager::install("KEGGprofile")
+# LOAD PACKAGE
+library(KEGGREST) # BiocManager::install("KEGGprofile")
+library(reactome.db)
 library(clusterProfiler)
 library(KEGGREST)
 library(tidyr)
@@ -19,6 +19,7 @@ library(ape)
 library(data.table)
 library(tidyverse)
 library(fBasics)
+
 
 # SET WORKING DIRECTORY   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
@@ -53,6 +54,9 @@ d7_WGCNA_all    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day7/d7
 d14_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day14/d14.WGCNA_ModulMembership.csv")
 d21_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day21/d21.WGCNA_ModulMembership.csv")
 
+# FRontloaded gene sets
+d7_frontloaded  <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day7_FrontloadedGenes.csv")    %>% dplyr::filter(Frontloaded %in% 'frontloaded') %>% dplyr::rename(geneSymbol = Gene)
+d21_frontloaded <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day21_FrontloadedGenes.csv") %>% dplyr::filter(Frontloaded %in% 'frontloaded')   %>% dplyr::rename(geneSymbol = Gene)
 
 # DESEq2 results - load data and assign up and downregualted genes!
 DESeq2_PrimaryEffects    <- read.csv(file="Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv", sep=',', header=TRUE)  
@@ -153,6 +157,116 @@ d14_WGCNA_crgKEGGhits <- merge(d14_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)],
 d21_WGCNA_crgKEGGhits <- merge(d21_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 
 
+d21_frontloaded_crgKEGG  <- merge(d21_frontloaded, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
+
+
+### Using KEGGREST instead of KEGGPrilfer
+
+# review here https://ucdavis-bioinformatics-training.github.io/2019_March_UCSF_mRNAseq_Workshop/differential_expression/enrichment.html
+
+# p.value: P-value for Wilcoxon rank-sum testing, testing that p-values from DE analysis for genes in the pathway are smaller than those not in the pathway
+# Annotated: Number of genes in the pathway (regardless of DE p-value)
+# The Wilcoxon rank-sum test is the nonparametric analogue of the two-sample t-test. It compares the ranks of observations in two groups. It is more powerful than the Kolmogorov-Smirnov test.
+
+pathways.list <- keggList("pathway", "crg")
+pathway.codes <- sub("path:", "", names(pathways.list)) 
+genes.by.pathway <- sapply(pathway.codes,
+                           function(pwid){
+                             pw <- keggGet(pwid)
+                             if (is.null(pw[[1]]$GENE)) return(NA)
+                             pw2 <- pw[[1]]$GENE[c(TRUE,FALSE)] # may need to modify this to c(FALSE, TRUE) for other organisms
+                             pw2 <- unlist(lapply(strsplit(pw2, split = ";", fixed = T), function(x)x[1]))
+                             return(pw2)
+                           }
+)
+
+
+ ModuleLoop_blasthit  <- d21_WGCNA_crgKEGGhits %>% dplyr::filter(moduleColor %in% "blue")
+geneList <- ModuleLoop_blasthit$p.MM.blue # nte - this requires some sort of P value - here I call the module membership p value for how the genes fit into the module correlation
+names(geneList) <- gsub(".*:","",ModuleLoop_blasthit$crg_KO)
+head(geneList)
+
+pVals.by.pathway <- t(sapply(names(genes.by.pathway),
+                             function(pathway) {
+                               pathway.genes <- genes.by.pathway[[pathway]]
+                               list.genes.in.pathway <- intersect(names(geneList), pathway.genes)
+                               list.genes.not.in.pathway <- setdiff(names(geneList), list.genes.in.pathway)
+                               scores.in.pathway <- geneList[list.genes.in.pathway]
+                               scores.not.in.pathway <- geneList[list.genes.not.in.pathway]
+                               if (length(scores.in.pathway) > 0){
+                                 p.value <- wilcox.test(scores.in.pathway, scores.not.in.pathway, alternative = "less")$p.value
+                               } else{
+                                 p.value <- NA
+                               }
+                               return(c(p.value = p.value, Annotated = length(list.genes.in.pathway)))
+                             }
+))
+pVals.by.pathway
+# Assemble output table
+outdat <- data.frame(pathway.code = rownames(pVals.by.pathway))
+outdat$pathway.name <- pathways.list[(paste("path:",outdat$pathway.code, sep = ''))]
+outdat$p.value <- pVals.by.pathway[,"p.value"]
+outdat$Annotated <- pVals.by.pathway[,"Annotated"]
+outdat <- outdat[order(outdat$p.value),]
+head(outdat)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# USING KEGGPROFILE -- NOTE: this is outdated and marked as so... 
+
 
 # Day 0 for loop ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;;; #
 Day0_WGCNA_sigmodules <- as.data.frame(c('midnightblue'))
@@ -229,7 +343,6 @@ for (i in 1:nrow(Day0_WGCNA_sigmodules)) {
   
   print(paste("Finished! Day0 module = ", modColor, sep = " "))
 }
-
 
 
 

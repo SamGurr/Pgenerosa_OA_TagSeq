@@ -78,6 +78,15 @@ annot.condenced$gene.length <- annot.condenced$V4 - annot.condenced$V3
 annot.condenced <- annot.condenced[,-c(2,3)]
 names(annot.condenced) <- c('Gene.ID', 'Uniprot', 'HGNC', 'fxn', 'Go.terms', 'Go.fxns','gene.length')
 
+
+Geoduck_annotation <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+# build annotation file to merge with the mean LFC tables
+Pgen_condenced <- Geoduck_annotation[,c(1,7)] # load just the PGEN ID and the putative gene terms
+Pgen_condenced$Gene_term    <- sub(" \\(EC.*", "", Pgen_condenced$V7)  # str_extract(annot.condenced$V7, "[^(]+")
+Pgen_reference <- na.omit(Pgen_condenced[c(1,3)])
+names(Pgen_reference)  <- c('PgenIDs', 'Gene_terms')
+
+
 # Prepare dataframe(s) and vectors for goseq 
 # (1) Format 'GO.term' for goseq from the P.generosa annotation .fna file 'Geoduck_annotation'
 Geoduck_GOterms <- as.data.frame(Geoduck_annotation) %>% dplyr::select(c('V1','V8'))
@@ -111,10 +120,10 @@ goseq_D7                           <- goseq(pwf_D7, gene2cat=GO.terms, test.cats
 GO.05.a_D7                         <- goseq_D7$category[goseq_D7$over_represented_pvalue<.05] # change twice here
 GO.05_D7                           <- data.frame(GO.05.a_D7 )
 colnames(GO.05_D7 )                <- c("category")
-GO.05_D7                           <- merge(GO.05_D7 , goseq, by="category") # change here
-GO.05_D7                           <- GO.05_D7[order(GO.05_D7$ontology, GO.05_D7$over_represented_pvalue,-GO.05_D7 $numDEInCat),]
-GO.05_D7 $term                     <- as.factor(GO.05_D7$term)
-GO.05_D7 $Day                      <- "Day7"
+GO.05_D7                           <- merge(GO.05_D7 , goseq_D7, by="category") # change here
+GO.05_D7                           <- GO.05_D7[order(GO.05_D7$ontology, GO.05_D7$over_represented_pvalue,-GO.05_D7$numDEInCat),]
+GO.05_D7$term                     <- as.factor(GO.05_D7$term)
+GO.05_D7$Day                      <- "Day7"
 # remove Biological Process GO terms with < 10 genes in the module  (with that term) and ommit Molecular Function terms with < 3 genes in the module (with that term)
 GO.05_filtered_FloadedDay7 <- GO.05_D7  %>% filter(!(ontology %in% "CC"), !(numDEInCat<=2 & ontology == "BP"), !(numDEInCat<=2 & ontology == "MF"))
 View(GO.05_filtered_FloadedDay7)
@@ -131,7 +140,7 @@ goseq_D21                           <- goseq(pwf_D21, gene2cat=GO.terms, test.ca
 GO.05.a_D21                         <- goseq_D21$category[goseq_D21$over_represented_pvalue<.05] # change twice here
 GO.05_D21                           <- data.frame(GO.05.a_D21)
 colnames(GO.05_D21 )                <- c("category")
-GO.05_D21                           <- merge(GO.05_D21 , goseq, by="category") # change here
+GO.05_D21                           <- merge(GO.05_D21 , goseq_D21, by="category") # change here
 GO.05_D21                           <- GO.05_D21[order(GO.05_D21$ontology, GO.05_D21$over_represented_pvalue,-GO.05_D21 $numDEInCat),]
 GO.05_D21$term                     <- as.factor(GO.05_D21$term)
 GO.05_D21$Day                      <- "Day21"
@@ -184,7 +193,7 @@ BPslim             <- filter(BPslim_Mapped, Term!="biological_process") #filter 
 BPsplitted         <- strsplit(as.character(BPslim$go_terms), ";") #split into multiple GO ids
 BPslim$BPsplitted  <- BPsplitted
 for (n in 1:nrow(BPslim)) {
-  table       <- data.frame(GOlist = unlist(BPslim[,6])) # call the BPsplitted column of characters and create a small table to filter
+  table       <- data.frame(GOlist = unlist(BPslim[n,6])) # call the BPsplitted column of characters and create a small table to filter
   table       <- unique(table)
   
   Pgen_module  <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% gene_names) # d7_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
@@ -202,6 +211,28 @@ BPslim_C <- unique(setDT(BPslim_B)[order(go_term, -Gene.Count)], by = "category"
 BPslim_final <- BPslim_C[,c(1,5,3,2,6,8:9)]
 colnames(BPslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
 BPslim_final[["Gene_IDs"]] <- vapply(unname(BPslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
+
+BPslim_GOterm_summary       <- BPslim_final[,c(1,2,5,7)]
+s <- strsplit(BPslim_GOterm_summary$GO_list, split = ";")
+BPslim_GOterm_summary_2     <- data.frame(slim_term = rep(BPslim_GOterm_summary$slim_term, sapply(s, length)),
+                                          Gene_IDs  = rep(BPslim_GOterm_summary$Gene_IDs, sapply(s, length)),
+                                          GO_terms = unlist(s))
+colnames(goseq_res_BP)[1]   <- 'GO_terms'
+BPslim_GOterm_summary_final <- merge(goseq_res_BP, BPslim_GOterm_summary_2, by = 'GO_terms')
+
+
+s_2 <- strsplit(BPslim_GOterm_summary_final$Gene_IDs, split = ";")
+BPslim_GOterm_gene_annotation <- data.frame(slim_term      = rep(BPslim_GOterm_summary_final$slim_term, sapply(s_2, length)),
+                                            over_represented_pvalue = rep(BPslim_GOterm_summary_final$over_represented_pvalue, sapply(s_2, length)),
+                                            GO_terms       = rep(BPslim_GOterm_summary_final$GO_terms, sapply(s_2, length)),
+                                            term           = rep(BPslim_GOterm_summary_final$term, sapply(s_2, length)),
+                                            ontology       = rep(BPslim_GOterm_summary_final$ontology, sapply(s_2, length)),
+                                            PgenIDs        = unlist(s_2))
+BP_master_gene_reference <- merge(BPslim_GOterm_gene_annotation, Pgen_reference, by = "PgenIDs")
+
+
+
+
 
 
 # MOLECULAR FUNCTION
@@ -228,6 +259,32 @@ MFslim_final <- MFslim_C[,c(1,5,3,2,6,8:9)]
 colnames(MFslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
 MFslim_final[["Gene_IDs"]] <- vapply(unname(MFslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
 
+MFslim_GOterm_summary       <- MFslim_final[,c(1,2,5,7)]
+s <- strsplit(MFslim_GOterm_summary$GO_list, split = ";")
+MFslim_GOterm_summary_2     <- data.frame(slim_term = rep(MFslim_GOterm_summary$slim_term, sapply(s, length)),
+                                          Gene_IDs  = rep(MFslim_GOterm_summary$Gene_IDs, sapply(s, length)),
+                                          GO_terms = unlist(s))
+colnames(goseq_res_MF)[1]   <- 'GO_terms'
+MFslim_GOterm_summary_final <- merge(goseq_res_MF, MFslim_GOterm_summary_2, by = 'GO_terms')
+
+s_2 <- strsplit(MFslim_GOterm_summary_final$Gene_IDs, split = ";")
+MFslim_GOterm_gene_annotation <- data.frame(slim_term      = rep(MFslim_GOterm_summary_final$slim_term, sapply(s_2, length)),
+                                            over_represented_pvalue = rep(MFslim_GOterm_summary_final$over_represented_pvalue, sapply(s_2, length)),
+                                            GO_terms       = rep(MFslim_GOterm_summary_final$GO_terms, sapply(s_2, length)),
+                                            term           = rep(MFslim_GOterm_summary_final$term, sapply(s_2, length)),
+                                            ontology       = rep(MFslim_GOterm_summary_final$ontology, sapply(s_2, length)),
+                                            PgenIDs        = unlist(s_2))
+MF_master_gene_reference <- merge(MFslim_GOterm_gene_annotation, Pgen_reference, by = "PgenIDs")
+
+write.csv(BP_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       
+write.csv(MF_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_MolFunction.csv", sep ='')) # save csv file       write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       
+
+
+
+
+
+
+
 
 
 
@@ -242,11 +299,16 @@ BP_GOcollection     <- GOCollection(goseq_res_BP$category)
 GOslims_BP          <- data.frame(goSlim(BP_GOcollection, slim, "BP")) #Find common parent terms to slim down our list
 GOslims_BP$category <- row.names(GOslims_BP) #save rownames as category
 
+
+
 # Molecular Function - run GOslim
 goseq_res_MF        <- GO.05_filtered_FloadedDay21 %>%  filter(ontology=="MF") # BP - all GO terms upregulated   ONLY LINE TO CHANGE!!!
 MF_GOcollection     <- GOCollection(goseq_res_MF$category)
 GOslims_MF          <- data.frame(goSlim(MF_GOcollection, slim, "MF")) #Find common parent terms to slim down our list
 GOslims_MF$category <- row.names(GOslims_MF) #save rownames as category
+
+
+
 
 # ====================================================================================
 # Get mapped terms - add to the GOslims datatable 
@@ -266,12 +328,15 @@ MFslim_Mapped <- mappedIds(GOslims_MF, MF_GOcollection, GOMFOFFSPRING)
 gene_names    <- Modgenes_FloadedDay7$Gene.ID # all gene IDs in the particular WGCNA module 
 
 
+
+
+
 # BIOLOGICAL PROCESS
 BPslim             <- filter(BPslim_Mapped, Term!="biological_process") #filter out empty slims and term "biological process" and slims with < 2 GO terms (omitted the Count>=2)
 BPsplitted         <- strsplit(as.character(BPslim$go_terms), ";") #split into multiple GO ids
 BPslim$BPsplitted  <- BPsplitted
 for (n in 1:nrow(BPslim)) {
-  table       <- data.frame(GOlist = unlist(BPslim[,6])) # call the BPsplitted column of characters and create a small table to filter
+  table       <- data.frame(GOlist = unlist(BPslim[n,6])) # call the BPsplitted column of characters and create a small table to filter
   table       <- unique(table)
   
   Pgen_module  <- Pgen_GOterms2 %>% dplyr::filter(gene.ID %in% gene_names) # d7_Mod.Brown$X calls the gene names in the origin Module membership dataframe at the start of this script
@@ -289,6 +354,29 @@ BPslim_C <- unique(setDT(BPslim_B)[order(go_term, -Gene.Count)], by = "category"
 BPslim_final <- BPslim_C[,c(1,5,3,2,6,8:9)]
 colnames(BPslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
 BPslim_final[["Gene_IDs"]] <- vapply(unname(BPslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
+
+BPslim_GOterm_summary       <- BPslim_final[,c(1,2,5,7)]
+s <- strsplit(BPslim_GOterm_summary$GO_list, split = ";")
+BPslim_GOterm_summary_2     <- data.frame(slim_term = rep(BPslim_GOterm_summary$slim_term, sapply(s, length)),
+                                          Gene_IDs  = rep(BPslim_GOterm_summary$Gene_IDs, sapply(s, length)),
+                                          GO_terms = unlist(s))
+colnames(goseq_res_BP)[1]   <- 'GO_terms'
+BPslim_GOterm_summary_final <- merge(goseq_res_BP, BPslim_GOterm_summary_2, by = 'GO_terms')
+
+
+s_2 <- strsplit(BPslim_GOterm_summary_final$Gene_IDs, split = ";")
+BPslim_GOterm_gene_annotation <- data.frame(slim_term      = rep(BPslim_GOterm_summary_final$slim_term, sapply(s_2, length)),
+                                            over_represented_pvalue = rep(BPslim_GOterm_summary_final$over_represented_pvalue, sapply(s_2, length)),
+                                            GO_terms       = rep(BPslim_GOterm_summary_final$GO_terms, sapply(s_2, length)),
+                                            term           = rep(BPslim_GOterm_summary_final$term, sapply(s_2, length)),
+                                            ontology       = rep(BPslim_GOterm_summary_final$ontology, sapply(s_2, length)),
+                                            PgenIDs        = unlist(s_2))
+BP_master_gene_reference <- merge(BPslim_GOterm_gene_annotation, Pgen_reference, by = "PgenIDs")
+
+
+
+
+
 
 
 # MOLECULAR FUNCTION
@@ -315,3 +403,24 @@ MFslim_final <- MFslim_C[,c(1,5,3,2,6,8:9)]
 colnames(MFslim_final) <- c("slim_term", "slim_cat", "GO_count", "GO_terms", "GO_list", "Gene_count", "Gene_IDs")
 MFslim_final[["Gene_IDs"]] <- vapply(unname(MFslim_final$Gene_IDs), paste, collapse = ";", character(1L)) # convert from a list to simply a charaacter string with ; delimiter
 
+MFslim_GOterm_summary       <- MFslim_final[,c(1,2,5,7)]
+s <- strsplit(MFslim_GOterm_summary$GO_list, split = ";")
+MFslim_GOterm_summary_2     <- data.frame(slim_term = rep(MFslim_GOterm_summary$slim_term, sapply(s, length)),
+                                          Gene_IDs  = rep(MFslim_GOterm_summary$Gene_IDs, sapply(s, length)),
+                                          GO_terms = unlist(s))
+colnames(goseq_res_MF)[1]   <- 'GO_terms'
+MFslim_GOterm_summary_final <- merge(goseq_res_MF, MFslim_GOterm_summary_2, by = 'GO_terms')
+
+s_2 <- strsplit(MFslim_GOterm_summary_final$Gene_IDs, split = ";")
+MFslim_GOterm_gene_annotation <- data.frame(slim_term      = rep(MFslim_GOterm_summary_final$slim_term, sapply(s_2, length)),
+                                            over_represented_pvalue = rep(MFslim_GOterm_summary_final$over_represented_pvalue, sapply(s_2, length)),
+                                            GO_terms       = rep(MFslim_GOterm_summary_final$GO_terms, sapply(s_2, length)),
+                                            term           = rep(MFslim_GOterm_summary_final$term, sapply(s_2, length)),
+                                            ontology       = rep(MFslim_GOterm_summary_final$ontology, sapply(s_2, length)),
+                                            PgenIDs        = unlist(s_2))
+MF_master_gene_reference <- merge(MFslim_GOterm_gene_annotation, Pgen_reference, by = "PgenIDs")
+
+
+
+write.csv(BP_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day21_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       
+write.csv(MF_master_gene_reference, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day21_GOterms_and_BOslim_MolFunction.csv", sep ='')) # save csv file       write.csv(BPslim_final, file = paste("Analysis/Output/GO/WGCNA_goseq/subseq_treatments_all/Frontloaded_genes/Day7_GOterms_and_BOslim_BiolProc.csv", sep ='')) # save csv file       
