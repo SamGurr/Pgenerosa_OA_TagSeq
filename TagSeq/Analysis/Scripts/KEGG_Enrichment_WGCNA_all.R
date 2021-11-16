@@ -23,7 +23,6 @@ library(fBasics)
 
 # SET WORKING DIRECTORY   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
-setwd("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
 
 # LOAD DATA  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
@@ -42,9 +41,9 @@ colnames(Crass_gigas_genome_dataframe) <- c('sseqid', 'Gene_name') # rename the 
 
 
 # Pgen annotation files and the blastx (using DIAMONd) hits to Cgigas to use downstream in KEGG pathway analysis 
-Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
-ref_update_20210602     <- read.gff("C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
-crgKEGG_Pgenref_DIAMOND <- read.table(file ="C:/Users/samjg/Documents/My_Projects/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/crgKEGG_diamond_out.txt", sep = '\t', header = F)
+Geoduck_annotation      <- read.delim2(file="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-genes-annotations.txt", header=F)
+ref_update_20210602     <- read.gff("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/Seq_details/Panopea-generosa-v1.0.a4.gene.gff3", GFF3 = TRUE) # use library(ape) to import a gff3 as a datatable
+crgKEGG_Pgenref_DIAMOND <- read.table(file ="C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/HPC_work/Output/crgKEGG_diamond_out.txt", sep = '\t', header = F)
 colnames(crgKEGG_Pgenref_DIAMOND) <- c('qseqid','sseqid','pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore') # change the names of the columns if the best blast hits
 
 
@@ -59,8 +58,10 @@ d21_WGCNA_all   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Day21/d
 d7_frontloaded_moderate  <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Preexposed_effect_module/Day7_FrontloadedGenes.csv") %>% dplyr::filter(Frontloaded_Moderate %in% 'frontloaded') %>% dplyr::rename(geneSymbol = Gene)
 d7_frontloaded_severe    <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Preexposed_effect_module/Day7_FrontloadedGenes.csv") %>% dplyr::filter(Frontloaded_Severe %in% 'frontloaded') %>% dplyr::rename(geneSymbol = Gene)
 
-d21_frontloaded_moderate <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Preexposed_effect_module/Day7_Moderate_Day21_Frontloaded.csv")
-d21_frontloaded_severe   <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Preexposed_effect_module/Day7_Severe_Day21_Frontloaded.csv") 
+d21_frontloaded              <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Day21_Moderate_FrontloadedGenes.csv") %>% dplyr::filter(Frontloaded %in% 'frontloaded') %>% dplyr::rename(geneSymbol = Gene)
+d7.d21_frontloaded_moderate  <- read.csv("Analysis/Output/WGCNA/subseq_treatments_all/Frontloading/Day7_Day21_Shared_Moderate_FrontloadedGenes.csv") 
+
+
 
 # DESEq2 results - load data and assign up and downregualted genes!
 DESeq2_PrimaryEffects    <- read.csv(file="Analysis/Output/DESeq2/10cpm/DE_PrimaryTreatment.All.csv", sep=',', header=TRUE)  
@@ -163,10 +164,8 @@ d21_WGCNA_crgKEGGhits <- merge(d21_WGCNA_all, crgKEGG_PgenREF_besthits[,c(1:2)],
 
 d7_frontloaded_moderate_crgKEGG  <- merge(d7_frontloaded_moderate, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 d7_frontloaded_severe_crgKEGG    <- merge(d7_frontloaded_severe, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
-
-
-d21_frontloaded_moderate_crgKEGG <- merge(d21_frontloaded_moderate, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
-d21_frontloaded_severe_crgKEGG   <- merge(d21_frontloaded_severe, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
+d21_frontloaded_moderate_crgKEGG     <- merge(d21_frontloaded, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
+d7.21_frontloaded_moderate_crgKEGG   <- merge(d7.d21_frontloaded_moderate, crgKEGG_PgenREF_besthits[,c(1:2)], by ='geneSymbol')
 
 ### Using KEGGREST instead of KEGGPrilfer
 

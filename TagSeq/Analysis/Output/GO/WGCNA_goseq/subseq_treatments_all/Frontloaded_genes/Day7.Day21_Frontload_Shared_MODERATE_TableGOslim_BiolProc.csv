@@ -1,0 +1,4 @@
+"","slim_term","slim_cat","GO_count","GO_terms","GO_list","Gene_count","Gene_IDs"
+"1","cellular protein modification proce...","GO:0006464",2,"GO:0006470","GO:0006470;GO:0016579",6,"PGEN_.00g001960;PGEN_.00g093280;PGEN_.00g116950;PGEN_.00g139380;PGEN_.00g186060;PGEN_.00g244000"
+"2","transport","GO:0006810",1,"GO:0006897","GO:0006897",3,"PGEN_.00g109150;PGEN_.00g116670;PGEN_.00g239770"
+"3","vesicle-mediated transport","GO:0016192",1,"GO:0006897","GO:0006897",3,"PGEN_.00g109150;PGEN_.00g116670;PGEN_.00g239770"
