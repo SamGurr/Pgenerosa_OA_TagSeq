@@ -1,0 +1,16 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.0
+title: Geoduck Hatchery Handbook
+message: >-
+  If you use this dataset, please cite it using the
+  metadata from this file.
+type: dataset
+authors:
+  - given-names: Samuel J Gurr
+    name-particle: Samuel
+    family-names: Gurr
+    email: samjgurr@gmail.com
+    affiliation: NOAA Affiliate, NRC POstdoctoral Research Fellow
+    orcid: 'https://orcid.org/0000-0002-9828-1917'
