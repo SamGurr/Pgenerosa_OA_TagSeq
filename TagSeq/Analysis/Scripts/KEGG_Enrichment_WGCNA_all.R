@@ -6,7 +6,9 @@
 # INFORMATION FOR KEGG IN R FOUND HERE: (http://yulab-smu.top/clusterProfiler-book/chapter6.html#kegg-over-representation-test)
 
 # LOAD PACKAGE
-library(KEGGREST) # BiocManager::install("KEGGprofile")
+
+library(KEGGProfile)
+library(KEGGREST) # BiocManager::install("KEGGProfile")
 library(reactome.db)
 library(clusterProfiler)
 library(KEGGREST)
@@ -14,16 +16,16 @@ library(tidyr)
 library(stringr)
 library(forcats)
 library(ggplot2)
-library(scales)
 library(ape)
+library(dplyr)
 library(data.table)
 library(tidyverse)
-library(fBasics)
-
+library(radiant.data)
+library(rlang)
 
 # SET WORKING DIRECTORY   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
-setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq/")
 
+setwd("C:/Users/samjg/Documents/Github_repositories/Pgenerosa_TagSeq_Metabolomics/TagSeq")
 
 # LOAD DATA  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 
@@ -100,7 +102,7 @@ length(unique(crgKEGG_Pgenref_DIAMOND$qseqid)) # 18027 of 14671
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::  crgKEGG_PgenREF_besthits  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::;: #
 ###############################################################################################################################################
-
+View(crgKEGG_Pgenref_DIAMOND)
 # merge with the cgigas KEGG genome IDs 
 crgKEGG_Pgenref_DIAMOND_merge  <- merge(crgKEGG_Pgenref_DIAMOND, Crass_gigas_genome_dataframe, by = 'sseqid')
 
@@ -367,7 +369,7 @@ for (i in 1:nrow(Day0_WGCNA_sigmodules)) {
     KEGGoutput$GeneRatio_2 <- gsub("/"," of ", KEGGoutput$GeneRatio)
     KEGGoutput$Rich_Factor <- (  (as.numeric(sub("/.*", "", KEGGoutput$GeneRatio))) / (as.numeric(sub("/.*", "", KEGGoutput$BgRatio)))  ) 
     
-    write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes.csv", sep ='')) 
+   # write.csv(KEGGoutput, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes.csv", sep ='')) 
     
     # Plot
     theme_set(theme_classic())
@@ -385,7 +387,7 @@ for (i in 1:nrow(Day0_WGCNA_sigmodules)) {
            y = "Rich Factor",
            subtitle=paste("WGCNA Module:", modColor, sep =' ')) +
       coord_flip()
-    pdf(paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
+   # pdf(paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_RichFactorPlot.pdf", sep =''), width=5, height=6)
     print(plot)
     dev.off()
     
@@ -398,7 +400,7 @@ for (i in 1:nrow(Day0_WGCNA_sigmodules)) {
     df_3$Cgigas_KEGG_IDs <- paste("crg:", df_3$gene_IDs, sep='')
     Crass_gigas_ref <- Crass_gigas_genome_dataframe %>% mutate(Cgigas_KEGG_IDs = Crass_gigas_genome_dataframe$sseqid) %>% select(c('Cgigas_KEGG_IDs','Gene_name'))
     df_final <- merge(df_3, Crass_gigas_ref, by='Cgigas_KEGG_IDs')
-    write.csv(df_final, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
+  #  write.csv(df_final, file = paste("Analysis/Output/KEGG/subseq_treatments_all/WGCNA/Day0_",modColor,"_KEGG_allgenes_unlisted.csv", sep ='')) 
     
   } else {}
   
